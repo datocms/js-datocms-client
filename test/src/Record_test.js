@@ -25,7 +25,7 @@ describe('Record', () => {
     recordsRepo.locale = 'it';
     expect(record.title).to.equal('Il mio titolo');
     recordsRepo.locale = 'en';
-    expect(record.title).to.equal('My title');
+    expect(record.title).to.equal('My titlè');
   });
 
   it('with complex values, it returns an object', () => {
