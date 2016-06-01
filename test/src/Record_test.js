@@ -31,5 +31,11 @@ describe('Record', () => {
   it('with complex values, it returns an object', () => {
     expect(record.image.url()).to.include('https://dato-images.imgix.net');
   });
+
+  describe('slug', () => {
+    it('returns a parameterized title', () => {
+      expect(record.slug).to.equal('9288-my-title');
+    });
+  });
 });
 

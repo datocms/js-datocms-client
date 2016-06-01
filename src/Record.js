@@ -1,6 +1,11 @@
 import Image from './fields/Image';
 import File from './fields/File';
 import Seo from './fields/Seo';
+import slugify from 'slugify';
+
+function slug(text) {
+  return slugify(text.replace(/_/, ' ').toLowerCase());
+}
 
 const fieldTypeParser = {
   date(value) {
@@ -79,6 +84,19 @@ export default class Record {
   }
 
   get slug() {
-    return 'FIXME';
+    if (this.isSingleton) {
+      return slug(this.contentType.api_key);
+    }
+
+    const titleField = this.fields.find(field => (
+      field.field_type === 'string' &&
+        field.appeareance.type === 'title'
+    ));
+
+    if (titleField && this[titleField.api_key]) {
+      return `${this.id}-${slug(this[titleField.api_key], { lower: true })}`
+    }
+
+    return this.id;
   }
 }

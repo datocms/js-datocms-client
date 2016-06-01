@@ -1,13 +1,13 @@
 import nock from 'nock';
-import { readOnlySession, authenticatedSession } from '../../src/index';
+import DatoCmsClient from '../../src/index';
 import ApiException from '../../src/ApiException';
 
-describe('index.js', () => {
+describe('DatoCmsClient', () => {
   describe('readOnlySession', () => {
     let session;
 
     beforeEach(mochaAsync(async () => {
-      session = await readOnlySession({
+      session = await DatoCmsClient.readOnlySession({
         domain: 'admin.foobar.com',
         token: 'XXX',
       });
@@ -34,7 +34,7 @@ describe('index.js', () => {
           .reply(406, { data: [{ id: 'FOO_ERROR', attributes: {} }] });
       });
       it('it rejects the promise', () => {
-        return expect(authenticatedSession(options))
+        return expect(DatoCmsClient.authenticatedSession(options))
           .to.be.rejectedWith(
             ApiException,
             'FOO_ERROR'
@@ -82,7 +82,7 @@ describe('index.js', () => {
       });
 
       beforeEach(mochaAsync(async () => {
-        session = await authenticatedSession(options);
+        session = await DatoCmsClient.authenticatedSession(options);
       }));
 
       it('returns a configured session', () => {
