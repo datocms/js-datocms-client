@@ -9,9 +9,10 @@
     "watch:lint": "esw -w src test",
     "watch:test": "mocha --watch --opts mocha.opts test/**/*_test.js",
     "test": "mocha --opts mocha.opts test/**/*_test.js",
-    "prepublish": "npm run lib && npm run dist",
+    "prepublish": "npm run lib && npm run dist && npm run dist-noshim",
     "lib": "babel src --out-dir lib",
-    "dist": "NODE_ENV=production browserify src/index.js -s DatoCmsClient -t babelify -g envify -g uglifyify > dist/datocms-client.min.js"
+    "dist": "NODE_ENV=production browserify src/index.js -s DatoCmsClient --ignore js-md5 --ignore js-base64 -t babelify -g envify -g uglifyify > dist/datocms-client.min.js",
+    "dist-noshim": "NODE_ENV=production browserify src/index.js -s DatoCmsClient --ignore js-md5 --ignore js-base64 --ignore babel-polyfill -t babelify -g envify -g uglifyify > dist/datocms-client.noshim.min.js"
   },
   "keywords": [
     "datocms"
@@ -32,6 +33,7 @@
   "devDependencies": {
     "babel-cli": "6.9.0",
     "babel-eslint": "6.0.4",
+    "babel-plugin-add-module-exports": "0.2.1",
     "babel-plugin-syntax-async-functions": "6.8.0",
     "babel-plugin-transform-regenerator": "6.9.0",
     "babel-preset-es2015": "6.9.0",

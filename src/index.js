@@ -1,5 +1,3 @@
-"use strict";
-
 import 'isomorphic-fetch';
 import 'babel-polyfill';
 
@@ -50,6 +48,6 @@ export default {
       });
   },
 
-  RecordsRepo
+  RecordsRepo,
 };
 

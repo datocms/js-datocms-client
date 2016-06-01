@@ -3,11 +3,11 @@ import Entity from '../../src/Entity';
 describe('Entity', () => {
   let entity;
 
-  let repo = {
+  const repo = {
     findEntity(type, id) {
       return `${type}-${id}`;
-    }
-  }
+    },
+  };
 
   const payload = {
     id: 'peter',

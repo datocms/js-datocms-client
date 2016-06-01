@@ -28,7 +28,7 @@ const fieldTypeParser = {
   },
   seo(value) {
     return new Seo(value);
-  }
+  },
 };
 
 export default class Record {
@@ -94,7 +94,7 @@ export default class Record {
     ));
 
     if (titleField && this[titleField.api_key]) {
-      return `${this.id}-${slug(this[titleField.api_key], { lower: true })}`
+      return `${this.id}-${slug(this[titleField.api_key], { lower: true })}`;
     }
 
     return this.id;
