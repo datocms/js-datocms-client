@@ -36,7 +36,7 @@ export default class EntitiesRepo {
   }
 
   findEntity(type, id) {
-    return this.findEntitiesOfType(type)[id];
+    return this.entities[type][id];
   }
 }
 

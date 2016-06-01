@@ -14,11 +14,11 @@ export default class Session {
   }
 
   getSpace(params = {}, options = {}) {
-    this.get('/space', params, options);
+    return this.get('/space', params, options);
   }
 
   getRecords(params = {}, options = {}) {
-    this.get('/records', params, options);
+    return this.get('/records', params, options);
   }
 
   get(url, params = {}, options = {}) {

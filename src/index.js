@@ -1,4 +1,5 @@
 import 'isomorphic-fetch';
+import 'babel-polyfill';
 
 import Session from './Session';
 import { post } from './request';
