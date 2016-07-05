@@ -8,17 +8,17 @@ export default class Session {
     this.token = token;
 
     this.defaultHeaders = {
-      'X-Space-Domain': domain,
+      'X-Site-Domain': domain,
       Authorization: `Bearer ${token}`,
     };
   }
 
-  getSpace(params = {}, options = {}) {
-    return this.get('/space', params, options);
+  getSite(params = {}, options = {}) {
+    return this.get('/site', params, options);
   }
 
-  getRecords(params = {}, options = {}) {
-    return this.get('/records', params, options);
+  getItems(params = {}, options = {}) {
+    return this.get('/items', params, options);
   }
 
   get(url, params = {}, options = {}) {

@@ -15,7 +15,7 @@
       token: 'XXXYYY',
     })
     .then(function(session) {
-      dato = new DatoCmsClient.RecordsRepo(session);
+      dato = new DatoCmsClient.ItemsRepo(session);
       return dato.refresh();
     })
     .then(function() {
@@ -37,7 +37,7 @@ npm install --save datocms-client
 ```
 
 ```js
-import { readOnlySession, RecordsRepo } from 'datocms-client';
+import { readOnlySession, ItemsRepo } from 'datocms-client';
 
 let dato;
 
@@ -46,7 +46,7 @@ readOnlySession({
   token: 'XXXYYY',
 })
 .then(function(session) {
-  dato = new RecordsRepo(session);
+  dato = new ItemsRepo(session);
   return dato.refresh();
 })
 .then(function() {

@@ -2,11 +2,11 @@ import 'isomorphic-fetch';
 import 'babel-polyfill';
 
 import Session from './Session';
-import RecordsRepo from './RecordsRepo';
+import ItemsRepo from './ItemsRepo';
 import { post } from './request';
 
 const defaultOptions = {
-  apiBaseUrl: 'http://api.datocms.com',
+  apiBaseUrl: 'http://site-api.datocms.com',
 };
 
 export default {
@@ -38,7 +38,7 @@ export default {
     };
 
     const headers = {
-      'X-Space-Domain': domain,
+      'X-Site-Domain': domain,
     };
 
     return post(`${apiBaseUrl}/sessions`, payload, { headers })
@@ -48,6 +48,6 @@ export default {
       });
   },
 
-  RecordsRepo,
+  ItemsRepo,
 };
 

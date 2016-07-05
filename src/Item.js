@@ -31,7 +31,7 @@ const fieldTypeParser = {
   },
 };
 
-export default class Record {
+export default class Item {
   constructor(entity, repo) {
     this.entity = entity;
     this.repo = repo;
@@ -63,16 +63,16 @@ export default class Record {
     return this.entity.id;
   }
 
-  get contentType() {
-    return this.entity.content_type;
+  get itemType() {
+    return this.entity.item_type;
   }
 
   get fields() {
-    return this.contentType.fields.sort((a, b) => b.position - a.position);
+    return this.itemType.fields.sort((a, b) => b.position - a.position);
   }
 
   get isSingleton() {
-    return this.contentType.singleton;
+    return this.itemType.singleton;
   }
 
   get position() {
@@ -85,7 +85,7 @@ export default class Record {
 
   get slug() {
     if (this.isSingleton) {
-      return slug(this.contentType.api_key);
+      return slug(this.itemType.api_key);
     }
 
     const titleField = this.fields.find(field => (
