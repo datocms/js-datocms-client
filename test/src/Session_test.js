@@ -5,7 +5,7 @@ describe('Session', () => {
   let session;
 
   const options = [
-    'http://site-api.datocms.com',
+    'https://site-api.datocms.com',
     'admin.foobar.com',
     'XXX',
   ];
@@ -23,7 +23,7 @@ describe('Session', () => {
 
   describe('initialization', () => {
     it('it is properly configured', () => {
-      expect(session.baseUrl).to.equal('http://site-api.datocms.com');
+      expect(session.baseUrl).to.equal('https://site-api.datocms.com');
       expect(session.domain).to.equal('admin.foobar.com');
       expect(session.token).to.equal('XXX');
     });
@@ -32,7 +32,7 @@ describe('Session', () => {
   describe('get', () => {
     describe('just the URL', () => {
       beforeEach(() => {
-        nock('http://site-api.datocms.com', { reqheaders })
+        nock('https://site-api.datocms.com', { reqheaders })
         .get('/endpoint')
         .reply(200, { data: 'success' });
       });
@@ -45,7 +45,7 @@ describe('Session', () => {
 
     describe('URL and params', () => {
       beforeEach(() => {
-        nock('http://site-api.datocms.com', { reqheaders })
+        nock('https://site-api.datocms.com', { reqheaders })
         .get('/endpoint')
         .query({ foo: 'bar' })
         .reply(200, { data: 'success' });

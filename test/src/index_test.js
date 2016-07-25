@@ -14,7 +14,7 @@ describe('DatoCmsClient', () => {
     }));
 
     it('it is properly configured', () => {
-      expect(session.baseUrl).to.equal('http://site-api.datocms.com');
+      expect(session.baseUrl).to.equal('https://site-api.datocms.com');
       expect(session.domain).to.equal('admin.foobar.com');
       expect(session.token).to.equal('XXX');
     });
@@ -29,7 +29,7 @@ describe('DatoCmsClient', () => {
 
     describe('if misconfigured', () => {
       beforeEach(() => {
-        nock('http://site-api.datocms.com')
+        nock('https://site-api.datocms.com')
           .post('/sessions')
           .reply(406, { data: [{ id: 'FOO_ERROR', attributes: {} }] });
       });
@@ -46,7 +46,7 @@ describe('DatoCmsClient', () => {
       let session;
 
       beforeEach(() => {
-        nock('http://site-api.datocms.com', {
+        nock('https://site-api.datocms.com', {
           reqheaders: {
             'Content-Type': 'application/json',
             'X-Site-Domain': 'admin.foobar.com',
@@ -86,7 +86,7 @@ describe('DatoCmsClient', () => {
       }));
 
       it('returns a configured session', () => {
-        expect(session.baseUrl).to.equal('http://site-api.datocms.com');
+        expect(session.baseUrl).to.equal('https://site-api.datocms.com');
         expect(session.domain).to.equal('admin.foobar.com');
         expect(session.token).to.equal('TOKEN');
       });
