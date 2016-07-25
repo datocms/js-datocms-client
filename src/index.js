@@ -6,7 +6,7 @@ import ItemsRepo from './ItemsRepo';
 import { post } from './request';
 
 const defaultOptions = {
-  apiBaseUrl: 'http://site-api.datocms.com',
+  apiBaseUrl: 'https://site-api.datocms.com',
 };
 
 export default {
