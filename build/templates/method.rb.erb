@@ -1,0 +1,14 @@
+<%= name %>(<%= method_signature %>) {
+  <%- if schema? -%>
+    const serializedResource = serializeJsonApi(
+      <%= put_request? && url_arguments.any? ? url_arguments.last + ",\n      " : "" %>resourceAttributes,
+      <%= serialization_rules %>
+    );
+    return this.client.<%= request_method %>(<%= request_url %>, serializedResource)
+    .then(response => Promise.resolve(deserializeJsonApi(response)));
+  <%- else -%>
+    return this.client.<%= request_method %>(<%= request_url %>)
+    .then(response => Promise.resolve(deserializeJsonApi(response)));
+  <%- end -%>
+  }
+

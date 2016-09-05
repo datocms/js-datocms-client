@@ -1,0 +1,14 @@
+import deserializeJsonApi from '../../deserializeJsonApi';
+<%- if methods.any?(&:schema?) -%>
+import serializeJsonApi from '../../serializeJsonApi';
+<%- end -%>
+
+export default class <%= resource.classify + 'Repo' %> {
+  constructor(client) {
+    this.client = client;
+  }
+
+<%- methods.each do |method| -%>
+  <%= method.method_body -%>
+<%- end -%>
+}
