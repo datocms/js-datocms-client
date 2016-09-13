@@ -6,7 +6,7 @@
 
 ```html
 <body>
-  <script src="https://npmcdn.com/datocms-client/dist/datocms-client.min.js"></script>
+  <script src="https://unpkg.com/datocms-client/dist/datocms-client.min.js"></script>
   <script>
     var dato;
 
