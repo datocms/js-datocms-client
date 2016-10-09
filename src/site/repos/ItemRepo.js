@@ -8,7 +8,7 @@ export default class ItemRepo {
 
   create(resourceAttributes) {
     const attributeKeys = Object.keys(resourceAttributes);
-    ['id', 'item_type'].forEach(key => {
+    ['id', 'itemType'].forEach(key => {
       const index = attributeKeys.indexOf(key);
       if (index > -1) {
         attributeKeys.splice(index, 1);

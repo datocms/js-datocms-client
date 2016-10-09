@@ -9,7 +9,7 @@ describe('Site API', () => {
 
   beforeEach(vcr('before', async function() {
     site = await accountClient.sites.create({ name: 'Blog' });
-    client = new SiteClient(site.readwrite_token, null, 'http://site-api.lvh.me:3000');
+    client = new SiteClient(site.readwriteToken, null, 'http://site-api.lvh.me:3000');
   }));
 
   afterEach(vcr('after', async function() {
@@ -31,9 +31,7 @@ describe('Site API', () => {
   describe('deploy event', () => {
     it('find, all', vcr(async function() {
       const events = await client.deployEvents.all();
-      expect(events).to.have.length(1);
-
-      await client.deployEvents.find(events[0].id);
+      expect(events).to.have.length(0);
     }));
   });
 
@@ -152,7 +150,7 @@ describe('Site API', () => {
   describe('upload request', () => {
     it('create', vcr(async function() {
       const uploadRequest = await client.uploadRequests.create({ filename: 'test.svg' });
-      expect(uploadRequest.id).to.not.beUndefined();
+      expect(uploadRequest.id).to.not.be.undefined();
     }));
   });
 
@@ -179,10 +177,24 @@ describe('Site API', () => {
         }
       );
 
+      await client.fields.create(
+        itemType.id,
+        {
+          label: 'Attachment',
+          fieldType: 'file',
+          localized: false,
+          apiKey: 'attachment',
+          hint: '',
+          validators: { required: {} },
+          appeareance: {},
+          position: 2,
+        }
+      );
+
       const item = await client.items.create({
         title: 'My first blog post',
         itemType: itemType.id,
-        file: (await client.uploadFile('test/fixtures/newTextFileHttps.txt')),
+        attachment: (await client.uploadFile('test/fixtures/newTextFileHttps.txt')),
       });
       expect(item.title).to.equal('My first blog post');
 
