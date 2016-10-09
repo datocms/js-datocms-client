@@ -4,7 +4,7 @@ import { camelizeKeys, decamelizeKeys } from 'humps';
 
 /* eslint-disable global-require */
 if (process.env.APP_ENV !== 'browser') {
-  require('node-fetch');
+  global.fetch = require('node-fetch');
 }
 /* eslint-enable global-require */
 
