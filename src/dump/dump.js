@@ -2,10 +2,10 @@ import { join } from 'path';
 import denodeify from 'denodeify';
 import nodeRimraf from 'rimraf';
 import Loader from '../local/Loader';
-import i18n from '../utils/i18n';
 import createPost from './createPost';
 import createDataFile from './createDataFile';
 import addToDataFile from './addToDataFile';
+import i18n from '../utils/i18n';
 
 const rimraf = denodeify(nodeRimraf);
 
@@ -73,7 +73,7 @@ export default async function dump(configFile, client, destinationPath = process
 
   const startOperation = start(
     destinationPath,
-    config.bind(config, loader.itemsRepo)
+    config.bind(config, loader.itemsRepo, i18n)
   );
 
   await startOperation();
