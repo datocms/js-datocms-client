@@ -1,4 +1,6 @@
 #!/usr/bin/env node
-require("../lib");
-require("../lib/dump/cli");
+require('babel-polyfill');
+require('whatwg-fetch');
+require('../lib');
+require('../lib/dump/cli');
 
