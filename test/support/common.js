@@ -1,11 +1,9 @@
 require('babel-polyfill');
 
 import chai, { expect } from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import dirtyChai from 'dirty-chai';
 import vcr from 'nock-vcr-recorder';
 
-chai.use(chaiAsPromised);
 chai.use(dirtyChai);
 
 global.expect = expect;
