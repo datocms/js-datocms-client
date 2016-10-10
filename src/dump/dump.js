@@ -55,7 +55,7 @@ function start(path, config) {
     },
   };
 
-  config(dsl);
+  config(dsl, i18n);
 
   return () => Promise.all(operations.map(o => o()));
 }
@@ -73,7 +73,7 @@ export default async function dump(configFile, client, destinationPath = process
 
   const startOperation = start(
     destinationPath,
-    config.bind(config, loader.itemsRepo, i18n)
+    config.bind(config, loader.itemsRepo)
   );
 
   await startOperation();
