@@ -30,7 +30,7 @@ export default class Image {
       { ch: 'DPR,Width', auto: 'compress,format' },
       params
     );
-    const baseUrl = 'https://dato-images.imgix.net/';
+    const baseUrl = 'https://dato-images.imgix.net';
     return `${baseUrl}${this.path}?${queryString.stringify(augmentedParams)}`;
   }
 
