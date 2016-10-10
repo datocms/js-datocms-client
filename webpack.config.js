@@ -1,9 +1,10 @@
-var webpack = require('webpack');
-var path = require('path');
-var Visualizer = require('webpack-visualizer-plugin');
+const webpack = require('webpack');
+const path = require('path');
+const Visualizer = require('webpack-visualizer-plugin');
 
-var BUILD_DIR = path.resolve(__dirname, 'dist');
-var APP_DIR = path.resolve(__dirname, 'src');
+const BUILD_DIR = path.resolve(__dirname, 'dist');
+const APP_DIR = path.resolve(__dirname, 'src');
+const addPolyfills = !!process.env.ADD_POLYFILLS;
 
 var config = {
   entry: APP_DIR + '/index.js',
@@ -25,7 +26,7 @@ var config = {
   },
   output: {
     path: BUILD_DIR,
-    filename: 'datocms.js',
+    filename: `client${addPolyfills ? '.shims' : ''}.js`,
     library: 'Dato',
     libraryTarget: 'umd',
     umdNamedDefine: true
@@ -39,13 +40,13 @@ config.plugins = [
     'process.env': {
       'NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       'APP_ENV': JSON.stringify('browser'),
+      'ADD_POLYFILLS': JSON.stringify(addPolyfills),
     }
   }),
   new webpack.optimize.UglifyJsPlugin({
     compress: { warnings: false },
     comments: false,
-  }),
-  new Visualizer(),
+  })
 ];
 
 module.exports = config;
