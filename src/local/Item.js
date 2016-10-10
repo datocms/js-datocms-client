@@ -1,12 +1,8 @@
-import slugify from 'slugify';
 import build from './fields/build';
 import DateTime from './fields/DateTime';
 import i18n from '../utils/i18n';
 import { camelize } from 'humps';
-
-function slug(text) {
-  return slugify(text.replace(/_/, ' ').toLowerCase()).substr(0, 51);
-}
+import slugify from '../utils/slugify';
 
 export default class Item {
   constructor(entity, itemsRepo) {
@@ -55,7 +51,7 @@ export default class Item {
     }
 
     if (this.isSingleton) {
-      return slug(this.itemType.apiKey);
+      return slugify(this.itemType.apiKey);
     }
 
     if (!this.titleField) {
@@ -65,9 +61,9 @@ export default class Item {
     const title = this.readAttribute(this.titleField);
 
     if (title && prefixWithId) {
-      return `${this.id}-${slug(title)}`;
+      return `${this.id}-${slugify(title)}`;
     } else if (title) {
-      return slug(title);
+      return slugify(title);
     }
 
     return this.id;
