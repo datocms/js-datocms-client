@@ -23,7 +23,7 @@ DatoCMS works differently:
 
 The process of translating the data coming from the API into static files can be performed both on your machine during the development process of the website, and in your Continuous Deployment service anytime the editors request a new "build" pressing a "Publish" button on the web interface.
 
-Now your static website isn't static anymore! Isn't this awesome?! :-) 
+Now your static website isn't static anymore! Isn't this awesome?! :-)
 
 ## Installing the CLI tool
 
@@ -45,28 +45,41 @@ Usage:
 
 Great! Now the easiest way to dump all the remote data into local files is to create a `dato.config.js` file into your project root directory with the following content:
 
-```ruby
-# dato.config.js
-dato.available_locales.each do |locale|
-  directory "content/#{locale}" do
-    I18n.with_locale(locale) do
-      create_data_file "site.yml", :yaml, dato.site.to_hash
-      dato.item_types.each do |item_type|
-        create_data_file "#{item_type.api_key}.yml", :yaml, 
-          dato.items_of_type(item_type).map(&:to_hash)
-      end
-    end
-  end
-end
+```js
+// dato.config.js
+
+module.exports = (dato, root) => {
+  // within a 'content' directory...
+  root.directory('./content', dir => {
+
+    // dump the global DatoCMS site setting into a 'site.yml' file
+    dir.createDataFile(
+      'site.yml',
+      'yaml',
+      dato.site.toMap()
+    );
+
+    // for each Item Type present in the DatoCMS backend...
+    dato.itemTypes.forEach(itemType => {
+
+      // dump the items in the collection into a YAML file
+      dir.createDataFile(
+        `${itemType.apiKey}.yml`,
+        'yaml',
+        dato.itemsOfType(itemType).map(item => item.toMap())
+      );
+    });
+  });
+};
 ```
 
 And run the following command:
 
 ```
-$ bundle exec dato dump --token=SITE_READONLY_TOKEN 
+$ ./node_modules/.bin/dato dump --token=YOUR_SITE_READONLY_TOKEN
 ```
 
-Hurray! A new `content` directory should have been generated with a Yaml file for each item type and the site itself!
+Hurray! A new `content` directory should have been generated with a YAML file for each item type and the site itself!
 
 ## Hugo step-by-step integration guide
 
@@ -139,12 +152,12 @@ The DSL is quite terse! Basically we're declaring that:
 3. for each post, we create a local markdown file:
   - named after the slugified version of the post title;
   - that contains the post body;
-  - decorated with a Toml front matter with a `title` and `date` keys; 
+  - decorated with a Toml front matter with a `title` and `date` keys;
 
 Now we can run the following command:
 
 ```
-$ bundle exec dato dump --token=SITE_READONLY_TOKEN 
+$ bundle exec dato dump --token=SITE_READONLY_TOKEN
 ```
 
 And see the `content/post` directory emptied from previous content and filled with new files:
@@ -167,9 +180,9 @@ title = "Lorem ipsum"
 date = "2001-02-03"
 +++
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 ```
 
 Awesome!! We can now continue using Hugo just like we're used to.
