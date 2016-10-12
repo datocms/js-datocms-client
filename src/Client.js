@@ -1,6 +1,7 @@
 import queryString from 'query-string';
 import ApiException from './ApiException';
 import { camelizeKeys, decamelizeKeys } from 'humps';
+import pkg from '../package.json';
 
 /* eslint-disable global-require */
 if (process.env.APP_ENV !== 'browser') {
@@ -61,10 +62,15 @@ export default class Client {
   }
 
   defaultHeaders() {
+    const userAgent = process.env.APP_ENV === 'browser' ?
+      'js-client (browser)' :
+      'js-client (nodejs)';
+
     return {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `Bearer ${this.token}`,
+      'content-type': 'application/json',
+      accept: 'application/json',
+      authorization: `Bearer ${this.token}`,
+      'user-agent': `${userAgent} v${pkg.version}`,
     };
   }
 
