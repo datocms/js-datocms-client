@@ -21,7 +21,11 @@ var config = {
         test: /\.js?$/,
         include: APP_DIR,
         loaders: ['babel']
-      }
+      },
+      {
+        test: /\.json$/,
+        loader: 'json'
+      },
     ]
   },
   output: {
