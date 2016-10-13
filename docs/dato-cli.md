@@ -117,6 +117,7 @@ To help you with your first integration, here's a list of sample websites integr
 
 * [Metalsmith](https://github.com/datocms/metalsmith-example)
 * [Hexo](https://github.com/datocms/hexo-example)
+* [Hugo](https://github.com/datocms/hugo-example)
 
 ### Need more help?
 
