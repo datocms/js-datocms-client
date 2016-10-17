@@ -1,6 +1,7 @@
 import Item from './Item';
 import Site from './Site';
 import pluralize from 'pluralize';
+import { camelize } from 'humps';
 
 function buildCollectionsByType(repo, itemTypeMethods) {
   const collectionsByType = {};
@@ -38,7 +39,7 @@ function buildItemTypeMethods(repo) {
     const { singleton } = itemType;
     const pluralizedApiKey = pluralize(itemType.apiKey);
 
-    let method = singleton ? itemType.apiKey : pluralizedApiKey;
+    let method = camelize(singleton ? itemType.apiKey : pluralizedApiKey);
 
     if (clashingKeys.includes(pluralizedApiKey)) {
       const suffix = singleton ? 'Instance' : 'Collection';
