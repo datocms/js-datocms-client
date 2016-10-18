@@ -85,10 +85,6 @@ export default class ItemsRepo {
     return new Site(this.entitiesRepo.findEntitiesOfType('site')[0]);
   }
 
-  get availableLocales() {
-    return ['en'];
-  }
-
   get itemTypes() {
     return this.entitiesRepo.findEntitiesOfType('item_type');
   }

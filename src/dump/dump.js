@@ -68,7 +68,7 @@ export default async function dump(configFile, client, destinationPath = process
   const loader = new Loader(client);
   await loader.load();
 
-  i18n.availableLocales = loader.itemsRepo.availableLocales;
+  i18n.availableLocales = loader.itemsRepo.site.locales;
   i18n.locale = i18n.availableLocales[0];
 
   const startOperation = start(
