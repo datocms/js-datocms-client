@@ -22,8 +22,8 @@ export default class EntitiesRepo {
   constructor(...payloads) {
     this.entities = {};
 
-    payloads.forEach(payload => {
-      payloadEntities(payload).forEach(entityPayload => {
+    payloads.forEach((payload) => {
+      payloadEntities(payload).forEach((entityPayload) => {
         const object = new JsonApiEntity(entityPayload, this);
         this.entities[object.type] = this.entities[object.type] || {};
         this.entities[object.type][object.id] = object;

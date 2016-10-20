@@ -3,7 +3,7 @@ function deserialize({ id, attributes, relationships }) {
 
   if (relationships) {
     const relationshipKeys = Object.keys(relationships);
-    relationshipKeys.forEach(key => {
+    relationshipKeys.forEach((key) => {
       const relationshipData = relationships[key].data;
 
       if (Array.isArray(relationshipData)) {

@@ -1,12 +1,12 @@
 import path from 'path';
 import fs from 'fs';
 import PrettyError from 'pretty-error';
+import { docopt } from 'docopt';
+import { Spinner } from 'cli-spinner';
 import pkg from '../../package.json';
 import SiteClient from '../site/SiteClient';
 import dump from './dump';
 import detectSsg from './detectSsg';
-import { docopt } from 'docopt';
-import { Spinner } from 'cli-spinner';
 
 const doc = `
 DatoCMS CLI tool
@@ -55,7 +55,7 @@ if (options.dump) {
       spinner.stop();
       process.stdout.write('\n\x1b[32m✓\x1b[0m Done!\n');
     })
-    .catch(e => {
+    .catch((e) => {
       spinner.stop();
       process.stdout.write(pe.render(e));
     });

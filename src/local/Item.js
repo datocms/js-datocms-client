@@ -1,7 +1,7 @@
+import { camelize } from 'humps';
 import build from './fields/build';
 import DateTime from './fields/DateTime';
 import i18n from '../utils/i18n';
-import { camelize } from 'humps';
 import slugify from '../utils/slugify';
 
 export default class Item {
@@ -9,7 +9,7 @@ export default class Item {
     this.entity = entity;
     this.itemsRepo = itemsRepo;
 
-    this.fields.forEach(field => {
+    this.fields.forEach((field) => {
       Object.defineProperty(this, camelize(field.apiKey), {
         enumerable: true,
         get() {

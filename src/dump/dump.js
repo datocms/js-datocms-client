@@ -61,9 +61,9 @@ function start(path, config) {
 }
 
 export default async function dump(configFile, client, destinationPath = process.cwd()) {
-  /* eslint-disable global-require */
+  /* eslint-disable global-require, import/no-dynamic-require */
   const config = require(configFile);
-  /* eslint-enable global-require */
+  /* eslint-enable global-require, import/no-dynamic-require */
 
   const loader = new Loader(client);
   await loader.load();

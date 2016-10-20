@@ -32,7 +32,7 @@ function serialize(
 ) {
   const result = { type, attributes: {} };
 
-  attributes.forEach(attribute => {
+  attributes.forEach((attribute) => {
     if (attribute in item) {
       result.attributes[attribute] = item[attribute];
     }

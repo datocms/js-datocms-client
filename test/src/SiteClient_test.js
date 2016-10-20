@@ -7,19 +7,19 @@ describe('Site API', () => {
   let site;
   let client;
 
-  beforeEach(vcr('before', async function() {
+  beforeEach(vcr('before', async () => {
     site = await accountClient.sites.create({ name: 'Blog' });
     client = new SiteClient(site.readwriteToken, null, 'http://site-api.lvh.me:3000');
   }));
 
-  afterEach(vcr('after', async function() {
+  afterEach(vcr('after', async () => {
     if (site) {
       await accountClient.sites.destroy(site.id);
     }
   }));
 
   describe('site', () => {
-    it('find, update', vcr(async function() {
+    it('find, update', vcr(async () => {
       const fetchedSite = await client.site.find();
       expect(fetchedSite.name).to.equal('Blog');
 
@@ -29,14 +29,14 @@ describe('Site API', () => {
   });
 
   describe('deploy event', () => {
-    it('find, all', vcr(async function() {
+    it('find, all', vcr(async () => {
       const events = await client.deployEvents.all();
       expect(events).to.have.length(0);
     }));
   });
 
   describe('menu item', () => {
-    it('create, find, all, update, destroy', vcr(async function() {
+    it('create, find, all, update, destroy', vcr(async () => {
       const menuItem = await client.menuItems.create({
         label: 'Browse Articles',
         position: 1,
@@ -61,7 +61,7 @@ describe('Site API', () => {
   });
 
   describe('item type', () => {
-    it('create, find, all, update, destroy', vcr(async function() {
+    it('create, find, all, update, destroy', vcr(async () => {
       const itemType = await client.itemTypes.create({
         name: 'Article',
         apiKey: 'item_type',
@@ -87,7 +87,7 @@ describe('Site API', () => {
   });
 
   describe('field', () => {
-    it('create, find, all, update, destroy', vcr(async function() {
+    it('create, find, all, update, destroy', vcr(async () => {
       const itemType = await client.itemTypes.create({
         name: 'Article',
         apiKey: 'item_type',
@@ -124,7 +124,7 @@ describe('Site API', () => {
   });
 
   describe('user', () => {
-    it('create, find, all, update, destroy', vcr(async function() {
+    it('create, find, all, update, destroy', vcr(async () => {
       const user = await client.users.create({
         email: 'user.tester@datocms.com',
         firstName: 'user',
@@ -148,14 +148,14 @@ describe('Site API', () => {
   });
 
   describe('upload request', () => {
-    it('create', vcr(async function() {
+    it('create', vcr(async () => {
       const uploadRequest = await client.uploadRequests.create({ filename: 'test.svg' });
       expect(uploadRequest.id).to.not.be.undefined();
     }));
   });
 
   describe('item', () => {
-    it('create, find, all, update, destroy', vcr(async function() {
+    it('create, find, all, update, destroy', vcr(async () => {
       const itemType = await client.itemTypes.create({
         name: 'Article',
         apiKey: 'item_type',

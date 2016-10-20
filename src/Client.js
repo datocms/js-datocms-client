@@ -1,6 +1,8 @@
+/* global fetch */
+
 import queryString from 'query-string';
-import ApiException from './ApiException';
 import { camelizeKeys, decamelizeKeys } from 'humps';
+import ApiException from './ApiException';
 import pkg from '../package.json';
 
 /* eslint-disable global-require */
@@ -97,7 +99,7 @@ export default class Client {
     );
 
     return fetch(url, fullOptions)
-      .then(res => {
+      .then((res) => {
         if (res.status !== 204) {
           return res.json().then(body => [res, body]);
         }

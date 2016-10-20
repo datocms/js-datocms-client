@@ -5,7 +5,7 @@ const client = new AccountClient('XXX', null, 'http://account-api.lvh.me:3000');
 
 describe('Account API', () => {
   describe('account', () => {
-    it('find, update', vcr(async function() {
+    it('find, update', vcr(async () => {
       let account = await client.account.find();
       expect(account).to.have.property('id');
       account = await client.account.update(
@@ -16,7 +16,7 @@ describe('Account API', () => {
   });
 
   describe('site', () => {
-    it('find, all, create, update, destroy, duplicate', vcr(async function() {
+    it('find, all, create, update, destroy, duplicate', vcr(async () => {
       const newSite = await client.sites.create({ name: 'Foobar' });
       expect(newSite.name).to.equal('Foobar');
 

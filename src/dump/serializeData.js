@@ -3,11 +3,13 @@ import toml from 'toml-js';
 import traverse from 'traverse';
 
 export default function serializeData(format, data) {
-  const safeData = traverse(data).map(function(value) {
+  /* eslint-disable array-callback-return */
+  const safeData = traverse(data).map(function transform(value) {
     if (typeof value === 'undefined') {
       this.update(null);
     }
   });
+  /* eslint-enable array-callback-return */
 
   switch (format) {
     case 'yaml':

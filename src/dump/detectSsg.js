@@ -89,7 +89,7 @@ function detectHugo(dir) {
     },
   ];
 
-  const isHugo = configs.find(option => {
+  const isHugo = configs.find((option) => {
     const configPath = path.join(dir, option.file);
     if (!fileExists(configPath)) { return false; }
 

@@ -1,3 +1,5 @@
+/* global XMLHttpRequest */
+
 function uploadToS3(id, url, file) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -25,7 +27,7 @@ export default function browser(client, file) {
   .then(({ id, url }) => {
     return uploadToS3(id, url, file);
   })
-  .then(id => {
+  .then((id) => {
     return {
       path: id,
       size: file.size,

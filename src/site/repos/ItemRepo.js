@@ -8,7 +8,7 @@ export default class ItemRepo {
 
   create(resourceAttributes) {
     const attributeKeys = Object.keys(resourceAttributes);
-    ['id', 'itemType'].forEach(key => {
+    ['id', 'itemType'].forEach((key) => {
       const index = attributeKeys.indexOf(key);
       if (index > -1) {
         attributeKeys.splice(index, 1);
@@ -33,7 +33,7 @@ export default class ItemRepo {
 
   update(itemId, resourceAttributes) {
     const attributeKeys = Object.keys(resourceAttributes);
-    ['id', 'updatedAt', 'isValid', 'itemType'].forEach(key => {
+    ['id', 'updatedAt', 'isValid', 'itemType'].forEach((key) => {
       const index = attributeKeys.indexOf(key);
       if (index > -1) {
         attributeKeys.splice(index, 1);

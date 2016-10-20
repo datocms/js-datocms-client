@@ -1,18 +1,18 @@
-import Item from './Item';
-import Site from './Site';
 import pluralize from 'pluralize';
 import { camelize } from 'humps';
+import Item from './Item';
+import Site from './Site';
 
 function buildCollectionsByType(repo, itemTypeMethods) {
   const collectionsByType = {};
   const itemsById = {};
 
-  repo.itemTypes.forEach(itemType => {
+  repo.itemTypes.forEach((itemType) => {
     const { method, singleton } = itemTypeMethods[itemType.apiKey];
     collectionsByType[method] = singleton ? null : [];
   });
 
-  repo.entitiesRepo.findEntitiesOfType('item').forEach(entity => {
+  repo.entitiesRepo.findEntitiesOfType('item').forEach((entity) => {
     const item = new Item(entity, repo);
     const { method, singleton } = itemTypeMethods[entity.itemType.apiKey];
 
@@ -35,7 +35,7 @@ function buildItemTypeMethods(repo) {
   const collectionKeys = repo.collectionItemTypes.map(t => pluralize(t.apiKey));
   const clashingKeys = singletonKeys.filter(k => collectionKeys.includes(k));
 
-  repo.itemTypes.forEach(itemType => {
+  repo.itemTypes.forEach((itemType) => {
     const { singleton } = itemType;
     const pluralizedApiKey = pluralize(itemType.apiKey);
 
@@ -43,7 +43,7 @@ function buildItemTypeMethods(repo) {
 
     if (clashingKeys.includes(pluralizedApiKey)) {
       const suffix = singleton ? 'Instance' : 'Collection';
-      method = method + suffix;
+      method += suffix;
     }
 
     result[itemType.apiKey] = { method, singleton };

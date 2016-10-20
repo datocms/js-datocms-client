@@ -2,7 +2,9 @@ import EntitiesRepo from '../local/EntitiesRepo';
 import ItemsRepo from '../local/ItemsRepo';
 
 function times(n) {
+  /* eslint-disable prefer-spread */
   return Array.apply(null, { length: n }).map(Number.call, Number);
+  /* eslint-enable prefer-spread */
 }
 
 export default class Loader {
@@ -29,11 +31,11 @@ export default class Loader {
     const itemsPerPage = 500;
 
     return this.client.get('/items', { 'page[limit]': itemsPerPage })
-    .then(baseResponse => {
+    .then((baseResponse) => {
       const pages = Math.ceil(baseResponse.meta.total_count / itemsPerPage);
 
       const extraFetches = times(pages - 1)
-      .map(extraPage => {
+      .map((extraPage) => {
         return this.client.get(
           '/items',
           {
