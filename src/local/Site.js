@@ -57,7 +57,7 @@ export default class Site {
     ];
 
     return fields.reduce((acc, field) => {
-      let value = typeof this[field] === 'undefined' ? null : this[field];
+      let value = this[field];
 
       if (value && value.toMap) {
         value = value.toMap();

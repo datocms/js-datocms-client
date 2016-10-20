@@ -102,7 +102,7 @@ export default class Item {
       if (value && value.toMap) {
         serializedValue = value.toMap();
       } else {
-        serializedValue = typeof value === 'undefined' ? null : value;
+        serializedValue = value;
       }
 
       return Object.assign(acc, { [camelize(field.apiKey)]: serializedValue });
