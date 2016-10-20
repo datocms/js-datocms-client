@@ -52,8 +52,8 @@ export default class ItemRepo {
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
 
-  all() {
-    return this.client.get('/items')
+  all(params = {}) {
+    return this.client.get('/items', params)
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
 
