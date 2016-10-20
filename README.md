@@ -17,6 +17,7 @@ This module can be used in different ways, so the documentation is split up in d
 
 * [I want to use the content of a DatoCMS site in my static website (Metalsmith, Hexo, etc)](https://github.com/datocms/js-datocms-client/blob/master/docs/dato-cli.md);
 * [I want to edit the contents of an existing DatoCMS site programmatically](https://github.com/datocms/js-datocms-client/blob/master/docs/site-api-client.md);
+* [I want to fetch DatoCMS content from the browser, to enhance my static website](https://github.com/datocms/js-datocms-client/blob/master/docs/browser-api-client.md);
 * [I want to create new DatoCMS sites programmatically](https://github.com/datocms/js-datocms-client/blob/master/docs/account-api-client.md).
 
 ## Development
