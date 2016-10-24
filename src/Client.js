@@ -4,9 +4,10 @@ import queryString from 'query-string';
 import { camelizeKeys, decamelizeKeys } from 'humps';
 import ApiException from './ApiException';
 import pkg from '../package.json';
+import isBrowser from './isBrowser';
 
 /* eslint-disable global-require */
-if (process.env.APP_ENV !== 'browser') {
+if (!isBrowser) {
   global.fetch = require('node-fetch');
 }
 /* eslint-enable global-require */
@@ -64,7 +65,7 @@ export default class Client {
   }
 
   defaultHeaders() {
-    const userAgent = process.env.APP_ENV === 'browser' ?
+    const userAgent = isBrowser ?
       'js-client (browser)' :
       'js-client (nodejs)';
 

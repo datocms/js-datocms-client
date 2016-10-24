@@ -3,6 +3,12 @@
   "version": "0.2.11",
   "description": "DatoCMS API client and CLI tool",
   "main": "lib/index.js",
+  "browser": {
+    "./lib/upload/adapters/node.js": "./lib/upload/adapters/browser.js",
+    "./lib/isBrowser.js": "./lib/forceIsBrowser.js",
+    "./package.json": "./lib/pkg.js",
+    "node-fetch": false
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/datocms/js-datocms-client.git"
@@ -10,7 +16,7 @@
   "scripts": {
     "lint:autocorrect": "eslint src --fix",
     "test": "eslint src && mocha --opts mocha.opts test/**/*_test.js",
-    "prepublish": "rimraf lib dist && npm run lib && npm run dist",
+    "prepublish": "rimraf lib dist && mkdir lib dist && node build/transformPackageJson.js && npm run lib && npm run dist",
     "dist": "ADD_POLYFILLS=1 NODE_ENV=production webpack --progress; NODE_ENV=production webpack --progress",
     "dev": "NODE_ENV=production webpack --progress --watch",
     "lib": "babel src --out-dir lib",
