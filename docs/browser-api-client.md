@@ -9,7 +9,7 @@ With our library, you can easily read any content stored within your DatoCMS bac
 Add the following library to your page:
 
 ```html
-<script src="https://npmcdn.com/datocms-client/dist/client.shims.js"></script>
+<script src="https://unpkg.com/datocms-client/dist/client.shims.js"></script>
 ```
 
 ## Usage
