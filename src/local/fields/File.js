@@ -17,12 +17,9 @@ export default class File {
     return this.value.size;
   }
 
-  url(params) {
-    const baseUrl = `https://dato-images.imgix.net/${this.path}`;
-    if (params) {
-      return `${baseUrl}?${queryString.stringify(params)}`;
-    }
-    return baseUrl;
+  url(params = {}) {
+    const baseUrl = 'https://dato-images.imgix.net';
+    return `${baseUrl}${this.path}?${queryString.stringify(params)}`;
   }
 
   toMap() {
