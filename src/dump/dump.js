@@ -13,6 +13,10 @@ function createDirectory(path, config) {
   const operations = [];
 
   const dsl = {
+    directory(dir, subConfig) {
+      operations.push(createDirectory(join(path, dir), subConfig));
+    },
+
     createDataFile(file, format, data) {
       operations.push(createDataFile.bind(null, join(path, file), format, data));
     },

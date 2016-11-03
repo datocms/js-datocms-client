@@ -10,16 +10,16 @@ describe('deserializeJsonApi', () => {
     it('it returns an array of objects', () => {
       const deserializedObject = deserializeJsonApi(arrayRelationships);
       expect(deserializedObject).to.eql([
-        { id: '12', siteName: 'Mio sito', account: '88', authors: ['81', '84'] },
-        { id: '13', siteName: 'Mio sito', authors: '81' },
+        { id: '12', siteName: 'Blog', account: '88', authors: ['81', '84'] },
+        { id: '13', siteName: 'Blog', authors: '81' },
       ]);
     });
 
     it('it doesn\'t returns relationships', () => {
       const deserializedObject = deserializeJsonApi(arrayNoRelationships);
       expect(deserializedObject).to.eql([
-        { id: '12', siteName: 'Mio sito', secondAttr: 'example' },
-        { id: '13', siteName: 'Mio sito' },
+        { id: '12', siteName: 'Blog', secondAttr: 'example' },
+        { id: '13', siteName: 'Blog' },
       ]);
     });
   });
@@ -29,7 +29,7 @@ describe('deserializeJsonApi', () => {
       const deserializedObject = deserializeJsonApi(noArrayNoRelationships);
       expect(deserializedObject).to.eql({
         id: '12',
-        siteName: 'Mio sito',
+        siteName: 'Blog',
         secondAttr: 'example',
       });
     });
@@ -38,7 +38,7 @@ describe('deserializeJsonApi', () => {
       const deserializedObject = deserializeJsonApi(noArrayRelationships);
       expect(deserializedObject).to.eql({
         id: '12',
-        siteName: 'Mio sito',
+        siteName: 'Blog',
         authors: ['81', '84'],
       });
     });

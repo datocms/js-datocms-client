@@ -99,11 +99,6 @@ If a Item Type is marked as "single instance" (ie. `about_page`) you don't need 
 
 You can query an item's field value with a method called like the field API identifier.
 
-An item also features a `.slug()` method:
-
-* if an item type has a field of type `string` with a "Title" Presentation mode, than the method returns the slugified version of the title itself;
-* otherwise, it just returns the unique identifier of the item;
-
 Complex field types (ie. `image`, `file`, `video`, `seo`) implement specific methods you can use as well within the config file:
 
 ```

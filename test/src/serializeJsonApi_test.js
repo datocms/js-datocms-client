@@ -10,8 +10,8 @@ describe('serializeJsonApi', () => {
     it('it returns data in an array', () => {
       const serializedObject = serializeJsonApi(
         [
-          { id: '12', siteName: 'Mio sito', secondAttr: 'example' },
-          { id: '13', siteName: 'Mio sito' },
+          { id: '12', siteName: 'Blog', secondAttr: 'example' },
+          { id: '13', siteName: 'Blog' },
         ],
         {
           type: 'site',
@@ -24,8 +24,8 @@ describe('serializeJsonApi', () => {
     it('it returns relationships', () => {
       const serializedObject = serializeJsonApi(
         [
-          { id: '12', siteName: 'Mio sito', account: '88', authors: ['81', '84'] },
-          { id: '13', siteName: 'Mio sito', authors: '81' },
+          { id: '12', siteName: 'Blog', account: '88', authors: ['81', '84'] },
+          { id: '13', siteName: 'Blog', authors: '81' },
         ],
         {
           type: 'site',
@@ -43,7 +43,7 @@ describe('serializeJsonApi', () => {
       const serializedObject = serializeJsonApi(
         {
           id: '12',
-          siteName: 'Mio sito',
+          siteName: 'Blog',
           secondAttr: 'example',
         },
         {
@@ -58,7 +58,7 @@ describe('serializeJsonApi', () => {
       const serializedObject = serializeJsonApi(
         {
           id: '12',
-          siteName: 'Mio sito',
+          siteName: 'Blog',
           authors: ['81', '84'],
         },
         {
