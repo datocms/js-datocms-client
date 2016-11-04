@@ -15,7 +15,7 @@
   },
   "scripts": {
     "lint:autocorrect": "eslint src --fix",
-    "test": "mocha --opts mocha.opts test/**/*_test.js",
+    "test": "eslint src && mocha --opts mocha.opts test/**/*_test.js",
     "prepublish": "rimraf lib dist && mkdir lib dist && node build/transformPackageJson.js && npm run lib && npm run dist",
     "dist": "ADD_POLYFILLS=1 NODE_ENV=production webpack --progress; NODE_ENV=production webpack --progress",
     "dev": "NODE_ENV=production webpack --progress --watch",

@@ -21,7 +21,6 @@ function deserialize({ id, attributes, relationships }) {
 }
 
 export default function deserializeJsonApi(json) {
-  console.log("JSON", json);
   const data = json.data;
 
   if (Array.isArray(data)) {
