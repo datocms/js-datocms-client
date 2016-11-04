@@ -2,5 +2,5 @@
 require('babel-polyfill');
 require('whatwg-fetch');
 require('../lib');
-require('../lib/dump/cli');
+require('../lib/cli');
 

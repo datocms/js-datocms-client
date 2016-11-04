@@ -1,25 +1,12 @@
 import path from 'path';
 import fs from 'fs';
 import PrettyError from 'pretty-error';
-import { docopt } from 'docopt';
 import { Spinner } from 'cli-spinner';
-import pkg from '../../package.json';
 import SiteClient from '../site/SiteClient';
-import dump from './dump';
 import detectSsg from './detectSsg';
+import dump from './dump';
 
-const doc = `
-DatoCMS CLI tool
-
-Usage:
-  dato dump [--token=<apiToken>] [--config=<file>]
-  dato -h | --help
-  dato --version
-`;
-
-const options = docopt(doc, { version: pkg.version });
-
-if (options.dump) {
+export default function (options) {
   const configFile = path.resolve(options['--config'] || 'dato.config.js');
   const token = options['--token'] || process.env.DATO_API_TOKEN;
 
@@ -50,7 +37,7 @@ if (options.dump) {
   spinner.setSpinnerString(18);
   spinner.start();
 
-  dump(configFile, client)
+  return dump(configFile, client)
     .then(() => {
       spinner.stop();
       process.stdout.write('\n\x1b[32m✓\x1b[0m Done!\n');
