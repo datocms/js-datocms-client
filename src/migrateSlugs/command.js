@@ -16,7 +16,7 @@ export default function (options) {
     process.exit(1);
   }
 
-  const client = new SiteClient(token, { 'X-Reason': 'migrate-slugs' }, 'http://site-api.lvh.me:3001');
+  const client = new SiteClient(token, { 'X-Reason': 'migrate-slugs' });
 
   const spinner = new Spinner('%s Fetching site informations...');
   spinner.setSpinnerString(18);
