@@ -93,6 +93,10 @@ export default function (options) {
   }
 
   function simpleSlugify(item, title, suffix) {
+    if (!title) {
+      return null;
+    }
+
     const slug = slugify(title);
 
     if (skipIdPrefix) {
