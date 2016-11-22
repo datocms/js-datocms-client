@@ -110,5 +110,6 @@ client.uploadFile(pathOrUrl);
 client.users.create(resourceAttributes);
 client.users.all();
 client.users.find(userId);
+client.users.destroy(userId);
 ```
 

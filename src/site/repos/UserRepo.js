@@ -54,4 +54,9 @@ export default class UserRepo {
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
 
+  destroy(userId) {
+    return this.client.delete(`/users/${userId}`)
+    .then(response => Promise.resolve(deserializeJsonApi(response)));
+  }
+
 }

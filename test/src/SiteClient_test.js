@@ -124,7 +124,7 @@ describe('Site API', () => {
   });
 
   describe('editors', () => {
-    it('create, find, all', vcr(async () => {
+    it('create, find, all, destroy', vcr(async () => {
       const user = await client.users.create({
         email: 'user.tester@datocms.com',
         firstName: 'user',
@@ -138,6 +138,8 @@ describe('Site API', () => {
 
       const allUsers = await client.users.all();
       expect(allUsers).to.have.length(1);
+
+      await client.users.destroy(foundUser.id);
     }));
   });
 
