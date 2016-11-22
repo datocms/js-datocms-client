@@ -15,13 +15,11 @@ export default class UserRepo {
           'email',
           'firstName',
           'lastName',
-          'isAdmin',
         ],
         requiredAttributes: [
           'email',
           'firstName',
           'lastName',
-          'isAdmin',
         ],
       }
     );
@@ -40,7 +38,6 @@ export default class UserRepo {
           'firstName',
           'lastName',
           'password',
-          'isAdmin',
         ],
       }
     );

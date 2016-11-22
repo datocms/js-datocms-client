@@ -13,6 +13,6 @@ task :regenerate do
   BuildClient.new(
     open('https://account-api.datocms.com/docs/account-api-hyperschema.json').read,
     'account',
-    %w(session)
+    %w(session account#create account#reset_password subscription portal_session)
   ).build
 end

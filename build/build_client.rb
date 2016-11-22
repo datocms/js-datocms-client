@@ -15,9 +15,19 @@ class BuildClient
 
   def build
     schema.properties.each do |resource, resource_schema|
-      if !blacklisted_resources.include?(resource) && resource_schema.links.any?
-        BuildRepo.new(namespace, resource, resource_schema).build
-      end
+      next unless !blacklisted_resources.include?(resource) &&
+                  resource_schema.links.any?
+
+      blacklisted_rels = blacklisted_resources
+                         .select { |x| x =~ /^#{resource}#.*$/ }
+                         .map { |x| x.gsub(/^#{resource}#/, '') }
+
+      BuildRepo.new(
+        namespace,
+        resource,
+        resource_schema,
+        blacklisted_rels
+      ).build
     end
   end
 end

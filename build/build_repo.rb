@@ -6,12 +6,13 @@ require 'active_support/core_ext/string/indent'
 require_relative './build_method'
 
 class BuildRepo
-  attr_reader :resource, :schema, :namespace
+  attr_reader :resource, :schema, :namespace, :blacklisted_rels
 
-  def initialize(namespace, resource, schema)
+  def initialize(namespace, resource, schema, blacklisted_rels)
     @namespace = namespace
     @resource = resource
     @schema = schema
+    @blacklisted_rels = blacklisted_rels
   end
 
   def build
@@ -33,9 +34,9 @@ class BuildRepo
   end
 
   def methods
-    schema.links.map do |link|
-      BuildMethod.new(resource, link)
-    end
+    schema.links
+          .select { |link| !blacklisted_rels.include?(link.rel) }
+          .map { |link| BuildMethod.new(resource, link) }
   end
 
   def links
