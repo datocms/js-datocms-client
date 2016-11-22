@@ -27,24 +27,6 @@ export default class UserRepo {
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
 
-  update(userId, resourceAttributes) {
-    const serializedResource = serializeJsonApi(
-      userId,
-      resourceAttributes,
-      {
-        type: 'user',
-        attributes: [
-          'email',
-          'firstName',
-          'lastName',
-          'password',
-        ],
-      }
-    );
-    return this.client.put(`/users/${userId}`, serializedResource)
-    .then(response => Promise.resolve(deserializeJsonApi(response)));
-  }
-
   all() {
     return this.client.get('/users')
     .then(response => Promise.resolve(deserializeJsonApi(response)));
@@ -69,11 +51,6 @@ export default class UserRepo {
       }
     );
     return this.client.post('/users/reset_password', serializedResource)
-    .then(response => Promise.resolve(deserializeJsonApi(response)));
-  }
-
-  destroy(userId) {
-    return this.client.delete(`/users/${userId}`)
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
 

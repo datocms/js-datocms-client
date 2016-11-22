@@ -123,13 +123,12 @@ describe('Site API', () => {
     }));
   });
 
-  describe('user', () => {
-    it('create, find, all, update, destroy', vcr(async () => {
+  describe('editors', () => {
+    it('create, find, all', vcr(async () => {
       const user = await client.users.create({
         email: 'user.tester@datocms.com',
         firstName: 'user',
         lastName: 'tester',
-        isAdmin: false,
       });
 
       expect(user.firstName).to.equal('user');
@@ -139,11 +138,6 @@ describe('Site API', () => {
 
       const allUsers = await client.users.all();
       expect(allUsers).to.have.length(1);
-
-      const updatedUser = await client.users.update(user.id, { isAdmin: true });
-      expect(updatedUser.isAdmin).to.equal(true);
-
-      await client.users.destroy(user.id);
     }));
   });
 

@@ -108,9 +108,7 @@ client.uploadImage(pathOrUrl);
 client.uploadFile(pathOrUrl);
 
 client.users.create(resourceAttributes);
-client.users.update(userId, resourceAttributes);
 client.users.all();
 client.users.find(userId);
-client.users.destroy(userId);
 ```
 

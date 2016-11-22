@@ -7,7 +7,7 @@ task :regenerate do
   BuildClient.new(
     open('https://site-api.datocms.com/docs/site-api-hyperschema.json').read,
     'site',
-    %w(session item)
+    %w(session item user#update user#destroy)
   ).build
 
   BuildClient.new(
