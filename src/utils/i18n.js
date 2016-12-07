@@ -1,7 +1,7 @@
-let currentLocale = null;
+let currentLocale = 'en';
 
 export default {
-  availableLocales: [],
+  availableLocales: ['en'],
 
   get locale() {
     return currentLocale;
@@ -13,5 +13,13 @@ export default {
     } else {
       throw new Error(`Invalid locale ${value}`);
     }
+  },
+
+  withLocale(locale, fn) {
+    const oldLocale = currentLocale;
+    this.locale = locale;
+    const result = fn();
+    this.locale = oldLocale;
+    return result;
   },
 };

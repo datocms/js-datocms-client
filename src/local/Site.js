@@ -1,6 +1,7 @@
 import i18n from '../utils/i18n';
 import Image from './fields/Image';
 import GlobalSeo from './fields/GlobalSeo';
+import faviconTagsBuilder from '../utils/faviconTagsBuilder';
 
 export default class Site {
   constructor(entity) {
@@ -43,6 +44,10 @@ export default class Site {
     return this.readAttribute('favicon', Image, false);
   }
 
+  get faviconMetaTags() {
+    return faviconTagsBuilder(this);
+  }
+
   toMap() {
     const fields = [
       'id',
@@ -54,6 +59,7 @@ export default class Site {
       'noIndex',
       'globalSeo',
       'favicon',
+      'faviconMetaTags',
     ];
 
     return fields.reduce((acc, field) => {

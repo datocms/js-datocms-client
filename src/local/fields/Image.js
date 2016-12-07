@@ -26,12 +26,15 @@ export default class Image {
   }
 
   url(params = {}) {
-    const augmentedParams = Object.assign(
-      { ch: 'DPR,Width', auto: 'compress,format' },
+    return this.rawUrl(Object.assign(
+      { ch: 'DPR,Width', auto: 'format' },
       params
-    );
+    ));
+  }
+
+  rawUrl(params = {}) {
     const baseUrl = 'https://dato-images.imgix.net';
-    return `${baseUrl}${this.path}?${queryString.stringify(augmentedParams)}`;
+    return `${baseUrl}${this.path}?${queryString.stringify(params)}`;
   }
 
   toMap() {

@@ -3,6 +3,7 @@ import build from './fields/build';
 import DateTime from './fields/DateTime';
 import i18n from '../utils/i18n';
 import slugify from '../utils/slugify';
+import seoTagsBuilder from '../utils/seoTagsBuilder';
 
 export default class Item {
   constructor(entity, itemsRepo) {
@@ -84,11 +85,16 @@ export default class Item {
     }, {});
   }
 
+  get seoMetaTags() {
+    return seoTagsBuilder(this, this.itemsRepo.site);
+  }
+
   toMap() {
     const result = {
       id: this.id,
       itemType: this.itemType.apiKey,
       updatedAt: this.updatedAt.toMap(),
+      seoMetaTags: this.seoMetaTags,
     };
 
     if (this.itemType.sortable) {

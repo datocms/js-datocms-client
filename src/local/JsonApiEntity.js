@@ -3,11 +3,11 @@ export default class JsonApiEntity {
     this.payload = payload;
     this.repo = repo;
 
-    Object.entries(payload.attributes).forEach(([name, value]) => {
+    Object.entries(payload.attributes || {}).forEach(([name, value]) => {
       Object.defineProperty(this, name, { enumerable: true, value });
     });
 
-    Object.entries(payload.relationships).forEach(([name, value]) => {
+    Object.entries(payload.relationships || {}).forEach(([name, value]) => {
       Object.defineProperty(this, name, {
         enumerable: true,
         get() {

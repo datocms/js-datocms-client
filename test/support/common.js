@@ -7,6 +7,14 @@ import vcr from 'nock-vcr-recorder';
 chai.use(dirtyChai);
 
 global.expect = expect;
+global.memo = function memo(fn) {
+  let value;
+
+  return function() {
+    value = value || fn();
+    return value;
+  }
+}
 
 function slugify(text) {
   return text.toString().toLowerCase()
