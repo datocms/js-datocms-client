@@ -7,22 +7,37 @@ function buildCollectionsByType(repo, itemTypeMethods) {
   const collectionsByType = {};
   const itemsById = {};
 
-  repo.itemTypes.forEach((itemType) => {
-    const { method, singleton } = itemTypeMethods[itemType.apiKey];
-    collectionsByType[method] = singleton ? null : [];
+  repo.itemTypes.forEach(itemType => {
+    const method = itemTypeMethods[itemType.apiKey];
+    collectionsByType[method] = itemType.singleton ? null : [];
   });
 
-  repo.entitiesRepo.findEntitiesOfType('item').forEach((entity) => {
+  repo.entitiesRepo.findEntitiesOfType('item').forEach(entity => {
     const item = new Item(entity, repo);
-    const { method, singleton } = itemTypeMethods[entity.itemType.apiKey];
+    const method = itemTypeMethods[entity.itemType.apiKey];
 
-    if (singleton) {
-      collectionsByType[method] = item;
-    } else {
+    if (!entity.itemType.singleton) {
       collectionsByType[method].push(item);
     }
 
     itemsById[item.id] = item;
+  });
+
+  repo.itemTypes.forEach(itemType => {
+    const method = itemTypeMethods[itemType.apiKey];
+    if (!itemType.singleton && itemType.sortable) {
+      collectionsByType[method] = collectionsByType[method]
+        .sort((a, b) => a.position - b.position);
+    }
+  });
+
+  repo.itemTypes.forEach(itemType => {
+    const method = itemTypeMethods[itemType.apiKey];
+
+    if (itemType.singleton && itemType.singletonItem) {
+      const item = new Item(itemType.singletonItem, repo);
+      collectionsByType[method] = item;
+    }
   });
 
   return { collectionsByType, itemsById };
@@ -46,7 +61,7 @@ function buildItemTypeMethods(repo) {
       method += suffix;
     }
 
-    result[itemType.apiKey] = { method, singleton };
+    result[itemType.apiKey] = method;
   });
 
   return result;
@@ -72,13 +87,13 @@ export default class ItemsRepo {
     this.itemsById = itemsById;
     this.itemTypeMethods = itemTypeMethods;
 
-    for (const { method } of Object.values(itemTypeMethods)) {
+    Object.values(itemTypeMethods).forEach(method => {
       Object.defineProperty(this, method, {
         get() {
           return collectionsByType[method];
         },
       });
-    }
+    });
   }
 
   get site() {

@@ -32,7 +32,7 @@ export default class Loader {
 
     return this.client.get('/items', { 'page[limit]': itemsPerPage })
     .then((baseResponse) => {
-      const pages = Math.ceil(baseResponse.meta.total_count / itemsPerPage);
+      const pages = Math.ceil(baseResponse.meta.totalCount / itemsPerPage);
 
       const extraFetches = times(pages - 1)
       .map((extraPage) => {
