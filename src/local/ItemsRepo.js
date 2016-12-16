@@ -7,12 +7,12 @@ function buildCollectionsByType(repo, itemTypeMethods) {
   const collectionsByType = {};
   const itemsById = {};
 
-  repo.itemTypes.forEach(itemType => {
+  repo.itemTypes.forEach((itemType) => {
     const method = itemTypeMethods[itemType.apiKey];
     collectionsByType[method] = itemType.singleton ? null : [];
   });
 
-  repo.entitiesRepo.findEntitiesOfType('item').forEach(entity => {
+  repo.entitiesRepo.findEntitiesOfType('item').forEach((entity) => {
     const item = new Item(entity, repo);
     const method = itemTypeMethods[entity.itemType.apiKey];
 
@@ -23,7 +23,7 @@ function buildCollectionsByType(repo, itemTypeMethods) {
     itemsById[item.id] = item;
   });
 
-  repo.itemTypes.forEach(itemType => {
+  repo.itemTypes.forEach((itemType) => {
     const method = itemTypeMethods[itemType.apiKey];
     if (!itemType.singleton && itemType.sortable) {
       collectionsByType[method] = collectionsByType[method]
@@ -31,7 +31,7 @@ function buildCollectionsByType(repo, itemTypeMethods) {
     }
   });
 
-  repo.itemTypes.forEach(itemType => {
+  repo.itemTypes.forEach((itemType) => {
     const method = itemTypeMethods[itemType.apiKey];
 
     if (itemType.singleton && itemType.singletonItem) {
@@ -87,7 +87,7 @@ export default class ItemsRepo {
     this.itemsById = itemsById;
     this.itemTypeMethods = itemTypeMethods;
 
-    Object.values(itemTypeMethods).forEach(method => {
+    Object.values(itemTypeMethods).forEach((method) => {
       Object.defineProperty(this, method, {
         get() {
           return collectionsByType[method];
