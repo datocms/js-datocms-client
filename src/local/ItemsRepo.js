@@ -35,8 +35,7 @@ function buildCollectionsByType(repo, itemTypeMethods) {
     const method = itemTypeMethods[itemType.apiKey];
 
     if (itemType.singleton && itemType.singletonItem) {
-      const item = new Item(itemType.singletonItem, repo);
-      collectionsByType[method] = item;
+      collectionsByType[method] = itemsById[itemType.singletonItem.id];
     }
   });
 
