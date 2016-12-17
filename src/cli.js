@@ -1,7 +1,10 @@
+import dotenv from 'dotenv';
 import { docopt } from 'docopt';
 import pkg from '../package.json';
 import dump from './dump/command';
 import migrateSlugs from './migrateSlugs/command';
+
+dotenv.load({ silent: true });
 
 const doc = `
 DatoCMS CLI tool
