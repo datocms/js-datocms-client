@@ -8,6 +8,7 @@ const mkdirp = denodeify(baseMkdirp);
 
 export default function writeFile(filePath, content) {
   return mkdirp(path.dirname(filePath))
-    .then(() => fsWriteFile(filePath, content));
+    .then(() => fsWriteFile(filePath, content))
+    .then(() => `Written ${path.relative(process.cwd(), filePath)}`);
 }
 

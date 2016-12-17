@@ -1,5 +1,5 @@
 import PrettyError from 'pretty-error';
-import { Spinner } from 'cli-spinner';
+import ora from 'ora';
 import SiteClient from '../site/SiteClient';
 import deserializeJsonApi from '../deserializeJsonApi';
 import slugify from '../utils/slugify';
@@ -18,9 +18,7 @@ export default function (options) {
 
   const client = new SiteClient(token, { 'X-Reason': 'migrate-slugs' });
 
-  const spinner = new Spinner('%s Fetching site informations...');
-  spinner.setSpinnerString(18);
-  spinner.start();
+  const spinner = ora('Fetching site information').start();
 
   async function addSlugField(field) {
     const validators = {
@@ -168,7 +166,7 @@ export default function (options) {
       return fields.find(field => field.fieldType === 'string' && field.appeareance.type === 'title');
     }))).filter(field => !!field);
 
-    spinner.setSpinnerTitle('Updating site...');
+    spinner.text = 'Updating site';
 
     await Promise.all(
       titleFields.map(async (titleField) => {
@@ -186,11 +184,10 @@ export default function (options) {
 
   return run()
   .then(() => {
-    spinner.stop();
-    process.stdout.write('\n\x1b[32m✓\x1b[0m Done!\n');
+    spinner.succeed();
   })
   .catch((e) => {
-    spinner.stop();
+    spinner.fail();
     process.stdout.write(pe.render(e));
   });
 }
