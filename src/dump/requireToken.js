@@ -13,11 +13,20 @@ export default function () {
       output: process.stdout,
     });
 
+    rl.on('SIGINT', () => {
+      process.exit(1);
+    });
+
+    rl.on('SIGCONT', () => {
+      rl.prompt();
+    });
+
     rl.question('> ', (token) => {
       rl.close();
 
       if (token) {
         resolve(token);
+        return;
       }
 
       reject();
@@ -27,5 +36,9 @@ export default function () {
     return fsAppendFile('.env', `DATO_API_TOKEN=${token}`)
       .then(() => process.stdout.write('\nToken added to .env file.\n\n'))
       .then(() => token);
+  })
+  .catch(() => {
+    process.stderr.write('\nMissing token.\n');
+    process.exit(1);
   });
 }

@@ -11,5 +11,5 @@ export default async function addToDataFile(file, format, data) {
     `\n\n# datocms:start\n${contentToAdd}\n# datocms:end`
   );
 
-  await writeFile(file, newContent);
+  return await writeFile(file, newContent);
 }

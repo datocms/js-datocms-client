@@ -81,9 +81,5 @@ export default function (options) {
     }
 
     return exec();
-  })
-  .catch((e) => {
-    process.stderr.write(new PrettyError().render(e));
-    process.exit(1);
   });
 }
