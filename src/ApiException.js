@@ -1,6 +1,9 @@
 export default function ApiException(response, body) {
-  this.name = 'ApiException';
-  this.stack = (new Error()).stack;
+  if ("captureStackTrace" in Error) {
+    Error.captureStackTrace(this, ApiException);
+  } else {
+    this.stack = (new Error()).stack;
+  }
 
   if (response) {
     if (response.status < 500) {
@@ -21,4 +24,5 @@ export default function ApiException(response, body) {
 }
 
 ApiException.prototype = Object.create(Error.prototype);
+ApiException.prototype.name = 'ApiException';
 ApiException.prototype.constructor = ApiException;
