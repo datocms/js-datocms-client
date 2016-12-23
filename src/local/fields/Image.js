@@ -25,6 +25,14 @@ export default class Image {
     return this.value.height;
   }
 
+  get alt() {
+    return this.value.alt;
+  }
+
+  get title() {
+    return this.value.title;
+  }
+
   url(params = {}) {
     return this.rawUrl(Object.assign(
       { ch: 'DPR,Width', auto: 'format' },
@@ -43,6 +51,8 @@ export default class Image {
       size: this.size,
       width: this.width,
       height: this.height,
+      title: this.title,
+      alt: this.alt,
       url: this.url(),
     };
   }
