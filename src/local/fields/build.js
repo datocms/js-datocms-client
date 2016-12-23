@@ -21,6 +21,9 @@ const fieldTypeParser = {
   image(value) {
     return new Image(value);
   },
+  gallery(value, repo) {
+    return new Gallery(...value.map(data => this.image(data)));
+  },
   file(value) {
     return new File(value);
   },
