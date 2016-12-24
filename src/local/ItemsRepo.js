@@ -116,9 +116,9 @@ export default class ItemsRepo {
   }
 
   itemsOfType(itemType) {
-    const { method, singleton } = this.itemTypeMethods[itemType.apiKey];
+    const method = this.itemTypeMethods[itemType.apiKey];
 
-    if (singleton) {
+    if (itemType.singleton) {
       const item = this.collectionsByType[method];
       return [item];
     }
