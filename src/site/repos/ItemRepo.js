@@ -1,6 +1,12 @@
 import deserializeJsonApi from '../../deserializeJsonApi';
 import serializeJsonApi from '../../serializeJsonApi';
 
+function times(n) {
+  /* eslint-disable prefer-spread */
+  return Array.apply(null, { length: n }).map(Number.call, Number);
+  /* eslint-enable prefer-spread */
+}
+
 export default class ItemRepo {
   constructor(client) {
     this.client = client;
@@ -52,9 +58,42 @@ export default class ItemRepo {
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
 
-  all(params = {}) {
-    return this.client.get('/items', params)
-    .then(response => Promise.resolve(deserializeJsonApi(response)));
+  all(params = {}, deserializeResponse = true) {
+    const itemsPerPage = 500;
+
+    return this.client.get(
+      '/items',
+      Object.assign({}, params, { 'page[limit]': itemsPerPage })
+    )
+    .then((baseResponse) => {
+      const pages = Math.ceil(baseResponse.meta.totalCount / itemsPerPage);
+
+      const extraFetches = times(pages - 1)
+      .map((extraPage) => {
+        return this.client.get(
+          '/items',
+          {
+            'page[offset]': itemsPerPage * (extraPage + 1),
+            'page[limit]': itemsPerPage,
+          }
+        ).then(response => response.data);
+      });
+
+      return Promise.all(extraFetches).then(x => [x, baseResponse]);
+    })
+    .then(([datas, baseResponse]) => {
+      return Object.assign(
+        {}, baseResponse,
+        {
+          data: baseResponse.data.concat(...datas),
+        }
+      );
+    })
+    .then(response => Promise.resolve(
+      deserializeResponse ?
+        deserializeJsonApi(response) :
+        response
+    ));
   }
 
   find(itemId) {
