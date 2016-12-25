@@ -72,10 +72,10 @@ export default class ItemRepo {
       .map((extraPage) => {
         return this.client.get(
           '/items',
-          {
+          Object.assign({}, params, {
             'page[offset]': itemsPerPage * (extraPage + 1),
             'page[limit]': itemsPerPage,
-          }
+          })
         ).then(response => response.data);
       });
 
