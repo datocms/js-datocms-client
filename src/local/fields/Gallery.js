@@ -1,13 +1,13 @@
 /* eslint-disable no-proto */
 
-export default function Links(...args) {
+export default function Gallery(...args) {
   const instance = new Array(...args);
-  instance.__proto__ = Links.prototype;
+  instance.__proto__ = Gallery.prototype;
   return instance;
 }
 
-Links.prototype = Object.create(Array.prototype);
+Gallery.prototype = Object.create(Array.prototype);
 
-Links.prototype.toMap = function toMap() {
+Gallery.prototype.toMap = function toMap() {
   return this.filter(item => !!item).map(item => item.toMap());
 };

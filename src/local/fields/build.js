@@ -23,6 +23,10 @@ const fieldTypeParser = {
     const items = value ? value.map(id => repo.find(id)) : [];
     return new Links(...items);
   },
+  rich_text(value, repo) {
+    const items = value ? value.map(id => repo.find(id)) : [];
+    return new Links(...items);
+  },
   image(value) {
     if (!value) { return value; }
     return new Image(value);
