@@ -89,7 +89,11 @@ export default class Item {
     return seoTagsBuilder(this, this.itemsRepo.site);
   }
 
-  toMap() {
+  toMap(maxDepth = 3, currentDepth = 0) {
+    if (maxDepth == currentDepth) {
+      return this.id;
+    }
+
     const result = {
       id: this.id,
       itemType: this.itemType.apiKey,
@@ -106,7 +110,7 @@ export default class Item {
 
       let serializedValue;
       if (value && value.toMap) {
-        serializedValue = value.toMap();
+        serializedValue = value.toMap(maxDepth, currentDepth + 1);
       } else {
         serializedValue = value;
       }
