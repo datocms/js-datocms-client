@@ -90,7 +90,7 @@ export default class Item {
   }
 
   toMap(maxDepth = 3, currentDepth = 0) {
-    if (maxDepth == currentDepth) {
+    if (maxDepth === currentDepth) {
       return this.id;
     }
 

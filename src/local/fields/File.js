@@ -18,7 +18,7 @@ export default class File {
   }
 
   url(params) {
-    const baseUrl = `https://dato-images.imgix.net${this.path}`;
+    const baseUrl = `https://www.datocms-assets.com${this.path}`;
     if (params) {
       return `${baseUrl}?${queryString.stringify(params)}`;
     }
