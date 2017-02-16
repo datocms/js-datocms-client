@@ -41,7 +41,7 @@ export default class Image {
   }
 
   rawUrl(params = {}) {
-    const baseUrl = 'https://dato-images.imgix.net';
+    const baseUrl = 'https://www.datocms-assets.com';
     return `${baseUrl}${this.path}?${queryString.stringify(params)}`;
   }
 
