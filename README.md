@@ -2,23 +2,19 @@
 
 [![Build Status](https://travis-ci.org/datocms/js-datocms-client.svg?branch=master)](https://travis-ci.org/datocms/js-datocms-client)
 
-NodeJS/Browser client and CLI for [DatoCMS](https://datocms.com).
+CLI tool for [DatoCMS](https://www.datocms.com).
 
-[DatoCMS](https://www.datocms.com/) is a fully customizable administrative area for your static websites:
+## How to integrate DatoCMS with your static website
 
-1. Use your favorite static website generator (Metalsmith, Hexo, Gatsby, and many others);
-2. Let your clients publish new content independently;
-3. Connect and build your site with any Continuous Deployment service (Netlify, Gitlab, CircleCI, etc.);
-4. Host the site anywhere you like (Amazon S3, Netlify, Surge.sh, etc.)
+Please head over our documentation to learn everything you need:
 
-## Usage
+* [Hugo](https://docs.datocms.com/hugo/overview.html)
+* [Metalsmith](https://docs.datocms.com/metalsmith/overview.html)
+* [Other generators](https://docs.datocms.com/other/overview.html)
 
-This module can be used in different ways, so the documentation is split up in different files:
+## API Client
 
-* [I want to use the content of a DatoCMS site in my static website (Metalsmith, Hexo, etc)](https://github.com/datocms/js-datocms-client/blob/master/docs/dato-cli.md);
-* [I want to edit the contents of an existing DatoCMS site programmatically](https://github.com/datocms/js-datocms-client/blob/master/docs/site-api-client.md);
-* [I want to fetch DatoCMS content from the browser, to enhance my static website](https://github.com/datocms/js-datocms-client/blob/master/docs/browser-api-client.md);
-* [I want to create new DatoCMS sites programmatically](https://github.com/datocms/js-datocms-client/blob/master/docs/account-api-client.md).
+This package also exposes an API client, useful ie. to import existing content in your DatoCMS administrative area. Read our [documentation](https://docs.datocms.com/api-client/nodejs.html) for detailed info.
 
 ## Development
 
