@@ -1,5 +1,3 @@
-import queryString from 'query-string';
-
 export default class Color {
   constructor(value) {
     this.value = value;
@@ -22,7 +20,7 @@ export default class Color {
   }
 
   get rgb() {
-    if (this.alpha === 255) {
+    if (this.value.alpha === 255) {
       return `rgb(${this.red}, ${this.green}, ${this.blue})`;
     }
 
@@ -30,16 +28,17 @@ export default class Color {
   }
 
   get hex() {
-    var hex = "#";
-    var r = this.red.toString(16);
-    var g = this.green.toString(16);
-    var b = this.blue.toString(16);
-    var a = parseInt(this.alpha * 255).toString(16);
+    let hex = '#';
 
-    if (r.length === 1) r = `0 ${r}`;
-    if (g.length === 1) g = `0 ${g}`;
-    if (b.length === 1) b = `0 ${b}`;
-    if (a.length === 1) a = `0 ${a}`;
+    let r = this.red.toString(16);
+    let g = this.green.toString(16);
+    let b = this.blue.toString(16);
+    let a = parseInt(this.alpha * 255, 10).toString(16);
+
+    if (r.length === 1) r = `0${r}`;
+    if (g.length === 1) g = `0${g}`;
+    if (b.length === 1) b = `0${b}`;
+    if (a.length === 1) a = `0${a}`;
 
     hex += r + g + b;
 
