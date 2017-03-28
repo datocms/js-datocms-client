@@ -16,13 +16,18 @@ export default class ItemTypeRepo {
           'apiKey',
           'singleton',
           'sortable',
+          'orderingDirection',
         ],
         requiredAttributes: [
           'name',
           'apiKey',
           'singleton',
           'sortable',
+          'orderingDirection',
         ],
+        relationships: {
+          orderingField: 'field',
+        },
       }
     );
     return this.client.post('/item-types', serializedResource)
@@ -40,13 +45,18 @@ export default class ItemTypeRepo {
           'apiKey',
           'singleton',
           'sortable',
+          'orderingDirection',
         ],
         requiredAttributes: [
           'name',
           'apiKey',
           'singleton',
           'sortable',
+          'orderingDirection',
         ],
+        relationships: {
+          orderingField: 'field',
+        },
       }
     );
     return this.client.put(`/item-types/${itemTypeId}`, serializedResource)

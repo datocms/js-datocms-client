@@ -5,6 +5,7 @@ import Links from './Links';
 import DateTime from './DateTime';
 import DateOnly from './DateOnly';
 import Gallery from './Gallery';
+import Color from './Color';
 
 const fieldTypeParser = {
   date(value) {
@@ -38,6 +39,10 @@ const fieldTypeParser = {
   file(value) {
     if (!value) { return value; }
     return new File(value);
+  },
+  color(value) {
+    if (!value) { return value; }
+    return new Color(value);
   },
   seo(value) {
     if (!value) { return value; }

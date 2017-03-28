@@ -27,6 +27,7 @@ export default class SiteRepo {
           'locales',
           'timezone',
           'ssg',
+          'frontendUrl',
         ],
       }
     );

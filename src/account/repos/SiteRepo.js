@@ -26,6 +26,7 @@ export default class SiteRepo {
           'internalSubdomain',
           'domain',
           'notes',
+          'ssg',
           'template',
         ],
       }
