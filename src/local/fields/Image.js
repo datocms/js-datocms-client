@@ -34,13 +34,6 @@ export default class Image {
   }
 
   url(params = {}) {
-    return this.rawUrl(Object.assign(
-      { ch: 'DPR,Width', auto: 'format' },
-      params
-    ));
-  }
-
-  rawUrl(params = {}) {
     const baseUrl = 'https://www.datocms-assets.com';
     return `${baseUrl}${this.path}?${queryString.stringify(params)}`;
   }
