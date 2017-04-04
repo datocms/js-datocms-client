@@ -67,6 +67,8 @@ describe('Site API', () => {
         apiKey: 'item_type',
         singleton: true,
         sortable: false,
+        orderingDirection: null,
+        orderingField: null,
       });
       expect(itemType.name).to.equal('Article');
 
@@ -93,6 +95,8 @@ describe('Site API', () => {
         apiKey: 'item_type',
         singleton: true,
         sortable: false,
+        orderingDirection: null,
+        orderingField: null,
       });
 
       const field = await client.fields.create(
@@ -157,6 +161,8 @@ describe('Site API', () => {
         apiKey: 'item_type',
         singleton: true,
         sortable: false,
+        orderingDirection: null,
+        orderingField: null,
       });
 
       await client.fields.create(

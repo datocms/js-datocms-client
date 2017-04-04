@@ -11,7 +11,7 @@ describe('deserializeJsonApi', () => {
       const deserializedObject = deserializeJsonApi(arrayRelationships);
       expect(deserializedObject).to.eql([
         { id: '12', siteName: 'Blog', account: '88', authors: ['81', '84'] },
-        { id: '13', siteName: 'Blog', authors: '81' },
+        { id: '13', siteName: 'Blog', account: null, authors: '81' },
       ]);
     });
 
@@ -40,6 +40,7 @@ describe('deserializeJsonApi', () => {
         id: '12',
         siteName: 'Blog',
         authors: ['81', '84'],
+        account: null,
       });
     });
   });

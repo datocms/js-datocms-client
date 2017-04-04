@@ -11,10 +11,8 @@ function deserialize({ id, attributes, relationships }) {
         result[key] = relationshipBody;
         return;
       }
-      if (relationshipData != null) {
-        result[key] = relationshipData.id;
-        return;
-      }
+      result[key] = relationshipData ? relationshipData.id : null;
+      return;
     });
   }
   return result;

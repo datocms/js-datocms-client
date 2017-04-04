@@ -28,6 +28,9 @@ export default class ItemTypeRepo {
         relationships: {
           orderingField: 'field',
         },
+        requiredRelationships: [
+          'orderingField',
+        ],
       }
     );
     return this.client.post('/item-types', serializedResource)
@@ -57,6 +60,9 @@ export default class ItemTypeRepo {
         relationships: {
           orderingField: 'field',
         },
+        requiredRelationships: [
+          'orderingField',
+        ],
       }
     );
     return this.client.put(`/item-types/${itemTypeId}`, serializedResource)

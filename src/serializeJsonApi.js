@@ -4,13 +4,11 @@ function serializeRelationships(item, relationships) {
   Object.entries(relationships).forEach(([name, type]) => {
     const idOrIds = item[name];
 
-    if (!idOrIds) { return; }
-
-    let data;
+    let data = null;
 
     if (Array.isArray(idOrIds)) {
       data = idOrIds.map(id => ({ type, id }));
-    } else {
+    } else if (idOrIds) {
       data = { type, id: idOrIds };
     }
 
