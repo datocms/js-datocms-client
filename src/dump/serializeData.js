@@ -14,7 +14,7 @@ export default function serializeData(format, data) {
   switch (format) {
     case 'yaml':
     case 'yml':
-      return yaml.safeDump(safeData).trim();
+      return yaml.safeDump(safeData, { lineWidth: -1 }).trim();
 
     case 'toml':
       return toml.dump(safeData).trim();
