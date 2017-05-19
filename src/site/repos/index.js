@@ -6,3 +6,4 @@ export { default as menuItems } from './MenuItemRepo';
 export { default as site } from './SiteRepo';
 export { default as uploadRequests } from './UploadRequestRepo';
 export { default as users } from './UserRepo';
+export { default as searchResults } from './SearchResultRepo';
