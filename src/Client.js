@@ -8,7 +8,7 @@ import isBrowser from './isBrowser';
 
 /* eslint-disable global-require */
 if (!isBrowser) {
-  global.fetch = require('node-fetch');
+  global.fetch = require('./fetch');
 }
 /* eslint-enable global-require */
 
