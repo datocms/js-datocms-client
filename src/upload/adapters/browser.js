@@ -21,7 +21,7 @@ function uploadToS3(id, url, file) {
 }
 
 export default function browser(client, file) {
-  const format = file.name.split('.').pop();
+  const format = file.name.split('.').pop().toLowerCase();
 
   return client.uploadRequests.create({ filename: file.name })
   .then(({ id, url }) => {
