@@ -1,9 +1,9 @@
 import { camelize } from 'humps';
 import build from './fields/build';
 import DateTime from './fields/DateTime';
-import i18n from '../utils/i18n';
 import slugify from '../utils/slugify';
 import seoTagsBuilder from '../utils/seoTagsBuilder';
+import localizedRead from '../utils/localizedRead';
 
 export default class Item {
   constructor(entity, itemsRepo) {
@@ -126,7 +126,7 @@ export default class Item {
     let value;
 
     if (localized) {
-      value = (this.entity[camelize(field.apiKey)] || {})[i18n.locale];
+      value = localizedRead(this.entity[camelize(field.apiKey)] || {});
     } else {
       value = this.entity[camelize(field.apiKey)];
     }

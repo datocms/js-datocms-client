@@ -2,6 +2,7 @@ let currentLocale = 'en';
 
 export default {
   availableLocales: ['en'],
+  fallbacks: {},
 
   get locale() {
     return currentLocale;

@@ -1,7 +1,7 @@
-import i18n from '../utils/i18n';
 import Image from './fields/Image';
 import GlobalSeo from './fields/GlobalSeo';
 import faviconTagsBuilder from '../utils/faviconTagsBuilder';
+import localizedRead from '../utils/localizedRead';
 
 export default class Site {
   constructor(entity) {
@@ -77,7 +77,7 @@ export default class Site {
     let value;
 
     if (localized) {
-      value = (this.entity[attribute] || {})[i18n.locale];
+      value = localizedRead(this.entity[attribute] || {});
     } else {
       value = this.entity[attribute];
     }
