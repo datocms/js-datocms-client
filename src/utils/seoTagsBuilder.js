@@ -124,7 +124,10 @@ export const builders = {
       .filter(f => f.fieldType === 'image')
       .map(field => item[camelize(field.apiKey)])
       .filter(image => image)
-      .find(image => image.width >= 200 && image.height >= 200);
+      .find(image => (
+        image.width && image.height &&
+          image.width >= 200 && image.height >= 200
+      ));
 
     const image = seoAttributeWithFallback('image', itemImage, item, site);
 
