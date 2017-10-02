@@ -16,16 +16,16 @@ const fieldTypeParser = {
     if (!value) { return value; }
     return new DateTime(Date.parse(value));
   },
-  link(value, { repo }) {
+  link(value, { itemsRepo }) {
     if (!value) { return value; }
-    return value && repo.find(value);
+    return value && itemsRepo.find(value);
   },
-  links(value, { repo }) {
-    const items = value ? value.map(id => repo.find(id)) : [];
+  links(value, { itemsRepo }) {
+    const items = value ? value.map(id => itemsRepo.find(id)) : [];
     return new Links(...items);
   },
-  rich_text(value, { repo }) {
-    const items = value ? value.map(id => repo.find(id)) : [];
+  rich_text(value, { itemsRepo }) {
+    const items = value ? value.map(id => itemsRepo.find(id)) : [];
     return new Links(...items);
   },
   image(value, { imgixHost }) {
