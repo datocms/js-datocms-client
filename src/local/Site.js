@@ -82,6 +82,8 @@ export default class Site {
       value = this.entity[attribute];
     }
 
-    return value && new TypeKlass(value);
+    const imgixHost = `https://${this.entity.imgixHost}`;
+
+    return value && new TypeKlass(value, imgixHost);
   }
 }

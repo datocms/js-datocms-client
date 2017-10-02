@@ -16,29 +16,29 @@ const fieldTypeParser = {
     if (!value) { return value; }
     return new DateTime(Date.parse(value));
   },
-  link(value, repo) {
+  link(value, { repo }) {
     if (!value) { return value; }
     return value && repo.find(value);
   },
-  links(value, repo) {
+  links(value, { repo }) {
     const items = value ? value.map(id => repo.find(id)) : [];
     return new Links(...items);
   },
-  rich_text(value, repo) {
+  rich_text(value, { repo }) {
     const items = value ? value.map(id => repo.find(id)) : [];
     return new Links(...items);
   },
-  image(value) {
+  image(value, { imgixHost }) {
     if (!value) { return value; }
-    return new Image(value);
+    return new Image(value, imgixHost);
   },
-  gallery(value) {
-    const images = value ? value.map(data => this.image(data)) : [];
+  gallery(value, { imgixHost }) {
+    const images = value ? value.map(data => this.image(data, imgixHost)) : [];
     return new Gallery(...images);
   },
-  file(value) {
+  file(value, { imgixHost }) {
     if (!value) { return value; }
-    return new File(value);
+    return new File(value, imgixHost);
   },
   color(value) {
     if (!value) { return value; }
@@ -52,7 +52,8 @@ const fieldTypeParser = {
 
 export default function build(fieldType, value, itemsRepo) {
   if (fieldTypeParser[fieldType]) {
-    return fieldTypeParser[fieldType](value, itemsRepo);
+    const imgixHost = `https://${itemsRepo.site.imgixHost}`;
+    return fieldTypeParser[fieldType](value, { itemsRepo, imgixHost });
   }
 
   return value;

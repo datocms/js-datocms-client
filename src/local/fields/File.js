@@ -1,8 +1,9 @@
 import queryString from 'query-string';
 
 export default class File {
-  constructor(value) {
+  constructor(value, imgixHost) {
     this.value = value;
+    this.imgixHost = imgixHost;
   }
 
   get path() {
@@ -18,11 +19,10 @@ export default class File {
   }
 
   url(params) {
-    const baseUrl = `https://www.datocms-assets.com${this.path}`;
-    if (params) {
-      return `${baseUrl}?${queryString.stringify(params)}`;
+    if (Object.keys(params).length > 0) {
+      return `${this.imgixHost}${this.path}?${queryString.stringify(params)}`;
     }
-    return baseUrl;
+    return `${this.imgixHost}${this.path}`;
   }
 
   toMap() {

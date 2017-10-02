@@ -20,6 +20,7 @@ describe('faviconTagsBuilder', () => {
             "name": "Site name",
             "locales": [ "en" ],
             "favicon": favicon(),
+            "imgix_host": "www.datocms-assets.com"
           }
         }
       });
