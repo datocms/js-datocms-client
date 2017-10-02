@@ -28,6 +28,10 @@ export default class Site {
     return this.entity.domain;
   }
 
+  get imgixHost() {
+    return this.entity.imgixHost;
+  }
+
   get internalDomain() {
     return this.entity.internalDomain;
   }
@@ -82,7 +86,7 @@ export default class Site {
       value = this.entity[attribute];
     }
 
-    const imgixHost = `https://${this.entity.imgixHost}`;
+    const imgixHost = `https://${this.imgixHost}`;
 
     return value && new TypeKlass(value, imgixHost);
   }

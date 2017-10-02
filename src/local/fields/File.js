@@ -19,7 +19,7 @@ export default class File {
   }
 
   url(params) {
-    if (Object.keys(params).length > 0) {
+    if (params && Object.keys(params).length > 0) {
       return `${this.imgixHost}${this.path}?${queryString.stringify(params)}`;
     }
     return `${this.imgixHost}${this.path}`;
