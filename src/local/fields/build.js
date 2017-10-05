@@ -33,7 +33,7 @@ const fieldTypeParser = {
     return new Image(value, imgixHost);
   },
   gallery(value, { imgixHost }) {
-    const images = value ? value.map(data => this.image(data, imgixHost)) : [];
+    const images = value ? value.map(data => this.image(data, { imgixHost })) : [];
     return new Gallery(...images);
   },
   file(value, { imgixHost }) {
