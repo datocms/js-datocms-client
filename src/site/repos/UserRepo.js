@@ -21,6 +21,9 @@ export default class UserRepo {
           'firstName',
           'lastName',
         ],
+        relationships: {
+          role: 'role',
+        },
       }
     );
     return this.client.post('/users', serializedResource)

@@ -79,6 +79,11 @@ export default class ItemTypeRepo {
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
 
+  duplicate(itemTypeId) {
+    return this.client.post(`/item-types/${itemTypeId}/duplicate}`)
+    .then(response => Promise.resolve(deserializeJsonApi(response)));
+  }
+
   destroy(itemTypeId) {
     return this.client.delete(`/item-types/${itemTypeId}`)
     .then(response => Promise.resolve(deserializeJsonApi(response)));

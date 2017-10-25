@@ -29,7 +29,11 @@ export default class SiteRepo {
           'locales',
           'timezone',
           'ssg',
-          'frontendUrl',
+          'productionFrontendUrl',
+          'stagingFrontendUrl',
+          'productionSpiderEnabled',
+          'stagingSpiderEnabled',
+          'require2fa',
         ],
       }
     );
