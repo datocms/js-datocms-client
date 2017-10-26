@@ -1,7 +1,7 @@
 import queryString from 'query-string';
 
 export default class File {
-  constructor(value, imgixHost) {
+  constructor(value, imgixHost = 'https://www.datocms-assets.com') {
     this.value = value;
     this.imgixHost = imgixHost;
   }
