@@ -16,19 +16,19 @@ function collectOperations(base, config) {
 
   const dsl = {
     directory(dir, subConfig) {
-      operations.push(createDirectory(join(base, dir), subConfig));
+      operations.push(() => createDirectory(join(base, dir), subConfig)());
     },
 
     createDataFile(file, format, data) {
-      operations.push(createDataFile.bind(null, join(base, file), format, data));
+      operations.push(() => Promise.resolve(data).then(resolvedData => createDataFile.bind(null, join(base, file), format, resolvedData)()));
     },
 
     createPost(file, format, data) {
-      operations.push(createPost.bind(null, join(base, file), format, data));
+      operations.push(() => Promise.resolve(data).then(resolvedData => createPost.bind(null, join(base, file), format, resolvedData)()));
     },
 
     addToDataFile(file, format, data) {
-      operations.push(addToDataFile.bind(null, join(base, file), format, data));
+      operations.push(() => Promise.resolve(data).then(resolvedData => addToDataFile.bind(null, join(base, file), format, resolvedData)()));
     },
   };
 
