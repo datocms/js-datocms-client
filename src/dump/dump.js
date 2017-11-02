@@ -20,15 +20,24 @@ function collectOperations(base, config) {
     },
 
     createDataFile(file, format, data) {
-      operations.push(createDataFile.bind(null, join(base, file), format, data));
+      operations.push(() => {
+        return Promise.resolve(data)
+          .then(dr => createDataFile.bind(null, join(base, file), format, dr)());
+      });
     },
 
     createPost(file, format, data) {
-      operations.push(createPost.bind(null, join(base, file), format, data));
+      operations.push(() => {
+        return Promise.resolve(data)
+          .then(dr => createPost.bind(null, join(base, file), format, dr)());
+      });
     },
 
     addToDataFile(file, format, data) {
-      operations.push(addToDataFile.bind(null, join(base, file), format, data));
+      operations.push(() => {
+        return Promise.resolve(data)
+          .then(dr => addToDataFile.bind(null, join(base, file), format, dr)());
+      });
     },
   };
 
