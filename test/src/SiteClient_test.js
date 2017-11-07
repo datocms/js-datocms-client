@@ -1,7 +1,7 @@
 import u from 'updeep';
 import { SiteClient, AccountClient } from '../../src/index';
 
-const accountClient = new AccountClient('XXX', null, 'http://account-api.lvh.me:3000');
+const accountClient = new AccountClient('XXX', null, 'http://account-api.lvh.me:3001');
 
 describe('Site API', () => {
   let site;
@@ -9,7 +9,7 @@ describe('Site API', () => {
 
   beforeEach(vcr('before', async () => {
     site = await accountClient.sites.create({ name: 'Blog' });
-    client = new SiteClient(site.readwriteToken, null, 'http://site-api.lvh.me:3000');
+    client = new SiteClient(site.readwriteToken, null, 'http://site-api.lvh.me:3001');
   }));
 
   afterEach(vcr('after', async () => {
@@ -129,10 +129,13 @@ describe('Site API', () => {
 
   describe('editors', () => {
     it('create, find, all, destroy', vcr(async () => {
+      const roles = await client.roles.all();
+
       const user = await client.users.create({
         email: 'user.tester@datocms.com',
         firstName: 'user',
         lastName: 'tester',
+        role: roles[0]['id']
       });
 
       expect(user.firstName).to.equal('user');

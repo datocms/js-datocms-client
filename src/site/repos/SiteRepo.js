@@ -21,7 +21,7 @@ export default class SiteRepo {
           'favicon',
           'globalSeo',
           'name',
-          'themeHue',
+          'theme',
           'productionDeployAdapter',
           'productionDeploySettings',
           'stagingDeployAdapter',

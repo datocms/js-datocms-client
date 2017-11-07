@@ -80,7 +80,7 @@ export default class ItemTypeRepo {
   }
 
   duplicate(itemTypeId) {
-    return this.client.post(`/item-types/${itemTypeId}/duplicate}`)
+    return this.client.post(`/item-types/${itemTypeId}/duplicate`)
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
 

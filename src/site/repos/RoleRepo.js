@@ -95,4 +95,5 @@ export default class RoleRepo {
     return this.client.delete(`/roles/${roleId}`)
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
+
 }

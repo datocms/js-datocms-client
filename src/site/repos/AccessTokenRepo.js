@@ -63,4 +63,5 @@ export default class AccessTokenRepo {
     return this.client.delete(`/access_tokens/${userId}`)
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
+
 }

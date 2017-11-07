@@ -20,8 +20,8 @@ export default class Site {
     return this.entity.locales;
   }
 
-  get themeHue() {
-    return this.entity.themeHue;
+  get theme() {
+    return this.entity.theme;
   }
 
   get domain() {
@@ -57,7 +57,7 @@ export default class Site {
       'id',
       'name',
       'locales',
-      'themeHue',
+      'theme',
       'domain',
       'internalDomain',
       'noIndex',
