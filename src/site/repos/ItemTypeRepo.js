@@ -16,6 +16,7 @@ export default class ItemTypeRepo {
           'apiKey',
           'singleton',
           'sortable',
+          'tree',
           'orderingDirection',
         ],
         requiredAttributes: [
@@ -23,6 +24,7 @@ export default class ItemTypeRepo {
           'apiKey',
           'singleton',
           'sortable',
+          'tree',
           'orderingDirection',
         ],
         relationships: {
@@ -48,6 +50,7 @@ export default class ItemTypeRepo {
           'apiKey',
           'singleton',
           'sortable',
+          'tree',
           'orderingDirection',
         ],
         requiredAttributes: [
@@ -55,6 +58,7 @@ export default class ItemTypeRepo {
           'apiKey',
           'singleton',
           'sortable',
+          'tree',
           'orderingDirection',
         ],
         relationships: {

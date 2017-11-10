@@ -6,6 +6,7 @@ import Site from './Site';
 function buildCollectionsByType(repo, itemTypeMethods) {
   const collectionsByType = {};
   const itemsById = {};
+  const itemsByParentId = {};
 
   repo.itemTypes.forEach((itemType) => {
     const method = itemTypeMethods[itemType.apiKey];
@@ -21,6 +22,11 @@ function buildCollectionsByType(repo, itemTypeMethods) {
     }
 
     itemsById[item.id] = item;
+
+    if (entity.parentId) {
+      itemsByParentId[entity.parentId] = itemsByParentId[entity.parentId] || [];
+      itemsByParentId[entity.parentId].push(item);
+    }
   });
 
   repo.itemTypes.forEach((itemType) => {
@@ -39,7 +45,7 @@ function buildCollectionsByType(repo, itemTypeMethods) {
     }
   });
 
-  return { collectionsByType, itemsById };
+  return { collectionsByType, itemsById, itemsByParentId };
 }
 
 function buildItemTypeMethods(repo) {
@@ -68,8 +74,18 @@ function buildItemTypeMethods(repo) {
 
 function buildCache(repo) {
   const itemTypeMethods = buildItemTypeMethods(repo);
-  const { collectionsByType, itemsById } = buildCollectionsByType(repo, itemTypeMethods);
-  return { collectionsByType, itemsById, itemTypeMethods };
+  const {
+    collectionsByType,
+    itemsById,
+    itemsByParentId,
+  } = buildCollectionsByType(repo, itemTypeMethods);
+
+  return {
+    collectionsByType,
+    itemsById,
+    itemTypeMethods,
+    itemsByParentId,
+  };
 }
 
 export default class ItemsRepo {
@@ -80,10 +96,12 @@ export default class ItemsRepo {
       collectionsByType,
       itemsById,
       itemTypeMethods,
+      itemsByParentId,
     } = buildCache(this);
 
     this.collectionsByType = collectionsByType;
     this.itemsById = itemsById;
+    this.itemsByParentId = itemsByParentId;
     this.itemTypeMethods = itemTypeMethods;
 
     Object.values(itemTypeMethods).forEach((method) => {
@@ -113,6 +131,10 @@ export default class ItemsRepo {
 
   find(id) {
     return this.itemsById[id];
+  }
+
+  childrenOf(id) {
+    return this.itemsByParentId[id] || [];
   }
 
   itemsOfType(itemType) {

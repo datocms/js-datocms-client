@@ -67,6 +67,7 @@ describe('Site API', () => {
         apiKey: 'item_type',
         singleton: true,
         sortable: false,
+        tree: false,
         orderingDirection: null,
         orderingField: null,
       });
@@ -94,6 +95,7 @@ describe('Site API', () => {
         name: 'Article',
         apiKey: 'item_type',
         singleton: true,
+        tree: false,
         sortable: false,
         orderingDirection: null,
         orderingField: null,
@@ -164,6 +166,7 @@ describe('Site API', () => {
         apiKey: 'item_type',
         singleton: true,
         sortable: false,
+        tree: false,
         orderingDirection: null,
         orderingField: null,
       });
