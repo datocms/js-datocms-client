@@ -41,7 +41,7 @@ export default class Site {
   }
 
   get globalSeo() {
-    return this.readAttribute('globalSeo', GlobalSeo, this.locales > 0);
+    return this.readAttribute('globalSeo', GlobalSeo, this.locales.length > 1);
   }
 
   get favicon() {
