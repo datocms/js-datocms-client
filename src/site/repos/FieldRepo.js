@@ -50,6 +50,7 @@ export default class FieldRepo {
           'validators',
           'appeareance',
           'position',
+          'fieldType',
           'hint',
         ],
       }
