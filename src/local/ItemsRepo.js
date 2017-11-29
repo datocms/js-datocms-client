@@ -56,7 +56,12 @@ function buildItemTypeMethods(repo) {
   const clashingKeys = singletonKeys.filter(k => collectionKeys.includes(k));
 
   repo.itemTypes.forEach((itemType) => {
-    const { singleton } = itemType;
+    const { singleton, modularBlock } = itemType;
+
+    if (modularBlock) {
+      return;
+    }
+
     const pluralizedApiKey = pluralize(itemType.apiKey);
 
     let method = camelize(singleton ? itemType.apiKey : pluralizedApiKey);
@@ -126,7 +131,8 @@ export default class ItemsRepo {
   }
 
   get collectionItemTypes() {
-    return this.itemTypes.filter(t => !t.singleton);
+    return this.itemTypes
+      .filter(t => !t.singleton && !t.modularBlock);
   }
 
   find(id) {
