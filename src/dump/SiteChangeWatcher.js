@@ -1,10 +1,11 @@
 import Pusher from 'pusher-js/node';
 
 const apiKey = '75e6ef0fe5d39f481626';
+const cluster = 'mt1';
 
 export default class SiteChangeWatcher {
   constructor(siteId) {
-    this.socket = new Pusher(apiKey);
+    this.socket = new Pusher(apiKey, { cluster: cluster });
     this.siteId = siteId;
   }
 
