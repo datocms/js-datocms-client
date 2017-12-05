@@ -5,7 +5,7 @@ const cluster = 'mt1';
 
 export default class SiteChangeWatcher {
   constructor(siteId) {
-    this.socket = new Pusher(apiKey, { cluster: cluster });
+    this.socket = new Pusher(apiKey, { cluster });
     this.siteId = siteId;
   }
 
