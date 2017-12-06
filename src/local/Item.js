@@ -44,6 +44,10 @@ export default class Item {
     return new DateTime(Date.parse(this.entity.updatedAt));
   }
 
+  get createdAt() {
+    return new DateTime(Date.parse(this.entity.createdAt));
+  }
+
   get parent() {
     if (this.entity.parentId) {
       return this.itemsRepo.find(this.entity.parentId);
@@ -121,6 +125,7 @@ export default class Item {
       id: this.id,
       itemType: this.itemType.apiKey,
       updatedAt: this.updatedAt.toMap(),
+      createdAt: this.createdAt.toMap(),
     };
 
     if (this.seoMetaTags) {

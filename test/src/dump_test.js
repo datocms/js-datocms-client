@@ -8,18 +8,20 @@ import SiteClient from '../../src/site/SiteClient';
 describe('CLI tool', () => {
   it('dump', vcr(async () => {
     const dir = tmp.dirSync();
-    const client = new SiteClient('XXX', {}, 'http://site-api.lvh.me:3001');
+    const dirName = dir.name;
+    // const dirName = path.resolve('test/fixtures/dump');
+    const client = new SiteClient('1b3a3699366bc5494d9d62aca7cd4202bf3df85b124d3d2f07', {}, 'http://site-api.lvh.me:3001');
     const configFile = path.resolve('test/fixtures/dato.config.js');
-    await dump(configFile, client, dir.name);
+    await dump(configFile, client, dirName);
 
     const result = dirCompare.compareSync(
-      dir.name, 'test/fixtures/dump',
+      dirName, 'test/fixtures/dump',
       { compareContent: true }
     );
 
     expect(result.differences).to.equal(0);
 
-    rimraf.sync(path.join(dir.name, '*'));
+    rimraf.sync(path.join(dirName, '*'));
     dir.removeCallback();
   }));
 });
