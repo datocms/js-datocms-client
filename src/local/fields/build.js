@@ -48,6 +48,10 @@ const fieldTypeParser = {
     if (!value) { return value; }
     return new Seo(value);
   },
+  json(value) {
+    if (!value) { return value; }
+    return JSON.parse(value);
+  },
 };
 
 export default function build(fieldType, value, itemsRepo) {
