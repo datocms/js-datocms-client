@@ -1,5 +1,6 @@
 import deserializeJsonApi from '../../deserializeJsonApi';
 import serializeJsonApi from '../../serializeJsonApi';
+import fetchAllPages from '../fetchAllPages';
 
 export default class UploadRepo {
   constructor(client) {
@@ -35,9 +36,29 @@ export default class UploadRepo {
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
 
-  all(params = {}) {
-    return this.client.get('/uploads', params)
-    .then(response => Promise.resolve(deserializeJsonApi(response)));
+  all(params = {}, options = {}) {
+    const deserializeResponse = Object.prototype.hasOwnProperty.call(options, 'deserializeResponse') ?
+      options.deserializeResponse :
+      true;
+
+    const allPages = Object.prototype.hasOwnProperty.call(options, 'allPages') ?
+      options.allPages :
+      false;
+
+    let request;
+
+    if (allPages) {
+      request = fetchAllPages(this.client, '/uploads', params);
+    } else {
+      request = this.client.get('/uploads', params);
+    }
+
+    return request
+    .then(response => Promise.resolve(
+      deserializeResponse ?
+        deserializeJsonApi(response) :
+        response
+    ));
   }
 
   find(uploadId) {

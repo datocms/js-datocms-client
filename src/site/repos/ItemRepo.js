@@ -1,11 +1,6 @@
 import deserializeJsonApi from '../../deserializeJsonApi';
 import serializeJsonApi from '../../serializeJsonApi';
-
-function times(n) {
-  /* eslint-disable prefer-spread */
-  return Array.apply(null, { length: n }).map(Number.call, Number);
-  /* eslint-enable prefer-spread */
-}
+import fetchAllPages from '../fetchAllPages';
 
 export default class ItemRepo {
   constructor(client) {
@@ -58,37 +53,24 @@ export default class ItemRepo {
     .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
 
-  all(params = {}, deserializeResponse = true) {
-    const itemsPerPage = 500;
+  all(params = {}, options = {}) {
+    const deserializeResponse = Object.prototype.hasOwnProperty.call(options, 'deserializeResponse') ?
+      options.deserializeResponse :
+      true;
 
-    return this.client.get(
-      '/items',
-      Object.assign({}, params, { 'page[limit]': itemsPerPage })
-    )
-    .then((baseResponse) => {
-      const pages = Math.ceil(baseResponse.meta.totalCount / itemsPerPage);
+    const allPages = Object.prototype.hasOwnProperty.call(options, 'allPages') ?
+      options.allPages :
+      false;
 
-      const extraFetches = times(pages - 1)
-      .map((extraPage) => {
-        return this.client.get(
-          '/items',
-          Object.assign({}, params, {
-            'page[offset]': itemsPerPage * (extraPage + 1),
-            'page[limit]': itemsPerPage,
-          })
-        ).then(response => response.data);
-      });
+    let request;
 
-      return Promise.all(extraFetches).then(x => [x, baseResponse]);
-    })
-    .then(([datas, baseResponse]) => {
-      return Object.assign(
-        {}, baseResponse,
-        {
-          data: baseResponse.data.concat(...datas),
-        }
-      );
-    })
+    if (allPages) {
+      request = fetchAllPages(this.client, '/items', params);
+    } else {
+      request = this.client.get('/items', params);
+    }
+
+    return request
     .then(response => Promise.resolve(
       deserializeResponse ?
         deserializeJsonApi(response) :
