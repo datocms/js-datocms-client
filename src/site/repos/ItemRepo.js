@@ -34,7 +34,7 @@ export default class ItemRepo {
 
   update(itemId, resourceAttributes) {
     const attributeKeys = Object.keys(resourceAttributes);
-    ['id', 'createdAt', 'updatedAt', 'isValid', 'itemType', 'lastEditor'].forEach((key) => {
+    ['id', 'createdAt', 'updatedAt', 'isValid', 'itemType', 'publishedVersion'].forEach((key) => {
       const index = attributeKeys.indexOf(key);
       if (index > -1) {
         attributeKeys.splice(index, 1);
