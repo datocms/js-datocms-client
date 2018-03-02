@@ -3,14 +3,14 @@ module.exports = (dato, root, i18n) => {
     i18n.locale = locale;
     root.directory(locale, localeDir => {
       localeDir.createDataFile('site.yml', 'yaml', dato.site.toMap());
-      localeDir.directory('posts', worksDir => {
-        dato.works.forEach(work => {
-          worksDir.createPost(
-            `${work.slug}.md`,
+      localeDir.directory('posts', articlesDir => {
+        dato.articles.forEach(article => {
+          articlesDir.createPost(
+            `${article.slug}.md`,
             'yaml',
             {
-              frontmatter: work.toMap(),
-              content: work.excerpt,
+              frontmatter: article.toMap(),
+              content: article.title,
             }
           );
         });

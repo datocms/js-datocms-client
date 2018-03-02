@@ -34,7 +34,7 @@ export default class ItemRepo {
 
   update(itemId, resourceAttributes) {
     const attributeKeys = Object.keys(resourceAttributes);
-    ['id', 'createdAt', 'updatedAt', 'isValid', 'itemType', 'publishedVersion'].forEach((key) => {
+    ['id', 'createdAt', 'updatedAt', 'isValid', 'itemType', 'currentVersion', 'publishedVersion'].forEach((key) => {
       const index = attributeKeys.indexOf(key);
       if (index > -1) {
         attributeKeys.splice(index, 1);
@@ -76,6 +76,16 @@ export default class ItemRepo {
         deserializeJsonApi(response) :
         response
     ));
+  }
+
+  publish(itemId) {
+    return this.client.put(`/items/${itemId}/publish`, {})
+    .then(response => Promise.resolve(deserializeJsonApi(response)));
+  }
+
+  unpublish(itemId) {
+    return this.client.put(`/items/${itemId}/unpublish`, {})
+    .then(response => Promise.resolve(deserializeJsonApi(response)));
   }
 
   find(itemId) {

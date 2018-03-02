@@ -3,6 +3,8 @@ import { SiteClient, AccountClient } from '../../src/index';
 
 const accountClient = new AccountClient('XXX', null, 'http://account-api.lvh.me:3001');
 
+const wait = (time) => new Promise((resolve) => setTimeout(resolve, time))
+
 describe('Site API', () => {
   let site;
   let client;
@@ -15,6 +17,7 @@ describe('Site API', () => {
   afterEach(vcr('after', async () => {
     if (site) {
       await accountClient.sites.destroy(site.id);
+      await wait(2000);
     }
   }));
 

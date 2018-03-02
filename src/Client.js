@@ -1,10 +1,19 @@
 /* global fetch */
 
 import queryString from 'query-string';
-import { camelizeKeys, decamelizeKeys } from 'humps';
+import { camelizeKeys, decamelizeKeys as humpsDecamelizeKeys } from 'humps';
 import ApiException from './ApiException';
 import pkg from '../package.json';
 import isBrowser from './isBrowser';
+
+const decamelizeKeys = (payload) => {
+  return humpsDecamelizeKeys(payload, (key, convert, options) => {
+    if (key === 'require2fa') {
+      return 'require_2fa';
+    }
+    return convert(key, options);
+  });
+};
 
 /* eslint-disable global-require */
 if (!isBrowser) {

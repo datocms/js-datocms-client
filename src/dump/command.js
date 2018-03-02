@@ -14,6 +14,7 @@ export default function (options) {
   const tokenOption = options['--token'] || process.env.DATO_API_TOKEN;
   const watch = options['--watch'];
   const quiet = options['--quiet'];
+  const draftMode = options['--draft'];
 
   let tokenPromise;
 
@@ -48,7 +49,7 @@ export default function (options) {
 
       const spinner = ora(text).start();
 
-      return dump(configFile, client)
+      return dump(configFile, client, draftMode)
         .then((operations) => {
           spinner.succeed();
           if (!quiet) {

@@ -1,7 +1,9 @@
 import u from 'updeep';
 import { AccountClient } from '../../src/index';
 
-const client = new AccountClient('XXX', null, 'http://account-api.lvh.me:3000');
+const client = new AccountClient('XXX', null, 'http://account-api.lvh.me:3001');
+
+const wait = (time) => new Promise((resolve) => setTimeout(resolve, time))
 
 describe('Account API', () => {
   describe('account', () => {
@@ -16,7 +18,7 @@ describe('Account API', () => {
   });
 
   describe('site', () => {
-    it('find, all, create, update, destroy, duplicate', vcr(async () => {
+    it('find, all, create, update, destroy', vcr(async () => {
       const newSite = await client.sites.create({ name: 'Foobar' });
       expect(newSite.name).to.equal('Foobar');
 
@@ -28,11 +30,9 @@ describe('Account API', () => {
       const site = await client.sites.find(newSite.id);
       expect(site.name).to.equal('Blog');
 
-      const clonedSite = await client.sites.duplicate(newSite.id, { name: 'Another blog' });
-      expect(clonedSite.name).to.equal('Another blog');
-
       await client.sites.destroy(newSite.id);
-      await client.sites.destroy(clonedSite.id);
+
+      await wait(2000);
 
       expect(await client.sites.all()).to.have.length(0);
     }));
