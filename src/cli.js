@@ -3,7 +3,6 @@ import { docopt } from 'docopt';
 import pkg from '../package.json';
 import dump from './dump/command';
 import check from './check/command';
-import migrateSlugs from './migrateSlugs/command';
 
 dotenv.load({ silent: true });
 
@@ -12,7 +11,6 @@ DatoCMS CLI tool
 
 Usage:
   dato dump [--watch] [--verbose] [--token=<apiToken>] [--config=<file>]
-  dato migrate-slugs [--token=<apiToken>] [--skip-id-prefix]
   dato check
   dato -h | --help
   dato --version
@@ -26,8 +24,4 @@ if (options.dump) {
 
 if (options.check) {
   check(options);
-}
-
-if (options['migrate-slugs']) {
-  migrateSlugs(options);
 }
