@@ -5,7 +5,7 @@ function times(n) {
 }
 
 export default function fetchAllPages(client, endpoint, params) {
-  const itemsPerPage = 500;
+  const itemsPerPage = 100;
 
   return client.get(
     endpoint,
