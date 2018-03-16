@@ -10,7 +10,7 @@ const doc = `
 DatoCMS CLI tool
 
 Usage:
-  dato dump [--watch] [--verbose] [--draft] [--token=<apiToken>] [--config=<file>]
+  dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--config=<file>]
   dato check
   dato -h | --help
   dato --version
