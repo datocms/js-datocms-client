@@ -3,7 +3,8 @@ import { AccountClient } from '../../src/index';
 
 const client = new AccountClient('XXX', null, 'http://account-api.lvh.me:3001');
 
-const wait = (time) => new Promise((resolve) => setTimeout(resolve, time))
+// const wait = ms => new Promise(r => setTimeout(r, ms));
+const wait = () => Promise.resolve();
 
 describe('Account API', () => {
   describe('account', () => {

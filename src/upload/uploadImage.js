@@ -2,7 +2,8 @@
 
 import uploadFile from './uploadFile';
 
-const wait = ms => new Promise(r => setTimeout(r, ms));
+// const wait = ms => new Promise(r => setTimeout(r, ms));
+const wait = () => Promise.resolve();
 
 const retryOperation = (operation, delay, times) => new Promise((resolve, reject) => {
   return operation()

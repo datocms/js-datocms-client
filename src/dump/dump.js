@@ -68,7 +68,12 @@ function start(path, config) {
   };
 }
 
-export default async function dump(configFile, client, previewMode, destinationPath = process.cwd()) {
+export default async function dump(
+  configFile,
+  client,
+  previewMode,
+  destinationPath = process.cwd()
+) {
   /* eslint-disable global-require, import/no-dynamic-require */
   delete require.cache[configFile];
   const config = require(configFile);
