@@ -74,6 +74,7 @@ describe('Site API', () => {
         modularBlock: false,
         tree: false,
         orderingDirection: null,
+        draftModeActive: false,
         orderingField: null,
       });
       expect(itemType.name).to.equal('Article');
@@ -102,6 +103,7 @@ describe('Site API', () => {
         singleton: true,
         modularBlock: false,
         tree: false,
+        draftModeActive: false,
         sortable: false,
         orderingDirection: null,
         orderingField: null,
@@ -174,6 +176,7 @@ describe('Site API', () => {
         modularBlock: false,
         sortable: false,
         tree: false,
+        draftModeActive: false,
         orderingDirection: null,
         orderingField: null,
       });

@@ -40,7 +40,8 @@ describe('CLI tool', () => {
       tree: false,
       apiKey: 'article',
       orderingDirection: null,
-      orderingField: null
+      orderingField: null,
+      draftModeActive: false
     });
 
     const textField = await client.fields.create(

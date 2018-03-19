@@ -18,6 +18,7 @@ export default class ItemTypeRepo {
           'sortable',
           'modularBlock',
           'tree',
+          'draftModeActive',
           'orderingDirection',
         ],
         requiredAttributes: [
@@ -27,6 +28,7 @@ export default class ItemTypeRepo {
           'sortable',
           'modularBlock',
           'tree',
+          'draftModeActive',
           'orderingDirection',
         ],
         relationships: {
@@ -54,6 +56,7 @@ export default class ItemTypeRepo {
           'sortable',
           'modularBlock',
           'tree',
+          'draftModeActive',
           'orderingDirection',
         ],
         requiredAttributes: [
@@ -63,6 +66,7 @@ export default class ItemTypeRepo {
           'sortable',
           'modularBlock',
           'tree',
+          'draftModeActive',
           'orderingDirection',
         ],
         relationships: {
