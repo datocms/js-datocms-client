@@ -4,6 +4,32 @@ function times(n) {
   /* eslint-enable prefer-spread */
 }
 
+function seq(promises) {
+  return new Promise((resolve, reject) => {
+    let count = 0;
+    let results = [];
+
+    const iterateeFunc = (previousPromise, currentPromise) => {
+      return previousPromise
+        .then((result) => {
+          if (count !== 0) results = results.concat(result);
+          count += 1;
+          return currentPromise(result, results, count);
+        })
+        .catch((err) => {
+          return reject(err);
+        });
+    };
+
+    const allPromises = promises.concat(() => Promise.resolve());
+
+    allPromises.reduce(iterateeFunc, Promise.resolve(false))
+    .then(() => {
+      resolve(results);
+    });
+  });
+}
+
 export default function fetchAllPages(client, endpoint, params) {
   const itemsPerPage = 100;
 
@@ -25,7 +51,7 @@ export default function fetchAllPages(client, endpoint, params) {
       ).then(response => response.data);
     });
 
-    return Promise.all(extraFetches).then(x => [x, baseResponse]);
+    return seq(extraFetches).then(x => [x, baseResponse]);
   })
   .then(([datas, baseResponse]) => {
     return Object.assign(
