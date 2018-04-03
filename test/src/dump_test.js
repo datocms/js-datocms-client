@@ -104,14 +104,14 @@ describe('CLI tool', () => {
     );
 
     const item = await client.items.create({
-        itemType: itemType.id,
-        title: {
-          en: 'First post',
-          it: 'Primo post'
-        },
-        slug: 'first-post',
-        image: await uploadImage(client, 'https://www.datocms.com/static/2-00c287793580e47fbe1222a1d44a6e25-95c66.png'),
-        file: await uploadFile(client, 'https://www.datocms.com/robots.txt')
+      itemType: itemType.id,
+      title: {
+        en: 'First post',
+        it: 'Primo post'
+      },
+      slug: 'first-post',
+      image: await uploadImage(client, 'https://www.datocms.com/static/2-00c287793580e47fbe1222a1d44a6e25-95c66.png'),
+      file: await uploadFile(client, 'https://www.datocms.com/robots.txt')
     });
 
     await client.items.publish(item.id);
@@ -121,7 +121,7 @@ describe('CLI tool', () => {
 
     // const dirName = path.resolve('test/fixtures/dump');
     const configFile = path.resolve('test/fixtures/dato.config.js');
-    await dump(configFile, client, dirName);
+    await dump(configFile, client, true, dirName);
 
     const result = dirCompare.compareSync(
       dirName,
