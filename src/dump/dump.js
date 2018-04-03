@@ -1,4 +1,4 @@
-import { join, relative } from 'path';
+import { resolve, relative } from 'path';
 import denodeify from 'denodeify';
 import nodeRimraf from 'rimraf';
 import Loader from '../local/Loader';
@@ -16,27 +16,27 @@ function collectOperations(base, config) {
 
   const dsl = {
     directory(dir, subConfig) {
-      operations.push(createDirectory(join(base, dir), subConfig));
+      operations.push(createDirectory(resolve(base, dir), subConfig));
     },
 
     createDataFile(file, format, data) {
       operations.push(() => {
         return Promise.resolve(data)
-          .then(dr => createDataFile.bind(null, join(base, file), format, dr)());
+          .then(dr => createDataFile.bind(null, resolve(base, file), format, dr)());
       });
     },
 
     createPost(file, format, data) {
       operations.push(() => {
         return Promise.resolve(data)
-          .then(dr => createPost.bind(null, join(base, file), format, dr)());
+          .then(dr => createPost.bind(null, resolve(base, file), format, dr)());
       });
     },
 
     addToDataFile(file, format, data) {
       operations.push(() => {
         return Promise.resolve(data)
-          .then(dr => addToDataFile.bind(null, join(base, file), format, dr)());
+          .then(dr => addToDataFile.bind(null, resolve(base, file), format, dr)());
       });
     },
   };
@@ -50,7 +50,7 @@ createDirectory = (dir, config) => {
   const operations = collectOperations(dir, config);
 
   return () => {
-    return rimraf(join(dir, '*'))
+    return rimraf(resolve(dir, '*'))
       .then(() => Promise.all(operations.map(o => o())))
       .then((descriptions) => {
         const description = `Created ${relative(process.cwd(), dir)}`;
