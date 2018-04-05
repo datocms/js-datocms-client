@@ -31,9 +31,15 @@ function buildCollectionsByType(repo, itemTypeMethods) {
 
   repo.itemTypes.forEach((itemType) => {
     const method = itemTypeMethods[itemType.apiKey];
+
     if (!itemType.singleton && itemType.sortable) {
       collectionsByType[method] = collectionsByType[method]
         .sort((a, b) => a.position - b.position);
+    } else if (itemType.orderingField) {
+      const field = camelize(itemType.orderingField.apiKey);
+      const direction = itemType.orderingDirection === 'asc' ? 1 : -1;
+      collectionsByType[method] = collectionsByType[method]
+        .sort((a, b) => (a[field] - b[field]) * direction);
     }
   });
 
