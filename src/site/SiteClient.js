@@ -1,7 +1,6 @@
 import * as repos from './repos';
 import Client from '../Client';
 import uploadFile from '../upload/uploadFile';
-import uploadImage from '../upload/uploadImage';
 
 export default class SiteClient extends Client {
   constructor(token, extraHeaders = {}, baseUrl = 'https://site-api.datocms.com') {
@@ -29,6 +28,6 @@ export default class SiteClient extends Client {
   }
 
   uploadImage(source) {
-    return uploadImage(this, source);
+    return uploadFile(this, source);
   }
 }

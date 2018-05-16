@@ -203,7 +203,9 @@ describe('Site API', () => {
           localized: false,
           apiKey: 'attachment',
           hint: '',
-          validators: { required: {} },
+          validators: {
+            required: {},
+          },
           appeareance: {},
           position: 2,
         }

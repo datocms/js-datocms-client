@@ -83,6 +83,7 @@ export default class Client {
       accept: 'application/json',
       authorization: `Bearer ${this.token}`,
       'user-agent': `${userAgent} v${pkg.version}`,
+      'X-Api-Version': '2',
     };
   }
 
