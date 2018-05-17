@@ -27,8 +27,8 @@ const fieldTypeParser = {
     const items = value ? value.map(id => itemsRepo.find(id)) : [];
     return new Links(...items);
   },
-  gallery(value, { imgixHost }) {
-    const images = value ? value.map(data => this.image(data, { imgixHost })) : [];
+  gallery(value, { imgixHost, itemsRepo }) {
+    const images = value ? value.map(data => this.file(data, { imgixHost, itemsRepo })) : [];
     return new Gallery(...images);
   },
   file(value, { imgixHost, itemsRepo }) {
