@@ -1,9 +1,10 @@
 import Seo from './Seo';
 
 export default class GlobalSeo {
-  constructor(value, imgixHost) {
+  constructor(value, { imgixHost, itemsRepo }) {
     this.value = value;
     this.imgixHost = imgixHost;
+    this.itemsRepo = itemsRepo;
   }
 
   get siteName() {
@@ -23,8 +24,9 @@ export default class GlobalSeo {
   }
 
   get fallbackSeo() {
+    const { imgixHost, itemsRepo } = this;
     return this.value.fallbackSeo &&
-      new Seo(this.value.fallbackSeo, this.imgixHost);
+      new Seo(this.value.fallbackSeo, { imgixHost, itemsRepo });
   }
 
   toMap() {
@@ -37,4 +39,3 @@ export default class GlobalSeo {
     };
   }
 }
-

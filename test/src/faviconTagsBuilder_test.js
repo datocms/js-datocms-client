@@ -2,6 +2,8 @@ import EntitiesRepo from '../../src/local/EntitiesRepo';
 import ItemsRepo from '../../src/local/ItemsRepo';
 import faviconTagsBuilder, { builders } from '../../src/utils/faviconTagsBuilder';
 import { camelizeKeys } from 'humps';
+import SiteClient from '../../src/site/SiteClient';
+import AccountClient from '../../src/account/AccountClient';
 
 describe('faviconTagsBuilder', () => {
   let favicon, result, itemsRepo, site;
@@ -13,16 +15,30 @@ describe('faviconTagsBuilder', () => {
 
     itemsRepo = memo(() => {
       const payload = camelizeKeys({
-        data: {
-          "id": "681",
-          "type": "site",
-          "attributes": {
-            "name": "Site name",
-            "locales": [ "en" ],
-            "favicon": favicon(),
-            "imgix_host": "www.datocms-assets.com"
+        data: [
+          {
+            "id": "681",
+            "type": "site",
+            "attributes": {
+              "name": "Site name",
+              "locales": [ "en" ],
+              "favicon": favicon(),
+              "imgix_host": "www.datocms-assets.com"
+            }
+          }, {
+            "id": "1000",
+            "type": "upload",
+            "attributes": {
+              "format": "png",
+              "size": "1000",
+              "width": "64",
+              "height": "64",
+              "title": "",
+              "alt": "",
+              "path": "/seo.png",
+            }
           }
-        }
+        ]
       });
 
       const entitiesRepo = new EntitiesRepo(payload);
@@ -42,13 +58,7 @@ describe('faviconTagsBuilder', () => {
 
   context('with favicon', () => {
     beforeEach(() => {
-      favicon = memo(() => camelizeKeys({
-        "path": "/seo.png",
-        "width": 500,
-        "height": 500,
-        "format": "png",
-        "size": 572451
-      }));
+      favicon = memo(() => "1000");
     });
 
     it('also builds favicon meta tags', () => {
@@ -77,4 +87,3 @@ describe('faviconTagsBuilder', () => {
     });
   });
 });
-

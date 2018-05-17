@@ -5,8 +5,8 @@ import dirCompare from 'dir-compare';
 import dump from '../../src/dump/dump';
 import SiteClient from '../../src/site/SiteClient';
 import AccountClient from '../../src/account/AccountClient';
-import uploadImage from '../../src/upload/uploadImage';
 import uploadFile from '../../src/upload/uploadFile';
+import uploadImage from '../../src/upload/uploadImage';
 
 describe('CLI tool', () => {
   it('dump', vcr(async () => {
@@ -27,9 +27,44 @@ describe('CLI tool', () => {
     );
 
     const newSite = await client.site.find();
+    const faviconFilePath = path.resolve('test/fixtures/favicon.ico');
+    const logoFilePath = path.resolve('test/fixtures/dato-logo.jpg');
 
     await client.site.update(
-      Object.assign(newSite, { locales: ['en', 'it'] })
+      Object.assign(
+        newSite,
+        {
+          locales: ['en', 'it'],
+          favicon: await uploadImage(client, faviconFilePath),
+          theme: {
+            logo: await uploadImage(client, logoFilePath),
+            primaryColor: {
+              red: 127,
+              green: 127,
+              blue: 127,
+              alpha: 127,
+            },
+            lightColor: {
+              red: 63,
+              green: 63,
+              blue: 63,
+              alpha: 63,
+            },
+            darkColor: {
+              red: 0,
+              green: 0,
+              blue: 0,
+              alpha: 0,
+            },
+            accentColor: {
+              red: 255,
+              green: 255,
+              blue: 255,
+              alpha: 255,
+            },
+          }
+        }
+      )
     );
 
     const itemType = await client.itemTypes.create({
@@ -79,13 +114,18 @@ describe('CLI tool', () => {
       itemType.id,
       {
         apiKey: 'image',
-        fieldType: 'image',
+        fieldType: 'file',
         appeareance: null,
         label: 'Image',
         localized: false,
         position: 99,
         hint: '',
-        validators: { required: {} }
+        validators: {
+          required: {},
+          extension: {
+            predefined_list: 'image',
+          },
+        }
       }
     );
 
@@ -103,6 +143,8 @@ describe('CLI tool', () => {
       }
     );
 
+    const uploadedFilePath = path.resolve('test/fixtures/uploadable-image.png');
+
     const item = await client.items.create({
       itemType: itemType.id,
       title: {
@@ -110,8 +152,8 @@ describe('CLI tool', () => {
         it: 'Primo post'
       },
       slug: 'first-post',
-      image: await uploadImage(client, 'https://www.datocms.com/static/2-00c287793580e47fbe1222a1d44a6e25-95c66.png'),
-      file: await uploadFile(client, 'https://www.datocms.com/robots.txt')
+      file: await uploadFile(client, 'https://www.datocms.com/robots.txt'),
+      image: await uploadImage(client, uploadedFilePath),
     });
 
     await client.items.publish(item.id);

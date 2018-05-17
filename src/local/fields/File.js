@@ -1,24 +1,44 @@
 import queryString from 'query-string';
 
 export default class File {
-  constructor(value, imgixHost = 'https://www.datocms-assets.com') {
-    this.value = value;
+  constructor(value, {
+    itemsRepo,
+    imgixHost = 'https://www.datocms-assets.com',
+  }) {
     this.imgixHost = imgixHost;
+    this.itemsRepo = itemsRepo;
+    this.upload = itemsRepo.entitiesRepo.findEntity('upload', value);
   }
 
   get path() {
-    return this.value.path;
+    return this.upload.path;
   }
 
   get format() {
-    return this.value.format;
+    return this.upload.format;
   }
 
   get size() {
-    return this.value.size;
+    return this.upload.size;
   }
 
-  url(params) {
+  get width() {
+    return this.upload.width;
+  }
+
+  get height() {
+    return this.upload.height;
+  }
+
+  get alt() {
+    return this.upload.alt;
+  }
+
+  get title() {
+    return this.upload.title;
+  }
+
+  url(params = {}) {
     if (params && Object.keys(params).length > 0) {
       return `${this.imgixHost}${this.path}?${queryString.stringify(params)}`;
     }
@@ -29,6 +49,10 @@ export default class File {
     return {
       format: this.format,
       size: this.size,
+      width: this.width,
+      height: this.height,
+      title: this.title,
+      alt: this.alt,
       url: this.url(),
     };
   }

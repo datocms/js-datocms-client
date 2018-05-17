@@ -35,4 +35,3 @@ global.vcr = function (...args) {
     return vcr.useCassette(slugify(cassetteName), action);
   };
 };
-

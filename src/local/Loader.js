@@ -14,9 +14,13 @@ export default class Loader {
         { version: this.previewMode ? 'latest' : 'published' },
         { deserializeResponse: false, allPages: true }
       ),
+      this.client.uploads.all(
+        {},
+        { deserializeResponse: false, allPages: true }
+      ),
     ])
-    .then(([site, allItems]) => {
-      this.entitiesRepo = new EntitiesRepo(site, allItems);
+    .then(([site, allItems, allUploads]) => {
+      this.entitiesRepo = new EntitiesRepo(site, allItems, allUploads);
       this.itemsRepo = new ItemsRepo(this.entitiesRepo);
     });
   }

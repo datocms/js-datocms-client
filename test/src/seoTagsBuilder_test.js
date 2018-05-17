@@ -113,7 +113,7 @@ describe('seoTagsBuilder', () => {
             "type": "field",
             "attributes": {
               "label": "Image",
-              "field_type": "image",
+              "field_type": "file",
               "api_key": "image",
               "hint": null,
               "localized": false,
@@ -200,6 +200,45 @@ describe('seoTagsBuilder', () => {
                   "type": "item_type"
                 }
               }
+            }
+          },
+          {
+            "id": "100000",
+            "type": "upload",
+            "attributes": {
+              "format": "png",
+              "size": "1000",
+              "width": "200",
+              "height": "200",
+              "title": "",
+              "alt": "",
+              "path": "/seo.png"
+            }
+          },
+          {
+            "id": "100001",
+            "type": "upload",
+            "attributes": {
+              "format": "png",
+              "size": "1000",
+              "width": "200",
+              "height": "200",
+              "title": "",
+              "alt": "",
+              "path": "/fallback.png"
+            }
+          },
+          {
+            "id": "100002",
+            "type": "upload",
+            "attributes": {
+              "format": "png",
+              "size": "1000",
+              "width": "200",
+              "height": "200",
+              "title": "",
+              "alt": "",
+              "path": "/image.png"
             }
           }
         ]
@@ -492,13 +531,7 @@ describe('seoTagsBuilder', () => {
           context('with SEO', () => {
             beforeEach(() => {
               seo = memo(() => camelizeKeys({
-                "image": {
-                  "path": "/seo.png",
-                  "width": 569,
-                  "height": 629,
-                  "format": "png",
-                  "size": 572451
-                }
+                "image": "100000"
               }));
             });
 
@@ -511,13 +544,7 @@ describe('seoTagsBuilder', () => {
 
         context('with image', () => {
           beforeEach(() => {
-            itemImage = memo(() => camelizeKeys({
-              "path": "/image.png",
-              "width": 569,
-              "height": 629,
-              "format": "png",
-              "size": 572451
-            }));
+            itemImage = memo(() => "100002");
           });
 
           context('no SEO', () => {
@@ -530,13 +557,7 @@ describe('seoTagsBuilder', () => {
           context('with SEO', () => {
             beforeEach(() => {
               seo = memo(() => camelizeKeys({
-                "image": {
-                  "path": "/seo.png",
-                  "width": 569,
-                  "height": 629,
-                  "format": "png",
-                  "size": 572451
-                }
+                "image": "100000",
               }));
             });
 
@@ -553,13 +574,7 @@ describe('seoTagsBuilder', () => {
       beforeEach(() => {
         globalSeo = memo(() => camelizeKeys({
           "fallback_seo": {
-            "image": {
-              "path": "/fallback.png",
-              "width": 569,
-              "height": 629,
-              "format": "png",
-              "size": 572451
-            }
+            "image": "100001",
           }
         }));
       });
@@ -587,13 +602,7 @@ describe('seoTagsBuilder', () => {
           context('with SEO', () => {
             beforeEach(() => {
               seo = memo(() => camelizeKeys({
-                "image": {
-                  "path": "/seo.png",
-                  "width": 569,
-                  "height": 629,
-                  "format": "png",
-                  "size": 572451
-                }
+                "image": "100000",
               }));
             });
 
@@ -606,13 +615,7 @@ describe('seoTagsBuilder', () => {
 
         context('with image', () => {
           beforeEach(() => {
-            itemImage = memo(() => camelizeKeys({
-              "path": "/image.png",
-              "width": 569,
-              "height": 629,
-              "format": "png",
-              "size": 572451
-            }));
+            itemImage = memo(() => "100002");
           });
 
           context('no SEO', () => {
@@ -625,13 +628,7 @@ describe('seoTagsBuilder', () => {
           context('with SEO', () => {
             beforeEach(() => {
               seo = memo(() => camelizeKeys({
-                "image": {
-                  "path": "/seo.png",
-                  "width": 569,
-                  "height": 629,
-                  "format": "png",
-                  "size": 572451
-                }
+                "image": "100000",
               }));
             });
 

@@ -1,4 +1,3 @@
-import Image from './Image';
 import File from './File';
 import Seo from './Seo';
 import Links from './Links';
@@ -28,25 +27,21 @@ const fieldTypeParser = {
     const items = value ? value.map(id => itemsRepo.find(id)) : [];
     return new Links(...items);
   },
-  image(value, { imgixHost }) {
-    if (!value) { return value; }
-    return new Image(value, imgixHost);
-  },
   gallery(value, { imgixHost }) {
     const images = value ? value.map(data => this.image(data, { imgixHost })) : [];
     return new Gallery(...images);
   },
-  file(value, { imgixHost }) {
+  file(value, { imgixHost, itemsRepo }) {
     if (!value) { return value; }
-    return new File(value, imgixHost);
+    return new File(value, { itemsRepo, imgixHost });
   },
   color(value) {
     if (!value) { return value; }
     return new Color(value);
   },
-  seo(value) {
+  seo(value, { itemsRepo }) {
     if (!value) { return value; }
-    return new Seo(value);
+    return new Seo(value, { itemsRepo });
   },
   json(value) {
     if (!value) { return value; }

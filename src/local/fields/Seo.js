@@ -1,9 +1,10 @@
-import Image from './Image';
+import File from './File';
 
 export default class Seo {
-  constructor(value, imgixHost) {
+  constructor(value, { itemsRepo, imgixHost }) {
     this.value = value;
     this.imgixHost = imgixHost;
+    this.itemsRepo = itemsRepo;
   }
 
   get title() {
@@ -15,8 +16,10 @@ export default class Seo {
   }
 
   get image() {
+    const { imgixHost, itemsRepo } = this;
+
     return this.value.image &&
-      new Image(this.value.image, this.imgixHost);
+      new File(this.value.image, { itemsRepo, imgixHost });
   }
 
   toMap() {
@@ -27,4 +30,3 @@ export default class Seo {
     };
   }
 }
-

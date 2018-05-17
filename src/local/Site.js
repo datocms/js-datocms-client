@@ -1,11 +1,13 @@
-import Image from './fields/Image';
+import File from './fields/File';
+import Theme from './fields/Theme';
 import GlobalSeo from './fields/GlobalSeo';
 import faviconTagsBuilder from '../utils/faviconTagsBuilder';
 import localizedRead from '../utils/localizedRead';
 
 export default class Site {
-  constructor(entity) {
+  constructor(entity, itemsRepo) {
     this.entity = entity;
+    this.itemsRepo = itemsRepo;
   }
 
   get id() {
@@ -21,7 +23,7 @@ export default class Site {
   }
 
   get theme() {
-    return this.entity.theme;
+    return this.readAttribute('theme', Theme, false);
   }
 
   get domain() {
@@ -45,7 +47,7 @@ export default class Site {
   }
 
   get favicon() {
-    return this.readAttribute('favicon', Image, false);
+    return this.readAttribute('favicon', File, false);
   }
 
   get faviconMetaTags() {
@@ -88,6 +90,6 @@ export default class Site {
 
     const imgixHost = `https://${this.imgixHost}`;
 
-    return value && new TypeKlass(value, imgixHost);
+    return value && new TypeKlass(value, { imgixHost, itemsRepo: this.itemsRepo });
   }
 }

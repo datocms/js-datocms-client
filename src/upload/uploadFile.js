@@ -1,15 +1,15 @@
 import isBrowser from '../isBrowser';
+import browser from './adapters/browser';
+import nodeUrl from './adapters/node';
 
 /* global fetch */
 const rawUploadFile = (client, source) => {
   if (isBrowser) {
-    const adapter = require('./adapters/browser');
-    return adapter(client, source);
+    return browser(client, source);
   }
 
-  const adapter = require('./adapters/node');
-  return adapter(client, source);
-}
+  return nodeUrl(client, source);
+};
 
 // const wait = ms => new Promise(r => setTimeout(r, ms));
 const wait = () => Promise.resolve();
@@ -60,7 +60,7 @@ export default function uploadFile(client, source) {
   }).then((attributes) => {
     return client.uploads.create(
       Object.assign(
-        {alt: '', title: ''},
+        { alt: '', title: '' },
         attributes,
       )
     );
