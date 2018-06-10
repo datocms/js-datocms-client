@@ -16,6 +16,7 @@ export default class FieldRepo {
           'fieldType',
           'localized',
           'apiKey',
+          'defaultValue',
           'hint',
           'validators',
           'appeareance',
@@ -51,6 +52,7 @@ export default class FieldRepo {
           'appeareance',
           'position',
           'fieldType',
+          'defaultValue',
           'hint',
         ],
       }
