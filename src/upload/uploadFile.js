@@ -1,4 +1,4 @@
-import isBrowser from '../isBrowser';
+import isBrowser from '../utils/isBrowser';
 import browser from './adapters/browser';
 import nodeUrl from './adapters/node';
 

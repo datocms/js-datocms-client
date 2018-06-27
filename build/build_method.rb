@@ -85,15 +85,15 @@ class BuildMethod
     result = {}
 
       schema_relationships.properties.map do |relationship, schema|
-        is_collection = schema.properties['data'].type.first == 'array'
+        is_collection = schema.properties['data'].type.first === 'array'
 
         definition = if is_collection
                        schema.properties['data'].items
-                     elsif schema.properties['data'].type.first == 'object'
+                     elsif schema.properties['data'].type.first === 'object'
                        schema.properties['data']
                      else
                        schema.properties['data'].any_of.find do |option|
-                         option.type.first == 'object'
+                         option.type.first === 'object'
                        end
                      end
 
@@ -123,12 +123,12 @@ class BuildMethod
 
   # rubocop:disable Style/AccessorMethodName
   def get_request?
-    request_method == :get
+    request_method === :get
   end
   # rubocop:enable Style/AccessorMethodName
 
   def put_request?
-    request_method == :put
+    request_method === :put
   end
 
   def schema?

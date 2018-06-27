@@ -1,33 +1,10 @@
-import * as repos from './repos';
-import Client from '../Client';
 import uploadFile from '../upload/uploadFile';
+import generateClient from '../utils/generateClient';
 
-export default class SiteClient extends Client {
-  constructor(token, extraHeaders = {}, baseUrl = 'https://site-api.datocms.com') {
-    super(token, extraHeaders, baseUrl);
-
-    const repoInstances = [];
-
-    for (const [method, Klass] of Object.entries(repos)) {
-      Object.defineProperty(
-        this,
-        method,
-        {
-          enumerable: true,
-          get() {
-            repoInstances[method] = repoInstances[method] || new Klass(this);
-            return repoInstances[method];
-          },
-        }
-      );
-    }
+export default generateClient(
+  'site-api',
+  {
+    uploadFile,
+    uploadImage: uploadFile,
   }
-
-  uploadFile(source) {
-    return uploadFile(this, source);
-  }
-
-  uploadImage(source) {
-    return uploadFile(this, source);
-  }
-}
+);
