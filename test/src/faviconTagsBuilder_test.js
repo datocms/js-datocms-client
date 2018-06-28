@@ -10,35 +10,35 @@ describe('faviconTagsBuilder', () => {
 
   beforeEach(() => {
     favicon = memo(() => null);
-    result = memo(() => faviconTagsBuilder(site(), '#ff0000') );
+    result = memo(() => faviconTagsBuilder(site(), '#ff0000'));
     site = memo(() => itemsRepo().site);
 
     itemsRepo = memo(() => {
       const payload = camelizeKeys({
         data: [
           {
-            "id": "681",
-            "type": "site",
-            "attributes": {
-              "name": "Site name",
-              "locales": [ "en" ],
-              "favicon": favicon(),
-              "imgix_host": "www.datocms-assets.com"
-            }
+            id: '681',
+            type: 'site',
+            attributes: {
+              name: 'Site name',
+              locales: ['en'],
+              favicon: favicon(),
+              imgix_host: 'www.datocms-assets.com',
+            },
           }, {
-            "id": "1000",
-            "type": "upload",
-            "attributes": {
-              "format": "png",
-              "size": "1000",
-              "width": "64",
-              "height": "64",
-              "title": "",
-              "alt": "",
-              "path": "/seo.png",
-            }
-          }
-        ]
+            id: '1000',
+            type: 'upload',
+            attributes: {
+              format: 'png',
+              size: '1000',
+              width: '64',
+              height: '64',
+              title: '',
+              alt: '',
+              path: '/seo.png',
+            },
+          },
+        ],
       });
 
       const entitiesRepo = new EntitiesRepo(payload);
@@ -51,14 +51,14 @@ describe('faviconTagsBuilder', () => {
       expect(JSON.stringify(result())).to.eq(JSON.stringify([
         { tagName: 'meta', attributes: { name: 'application-name', content: 'Site name' } },
         { tagName: 'meta', attributes: { name: 'theme-color', content: '#ff0000' } },
-        { tagName: 'meta', attributes: { name: 'msapplication-TileColor', content: '#ff0000' } }
+        { tagName: 'meta', attributes: { name: 'msapplication-TileColor', content: '#ff0000' } },
       ]));
     });
   });
 
   context('with favicon', () => {
     beforeEach(() => {
-      favicon = memo(() => "1000");
+      favicon = memo(() => '1000');
     });
 
     it('also builds favicon meta tags', () => {
@@ -82,7 +82,7 @@ describe('faviconTagsBuilder', () => {
         { tagName: 'link', attributes: { rel: 'icon', sizes: '192x192', href: 'https://www.datocms-assets.com/seo.png?h=192&w=192', type: 'image/png' } },
         { tagName: 'meta', attributes: { name: 'application-name', content: 'Site name' } },
         { tagName: 'meta', attributes: { name: 'theme-color', content: '#ff0000' } },
-        { tagName: 'meta', attributes: { name: 'msapplication-TileColor', content: '#ff0000' } }
+        { tagName: 'meta', attributes: { name: 'msapplication-TileColor', content: '#ff0000' } },
       ]));
     });
   });

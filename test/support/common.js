@@ -32,6 +32,11 @@ global.vcr = function (...args) {
   return function () {
     let cassetteName = (this.currentTest || this.test).fullTitle();
     if (suffix) { cassetteName += suffix; }
-    return vcr.useCassette(slugify(cassetteName), action);
+
+    return vcr.useCassette('json-api-doc', (action) => {
+      require('../../src/index');
+    }).then(() => {
+      return vcr.useCassette(slugify(cassetteName), action);
+    });
   };
 };

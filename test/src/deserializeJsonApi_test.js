@@ -1,4 +1,4 @@
-import deserializeJsonApi from '../../src/deserializeJsonApi';
+import deserializeJsonApi from '../../src/utils/deserializeJsonApi';
 
 import arrayRelationships from '../fixtures/json_objects/arrayRelationships.json';
 import arrayNoRelationships from '../fixtures/json_objects/arrayNoRelationships.json';

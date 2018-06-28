@@ -162,7 +162,7 @@ describe('Site API', () => {
 
   describe('upload request', () => {
     it('create', vcr(async () => {
-      const uploadRequest = await client.uploadRequests.create({ filename: 'test.svg' });
+      const uploadRequest = await client.uploadRequest.create({ filename: 'test.svg' });
       expect(uploadRequest.id).to.not.be.undefined();
     }));
   });

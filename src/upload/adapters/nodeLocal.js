@@ -31,7 +31,7 @@ export default async function nodeLocal(client, filePath) {
   const { size } = await stat(filePath);
   const format = path.extname(filePath).slice(1);
 
-  const { id, url } = await client.uploadRequests.create({
+  const { id, url } = await client.uploadRequest.create({
     filename: path.basename(filePath),
   });
 

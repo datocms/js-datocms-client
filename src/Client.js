@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import { camelizeKeys, decamelizeKeys as humpsDecamelizeKeys } from 'humps';
 import ApiException from './ApiException';
 import pkg from '../package.json';
-import isBrowser from './isBrowser';
+import isBrowser from './utils/isBrowser';
 
 const decamelizeKeys = (payload) => {
   return humpsDecamelizeKeys(payload, (key, convert, options) => {
@@ -15,9 +15,11 @@ const decamelizeKeys = (payload) => {
   });
 };
 
+const fetch = isBrowser ? window.fetch : require('./utils/fetch');
+
 /* eslint-disable global-require */
 if (!isBrowser) {
-  global.fetch = require('./fetch');
+  global.fetch = require('./utils/fetch');
 }
 /* eslint-enable global-require */
 
@@ -91,7 +93,6 @@ export default class Client {
     const query = Object.keys(params).length ?
       `?${queryString.stringify(params)}` :
       '';
-
     return `${this.baseUrl}${path}${query}`;
   }
 
