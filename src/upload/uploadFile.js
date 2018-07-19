@@ -11,8 +11,7 @@ const rawUploadFile = (client, source) => {
   return nodeUrl(client, source);
 };
 
-// const wait = ms => new Promise(r => setTimeout(r, ms));
-const wait = () => Promise.resolve();
+const wait = ms => new Promise(r => setTimeout(r, ms));
 
 const imageFormats = ['png', 'jpg', 'jpeg', 'gif'];
 

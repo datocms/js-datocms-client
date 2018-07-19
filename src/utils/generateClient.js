@@ -94,7 +94,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                     singularized,
                     unserializedBody,
                     link,
-                    lastUrlId
+                    link.method === 'PUT' && lastUrlId
                   );
                 }
 

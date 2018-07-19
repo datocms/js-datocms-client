@@ -77,6 +77,8 @@ describe('CLI tool', () => {
       orderingDirection: null,
       orderingField: null,
       draftModeActive: false,
+      allLocalesRequired: false,
+      titleField: null,
     });
 
     const textField = await client.fields.create(
@@ -84,7 +86,7 @@ describe('CLI tool', () => {
       {
         apiKey: 'title',
         fieldType: 'string',
-        appeareance: { type: 'title' },
+        appeareance: { editor: 'single_line', parameters: { heading: true } },
         label: 'Title',
         localized: true,
         position: 99,
@@ -99,14 +101,21 @@ describe('CLI tool', () => {
         apiKey: 'slug',
         fieldType: 'slug',
         appeareance: {
-          titleFieldId: textField.id,
-          urlPrefix: null,
+          editor: 'slug',
+          parameters: {
+            urlPrefix: null,
+          },
         },
         label: 'Slug',
         localized: false,
         position: 99,
         hint: '',
-        validators: { required: {} },
+        validators: {
+          required: {},
+          slugTitleField: {
+            titleFieldId: textField.id,
+          }
+        },
       }
     );
 
@@ -115,7 +124,10 @@ describe('CLI tool', () => {
       {
         apiKey: 'image',
         fieldType: 'file',
-        appeareance: null,
+        appeareance: {
+          editor: 'file',
+          parameters: {}
+        },
         label: 'Image',
         localized: false,
         position: 99,
@@ -134,7 +146,10 @@ describe('CLI tool', () => {
       {
         apiKey: 'file',
         fieldType: 'file',
-        appeareance: null,
+        appeareance: {
+          editor: 'file',
+          parameters: {}
+        },
         label: 'File',
         localized: false,
         position: 99,
@@ -159,10 +174,13 @@ describe('CLI tool', () => {
     await client.items.publish(item.id);
 
     const dir = tmp.dirSync();
-    const dirName = dir.name;
 
-    // const dirName = path.resolve('test/fixtures/dump');
+    // const dirName = dir.name;
+    // FOR DEV
+    const dirName = path.resolve('test/fixtures/dump');
+
     const configFile = path.resolve('test/fixtures/dato.config.js');
+
     await dump(configFile, client, true, dirName);
 
     const result = dirCompare.compareSync(
@@ -176,6 +194,6 @@ describe('CLI tool', () => {
     rimraf.sync(path.join(dirName, '*'));
     dir.removeCallback();
 
-    await accountClient.sites.destroy(site.id);
+    await destroySiteAndWait(accountClient, site);
   }));
 });

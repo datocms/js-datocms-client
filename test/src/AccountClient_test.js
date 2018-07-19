@@ -3,8 +3,7 @@ import { AccountClient } from '../../src/index';
 
 const client = new AccountClient('XXX', null, 'http://account-api.lvh.me:3001');
 
-// const wait = ms => new Promise(r => setTimeout(r, ms));
-const wait = () => Promise.resolve();
+const wait = ms => new Promise(r => setTimeout(r, ms));
 
 describe('Account API', () => {
   describe('account', () => {
@@ -12,9 +11,9 @@ describe('Account API', () => {
       let account = await client.account.find();
       expect(account).to.have.property('id');
       account = await client.account.update(
-        u({ email: 'foo@bar.com' }, account)
+        u({ email: 'prettysurethiswillbeunique@bar.com' }, account)
       );
-      expect(account.email).to.equal('foo@bar.com');
+      expect(account.email).to.equal('prettysurethiswillbeunique@bar.com');
     }));
   });
 
@@ -31,9 +30,7 @@ describe('Account API', () => {
       const site = await client.sites.find(newSite.id);
       expect(site.name).to.equal('Blog');
 
-      await client.sites.destroy(newSite.id);
-
-      await wait(2000);
+      await destroySiteAndWait(client, newSite);
 
       expect(await client.sites.all()).to.have.length(0);
     }));

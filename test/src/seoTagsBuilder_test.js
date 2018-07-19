@@ -119,7 +119,10 @@ describe('seoTagsBuilder', () => {
               "localized": false,
               "validators": {},
               "position": 1,
-              "appeareance": {}
+              "appeareance": {
+                "editor": "file",
+                "parameters": {}
+              }
             },
             "relationships": {
               "item_type": {
@@ -144,7 +147,7 @@ describe('seoTagsBuilder', () => {
               },
               "position": 2,
               "appeareance": {
-                "type": "title"
+                "parameters": { "heading": true }
               }
             },
             "relationships": {
@@ -168,7 +171,7 @@ describe('seoTagsBuilder', () => {
               "validators": {},
               "position": 3,
               "appeareance": {
-                "type": "plain"
+                "parameters": { "heading": false }
               }
             },
             "relationships": {
@@ -191,7 +194,10 @@ describe('seoTagsBuilder', () => {
               "localized": false,
               "validators": {},
               "position": 4,
-              "appeareance": {}
+              "appeareance": {
+                "editor": "seo",
+                "parameters": {}
+              }
             },
             "relationships": {
               "item_type": {

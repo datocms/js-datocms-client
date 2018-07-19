@@ -3,9 +3,6 @@ import { SiteClient, AccountClient } from '../../src/index';
 
 const accountClient = new AccountClient('XXX', null, 'http://account-api.lvh.me:3001');
 
-// const wait = ms => new Promise(r => setTimeout(r, ms));
-const wait = () => Promise.resolve();
-
 describe('Site API', () => {
   let site;
   let client;
@@ -17,8 +14,7 @@ describe('Site API', () => {
 
   afterEach(vcr('after', async () => {
     if (site) {
-      await accountClient.sites.destroy(site.id);
-      await wait(2000);
+      await destroySiteAndWait(accountClient, site);
     }
   }));
 
@@ -76,6 +72,8 @@ describe('Site API', () => {
         orderingDirection: null,
         draftModeActive: false,
         orderingField: null,
+        allLocalesRequired: true,
+        titleField: null,
       });
       expect(itemType.name).to.equal('Article');
 
@@ -107,22 +105,24 @@ describe('Site API', () => {
         sortable: false,
         orderingDirection: null,
         orderingField: null,
+        allLocalesRequired: true,
+        titleField: null,
       });
 
       const field = await client.fields.create(
         itemType.id,
         {
-          label: 'Title',
-          fieldType: 'string',
+          label: 'Image',
+          fieldType: 'file',
           localized: false,
-          apiKey: 'title',
+          apiKey: 'image',
           hint: '',
           validators: { required: {} },
-          appeareance: { type: 'plain' },
+          appeareance: { editor: 'file', parameters: {} },
           position: 1,
         }
       );
-      expect(field.label).to.equal('Title');
+      expect(field.label).to.equal('Image');
 
       const foundField = await client.fields.find(field.id);
       expect(foundField.id).to.equal(field.id);
@@ -179,18 +179,20 @@ describe('Site API', () => {
         draftModeActive: false,
         orderingDirection: null,
         orderingField: null,
+        allLocalesRequired: true,
+        titleField: null,
       });
 
       await client.fields.create(
         itemType.id,
         {
           label: 'Title',
-          fieldType: 'text',
+          fieldType: 'string',
           localized: false,
           apiKey: 'title',
           hint: '',
           validators: { required: {} },
-          appeareance: { type: 'plain' },
+          appeareance: { editor: 'single_line', parameters: { heading: true } },
           position: 1,
         }
       );
@@ -206,7 +208,10 @@ describe('Site API', () => {
           validators: {
             required: {},
           },
-          appeareance: {},
+          appeareance: {
+            editor: 'file',
+            parameters: {},
+          },
           position: 2,
         }
       );

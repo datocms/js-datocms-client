@@ -40,3 +40,18 @@ global.vcr = function (...args) {
     });
   };
 };
+
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+global.destroySiteAndWait = async function(client, site) {
+  await client.sites.destroy(site.id);
+
+  while (true) {
+    try {
+      await client.sites.find(site.id)
+      await wait(3000);
+    } catch(e) {
+      break;
+    }
+  }
+}

@@ -19,6 +19,13 @@ module.exports = {
     "regenerateToken": true,
     "destroy": true
   },
+  "uiExtensions": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
+    "destroy": true
+  },
   "site": {
     "find": true,
     "update": true
