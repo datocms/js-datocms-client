@@ -22,8 +22,7 @@ function seoAttributeWithFallback(attribute, alternative, item, site) {
 
 export const builders = {
   title(item, site) {
-    const titleField = item && item.fields
-      .find(f => f.fieldType === 'string' && f.appeareance.type === 'title');
+    const titleField = item && item.itemType.titleField;
 
     const title = seoAttributeWithFallback(
       'title',

@@ -105,6 +105,12 @@ describe('seoTagsBuilder', () => {
               },
               "singleton_item": {
                 "data": null
+              },
+              "title_field": {
+                "data": {
+                  "type": "field",
+                  "id": "15085"
+                }
               }
             }
           },
@@ -147,7 +153,7 @@ describe('seoTagsBuilder', () => {
               },
               "position": 2,
               "appeareance": {
-                "parameters": { "heading": true }
+                "parameters": { "heading": false }
               }
             },
             "relationships": {
@@ -256,6 +262,87 @@ describe('seoTagsBuilder', () => {
 
     item = memo(() => null);
     site = memo(() => itemsRepo().site);
+  });
+
+  describe('title()', () => {
+    let result, titleValue;
+
+    beforeEach(() => {
+      result = memo(() => builders.title(item(), site()));
+      titleValue = memo(() => result()[0].content);
+    });
+
+    context('with no fallback seo', () => {
+      context('with no item', () => {
+        it('returns no tags', () => {
+          expect(result()).to.be.undefined();
+        });
+      });
+
+      context('with item', () => {
+        beforeEach(() => {
+          item = memo(() => itemsRepo().articles[0]);
+        });
+
+        context('no SEO', () => {
+          it('returns no tags', () => {
+            expect(result()).to.be.undefined();
+          });
+        });
+
+        context('with SEO', () => {
+          beforeEach(() => {
+            seo = memo(() => camelizeKeys({
+              "title": "SEO title",
+            }));
+          });
+
+          it('returns seo title', () => {
+            expect(titleValue()).to.eq("SEO title");
+          });
+        });
+      });
+    });
+
+    context('with fallback seo', () => {
+      beforeEach(() => {
+        globalSeo = memo(() => camelizeKeys({
+          "fallback_seo": {
+            "title": "Default title"
+          }
+        }));
+      });
+
+      context('with no item', () => {
+        it('returns fallback description', () => {
+          expect(titleValue()).to.eq("Default title");
+        });
+      });
+
+      context('with item', () => {
+        beforeEach(() => {
+          item = memo(() => itemsRepo().articles[0]);
+        });
+
+        context('no SEO', () => {
+          it('returns fallback description', () => {
+            expect(titleValue()).to.eq("Default title");
+          });
+        });
+
+        context('with SEO', () => {
+          beforeEach(() => {
+            seo = memo(() => camelizeKeys({
+              "title": "SEO title",
+            }));
+          });
+
+          it('returns seo title', () => {
+            expect(titleValue()).to.eq("SEO title");
+          });
+        });
+      });
+    });
   });
 
   describe('description()', () => {
