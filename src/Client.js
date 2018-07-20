@@ -99,8 +99,8 @@ export default class Client {
   request(url, options = {}) {
     const fullHeaders = Object.assign(
       {},
-      this.extraHeaders,
       this.defaultHeaders(),
+      this.extraHeaders,
       options.headers
     );
 
