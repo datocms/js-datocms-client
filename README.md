@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/datocms/js-datocms-client.svg?branch=master)](https://travis-ci.org/datocms/js-datocms-client)
 
-CLI tool for [DatoCMS](https://www.datocms.com).
+API client and CLI tool for [DatoCMS](https://www.datocms.com). Take a look at the full [API documentation](https://www.datocms.com/content-management-api/) for examples.
 
 ## How to integrate DatoCMS with your static website
 
@@ -12,17 +12,9 @@ Please head over our documentation to learn everything you need:
 * [Metalsmith](https://docs.datocms.com/metalsmith/overview.html)
 * [Other generators](https://docs.datocms.com/other/overview.html)
 
-## API Client
-
-This package also exposes an API client, useful ie. to import existing content in your DatoCMS administrative area. Read our [documentation](https://docs.datocms.com/api-client/nodejs.html) for detailed info.
-
 ## Development
 
 After checking out the repo, run `npm install` and `bundle install` to install dependencies. Then, run `npm test` to run the tests.
-
-### Updating the client when the API changes
-
-The DatoCMS API provides an always up-to-date [JSON Hyperschema](http://json-schema.org/latest/json-schema-hypermedia.html): the code of this package is generated automatically starting from the schema running `rake regenerate`.
 
 ## Contributing
 
