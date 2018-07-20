@@ -105,10 +105,9 @@ function detectHugo(dir) {
 }
 
 export default function detectSsg(dir) {
-  return detectRubyGenerator(dir) ||
-    detectNodeGenerator(dir) ||
-    detectPythonGenerator(dir) ||
-    detectHugo(dir) ||
-    'unknown';
+  return detectRubyGenerator(dir)
+    || detectNodeGenerator(dir)
+    || detectPythonGenerator(dir)
+    || detectHugo(dir)
+    || 'unknown';
 }
-

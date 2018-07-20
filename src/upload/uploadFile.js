@@ -1,15 +1,9 @@
-import isBrowser from '../utils/isBrowser';
-import browser from './adapters/browser';
-import nodeUrl from './adapters/node';
+import { isBrowser } from 'browser-or-node';
+import fetch from '../utils/fetch';
 
-/* global fetch */
-const rawUploadFile = (client, source) => {
-  if (isBrowser) {
-    return browser(client, source);
-  }
-
-  return nodeUrl(client, source);
-};
+const rawUploadFile = isBrowser
+  ? require('./adapters/browser').default
+  : require('./adapters/node').default;
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
@@ -39,31 +33,31 @@ const fetchJson = url => fetch(url).then((res) => {
 
 export default function uploadFile(client, source) {
   return rawUploadFile(client, source)
-  .then((hash) => {
-    if (imageFormats.indexOf(hash.format) < 0) {
-      return Promise.resolve(
-        Object.assign({ width: null, height: null }, hash)
-      );
-    }
+    .then((hash) => {
+      if (imageFormats.indexOf(hash.format) < 0) {
+        return Promise.resolve(
+          Object.assign({ width: null, height: null }, hash),
+        );
+      }
 
-    return retryOperation(
-      fetchJson.bind(null, `https://www.datocms-assets.com${hash.path}?fm=json`),
-      500,
-      5
-    ).then(({ PixelHeight, PixelWidth }) => {
-      return Object.assign(
-        { height: PixelHeight, width: PixelWidth },
-        hash
+      return retryOperation(
+        fetchJson.bind(null, `https://www.datocms-assets.com${hash.path}?fm=json`),
+        500,
+        5,
+      ).then(({ PixelHeight, PixelWidth }) => {
+        return Object.assign(
+          { height: PixelHeight, width: PixelWidth },
+          hash,
+        );
+      });
+    }).then((attributes) => {
+      return client.uploads.create(
+        Object.assign(
+          { alt: '', title: '' },
+          attributes,
+        ),
       );
+    }).then((upload) => {
+      return Promise.resolve(upload.id);
     });
-  }).then((attributes) => {
-    return client.uploads.create(
-      Object.assign(
-        { alt: '', title: '' },
-        attributes,
-      )
-    );
-  }).then((upload) => {
-    return Promise.resolve(upload.id);
-  });
 }

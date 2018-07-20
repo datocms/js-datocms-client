@@ -1,10 +1,8 @@
-/* global fetch */
-
 import queryString from 'query-string';
 import { camelizeKeys, decamelizeKeys as humpsDecamelizeKeys } from 'humps';
 import ApiException from './ApiException';
 import pkg from '../package.json';
-import isBrowser from './utils/isBrowser';
+import fetch from './utils/fetch';
 
 const decamelizeKeys = (payload) => {
   return humpsDecamelizeKeys(payload, (key, convert, options) => {
@@ -14,14 +12,6 @@ const decamelizeKeys = (payload) => {
     return convert(key, options);
   });
 };
-
-const fetch = isBrowser ? window.fetch : require('./utils/fetch');
-
-/* eslint-disable global-require */
-if (!isBrowser) {
-  global.fetch = require('./utils/fetch');
-}
-/* eslint-enable global-require */
 
 export default class Client {
   constructor(token, extraHeaders, baseUrl) {
@@ -33,7 +23,7 @@ export default class Client {
   get(url, params = {}, options = {}) {
     return this.request(
       this.buildUrl(url, params),
-      options
+      options,
     );
   }
 
@@ -45,8 +35,8 @@ export default class Client {
           method: 'PUT',
           body: JSON.stringify(decamelizeKeys(body)),
         },
-        options
-      )
+        options,
+      ),
     );
   }
 
@@ -58,8 +48,8 @@ export default class Client {
           method: 'POST',
           body: JSON.stringify(decamelizeKeys(body)),
         },
-        options
-      )
+        options,
+      ),
     );
   }
 
@@ -70,29 +60,25 @@ export default class Client {
         {
           method: 'DELETE',
         },
-        options
-      )
+        options,
+      ),
     );
   }
 
   defaultHeaders() {
-    const userAgent = isBrowser ?
-      'js-client (browser)' :
-      'js-client (nodejs)';
-
     return {
       'content-type': 'application/json',
       accept: 'application/json',
       authorization: `Bearer ${this.token}`,
-      'user-agent': `${userAgent} v${pkg.version}`,
+      'user-agent': `js-client v${pkg.version}`,
       'X-Api-Version': '2',
     };
   }
 
   buildUrl(path, params = {}) {
-    const query = Object.keys(params).length ?
-      `?${queryString.stringify(params)}` :
-      '';
+    const query = Object.keys(params).length
+      ? `?${queryString.stringify(params)}`
+      : '';
     return `${this.baseUrl}${path}${query}`;
   }
 
@@ -101,13 +87,13 @@ export default class Client {
       {},
       this.defaultHeaders(),
       this.extraHeaders,
-      options.headers
+      options.headers,
     );
 
     const fullOptions = Object.assign(
       {},
       options,
-      { headers: fullHeaders }
+      { headers: fullHeaders },
     );
 
     return fetch(url, fullOptions)

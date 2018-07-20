@@ -86,7 +86,7 @@ export default class Item {
 
     if (title && prefixWithId) {
       return `${this.id}-${slugify(title)}`;
-    } else if (title) {
+    } if (title) {
       return slugify(title);
     }
 
@@ -95,8 +95,8 @@ export default class Item {
 
   get titleField() {
     return this.fields.find(field => (
-      field.fieldType === 'string' &&
-        field.appeareance.type === 'title'
+      field.fieldType === 'string'
+        && field.appeareance.type === 'title'
     ));
   }
 
@@ -158,8 +158,7 @@ export default class Item {
   }
 
   readAttribute(field) {
-    const fieldType = field.fieldType;
-    const localized = field.localized;
+    const { fieldType, localized } = field;
 
     let value;
 

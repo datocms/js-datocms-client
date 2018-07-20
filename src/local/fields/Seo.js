@@ -18,8 +18,8 @@ export default class Seo {
   get image() {
     const { imgixHost, itemsRepo } = this;
 
-    return this.value.image &&
-      new File(this.value.image, { itemsRepo, imgixHost });
+    return this.value.image
+      && new File(this.value.image, { itemsRepo, imgixHost });
   }
 
   toMap() {

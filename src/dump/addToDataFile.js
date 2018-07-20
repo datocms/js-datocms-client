@@ -8,8 +8,8 @@ export default async function addToDataFile(file, format, data) {
 
   const newContent = oldContent.replace(
     /\n*(#\s*datocms:start[\s\S]*#\s*datocms:end|$)/,
-    `\n\n# datocms:start\n${contentToAdd}\n# datocms:end`
+    `\n\n# datocms:start\n${contentToAdd}\n# datocms:end`,
   );
 
-  return await writeFile(file, newContent);
+  return writeFile(file, newContent);
 }

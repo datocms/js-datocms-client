@@ -12,14 +12,13 @@ function deserialize({ id, attributes, relationships }) {
         return;
       }
       result[key] = relationshipData ? relationshipData.id : null;
-      return;
     });
   }
   return result;
 }
 
 export default function deserializeJsonApi(json) {
-  const data = json.data;
+  const { data } = json;
 
   if (Array.isArray(data)) {
     return data.map(item => deserialize(item));

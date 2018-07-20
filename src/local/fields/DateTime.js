@@ -11,4 +11,3 @@ DateTime.prototype = Object.create(Date.prototype);
 DateTime.prototype.toMap = function toMap() {
   return this.toISOString();
 };
-

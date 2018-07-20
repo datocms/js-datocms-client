@@ -1,5 +1,3 @@
-require('babel-polyfill');
-
 import chai, { expect } from 'chai';
 import dirtyChai from 'dirty-chai';
 import vcr from 'nock-vcr-recorder';
@@ -49,7 +47,7 @@ global.destroySiteAndWait = async function(client, site) {
   while (true) {
     try {
       await client.sites.find(site.id)
-      await wait(3000);
+      //await wait(3000);
     } catch(e) {
       break;
     }

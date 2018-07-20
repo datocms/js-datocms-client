@@ -11,4 +11,3 @@ DateOnly.prototype = Object.create(Date.prototype);
 DateOnly.prototype.toMap = function toMap() {
   return this.toISOString().slice(0, 10);
 };
-

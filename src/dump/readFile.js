@@ -11,6 +11,5 @@ export default async function readFile(filePath) {
     return null;
   }
 
-  return await fsReadFile(filePath, 'utf-8');
+  return fsReadFile(filePath, 'utf-8');
 }
-

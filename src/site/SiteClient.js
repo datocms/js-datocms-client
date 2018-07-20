@@ -8,5 +8,5 @@ export default generateClient(
   {
     uploadFile,
     uploadImage: uploadFile,
-  }
+  },
 );

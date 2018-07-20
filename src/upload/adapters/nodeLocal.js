@@ -14,14 +14,14 @@ function uploadToS3(url, filePath, size) {
         'content-length': size,
       },
     })
-    .on('response', (res) => {
-      if (res.statusCode === 200) {
-        resolve();
-      } else {
-        reject(new Error(`Invalid status code: ${res.statusCode}`));
-      }
-    })
-    .on('error', reject);
+      .on('response', (res) => {
+        if (res.statusCode === 200) {
+          resolve();
+        } else {
+          reject(new Error(`Invalid status code: ${res.statusCode}`));
+        }
+      })
+      .on('error', reject);
 
     fs.createReadStream(filePath).pipe(req);
   });

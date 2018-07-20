@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'isomorphic-fetch';
 import HttpsProxyAgent from 'https-proxy-agent';
 
 export default function fetchWithProxy(url, options) {

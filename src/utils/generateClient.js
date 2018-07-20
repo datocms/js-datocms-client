@@ -1,5 +1,5 @@
 import 'proxy-polyfill';
-import parser from 'json-schema-ref-parser';
+import jsonref from 'json-schema-ref-parser';
 import pluralize from 'pluralize';
 import { decamelize, camelize } from 'humps';
 import fetch from './fetch';
@@ -11,8 +11,8 @@ import fetchAllPages from './fetchAllPages';
 const getProps = obj => (
   Object.getOwnPropertyNames(obj)
     .concat(
-      Object.getPrototypeOf(obj) !== Object.prototype &&
-        Object.getOwnPropertyNames(Object.getPrototypeOf(obj))
+      Object.getPrototypeOf(obj) !== Object.prototype
+        && Object.getOwnPropertyNames(Object.getPrototypeOf(obj)),
     )
     .filter(p => p !== 'constructor')
 );
@@ -37,15 +37,15 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
         }
 
         if (rawClientProps.includes(namespace)) {
-          return typeof rawClient[namespace] === 'function' ?
-            rawClient[namespace].bind(rawClient) :
-            rawClient[namespace];
+          return typeof rawClient[namespace] === 'function'
+            ? rawClient[namespace].bind(rawClient)
+            : rawClient[namespace];
         }
 
         if (extraProps.includes(namespace)) {
-          return typeof extraMethods[namespace] === 'function' ?
-            extraMethods[namespace].bind(client, client) :
-            extraMethods[namespace];
+          return typeof extraMethods[namespace] === 'function'
+            ? extraMethods[namespace].bind(client, client)
+            : extraMethods[namespace];
         }
 
         return new Proxy(cache[namespace] || {}, {
@@ -54,7 +54,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
               if (!schemaPromise) {
                 schemaPromise = fetch(`https://${subdomain}.datocms.com/docs/${subdomain}-hyperschema.json`)
                   .then(res => res.json())
-                  .then(schema => parser.dereference(schema));
+                  .then(schema => jsonref.dereference(schema));
               }
 
               return schemaPromise.then((schema) => {
@@ -73,7 +73,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                 const identityRegexp = /\{\(.*?definitions%2F(.*?)%2Fdefinitions%2Fidentity\)}/g;
 
                 const link = sub.links.find(
-                  l => (methodNames[l.rel] || camelize(l.rel)) === apiCall
+                  l => (methodNames[l.rel] || camelize(l.rel)) === apiCall,
                 );
 
                 if (!link) {
@@ -94,17 +94,17 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                     singularized,
                     unserializedBody,
                     link,
-                    link.method === 'PUT' && lastUrlId
+                    link.method === 'PUT' && lastUrlId,
                   );
                 }
 
                 if (link.method === 'POST') {
                   return rawClient.post(`${url}`, body)
                     .then(response => Promise.resolve(deserializeJsonApi(response)));
-                } else if (link.method === 'PUT') {
+                } if (link.method === 'PUT') {
                   return rawClient.put(`${url}`, body)
                     .then(response => Promise.resolve(deserializeJsonApi(response)));
-                } else if (link.method === 'DELETE') {
+                } if (link.method === 'DELETE') {
                   return rawClient.delete(url)
                     .then(response => Promise.resolve(deserializeJsonApi(response)));
                 }
@@ -112,23 +112,23 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                 const queryString = args.shift();
                 const options = args.shift() || {};
 
-                const deserializeResponse = Object.prototype.hasOwnProperty.call(options, 'deserializeResponse') ?
-                  options.deserializeResponse :
-                  true;
+                const deserializeResponse = Object.prototype.hasOwnProperty.call(options, 'deserializeResponse')
+                  ? options.deserializeResponse
+                  : true;
 
-                const allPages = Object.prototype.hasOwnProperty.call(options, 'allPages') ?
-                  options.allPages :
-                  false;
+                const allPages = Object.prototype.hasOwnProperty.call(options, 'allPages')
+                  ? options.allPages
+                  : false;
 
-                const request = allPages ?
-                  fetchAllPages(rawClient, url, queryString) :
-                  rawClient.get(url, queryString);
+                const request = allPages
+                  ? fetchAllPages(rawClient, url, queryString)
+                  : rawClient.get(url, queryString);
 
                 return request
                   .then(response => Promise.resolve(
-                    deserializeResponse ?
-                      deserializeJsonApi(response) :
-                      response
+                    deserializeResponse
+                      ? deserializeJsonApi(response)
+                      : response,
                   ));
               });
             };

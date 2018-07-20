@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
-const Visualizer = require('webpack-visualizer-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const BUILD_DIR = path.resolve(__dirname, 'dist');
 const APP_DIR = path.resolve(__dirname, 'src');
@@ -8,25 +8,21 @@ const addPolyfills = !!process.env.ADD_POLYFILLS;
 
 var config = {
   entry: APP_DIR + '/index.js',
+  mode: 'production',
   module: {
-    preLoaders: [
+    rules: [
       {
         test: /\.js$/,
         include: APP_DIR,
-        loaders: ['eslint']
-      }
-    ],
-    loaders: [
+        loader: 'eslint-loader',
+        enforce: 'pre'
+      },
       {
         test: /\.js?$/,
         include: APP_DIR,
-        loaders: ['babel']
+        loader: 'babel-loader'
       },
-      {
-        test: /\.json$/,
-        loader: 'json'
-      },
-    ]
+    ],
   },
   output: {
     path: BUILD_DIR,
@@ -35,22 +31,26 @@ var config = {
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
+  optimization: { minimize: true },
+  resolve: {
+    alias: {
+      'js-yaml$': path.resolve(__dirname, 'src/utils/nop.js'),
+      'http$': path.resolve(__dirname, 'src/utils/nop.js'),
+      'https-proxy-agent$': path.resolve(__dirname, 'src/utils/nop.js'),
+      'babel-polyfill$': path.resolve(__dirname, 'src/utils/nop.js'),
+      './adapters/node': path.resolve(__dirname, 'src/upload/adapters/browser.js'),
+    }
+  }
 };
 
 config.plugins = [
-  new webpack.IgnorePlugin(/(adapters\/node|node-fetch)/),
   new webpack.DefinePlugin({
     'process.env': {
       'NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      'APP_ENV': JSON.stringify('browser'),
-      'ADD_POLYFILLS': JSON.stringify(addPolyfills),
     }
   }),
-  new webpack.optimize.UglifyJsPlugin({
-    compress: { warnings: false },
-    comments: false,
-  })
-];
+  //new BundleAnalyzerPlugin(),
+].filter(x => !!x);
 
 module.exports = config;

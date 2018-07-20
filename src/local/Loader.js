@@ -1,5 +1,5 @@
-import EntitiesRepo from '../local/EntitiesRepo';
-import ItemsRepo from '../local/ItemsRepo';
+import EntitiesRepo from './EntitiesRepo';
+import ItemsRepo from './ItemsRepo';
 
 export default class Loader {
   constructor(client, previewMode = false) {
@@ -12,16 +12,16 @@ export default class Loader {
       this.client.get('/site', { include: 'item_types,item_types.fields' }),
       this.client.items.all(
         { version: this.previewMode ? 'latest' : 'published' },
-        { deserializeResponse: false, allPages: true }
+        { deserializeResponse: false, allPages: true },
       ),
       this.client.uploads.all(
         {},
-        { deserializeResponse: false, allPages: true }
+        { deserializeResponse: false, allPages: true },
       ),
     ])
-    .then(([site, allItems, allUploads]) => {
-      this.entitiesRepo = new EntitiesRepo(site, allItems, allUploads);
-      this.itemsRepo = new ItemsRepo(this.entitiesRepo);
-    });
+      .then(([site, allItems, allUploads]) => {
+        this.entitiesRepo = new EntitiesRepo(site, allItems, allUploads);
+        this.itemsRepo = new ItemsRepo(this.entitiesRepo);
+      });
   }
 }

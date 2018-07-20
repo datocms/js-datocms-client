@@ -37,7 +37,7 @@ export default function (options) {
       {
         'X-Reason': 'dump',
         'X-SSG': detectSsg(process.cwd()),
-      }
+      },
     );
 
     function exec(prefix = '') {

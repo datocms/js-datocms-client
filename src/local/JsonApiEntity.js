@@ -15,7 +15,7 @@ export default class JsonApiEntity {
 
           if (Array.isArray(linkage)) {
             return linkage.map(item => repo.findEntity(item.type, item.id));
-          } else if (linkage) {
+          } if (linkage) {
             return repo.findEntity(linkage.type, linkage.id);
           }
 

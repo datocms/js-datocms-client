@@ -32,13 +32,13 @@ export default function () {
       reject();
     });
   })
-  .then((token) => {
-    return fsAppendFile('.env', `DATO_API_TOKEN=${token}`)
-      .then(() => process.stdout.write('\nToken added to .env file.\n\n'))
-      .then(() => token);
-  })
-  .catch(() => {
-    process.stderr.write('\nMissing token.\n');
-    process.exit(1);
-  });
+    .then((token) => {
+      return fsAppendFile('.env', `DATO_API_TOKEN=${token}`)
+        .then(() => process.stdout.write('\nToken added to .env file.\n\n'))
+        .then(() => token);
+    })
+    .catch(() => {
+      process.stderr.write('\nMissing token.\n');
+      process.exit(1);
+    });
 }

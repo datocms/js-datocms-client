@@ -11,4 +11,3 @@ export default function writeFile(filePath, content) {
     .then(() => fsWriteFile(filePath, content))
     .then(() => `Written ${path.relative(process.cwd(), filePath)}`);
 }
-

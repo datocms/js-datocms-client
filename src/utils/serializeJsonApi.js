@@ -5,9 +5,9 @@ const linkAttributes = schema => schema.properties.data.properties.attributes;
 const requiredAttributes = schema => (linkAttributes(schema).required || []);
 
 const linkRelationships = schema => (
-  !schema || !schema.properties.data ?
-    {} :
-    schema.properties.data.properties.relationships
+  !schema || !schema.properties.data
+    ? {}
+    : schema.properties.data.properties.relationships
 );
 const requiredRelationships = schema => (linkRelationships(schema).required || []);
 
@@ -42,7 +42,7 @@ function relationships(type, schema) {
 
       return Object.assign(
         acc,
-        { [relationship]: { collection: isCollection, type: relType } }
+        { [relationship]: { collection: isCollection, type: relType } },
       );
     }, {});
 }
@@ -65,7 +65,7 @@ function serializedRelationships(type, unserializedBody, schema) {
         }
 
         return Object.assign(acc, { [relationship]: { data } });
-      } else if (requiredRelationships(schema).includes(relationship)) {
+      } if (requiredRelationships(schema).includes(relationship)) {
         throw new Error(`Required attribute: ${relationship}`);
       }
 
@@ -74,18 +74,18 @@ function serializedRelationships(type, unserializedBody, schema) {
 }
 
 function serializedAttributes(type, unserializedBody = {}, schema) {
-  const attrs = type === 'item' ?
-    diff(Object.keys(unserializedBody), [
+  const attrs = type === 'item'
+    ? diff(Object.keys(unserializedBody), [
       'itemType', 'id', 'createdAt',
       'updatedAt', 'isValid', 'publishedVersion',
       'currentVersion',
-    ]) :
-    Object.keys(linkAttributes(schema).properties);
+    ])
+    : Object.keys(linkAttributes(schema).properties);
 
   return attrs.reduce((acc, attribute) => {
     if (Object.prototype.hasOwnProperty.call(unserializedBody, camelize(attribute))) {
       return Object.assign(acc, { [attribute]: unserializedBody[camelize(attribute)] });
-    } else if (requiredAttributes(schema).includes(attribute)) {
+    } if (requiredAttributes(schema).includes(attribute)) {
       throw new Error(`Required attribute: ${attribute}`);
     }
 

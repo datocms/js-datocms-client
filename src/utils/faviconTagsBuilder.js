@@ -5,40 +5,34 @@ const builders = {
   apple(site) {
     if (!site.favicon) return undefined;
 
-    return [57, 60, 72, 76, 114, 120, 144, 152, 180].map(size =>
-      tag(
-        'link',
-        {
-          rel: 'apple-touch-icon',
-          sizes: `${size}x${size}`,
-          href: site.favicon.url({ w: size, h: size }),
-        }
-      )
-    );
+    return [57, 60, 72, 76, 114, 120, 144, 152, 180].map(size => tag(
+      'link',
+      {
+        rel: 'apple-touch-icon',
+        sizes: `${size}x${size}`,
+        href: site.favicon.url({ w: size, h: size }),
+      },
+    ));
   },
 
   windows(site) {
     if (!site.favicon) return undefined;
 
-    return [[70, 70], [150, 150], [310, 310], [310, 150]].map(([w, h]) =>
-      metaTag(`msapplication-square${w}x${h}`, site.favicon.url({ w, h }))
-    );
+    return [[70, 70], [150, 150], [310, 310], [310, 150]].map(([w, h]) => metaTag(`msapplication-square${w}x${h}`, site.favicon.url({ w, h })));
   },
 
   icon(site) {
     if (!site.favicon) return undefined;
 
-    return [16, 32, 96, 192].map(size =>
-      tag(
-        'link',
-        {
-          rel: 'icon',
-          sizes: `${size}x${size}`,
-          href: site.favicon.url({ w: size, h: size }),
-          type: `image/${site.favicon.format}`,
-        }
-      )
-    );
+    return [16, 32, 96, 192].map(size => tag(
+      'link',
+      {
+        rel: 'icon',
+        sizes: `${size}x${size}`,
+        href: site.favicon.url({ w: size, h: size }),
+        type: `image/${site.favicon.format}`,
+      },
+    ));
   },
 
   appName(site) {

@@ -1,4 +1,4 @@
-const parser = require('json-schema-ref-parser');
+const jsonref = require('json-schema-ref-parser');
 const fetch = require('node-fetch');
 const pluralize = require('pluralize');
 const camelize = require('humps').camelize;
@@ -12,7 +12,7 @@ const methodNames = {
 function buildCache(subdomain, dir) {
   return fetch(`https://${subdomain}.datocms.com/docs/${subdomain}-hyperschema.json`)
     .then(res => res.json())
-    .then(schema => parser.dereference(schema))
+    .then(schema => jsonref.dereference(schema))
     .then(schema => {
       const data = Object.entries(schema.properties).reduce((acc, entry) => {entry
         const key = entry[0];

@@ -72,7 +72,7 @@ export default async function dump(
   configFile,
   client,
   previewMode,
-  destinationPath = process.cwd()
+  destinationPath = process.cwd(),
 ) {
   /* eslint-disable global-require, import/no-dynamic-require */
   delete require.cache[configFile];
@@ -83,12 +83,12 @@ export default async function dump(
   await loader.load();
 
   i18n.availableLocales = loader.itemsRepo.site.locales;
-  i18n.locale = i18n.availableLocales[0];
+  [i18n.locale] = i18n.availableLocales;
 
   const startOperation = start(
     destinationPath,
-    config.bind(config, loader.itemsRepo)
+    config.bind(config, loader.itemsRepo),
   );
 
-  return await startOperation();
+  return startOperation();
 }

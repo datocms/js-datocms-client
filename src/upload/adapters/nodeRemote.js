@@ -20,11 +20,11 @@ export default function nodeUrl(client, fileUrl) {
 
       writeStream.on('close', () => {
         local(client, filePath)
-        .then((result) => {
-          fs.unlinkSync(filePath);
-          cleanupCallback();
-          resolve(result);
-        });
+          .then((result) => {
+            fs.unlinkSync(filePath);
+            cleanupCallback();
+            resolve(result);
+          });
       });
     });
   });

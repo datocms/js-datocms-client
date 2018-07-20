@@ -1,5 +1,5 @@
 import { camelize } from 'humps';
-import i18n from '../utils/i18n';
+import i18n from './i18n';
 
 const tag = (tagName, attributes) => ({ tagName, attributes });
 const metaTag = (name, content) => tag('meta', { name, content });
@@ -11,9 +11,9 @@ function seoAttributeWithFallback(attribute, alternative, item, site) {
   const fallbackSeo = site.globalSeo && site.globalSeo.fallbackSeo;
   const seoField = item && item.fields.find(f => f.fieldType === 'seo');
 
-  const itemSeoValue = seoField &&
-    item[camelize(seoField.apiKey)] &&
-    item[camelize(seoField.apiKey)][attribute];
+  const itemSeoValue = seoField
+    && item[camelize(seoField.apiKey)]
+    && item[camelize(seoField.apiKey)][attribute];
 
   const fallbackSeoValue = fallbackSeo && fallbackSeo[attribute];
 
@@ -27,14 +27,14 @@ export const builders = {
     const title = seoAttributeWithFallback(
       'title',
       titleField && item[camelize(titleField.apiKey)],
-      item, site
+      item, site,
     );
 
     if (title) {
       const suffix = (site.globalSeo && site.globalSeo.titleSuffix) || '';
-      const titleWithSuffix = (title + suffix).length <= 60 ?
-        title + suffix :
-        title;
+      const titleWithSuffix = (title + suffix).length <= 60
+        ? title + suffix
+        : title;
 
       return [
         contentTag('title', titleWithSuffix),
@@ -50,7 +50,7 @@ export const builders = {
     const description = seoAttributeWithFallback(
       'description',
       null,
-      item, site
+      item, site,
     );
 
     if (description) {
@@ -86,7 +86,7 @@ export const builders = {
     if (!item) return undefined;
     return ogTag(
       'article:modified_time',
-      `${item.updatedAt.toISOString().split('.')[0]}Z`
+      `${item.updatedAt.toISOString().split('.')[0]}Z`,
     );
   },
 
@@ -124,8 +124,8 @@ export const builders = {
       .map(field => item[camelize(field.apiKey)])
       .filter(image => image)
       .find(image => (
-          image.width && image.height &&
-            image.width >= 200 && image.height >= 200
+        image.width && image.height
+            && image.width >= 200 && image.height >= 200
       ));
 
     const image = seoAttributeWithFallback('image', itemImage, item, site);
