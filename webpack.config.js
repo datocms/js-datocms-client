@@ -4,10 +4,9 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 const BUILD_DIR = path.resolve(__dirname, 'dist');
 const APP_DIR = path.resolve(__dirname, 'src');
-const addPolyfills = !!process.env.ADD_POLYFILLS;
 
 var config = {
-  entry: APP_DIR + '/index.js',
+  entry: APP_DIR + '/browser.js',
   mode: 'production',
   module: {
     rules: [
@@ -26,7 +25,7 @@ var config = {
   },
   output: {
     path: BUILD_DIR,
-    filename: `client${addPolyfills ? '.shims' : ''}.js`,
+    filename: `client.js`,
     library: 'Dato',
     libraryTarget: 'umd',
     umdNamedDefine: true
@@ -38,7 +37,6 @@ var config = {
       'js-yaml$': path.resolve(__dirname, 'src/utils/nop.js'),
       'http$': path.resolve(__dirname, 'src/utils/nop.js'),
       'https-proxy-agent$': path.resolve(__dirname, 'src/utils/nop.js'),
-      'babel-polyfill$': path.resolve(__dirname, 'src/utils/nop.js'),
       './adapters/node': path.resolve(__dirname, 'src/upload/adapters/browser.js'),
     }
   }

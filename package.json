@@ -6,14 +6,11 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/datocms/js-datocms-client.git"
-  },
-  "scripts": {
+  }, "scripts": {
     "lint:autocorrect": "eslint src --fix",
     "test": "eslint src && mocha ./test/**/*_test.js --require \"@babel/register\" --require babel-polyfill --require \"./test/support/common\" --timeout 15000",
     "prepublish": "rimraf lib dist && mkdir lib dist && node build/buildApiMethods.js && node build/transformPackageJson.js && npm run lib && npm run dist",
-    "dist:shims": "NODE_ENV=production ADD_POLYFILLS=1 webpack --progress",
-    "dist:noshims": "NODE_ENV=production webpack --progress",
-    "dist": "npm run dist:shims && npm run dist:noshims",
+    "dist": "NODE_ENV=production webpack --progress",
     "dev": "NODE_ENV=production webpack --progress --watch",
     "lib": "babel src --out-dir lib",
     "watch": "babel -w src --out-dir lib"
