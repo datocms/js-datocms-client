@@ -15,7 +15,7 @@ export default class Loader {
         { deserializeResponse: false, allPages: true },
       ),
       this.client.uploads.all(
-        {},
+        { 'filter[type]': 'used' },
         { deserializeResponse: false, allPages: true },
       ),
     ])
