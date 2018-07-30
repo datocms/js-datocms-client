@@ -1,8 +1,9 @@
-import { camelize } from 'humps';
+import { decamelizeKeys, camelize } from 'humps';
 import diff from 'arr-diff';
 
 const linkAttributes = schema => schema.properties.data.properties.attributes;
 const requiredAttributes = schema => (linkAttributes(schema).required || []);
+const hasKey = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
 
 const linkRelationships = schema => (
   !schema || !schema.properties.data
@@ -50,8 +51,18 @@ function relationships(type, schema) {
 function serializedRelationships(type, unserializedBody, schema) {
   return Object.entries(relationships(type, schema))
     .reduce((acc, [relationship, meta]) => {
-      if (Object.prototype.hasOwnProperty.call(unserializedBody, camelize(relationship))) {
-        const value = unserializedBody[camelize(relationship)];
+      const camelizedRelationship = camelize(relationship);
+
+      if (relationship !== camelizedRelationship && hasKey(unserializedBody, relationship)
+        && hasKey(unserializedBody, camelizedRelationship)) {
+        throw new Error(`Attribute ${camelizedRelationship} is expressed both in camel-case and snake-case`);
+      }
+
+      if (hasKey(unserializedBody, camelizedRelationship)
+        || hasKey(unserializedBody, relationship)) {
+        const value = unserializedBody[camelizedRelationship]
+          || unserializedBody[relationship];
+
         let data;
 
         if (value) {
@@ -64,9 +75,15 @@ function serializedRelationships(type, unserializedBody, schema) {
           data = null;
         }
 
+        if (relationship !== camelizedRelationship && hasKey(unserializedBody, relationship)) {
+          console.warn(`Warning: Attribute ${relationship} should be expressed in camel-case syntax (${camelizedRelationship})`);
+        }
+
         return Object.assign(acc, { [relationship]: { data } });
-      } if (requiredRelationships(schema).includes(relationship)) {
-        throw new Error(`Required attribute: ${relationship}`);
+      }
+
+      if (requiredRelationships(schema).includes(relationship)) {
+        throw new Error(`Required attribute: ${camelizedRelationship}`);
       }
 
       return Object.assign(acc, { [relationship]: { data: null } });
@@ -75,18 +92,35 @@ function serializedRelationships(type, unserializedBody, schema) {
 
 function serializedAttributes(type, unserializedBody = {}, schema) {
   const attrs = type === 'item'
-    ? diff(Object.keys(unserializedBody), [
-      'itemType', 'id', 'createdAt',
-      'updatedAt', 'isValid', 'publishedVersion',
-      'currentVersion',
-    ])
+    ? diff(
+      Object.keys(decamelizeKeys(unserializedBody)),
+      [
+        'item_type', 'id', 'created_at', 'updated_at', 'is_valid',
+        'published_version', 'current_version',
+      ],
+    )
     : Object.keys(linkAttributes(schema).properties);
 
-  return attrs.reduce((acc, attribute) => {
-    if (Object.prototype.hasOwnProperty.call(unserializedBody, camelize(attribute))) {
-      return Object.assign(acc, { [attribute]: unserializedBody[camelize(attribute)] });
-    } if (requiredAttributes(schema).includes(attribute)) {
-      throw new Error(`Required attribute: ${attribute}`);
+  return attrs.reduce((acc, attr) => {
+    const camelizedAttr = camelize(attr);
+
+    if (attr !== camelizedAttr
+      && hasKey(unserializedBody, attr)
+      && hasKey(unserializedBody, camelizedAttr)) {
+      throw new Error(`Attribute ${camelizedAttr} is expressed both in camel-case and snake-case`);
+    }
+
+    if (attr !== camelizedAttr && hasKey(unserializedBody, attr)) {
+      console.warn(`Warning: Attribute ${attr} should be expressed in camel-case syntax (${camelizedAttr})`);
+      return Object.assign(acc, { [attr]: unserializedBody[attr] });
+    }
+
+    if (hasKey(unserializedBody, camelizedAttr)) {
+      return Object.assign(acc, { [attr]: unserializedBody[camelizedAttr] });
+    }
+
+    if (requiredAttributes(schema).includes(attr)) {
+      throw new Error(`Required attribute: ${camelizedAttr}`);
     }
 
     return acc;

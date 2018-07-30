@@ -9,7 +9,7 @@ export default function ApiException(response, body) {
     if (response.status < 500) {
       const error = body.data[0];
       const details = JSON.stringify(error.attributes.details);
-      this.message = `${response.status} ${error.id} (details: ${details})`;
+      this.message = `${response.status} ${error.attributes.code} (details: ${details})`;
     } else {
       this.message = `${response.status} ${response.statusText}`;
     }

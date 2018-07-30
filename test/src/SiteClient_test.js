@@ -237,5 +237,64 @@ describe('Site API', () => {
 
       await client.items.destroy(item.id);
     }));
+
+    it('creation accepts uncamelized keys', vcr(async () => {
+      const itemType = await client.itemTypes.create({
+        name: 'Article',
+        api_key: 'item_type',
+        singleton: true,
+        modularBlock: false,
+        sortable: false,
+        tree: false,
+        draftModeActive: false,
+        orderingDirection: null,
+        orderingField: null,
+        allLocalesRequired: true,
+        title_field: null,
+      });
+
+      await client.fields.create(
+        itemType.id,
+        {
+          label: 'Title',
+          fieldType: 'string',
+          localized: false,
+          apiKey: 'title',
+          hint: '',
+          validators: { required: {} },
+          appeareance: { editor: 'single_line', parameters: { heading: true } },
+          position: 1,
+        }
+      );
+
+      await client.fields.create(
+        itemType.id,
+        {
+          label: 'Main content',
+          field_type: 'text',
+          localized: false,
+          apiKey: 'main_content',
+          hint: '',
+          validators: {
+            required: {},
+          },
+          appeareance: {
+            editor: 'markdown',
+            parameters: {},
+          },
+          position: 2,
+        }
+      );
+
+      const item = await client.items.create({
+        title: 'My first blog post',
+        item_type: itemType.id,
+        main_content: 'Foo bar',
+      });
+
+      expect(item.mainContent).to.equal('Foo bar');
+
+      await client.items.destroy(item.id);
+    }));
   });
 });
