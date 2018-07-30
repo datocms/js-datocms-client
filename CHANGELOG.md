@@ -1,3 +1,8 @@
+## 0.6.3
+
+* Made API errors more readable
+* Allow snake-case keys on every API call (with warnings though)
+
 ## 0.5.5
 
 * Fixed problems with `client.fields.create` method
