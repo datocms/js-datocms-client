@@ -1,4 +1,5 @@
-import queryString from 'query-string';
+import queryString from 'querystring';
+
 import { camelizeKeys, decamelizeKeys as humpsDecamelizeKeys } from 'humps';
 import ApiException from './ApiException';
 import pkg from '../package.json';
