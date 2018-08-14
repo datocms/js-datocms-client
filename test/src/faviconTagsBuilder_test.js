@@ -1,12 +1,12 @@
+/* global memo:true */
+
+import { camelizeKeys } from 'humps';
 import EntitiesRepo from '../../src/local/EntitiesRepo';
 import ItemsRepo from '../../src/local/ItemsRepo';
-import faviconTagsBuilder, { builders } from '../../src/utils/faviconTagsBuilder';
-import { camelizeKeys } from 'humps';
-import SiteClient from '../../src/site/SiteClient';
-import AccountClient from '../../src/account/AccountClient';
+import faviconTagsBuilder from '../../src/utils/faviconTagsBuilder';
 
 describe('faviconTagsBuilder', () => {
-  let favicon, result, itemsRepo, site;
+  let favicon; let result; let itemsRepo; let site;
 
   beforeEach(() => {
     favicon = memo(() => null);
@@ -76,10 +76,30 @@ describe('faviconTagsBuilder', () => {
         { tagName: 'meta', attributes: { name: 'msapplication-square150x150', content: 'https://www.datocms-assets.com/seo.png?h=150&w=150' } },
         { tagName: 'meta', attributes: { name: 'msapplication-square310x310', content: 'https://www.datocms-assets.com/seo.png?h=310&w=310' } },
         { tagName: 'meta', attributes: { name: 'msapplication-square310x150', content: 'https://www.datocms-assets.com/seo.png?h=150&w=310' } },
-        { tagName: 'link', attributes: { rel: 'icon', sizes: '16x16', href: 'https://www.datocms-assets.com/seo.png?h=16&w=16', type: 'image/png' } },
-        { tagName: 'link', attributes: { rel: 'icon', sizes: '32x32', href: 'https://www.datocms-assets.com/seo.png?h=32&w=32', type: 'image/png' } },
-        { tagName: 'link', attributes: { rel: 'icon', sizes: '96x96', href: 'https://www.datocms-assets.com/seo.png?h=96&w=96', type: 'image/png' } },
-        { tagName: 'link', attributes: { rel: 'icon', sizes: '192x192', href: 'https://www.datocms-assets.com/seo.png?h=192&w=192', type: 'image/png' } },
+        {
+          tagName: 'link',
+          attributes: {
+            rel: 'icon', sizes: '16x16', href: 'https://www.datocms-assets.com/seo.png?h=16&w=16', type: 'image/png',
+          },
+        },
+        {
+          tagName: 'link',
+          attributes: {
+            rel: 'icon', sizes: '32x32', href: 'https://www.datocms-assets.com/seo.png?h=32&w=32', type: 'image/png',
+          },
+        },
+        {
+          tagName: 'link',
+          attributes: {
+            rel: 'icon', sizes: '96x96', href: 'https://www.datocms-assets.com/seo.png?h=96&w=96', type: 'image/png',
+          },
+        },
+        {
+          tagName: 'link',
+          attributes: {
+            rel: 'icon', sizes: '192x192', href: 'https://www.datocms-assets.com/seo.png?h=192&w=192', type: 'image/png',
+          },
+        },
         { tagName: 'meta', attributes: { name: 'application-name', content: 'Site name' } },
         { tagName: 'meta', attributes: { name: 'theme-color', content: '#ff0000' } },
         { tagName: 'meta', attributes: { name: 'msapplication-TileColor', content: '#ff0000' } },
