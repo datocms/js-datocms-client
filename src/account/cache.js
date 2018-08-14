@@ -17,10 +17,6 @@ module.exports = {
     "destroy": true,
     "duplicate": true
   },
-  "deployEvents": {
-    "all": true,
-    "find": true
-  },
   "subscription": {
     "create": true
   },
