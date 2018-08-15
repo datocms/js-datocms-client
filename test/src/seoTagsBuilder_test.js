@@ -1,737 +1,109 @@
+/* global memo:true */
+
+import { camelizeKeys } from 'humps';
 import EntitiesRepo from '../../src/local/EntitiesRepo';
 import ItemsRepo from '../../src/local/ItemsRepo';
-import seoTagsBuilder, { builders } from '../../src/utils/seoTagsBuilder';
-import { camelizeKeys } from 'humps';
-import i18n from '../../src/utils/i18n';
+import faviconTagsBuilder from '../../src/utils/faviconTagsBuilder';
 
-describe('seoTagsBuilder', () => {
-  let itemTitle, titleSuffix, seo, globalSeo, itemsRepo, item, site, noIndex, itemImage;
+describe('faviconTagsBuilder', () => {
+  let favicon; let result; let itemsRepo; let site;
 
   beforeEach(() => {
-    itemTitle = memo(() => null);
-    titleSuffix = memo(() => null);
-    globalSeo = memo(() => null);
-    seo = memo(() => null);
-    noIndex = memo(() => null);
-    itemImage = memo(() => null);
+    favicon = memo(() => null);
+    result = memo(() => faviconTagsBuilder(site(), '#ff0000'));
+    site = memo(() => itemsRepo().site);
 
     itemsRepo = memo(() => {
       const payload = camelizeKeys({
         data: [
           {
-            "id": "24038",
-            "type": "item",
-            "attributes": {
-              "updated_at": "2016-12-07T09:14:22Z",
-              "is_valid": true,
-              "title": itemTitle(),
-              "another_string": "Foo bar",
-              "seo_settings": seo(),
-              "image": itemImage()
+            id: '681',
+            type: 'site',
+            attributes: {
+              name: 'Site name',
+              locales: ['en'],
+              favicon: favicon(),
+              imgix_host: 'www.datocms-assets.com',
             },
-            "relationships": {
-              "item_type": {
-                "data": {
-                  "id": "3781",
-                  "type": "item_type"
-                }
-              }
-            }
-          },
-          {
-            "id": "681",
-            "type": "site",
-            "attributes": {
-              "name": "XXX",
-              "locales": [
-                "en"
-              ],
-              "theme_hue": 190,
-              "domain": null,
-              "internal_domain": "wispy-sun-3056.admin.datocms.com",
-              "global_seo": globalSeo(),
-              "favicon": null,
-              "no_index": noIndex(),
-              "ssg": null
+          }, {
+            id: '1000',
+            type: 'upload',
+            attributes: {
+              format: 'png',
+              size: '1000',
+              width: '64',
+              height: '64',
+              title: '',
+              alt: '',
+              path: '/seo.png',
             },
-            "relationships": {
-              "menu_items": {
-                "data": [
-                  {
-                    "id": "4212",
-                    "type": "menu_item"
-                  }
-                ]
-              },
-              "item_types": {
-                "data": [
-                  {
-                    "id": "3781",
-                    "type": "item_type"
-                  }
-                ]
-              }
-            }
           },
-          {
-            "id": "3781",
-            "type": "item_type",
-            "attributes": {
-              "name": "Article",
-              "singleton": false,
-              "sortable": false,
-              "api_key": "article"
-            },
-            "relationships": {
-              "fields": {
-                "data": [
-                  {
-                    "id": "15088",
-                    "type": "field"
-                  },
-                  {
-                    "id": "15085",
-                    "type": "field"
-                  },
-                  {
-                    "id": "15086",
-                    "type": "field"
-                  },
-                  {
-                    "id": "15087",
-                    "type": "field"
-                  }
-                ]
-              },
-              "singleton_item": {
-                "data": null
-              },
-              "title_field": {
-                "data": {
-                  "type": "field",
-                  "id": "15085"
-                }
-              }
-            }
-          },
-          {
-            "id": "15088",
-            "type": "field",
-            "attributes": {
-              "label": "Image",
-              "field_type": "file",
-              "api_key": "image",
-              "hint": null,
-              "localized": false,
-              "validators": {},
-              "position": 1,
-              "appeareance": {
-                "editor": "file",
-                "parameters": {}
-              }
-            },
-            "relationships": {
-              "item_type": {
-                "data": {
-                  "id": "3781",
-                  "type": "item_type"
-                }
-              }
-            }
-          },
-          {
-            "id": "15085",
-            "type": "field",
-            "attributes": {
-              "label": "Title",
-              "field_type": "string",
-              "api_key": "title",
-              "hint": null,
-              "localized": false,
-              "validators": {
-                "required": {}
-              },
-              "position": 2,
-              "appeareance": {
-                "parameters": { "heading": false }
-              }
-            },
-            "relationships": {
-              "item_type": {
-                "data": {
-                  "id": "3781",
-                  "type": "item_type"
-                }
-              }
-            }
-          },
-          {
-            "id": "15086",
-            "type": "field",
-            "attributes": {
-              "label": "Another string",
-              "field_type": "string",
-              "api_key": "another_string",
-              "hint": null,
-              "localized": false,
-              "validators": {},
-              "position": 3,
-              "appeareance": {
-                "parameters": { "heading": false }
-              }
-            },
-            "relationships": {
-              "item_type": {
-                "data": {
-                  "id": "3781",
-                  "type": "item_type"
-                }
-              }
-            }
-          },
-          {
-            "id": "15087",
-            "type": "field",
-            "attributes": {
-              "label": "SEO settings",
-              "field_type": "seo",
-              "api_key": "seo_settings",
-              "hint": null,
-              "localized": false,
-              "validators": {},
-              "position": 4,
-              "appeareance": {
-                "editor": "seo",
-                "parameters": {}
-              }
-            },
-            "relationships": {
-              "item_type": {
-                "data": {
-                  "id": "3781",
-                  "type": "item_type"
-                }
-              }
-            }
-          },
-          {
-            "id": "100000",
-            "type": "upload",
-            "attributes": {
-              "format": "png",
-              "size": "1000",
-              "width": "200",
-              "height": "200",
-              "title": "",
-              "alt": "",
-              "path": "/seo.png"
-            }
-          },
-          {
-            "id": "100001",
-            "type": "upload",
-            "attributes": {
-              "format": "png",
-              "size": "1000",
-              "width": "200",
-              "height": "200",
-              "title": "",
-              "alt": "",
-              "path": "/fallback.png"
-            }
-          },
-          {
-            "id": "100002",
-            "type": "upload",
-            "attributes": {
-              "format": "png",
-              "size": "1000",
-              "width": "200",
-              "height": "200",
-              "title": "",
-              "alt": "",
-              "path": "/image.png"
-            }
-          }
-        ]
+        ],
       });
 
       const entitiesRepo = new EntitiesRepo(payload);
       return new ItemsRepo(entitiesRepo);
     });
-
-    item = memo(() => null);
-    site = memo(() => itemsRepo().site);
   });
 
-  describe('title()', () => {
-    let result, titleValue;
+  context('with no favicon', () => {
+    it('builds meta tags', () => {
+      expect(JSON.stringify(result())).to.eq(JSON.stringify([
+        { tagName: 'meta', attributes: { name: 'application-name', content: 'Site name' } },
+        { tagName: 'meta', attributes: { name: 'theme-color', content: '#ff0000' } },
+        { tagName: 'meta', attributes: { name: 'msapplication-TileColor', content: '#ff0000' } },
+      ]));
+    });
+  });
 
+  context('with favicon', () => {
     beforeEach(() => {
-      result = memo(() => builders.title(item(), site()));
-      titleValue = memo(() => result()[0].content);
+      favicon = memo(() => '1000');
     });
 
-    context('with no fallback seo', () => {
-      context('with no item', () => {
-        it('returns no tags', () => {
-          expect(result()).to.be.undefined();
-        });
-      });
-
-      context('with item', () => {
-        beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
-        });
-
-        context('no SEO', () => {
-          it('returns no tags', () => {
-            expect(result()).to.be.undefined();
-          });
-        });
-
-        context('with SEO', () => {
-          beforeEach(() => {
-            seo = memo(() => camelizeKeys({
-              "title": "SEO title",
-            }));
-          });
-
-          it('returns seo title', () => {
-            expect(titleValue()).to.eq("SEO title");
-          });
-        });
-      });
-    });
-
-    context('with fallback seo', () => {
-      beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          "fallback_seo": {
-            "title": "Default title"
-          }
-        }));
-      });
-
-      context('with no item', () => {
-        it('returns fallback description', () => {
-          expect(titleValue()).to.eq("Default title");
-        });
-      });
-
-      context('with item', () => {
-        beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
-        });
-
-        context('no SEO', () => {
-          it('returns fallback description', () => {
-            expect(titleValue()).to.eq("Default title");
-          });
-        });
-
-        context('with SEO', () => {
-          beforeEach(() => {
-            seo = memo(() => camelizeKeys({
-              "title": "SEO title",
-            }));
-          });
-
-          it('returns seo title', () => {
-            expect(titleValue()).to.eq("SEO title");
-          });
-        });
-      });
-    });
-  });
-
-  describe('description()', () => {
-    let result, descriptionValue, ogValue, cardValue;
-
-    beforeEach(() => {
-      result = memo(() => builders.description(item(), site()));
-      descriptionValue = memo(() => result()[0].attributes.content);
-      ogValue = memo(() => result()[1].attributes.content);
-      cardValue = memo(() => result()[2].attributes.content);
-    });
-
-    context('with no fallback seo', () => {
-      context('with no item', () => {
-        it('returns no tags', () => {
-          expect(result()).to.be.undefined();
-        });
-      });
-
-      context('with item', () => {
-        beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
-        });
-
-        context('no SEO', () => {
-          it('returns no tags', () => {
-            expect(result()).to.be.undefined();
-          });
-        });
-
-        context('with SEO', () => {
-          beforeEach(() => {
-            seo = memo(() => camelizeKeys({
-              "description": "SEO description",
-            }));
-          });
-
-          it('returns seo description', () => {
-            expect(descriptionValue()).to.eq("SEO description");
-            expect(ogValue()).to.eq("SEO description");
-            expect(cardValue()).to.eq("SEO description");
-          });
-        });
-      });
-    });
-
-    context('with fallback seo', () => {
-      beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          "fallback_seo": {
-            "description": "Default description"
-          }
-        }));
-      });
-
-      context('with no item', () => {
-        it('returns fallback description', () => {
-          expect(descriptionValue()).to.eq("Default description");
-          expect(ogValue()).to.eq("Default description");
-          expect(cardValue()).to.eq("Default description");
-        });
-      });
-
-      context('with item', () => {
-        beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
-        });
-
-        context('no SEO', () => {
-          it('returns fallback description', () => {
-            expect(descriptionValue()).to.eq("Default description");
-            expect(ogValue()).to.eq("Default description");
-            expect(cardValue()).to.eq("Default description");
-          });
-        });
-
-        context('with SEO', () => {
-          beforeEach(() => {
-            seo = memo(() => camelizeKeys({
-              "description": "SEO description",
-            }));
-          });
-
-          it('returns seo description', () => {
-            expect(descriptionValue()).to.eq("SEO description");
-            expect(ogValue()).to.eq("SEO description");
-            expect(cardValue()).to.eq("SEO description");
-          });
-        });
-      });
-    });
-  });
-
-  describe('robots()', () => {
-    let result;
-
-    beforeEach(() => {
-      result = memo(() => builders.robots(null, site()));
-    });
-
-    context('with site noIndex set', () => {
-      beforeEach(() => {
-        noIndex = memo(() => true);
-      });
-
-      it('returns robots meta tag', () => {
-        expect(result().attributes.content).to.eq("noindex");
-      });
-    });
-
-    context('with site noIndex not set', () => {
-      it('returns no tags', () => {
-        expect(result()).to.be.undefined();
-      });
-    });
-  });
-
-  describe('twitterSite()', () => {
-    let result;
-
-    beforeEach(() => {
-      result = memo(() => builders.twitterSite(null, site()));
-    });
-
-    context('with twitter account not set', () => {
-      it('returns no tags', () => {
-        expect(result()).to.be.undefined();
-      });
-    });
-
-    context('with twitter account set', () => {
-      beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          "twitter_account": "@steffoz"
-        }));
-      });
-
-      it('returns robots meta tag', () => {
-        expect(result().attributes.content).to.eq("@steffoz");
-      });
-    });
-  });
-
-  describe('articleModifiedTime()', () => {
-    let result;
-
-    beforeEach(() => {
-      result = memo(() => builders.articleModifiedTime(item(), site()));
-    });
-
-    context('with no item', () => {
-      it('returns no tags', () => {
-        expect(result()).to.be.undefined();
-      });
-    });
-
-    context('with item', () => {
-      beforeEach(() => {
-        item = memo(() => itemsRepo().articles[0]);
-      });
-
-      it('returns iso 8601 datetime', () => {
-        expect(result().attributes.content).to.eq("2016-12-07T09:14:22Z");
-      });
-    });
-  });
-
-  describe('articlePublisher()', () => {
-    let result;
-
-    beforeEach(() => {
-      result = memo(() => builders.articlePublisher(null, site()));
-    });
-
-    context('with FB page not set', () => {
-      it('returns no tags', () => {
-        expect(result()).to.be.undefined();
-      });
-    });
-
-    context('with FB page set', () => {
-      beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          "facebook_page_url": "http://facebook.com/mark.smith"
-        }));
-      });
-
-      it('returns robots meta tag', () => {
-        expect(result().attributes.content).to.eq("http://facebook.com/mark.smith");
-      });
-    });
-  });
-
-  describe('ogLocale()', () => {
-    it('returns current i18n locale', () => {
-      const result = i18n.withLocale('en', () => builders.ogLocale(null, null));
-      expect(result.attributes.content).to.eq('en_EN');
-    });
-  });
-
-  describe('ogType()', () => {
-    let result;
-
-    beforeEach(() => {
-      result = memo(() => builders.ogType(item(), site()));
-    });
-
-    context('with no item', () => {
-      it('returns website og:type', () => {
-        expect(result().attributes.content).to.eq('website');
-      });
-    });
-
-    context('with item', () => {
-      beforeEach(() => {
-        item = memo(() => itemsRepo().articles[0]);
-      });
-
-      it('returns article og:type', () => {
-        expect(result().attributes.content).to.eq('article');
-      });
-    });
-  });
-
-  describe('ogSiteName()', () => {
-    let result;
-
-    beforeEach(() => {
-      result = memo(() => builders.ogSiteName(null, site()));
-    });
-
-    context('with site name not set', () => {
-      it('returns no tags', () => {
-        expect(result()).to.be.undefined();
-      });
-    });
-
-    context('with site name set', () => {
-      beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          "site_name": "My site"
-        }));
-      });
-
-      it('returns og:site_name tag', () => {
-        expect(result().attributes.content).to.eq("My site");
-      });
-    });
-  });
-
-  describe('image()', () => {
-    let result, ogValue, cardValue;
-
-    beforeEach(() => {
-      ogValue = memo(() => result()[0].attributes.content);
-      cardValue = memo(() => result()[1].attributes.content);
-      result = memo(() => builders.image(item(), site()));
-    });
-
-    context('with no fallback seo', () => {
-      context('with no item', () => {
-        it('returns no tags', () => {
-          expect(result()).to.be.undefined();
-        });
-      });
-
-      context('with item', () => {
-        beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
-        });
-
-        context('with no image', () => {
-          context('no SEO', () => {
-            it('returns no tags', () => {
-              expect(result()).to.be.undefined();
-            });
-          });
-
-          context('with SEO', () => {
-            beforeEach(() => {
-              seo = memo(() => camelizeKeys({
-                "image": "100000"
-              }));
-            });
-
-            it('returns seo image', () => {
-              expect(ogValue()).to.include("seo.png");
-              expect(cardValue()).to.include("seo.png");
-            });
-          });
-        });
-
-        context('with image', () => {
-          beforeEach(() => {
-            itemImage = memo(() => "100002");
-          });
-
-          context('no SEO', () => {
-            it('returns item image', () => {
-              expect(ogValue()).to.include("image.png");
-              expect(cardValue()).to.include("image.png");
-            });
-          });
-
-          context('with SEO', () => {
-            beforeEach(() => {
-              seo = memo(() => camelizeKeys({
-                "image": "100000",
-              }));
-            });
-
-            it('returns SEO image', () => {
-              expect(ogValue()).to.include("seo.png");
-              expect(cardValue()).to.include("seo.png");
-            });
-          });
-        });
-      });
-    });
-
-    context('with fallback seo', () => {
-      beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          "fallback_seo": {
-            "image": "100001",
-          }
-        }));
-      });
-
-      context('with no item', () => {
-        it('returns fallback image', () => {
-          expect(ogValue()).to.include("fallback.png");
-          expect(cardValue()).to.include("fallback.png");
-        });
-      });
-
-      context('with item', () => {
-        beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
-        });
-
-        context('with no image', () => {
-          context('no SEO', () => {
-            it('returns fallback image', () => {
-              expect(ogValue()).to.include("fallback.png");
-              expect(cardValue()).to.include("fallback.png");
-            });
-          });
-
-          context('with SEO', () => {
-            beforeEach(() => {
-              seo = memo(() => camelizeKeys({
-                "image": "100000",
-              }));
-            });
-
-            it('returns seo image', () => {
-              expect(ogValue()).to.include("seo.png");
-              expect(cardValue()).to.include("seo.png");
-            });
-          });
-        });
-
-        context('with image', () => {
-          beforeEach(() => {
-            itemImage = memo(() => "100002");
-          });
-
-          context('no SEO', () => {
-            it('returns item image', () => {
-              expect(ogValue()).to.include("image.png");
-              expect(cardValue()).to.include("image.png");
-            });
-          });
-
-          context('with SEO', () => {
-            beforeEach(() => {
-              seo = memo(() => camelizeKeys({
-                "image": "100000",
-              }));
-            });
-
-            it('returns SEO image', () => {
-              expect(ogValue()).to.include("seo.png");
-              expect(cardValue()).to.include("seo.png");
-            });
-          });
-        });
-      });
+    it('also builds favicon meta tags', () => {
+      expect(JSON.stringify(result())).to.eq(JSON.stringify([
+        { tagName: 'link', attributes: { rel: 'apple-touch-icon', sizes: '57x57', href: 'https://www.datocms-assets.com/seo.png?w=57&h=57' } },
+        { tagName: 'link', attributes: { rel: 'apple-touch-icon', sizes: '60x60', href: 'https://www.datocms-assets.com/seo.png?w=60&h=60' } },
+        { tagName: 'link', attributes: { rel: 'apple-touch-icon', sizes: '72x72', href: 'https://www.datocms-assets.com/seo.png?w=72&h=72' } },
+        { tagName: 'link', attributes: { rel: 'apple-touch-icon', sizes: '76x76', href: 'https://www.datocms-assets.com/seo.png?w=76&h=76' } },
+        { tagName: 'link', attributes: { rel: 'apple-touch-icon', sizes: '114x114', href: 'https://www.datocms-assets.com/seo.png?w=114&h=114' } },
+        { tagName: 'link', attributes: { rel: 'apple-touch-icon', sizes: '120x120', href: 'https://www.datocms-assets.com/seo.png?w=120&h=120' } },
+        { tagName: 'link', attributes: { rel: 'apple-touch-icon', sizes: '144x144', href: 'https://www.datocms-assets.com/seo.png?w=144&h=144' } },
+        { tagName: 'link', attributes: { rel: 'apple-touch-icon', sizes: '152x152', href: 'https://www.datocms-assets.com/seo.png?w=152&h=152' } },
+        { tagName: 'link', attributes: { rel: 'apple-touch-icon', sizes: '180x180', href: 'https://www.datocms-assets.com/seo.png?w=180&h=180' } },
+        { tagName: 'meta', attributes: { name: 'msapplication-square70x70', content: 'https://www.datocms-assets.com/seo.png?w=70&h=70' } },
+        { tagName: 'meta', attributes: { name: 'msapplication-square150x150', content: 'https://www.datocms-assets.com/seo.png?w=150&h=150' } },
+        { tagName: 'meta', attributes: { name: 'msapplication-square310x310', content: 'https://www.datocms-assets.com/seo.png?w=310&h=310' } },
+        { tagName: 'meta', attributes: { name: 'msapplication-square310x150', content: 'https://www.datocms-assets.com/seo.png?w=310&h=150' } },
+        {
+          tagName: 'link',
+          attributes: {
+            rel: 'icon', sizes: '16x16', href: 'https://www.datocms-assets.com/seo.png?w=16&h=16', type: 'image/png',
+          },
+        },
+        {
+          tagName: 'link',
+          attributes: {
+            rel: 'icon', sizes: '32x32', href: 'https://www.datocms-assets.com/seo.png?w=32&h=32', type: 'image/png',
+          },
+        },
+        {
+          tagName: 'link',
+          attributes: {
+            rel: 'icon', sizes: '96x96', href: 'https://www.datocms-assets.com/seo.png?w=96&h=96', type: 'image/png',
+          },
+        },
+        {
+          tagName: 'link',
+          attributes: {
+            rel: 'icon', sizes: '192x192', href: 'https://www.datocms-assets.com/seo.png?w=192&h=192', type: 'image/png',
+          },
+        },
+        { tagName: 'meta', attributes: { name: 'application-name', content: 'Site name' } },
+        { tagName: 'meta', attributes: { name: 'theme-color', content: '#ff0000' } },
+        { tagName: 'meta', attributes: { name: 'msapplication-TileColor', content: '#ff0000' } },
+      ]));
     });
   });
 });

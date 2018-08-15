@@ -1,3 +1,5 @@
+/* global destroySiteAndWait:true */
+
 import u from 'updeep';
 import { AccountClient } from '../../src/index';
 
@@ -11,7 +13,7 @@ describe('Account API', () => {
       let account = await client.account.find();
       expect(account).to.have.property('id');
       account = await client.account.update(
-        u({ email: 'prettysurethiswillbeunique@bar.com' }, account)
+        u({ email: 'prettysurethiswillbeunique@bar.com' }, account),
       );
       expect(account.email).to.equal('prettysurethiswillbeunique@bar.com');
     }));

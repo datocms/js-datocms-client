@@ -10,8 +10,12 @@ describe('deserializeJsonApi', () => {
     it('it returns an array of objects', () => {
       const deserializedObject = deserializeJsonApi(arrayRelationships);
       expect(deserializedObject).to.eql([
-        { id: '12', siteName: 'Blog', account: '88', authors: ['81', '84'] },
-        { id: '13', siteName: 'Blog', account: null, authors: '81' },
+        {
+          id: '12', siteName: 'Blog', account: '88', authors: ['81', '84'],
+        },
+        {
+          id: '13', siteName: 'Blog', account: null, authors: '81',
+        },
       ]);
     });
 

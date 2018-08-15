@@ -18,6 +18,4 @@ export { default as Site } from './local/Site';
 export { default as seoTagsBuilder } from './utils/seoTagsBuilder';
 export { default as faviconTagsBuilder } from './utils/faviconTagsBuilder';
 
-export { default as SiteChangeWatcher } from './dump/SiteChangeWatcher';
-
 export { default as i18n } from './utils/i18n';
