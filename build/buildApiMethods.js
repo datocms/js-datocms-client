@@ -1,5 +1,5 @@
 const jsonref = require('json-schema-ref-parser');
-const fetch = require('node-fetch');
+const fetch = require('isomorphic-fetch');
 const pluralize = require('pluralize');
 const { camelize } = require('humps');
 const fs = require('fs');
