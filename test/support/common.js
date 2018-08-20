@@ -1,3 +1,5 @@
+/* eslint-disable global-require, no-await-in-loop, no-constant-condition */
+
 import chai, { expect } from 'chai';
 import dirtyChai from 'dirty-chai';
 import vcr from 'nock-vcr-recorder';
@@ -8,17 +10,17 @@ global.expect = expect;
 global.memo = function memo(fn) {
   let value;
 
-  return function() {
+  return function () {
     value = value || fn();
     return value;
-  }
-}
+  };
+};
 
 function slugify(text) {
   return text.toString().toLowerCase()
     .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '');
 }
@@ -31,7 +33,7 @@ global.vcr = function (...args) {
     let cassetteName = (this.currentTest || this.test).fullTitle();
     if (suffix) { cassetteName += suffix; }
 
-    return vcr.useCassette('json-api-doc', (action) => {
+    return vcr.useCassette('json-api-doc', () => {
       require('../../src/index');
     }).then(() => {
       return vcr.useCassette(slugify(cassetteName), action);
@@ -39,17 +41,15 @@ global.vcr = function (...args) {
   };
 };
 
-const wait = ms => new Promise(r => setTimeout(r, ms));
-
-global.destroySiteAndWait = async function(client, site) {
+global.destroySiteAndWait = async function (client, site) {
   await client.sites.destroy(site.id);
 
   while (true) {
     try {
-      await client.sites.find(site.id)
-      //await wait(3000);
-    } catch(e) {
+      await client.sites.find(site.id);
+      // await wait(3000);
+    } catch (e) {
       break;
     }
   }
-}
+};

@@ -1,3 +1,5 @@
+/* global destroySiteAndWait:true */
+
 import u from 'updeep';
 import { SiteClient, AccountClient } from '../../src/index';
 
@@ -51,7 +53,7 @@ describe('Site API', () => {
 
       const updatedMenuItems = await client.menuItems.update(
         menuItem.id,
-        u({ label: 'Updated' }, menuItem)
+        u({ label: 'Updated' }, menuItem),
       );
       expect(updatedMenuItems.label).to.equal('Updated');
 
@@ -85,7 +87,7 @@ describe('Site API', () => {
 
       const updatedItemType = await client.itemTypes.update(
         itemType.id,
-        u({ name: 'UpdatedArticle' }, itemType)
+        u({ name: 'UpdatedArticle' }, itemType),
       );
       expect(updatedItemType.name).to.equal('UpdatedArticle');
 
@@ -120,7 +122,7 @@ describe('Site API', () => {
           validators: { required: {} },
           appeareance: { editor: 'file', parameters: {} },
           position: 1,
-        }
+        },
       );
       expect(field.label).to.equal('Image');
 
@@ -145,7 +147,7 @@ describe('Site API', () => {
         email: 'user.tester@datocms.com',
         firstName: 'user',
         lastName: 'tester',
-        role: roles[0]['id']
+        role: roles[0].id,
       });
 
       expect(user.firstName).to.equal('user');
@@ -194,7 +196,7 @@ describe('Site API', () => {
           validators: { required: {} },
           appeareance: { editor: 'single_line', parameters: { heading: true } },
           position: 1,
-        }
+        },
       );
 
       await client.fields.create(
@@ -213,7 +215,7 @@ describe('Site API', () => {
             parameters: {},
           },
           position: 2,
-        }
+        },
       );
 
       const item = await client.items.create({
@@ -231,7 +233,7 @@ describe('Site API', () => {
 
       const updatedItem = await client.items.update(
         item.id,
-        u({ title: 'Updated' }, item)
+        u({ title: 'Updated' }, item),
       );
       expect(updatedItem.title).to.equal('Updated');
 
@@ -264,7 +266,7 @@ describe('Site API', () => {
           validators: { required: {} },
           appeareance: { editor: 'single_line', parameters: { heading: true } },
           position: 1,
-        }
+        },
       );
 
       await client.fields.create(
@@ -283,7 +285,7 @@ describe('Site API', () => {
             parameters: {},
           },
           position: 2,
-        }
+        },
       );
 
       const item = await client.items.create({

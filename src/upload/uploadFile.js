@@ -1,7 +1,6 @@
-import { isBrowser } from 'browser-or-node';
 import fetch from '../utils/fetch';
 
-const rawUploadFile = isBrowser
+const rawUploadFile = process.browser
   ? require('./adapters/browser').default
   : require('./adapters/node').default;
 

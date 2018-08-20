@@ -87,5 +87,23 @@ module.exports = {
     "all": true,
     "find": true,
     "destroy": true
+  },
+  "webhooks": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
+    "destroy": true
+  },
+  "webhookCalls": {
+    "all": true,
+    "resendWebhook": true
+  },
+  "deploymentEnvironments": {
+    "all": true,
+    "find": true,
+    "create": true,
+    "update": true,
+    "destroy": true
   }
 };

@@ -1,3 +1,5 @@
+/* global destroySiteAndWait:true */
+
 import path from 'path';
 import rimraf from 'rimraf';
 import tmp from 'tmp';
@@ -13,7 +15,7 @@ describe('CLI tool', () => {
     const accountClient = new AccountClient(
       'XXX',
       {},
-      'http://account-api.lvh.me:3001'
+      'http://account-api.lvh.me:3001',
     );
 
     const site = await accountClient.sites.create({
@@ -23,7 +25,7 @@ describe('CLI tool', () => {
     const client = new SiteClient(
       site.readwriteToken,
       {},
-      'http://site-api.lvh.me:3001'
+      'http://site-api.lvh.me:3001',
     );
 
     const newSite = await client.site.find();
@@ -63,8 +65,8 @@ describe('CLI tool', () => {
               alpha: 255,
             },
           },
-        }
-      )
+        },
+      ),
     );
 
     const itemType = await client.itemTypes.create({
@@ -92,10 +94,10 @@ describe('CLI tool', () => {
         position: 99,
         hint: '',
         validators: { required: {} },
-      }
+      },
     );
 
-    const slugField = await client.fields.create(
+    await client.fields.create(
       itemType.id,
       {
         apiKey: 'slug',
@@ -114,19 +116,19 @@ describe('CLI tool', () => {
           required: {},
           slugTitleField: {
             titleFieldId: textField.id,
-          }
+          },
         },
-      }
+      },
     );
 
-    const imageField = await client.fields.create(
+    await client.fields.create(
       itemType.id,
       {
         apiKey: 'image',
         fieldType: 'file',
         appeareance: {
           editor: 'file',
-          parameters: {}
+          parameters: {},
         },
         label: 'Image',
         localized: false,
@@ -138,24 +140,24 @@ describe('CLI tool', () => {
             predefined_list: 'image',
           },
         },
-      }
+      },
     );
 
-    const fileField = await client.fields.create(
+    await client.fields.create(
       itemType.id,
       {
         apiKey: 'file',
         fieldType: 'file',
         appeareance: {
           editor: 'file',
-          parameters: {}
+          parameters: {},
         },
         label: 'File',
         localized: false,
         position: 99,
         hint: '',
         validators: { required: {} },
-      }
+      },
     );
 
     const uploadedFilePath = path.resolve('test/fixtures/uploadable-image.png');
@@ -186,7 +188,7 @@ describe('CLI tool', () => {
     const result = dirCompare.compareSync(
       dirName,
       'test/fixtures/dump',
-      { compareContent: true }
+      { compareContent: true },
     );
 
     expect(result.differences).to.equal(0);

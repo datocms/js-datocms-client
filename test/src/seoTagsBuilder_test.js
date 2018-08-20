@@ -1,15 +1,23 @@
+/* global memo:true */
+
+import { camelizeKeys } from 'humps';
 import EntitiesRepo from '../../src/local/EntitiesRepo';
 import ItemsRepo from '../../src/local/ItemsRepo';
-import seoTagsBuilder, { builders } from '../../src/utils/seoTagsBuilder';
-import { camelizeKeys } from 'humps';
+import { builders } from '../../src/utils/seoTagsBuilder';
 import i18n from '../../src/utils/i18n';
 
 describe('seoTagsBuilder', () => {
-  let itemTitle, titleSuffix, seo, globalSeo, itemsRepo, item, site, noIndex, itemImage;
+  let itemTitle;
+  let seo;
+  let globalSeo;
+  let itemsRepo;
+  let item;
+  let site;
+  let noIndex;
+  let itemImage;
 
   beforeEach(() => {
     itemTitle = memo(() => null);
-    titleSuffix = memo(() => null);
     globalSeo = memo(() => null);
     seo = memo(() => null);
     noIndex = memo(() => null);
@@ -19,241 +27,241 @@ describe('seoTagsBuilder', () => {
       const payload = camelizeKeys({
         data: [
           {
-            "id": "24038",
-            "type": "item",
-            "attributes": {
-              "updated_at": "2016-12-07T09:14:22Z",
-              "is_valid": true,
-              "title": itemTitle(),
-              "another_string": "Foo bar",
-              "seo_settings": seo(),
-              "image": itemImage()
+            id: '24038',
+            type: 'item',
+            attributes: {
+              updated_at: '2016-12-07T09:14:22Z',
+              is_valid: true,
+              title: itemTitle(),
+              another_string: 'Foo bar',
+              seo_settings: seo(),
+              image: itemImage(),
             },
-            "relationships": {
-              "item_type": {
-                "data": {
-                  "id": "3781",
-                  "type": "item_type"
-                }
-              }
-            }
+            relationships: {
+              item_type: {
+                data: {
+                  id: '3781',
+                  type: 'item_type',
+                },
+              },
+            },
           },
           {
-            "id": "681",
-            "type": "site",
-            "attributes": {
-              "name": "XXX",
-              "locales": [
-                "en"
+            id: '681',
+            type: 'site',
+            attributes: {
+              name: 'XXX',
+              locales: [
+                'en',
               ],
-              "theme_hue": 190,
-              "domain": null,
-              "internal_domain": "wispy-sun-3056.admin.datocms.com",
-              "global_seo": globalSeo(),
-              "favicon": null,
-              "no_index": noIndex(),
-              "ssg": null
+              theme_hue: 190,
+              domain: null,
+              internal_domain: 'wispy-sun-3056.admin.datocms.com',
+              global_seo: globalSeo(),
+              favicon: null,
+              no_index: noIndex(),
+              ssg: null,
             },
-            "relationships": {
-              "menu_items": {
-                "data": [
+            relationships: {
+              menu_items: {
+                data: [
                   {
-                    "id": "4212",
-                    "type": "menu_item"
-                  }
-                ]
+                    id: '4212',
+                    type: 'menu_item',
+                  },
+                ],
               },
-              "item_types": {
-                "data": [
+              item_types: {
+                data: [
                   {
-                    "id": "3781",
-                    "type": "item_type"
-                  }
-                ]
-              }
-            }
+                    id: '3781',
+                    type: 'item_type',
+                  },
+                ],
+              },
+            },
           },
           {
-            "id": "3781",
-            "type": "item_type",
-            "attributes": {
-              "name": "Article",
-              "singleton": false,
-              "sortable": false,
-              "api_key": "article"
+            id: '3781',
+            type: 'item_type',
+            attributes: {
+              name: 'Article',
+              singleton: false,
+              sortable: false,
+              api_key: 'article',
             },
-            "relationships": {
-              "fields": {
-                "data": [
+            relationships: {
+              fields: {
+                data: [
                   {
-                    "id": "15088",
-                    "type": "field"
+                    id: '15088',
+                    type: 'field',
                   },
                   {
-                    "id": "15085",
-                    "type": "field"
+                    id: '15085',
+                    type: 'field',
                   },
                   {
-                    "id": "15086",
-                    "type": "field"
+                    id: '15086',
+                    type: 'field',
                   },
                   {
-                    "id": "15087",
-                    "type": "field"
-                  }
-                ]
+                    id: '15087',
+                    type: 'field',
+                  },
+                ],
               },
-              "singleton_item": {
-                "data": null
+              singleton_item: {
+                data: null,
               },
-              "title_field": {
-                "data": {
-                  "type": "field",
-                  "id": "15085"
-                }
-              }
-            }
-          },
-          {
-            "id": "15088",
-            "type": "field",
-            "attributes": {
-              "label": "Image",
-              "field_type": "file",
-              "api_key": "image",
-              "hint": null,
-              "localized": false,
-              "validators": {},
-              "position": 1,
-              "appeareance": {
-                "editor": "file",
-                "parameters": {}
-              }
-            },
-            "relationships": {
-              "item_type": {
-                "data": {
-                  "id": "3781",
-                  "type": "item_type"
-                }
-              }
-            }
-          },
-          {
-            "id": "15085",
-            "type": "field",
-            "attributes": {
-              "label": "Title",
-              "field_type": "string",
-              "api_key": "title",
-              "hint": null,
-              "localized": false,
-              "validators": {
-                "required": {}
+              title_field: {
+                data: {
+                  type: 'field',
+                  id: '15085',
+                },
               },
-              "position": 2,
-              "appeareance": {
-                "parameters": { "heading": false }
-              }
             },
-            "relationships": {
-              "item_type": {
-                "data": {
-                  "id": "3781",
-                  "type": "item_type"
-                }
-              }
-            }
           },
           {
-            "id": "15086",
-            "type": "field",
-            "attributes": {
-              "label": "Another string",
-              "field_type": "string",
-              "api_key": "another_string",
-              "hint": null,
-              "localized": false,
-              "validators": {},
-              "position": 3,
-              "appeareance": {
-                "parameters": { "heading": false }
-              }
+            id: '15088',
+            type: 'field',
+            attributes: {
+              label: 'Image',
+              field_type: 'file',
+              api_key: 'image',
+              hint: null,
+              localized: false,
+              validators: {},
+              position: 1,
+              appeareance: {
+                editor: 'file',
+                parameters: {},
+              },
             },
-            "relationships": {
-              "item_type": {
-                "data": {
-                  "id": "3781",
-                  "type": "item_type"
-                }
-              }
-            }
-          },
-          {
-            "id": "15087",
-            "type": "field",
-            "attributes": {
-              "label": "SEO settings",
-              "field_type": "seo",
-              "api_key": "seo_settings",
-              "hint": null,
-              "localized": false,
-              "validators": {},
-              "position": 4,
-              "appeareance": {
-                "editor": "seo",
-                "parameters": {}
-              }
+            relationships: {
+              item_type: {
+                data: {
+                  id: '3781',
+                  type: 'item_type',
+                },
+              },
             },
-            "relationships": {
-              "item_type": {
-                "data": {
-                  "id": "3781",
-                  "type": "item_type"
-                }
-              }
-            }
           },
           {
-            "id": "100000",
-            "type": "upload",
-            "attributes": {
-              "format": "png",
-              "size": "1000",
-              "width": "200",
-              "height": "200",
-              "title": "",
-              "alt": "",
-              "path": "/seo.png"
-            }
+            id: '15085',
+            type: 'field',
+            attributes: {
+              label: 'Title',
+              field_type: 'string',
+              api_key: 'title',
+              hint: null,
+              localized: false,
+              validators: {
+                required: {},
+              },
+              position: 2,
+              appeareance: {
+                parameters: { heading: false },
+              },
+            },
+            relationships: {
+              item_type: {
+                data: {
+                  id: '3781',
+                  type: 'item_type',
+                },
+              },
+            },
           },
           {
-            "id": "100001",
-            "type": "upload",
-            "attributes": {
-              "format": "png",
-              "size": "1000",
-              "width": "200",
-              "height": "200",
-              "title": "",
-              "alt": "",
-              "path": "/fallback.png"
-            }
+            id: '15086',
+            type: 'field',
+            attributes: {
+              label: 'Another string',
+              field_type: 'string',
+              api_key: 'another_string',
+              hint: null,
+              localized: false,
+              validators: {},
+              position: 3,
+              appeareance: {
+                parameters: { heading: false },
+              },
+            },
+            relationships: {
+              item_type: {
+                data: {
+                  id: '3781',
+                  type: 'item_type',
+                },
+              },
+            },
           },
           {
-            "id": "100002",
-            "type": "upload",
-            "attributes": {
-              "format": "png",
-              "size": "1000",
-              "width": "200",
-              "height": "200",
-              "title": "",
-              "alt": "",
-              "path": "/image.png"
-            }
-          }
-        ]
+            id: '15087',
+            type: 'field',
+            attributes: {
+              label: 'SEO settings',
+              field_type: 'seo',
+              api_key: 'seo_settings',
+              hint: null,
+              localized: false,
+              validators: {},
+              position: 4,
+              appeareance: {
+                editor: 'seo',
+                parameters: {},
+              },
+            },
+            relationships: {
+              item_type: {
+                data: {
+                  id: '3781',
+                  type: 'item_type',
+                },
+              },
+            },
+          },
+          {
+            id: '100000',
+            type: 'upload',
+            attributes: {
+              format: 'png',
+              size: '1000',
+              width: '200',
+              height: '200',
+              title: '',
+              alt: '',
+              path: '/seo.png',
+            },
+          },
+          {
+            id: '100001',
+            type: 'upload',
+            attributes: {
+              format: 'png',
+              size: '1000',
+              width: '200',
+              height: '200',
+              title: '',
+              alt: '',
+              path: '/fallback.png',
+            },
+          },
+          {
+            id: '100002',
+            type: 'upload',
+            attributes: {
+              format: 'png',
+              size: '1000',
+              width: '200',
+              height: '200',
+              title: '',
+              alt: '',
+              path: '/image.png',
+            },
+          },
+        ],
       });
 
       const entitiesRepo = new EntitiesRepo(payload);
@@ -265,7 +273,8 @@ describe('seoTagsBuilder', () => {
   });
 
   describe('title()', () => {
-    let result, titleValue;
+    let result; let
+      titleValue;
 
     beforeEach(() => {
       result = memo(() => builders.title(item(), site()));
@@ -293,12 +302,12 @@ describe('seoTagsBuilder', () => {
         context('with SEO', () => {
           beforeEach(() => {
             seo = memo(() => camelizeKeys({
-              "title": "SEO title",
+              title: 'SEO title',
             }));
           });
 
           it('returns seo title', () => {
-            expect(titleValue()).to.eq("SEO title");
+            expect(titleValue()).to.eq('SEO title');
           });
         });
       });
@@ -307,15 +316,15 @@ describe('seoTagsBuilder', () => {
     context('with fallback seo', () => {
       beforeEach(() => {
         globalSeo = memo(() => camelizeKeys({
-          "fallback_seo": {
-            "title": "Default title"
-          }
+          fallback_seo: {
+            title: 'Default title',
+          },
         }));
       });
 
       context('with no item', () => {
         it('returns fallback description', () => {
-          expect(titleValue()).to.eq("Default title");
+          expect(titleValue()).to.eq('Default title');
         });
       });
 
@@ -326,19 +335,19 @@ describe('seoTagsBuilder', () => {
 
         context('no SEO', () => {
           it('returns fallback description', () => {
-            expect(titleValue()).to.eq("Default title");
+            expect(titleValue()).to.eq('Default title');
           });
         });
 
         context('with SEO', () => {
           beforeEach(() => {
             seo = memo(() => camelizeKeys({
-              "title": "SEO title",
+              title: 'SEO title',
             }));
           });
 
           it('returns seo title', () => {
-            expect(titleValue()).to.eq("SEO title");
+            expect(titleValue()).to.eq('SEO title');
           });
         });
       });
@@ -346,7 +355,8 @@ describe('seoTagsBuilder', () => {
   });
 
   describe('description()', () => {
-    let result, descriptionValue, ogValue, cardValue;
+    let result; let descriptionValue; let ogValue; let
+      cardValue;
 
     beforeEach(() => {
       result = memo(() => builders.description(item(), site()));
@@ -376,14 +386,14 @@ describe('seoTagsBuilder', () => {
         context('with SEO', () => {
           beforeEach(() => {
             seo = memo(() => camelizeKeys({
-              "description": "SEO description",
+              description: 'SEO description',
             }));
           });
 
           it('returns seo description', () => {
-            expect(descriptionValue()).to.eq("SEO description");
-            expect(ogValue()).to.eq("SEO description");
-            expect(cardValue()).to.eq("SEO description");
+            expect(descriptionValue()).to.eq('SEO description');
+            expect(ogValue()).to.eq('SEO description');
+            expect(cardValue()).to.eq('SEO description');
           });
         });
       });
@@ -392,17 +402,17 @@ describe('seoTagsBuilder', () => {
     context('with fallback seo', () => {
       beforeEach(() => {
         globalSeo = memo(() => camelizeKeys({
-          "fallback_seo": {
-            "description": "Default description"
-          }
+          fallback_seo: {
+            description: 'Default description',
+          },
         }));
       });
 
       context('with no item', () => {
         it('returns fallback description', () => {
-          expect(descriptionValue()).to.eq("Default description");
-          expect(ogValue()).to.eq("Default description");
-          expect(cardValue()).to.eq("Default description");
+          expect(descriptionValue()).to.eq('Default description');
+          expect(ogValue()).to.eq('Default description');
+          expect(cardValue()).to.eq('Default description');
         });
       });
 
@@ -413,23 +423,23 @@ describe('seoTagsBuilder', () => {
 
         context('no SEO', () => {
           it('returns fallback description', () => {
-            expect(descriptionValue()).to.eq("Default description");
-            expect(ogValue()).to.eq("Default description");
-            expect(cardValue()).to.eq("Default description");
+            expect(descriptionValue()).to.eq('Default description');
+            expect(ogValue()).to.eq('Default description');
+            expect(cardValue()).to.eq('Default description');
           });
         });
 
         context('with SEO', () => {
           beforeEach(() => {
             seo = memo(() => camelizeKeys({
-              "description": "SEO description",
+              description: 'SEO description',
             }));
           });
 
           it('returns seo description', () => {
-            expect(descriptionValue()).to.eq("SEO description");
-            expect(ogValue()).to.eq("SEO description");
-            expect(cardValue()).to.eq("SEO description");
+            expect(descriptionValue()).to.eq('SEO description');
+            expect(ogValue()).to.eq('SEO description');
+            expect(cardValue()).to.eq('SEO description');
           });
         });
       });
@@ -449,7 +459,7 @@ describe('seoTagsBuilder', () => {
       });
 
       it('returns robots meta tag', () => {
-        expect(result().attributes.content).to.eq("noindex");
+        expect(result().attributes.content).to.eq('noindex');
       });
     });
 
@@ -476,12 +486,12 @@ describe('seoTagsBuilder', () => {
     context('with twitter account set', () => {
       beforeEach(() => {
         globalSeo = memo(() => camelizeKeys({
-          "twitter_account": "@steffoz"
+          twitter_account: '@steffoz',
         }));
       });
 
       it('returns robots meta tag', () => {
-        expect(result().attributes.content).to.eq("@steffoz");
+        expect(result().attributes.content).to.eq('@steffoz');
       });
     });
   });
@@ -505,7 +515,7 @@ describe('seoTagsBuilder', () => {
       });
 
       it('returns iso 8601 datetime', () => {
-        expect(result().attributes.content).to.eq("2016-12-07T09:14:22Z");
+        expect(result().attributes.content).to.eq('2016-12-07T09:14:22Z');
       });
     });
   });
@@ -526,12 +536,12 @@ describe('seoTagsBuilder', () => {
     context('with FB page set', () => {
       beforeEach(() => {
         globalSeo = memo(() => camelizeKeys({
-          "facebook_page_url": "http://facebook.com/mark.smith"
+          facebook_page_url: 'http://facebook.com/mark.smith',
         }));
       });
 
       it('returns robots meta tag', () => {
-        expect(result().attributes.content).to.eq("http://facebook.com/mark.smith");
+        expect(result().attributes.content).to.eq('http://facebook.com/mark.smith');
       });
     });
   });
@@ -583,18 +593,19 @@ describe('seoTagsBuilder', () => {
     context('with site name set', () => {
       beforeEach(() => {
         globalSeo = memo(() => camelizeKeys({
-          "site_name": "My site"
+          site_name: 'My site',
         }));
       });
 
       it('returns og:site_name tag', () => {
-        expect(result().attributes.content).to.eq("My site");
+        expect(result().attributes.content).to.eq('My site');
       });
     });
   });
 
   describe('image()', () => {
-    let result, ogValue, cardValue;
+    let result; let ogValue; let
+      cardValue;
 
     beforeEach(() => {
       ogValue = memo(() => result()[0].attributes.content);
@@ -624,39 +635,39 @@ describe('seoTagsBuilder', () => {
           context('with SEO', () => {
             beforeEach(() => {
               seo = memo(() => camelizeKeys({
-                "image": "100000"
+                image: '100000',
               }));
             });
 
             it('returns seo image', () => {
-              expect(ogValue()).to.include("seo.png");
-              expect(cardValue()).to.include("seo.png");
+              expect(ogValue()).to.include('seo.png');
+              expect(cardValue()).to.include('seo.png');
             });
           });
         });
 
         context('with image', () => {
           beforeEach(() => {
-            itemImage = memo(() => "100002");
+            itemImage = memo(() => '100002');
           });
 
           context('no SEO', () => {
             it('returns item image', () => {
-              expect(ogValue()).to.include("image.png");
-              expect(cardValue()).to.include("image.png");
+              expect(ogValue()).to.include('image.png');
+              expect(cardValue()).to.include('image.png');
             });
           });
 
           context('with SEO', () => {
             beforeEach(() => {
               seo = memo(() => camelizeKeys({
-                "image": "100000",
+                image: '100000',
               }));
             });
 
             it('returns SEO image', () => {
-              expect(ogValue()).to.include("seo.png");
-              expect(cardValue()).to.include("seo.png");
+              expect(ogValue()).to.include('seo.png');
+              expect(cardValue()).to.include('seo.png');
             });
           });
         });
@@ -666,16 +677,16 @@ describe('seoTagsBuilder', () => {
     context('with fallback seo', () => {
       beforeEach(() => {
         globalSeo = memo(() => camelizeKeys({
-          "fallback_seo": {
-            "image": "100001",
-          }
+          fallback_seo: {
+            image: '100001',
+          },
         }));
       });
 
       context('with no item', () => {
         it('returns fallback image', () => {
-          expect(ogValue()).to.include("fallback.png");
-          expect(cardValue()).to.include("fallback.png");
+          expect(ogValue()).to.include('fallback.png');
+          expect(cardValue()).to.include('fallback.png');
         });
       });
 
@@ -687,47 +698,47 @@ describe('seoTagsBuilder', () => {
         context('with no image', () => {
           context('no SEO', () => {
             it('returns fallback image', () => {
-              expect(ogValue()).to.include("fallback.png");
-              expect(cardValue()).to.include("fallback.png");
+              expect(ogValue()).to.include('fallback.png');
+              expect(cardValue()).to.include('fallback.png');
             });
           });
 
           context('with SEO', () => {
             beforeEach(() => {
               seo = memo(() => camelizeKeys({
-                "image": "100000",
+                image: '100000',
               }));
             });
 
             it('returns seo image', () => {
-              expect(ogValue()).to.include("seo.png");
-              expect(cardValue()).to.include("seo.png");
+              expect(ogValue()).to.include('seo.png');
+              expect(cardValue()).to.include('seo.png');
             });
           });
         });
 
         context('with image', () => {
           beforeEach(() => {
-            itemImage = memo(() => "100002");
+            itemImage = memo(() => '100002');
           });
 
           context('no SEO', () => {
             it('returns item image', () => {
-              expect(ogValue()).to.include("image.png");
-              expect(cardValue()).to.include("image.png");
+              expect(ogValue()).to.include('image.png');
+              expect(cardValue()).to.include('image.png');
             });
           });
 
           context('with SEO', () => {
             beforeEach(() => {
               seo = memo(() => camelizeKeys({
-                "image": "100000",
+                image: '100000',
               }));
             });
 
             it('returns SEO image', () => {
-              expect(ogValue()).to.include("seo.png");
-              expect(cardValue()).to.include("seo.png");
+              expect(ogValue()).to.include('seo.png');
+              expect(cardValue()).to.include('seo.png');
             });
           });
         });

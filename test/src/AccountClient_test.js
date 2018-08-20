@@ -1,9 +1,9 @@
+/* global destroySiteAndWait:true */
+
 import u from 'updeep';
 import { AccountClient } from '../../src/index';
 
 const client = new AccountClient('XXX', null, 'http://account-api.lvh.me:3001');
-
-const wait = ms => new Promise(r => setTimeout(r, ms));
 
 describe('Account API', () => {
   describe('account', () => {
@@ -11,7 +11,7 @@ describe('Account API', () => {
       let account = await client.account.find();
       expect(account).to.have.property('id');
       account = await client.account.update(
-        u({ email: 'prettysurethiswillbeunique@bar.com' }, account)
+        u({ email: 'prettysurethiswillbeunique@bar.com' }, account),
       );
       expect(account.email).to.equal('prettysurethiswillbeunique@bar.com');
     }));

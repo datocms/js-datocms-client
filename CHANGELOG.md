@@ -1,3 +1,23 @@
+## 0.7.0
+
+Major
+
+* Added entry point for browser
+* Removed SiteChangerWatcher from index.js import: SiteChangerWatcher, which uses pusher/node resulted in the crash below when using the package in a browser
+* Replaced query-string with node querystring: this also required amending some of the tests, since querystring stringifies objects in different order (ie ?w=96&h96 instead of ?h=96&w=96). Note that query-string was returning an error when building the package with CRA.
+
+Removal of following packages:
+
+* node-fetch since isomorphic-fetch is a wrapper of node-fetch and is already used
+* browser-or-node since node already exposes process.browser
+* proxy-polyfill: honestly I'm not sure about that one, but I tried consuming the Proxy as a function as indicated here and it failed so I doubt the global import actually make the Proxy Polyfills work at all.
+
+Minor
+
+* eslint-config-airbnb-base is now part of dev dependenvcies as it should
+* Added /test in eslint scope for lint:autocorrect task
+* Most lint errors are fixed. Some of them are still in there (especially in the /test directory), I didn't want to remove useless variables, I'll let you guys do the cleaning.
+
 ## 0.6.3
 
 * Made API errors more readable
