@@ -1,3 +1,7 @@
+## 0.7.1
+
+* undefined values are now serialized into JSON payload
+
 ## 0.7.0
 
 Major

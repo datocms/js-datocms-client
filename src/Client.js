@@ -5,6 +5,8 @@ import ApiException from './ApiException';
 import pkg from '../package.json';
 import fetch from './utils/fetch';
 
+const undefinedToNull = (k, v) => (v === undefined ? null : v);
+
 const decamelizeKeys = (payload) => {
   return humpsDecamelizeKeys(payload, (key, convert, options) => {
     if (key === 'require2fa') {
@@ -34,7 +36,7 @@ export default class Client {
       Object.assign(
         {
           method: 'PUT',
-          body: JSON.stringify(decamelizeKeys(body)),
+          body: JSON.stringify(decamelizeKeys(body), undefinedToNull),
         },
         options,
       ),
@@ -47,7 +49,7 @@ export default class Client {
       Object.assign(
         {
           method: 'POST',
-          body: JSON.stringify(decamelizeKeys(body)),
+          body: JSON.stringify(decamelizeKeys(body), undefinedToNull),
         },
         options,
       ),
