@@ -63,6 +63,7 @@ module.exports = {
     "duplicate": true,
     "update": true,
     "all": true,
+    "references": true,
     "find": true,
     "destroy": true,
     "publish": true,

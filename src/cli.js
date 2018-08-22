@@ -3,6 +3,7 @@ import { docopt } from 'docopt';
 import pkg from '../package.json';
 import dump from './dump/command';
 import check from './check/command';
+import wpImport from './wpImport/command';
 
 dotenv.load({ silent: true });
 
@@ -11,6 +12,7 @@ DatoCMS CLI tool
 
 Usage:
   dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--config=<file>]
+  dato wp-import --token=<datoApiToken> --wpUrl=<url> --wpUser=<user> --wpPassword=<password>
   dato check
   dato -h | --help
   dato --version
@@ -20,8 +22,15 @@ const options = docopt(doc, { version: pkg.version });
 
 if (options.dump) {
   dump(options);
-}
-
-if (options.check) {
+} else if (options.check) {
   check(options);
+} else if (options['wp-import']) {
+  const {
+    '--token': token,
+    '--wpUrl': wpUrl,
+    '--wpUser': wpUser,
+    '--wpPassword': wpPassword,
+  } = options;
+
+  wpImport(token, wpUrl, wpUser, wpPassword);
 }
