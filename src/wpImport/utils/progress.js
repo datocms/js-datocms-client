@@ -10,7 +10,7 @@ export async function spin(label, promise) {
   return result;
 }
 
-export async function progress(label, max) {
+export function progress(label, max) {
   if (max === 0) {
     return () => {};
   }
