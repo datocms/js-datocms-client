@@ -19,7 +19,7 @@ module.exports = {
     "regenerateToken": true,
     "destroy": true
   },
-  "uiExtensions": {
+  "plugins": {
     "create": true,
     "update": true,
     "all": true,
