@@ -13,6 +13,7 @@ export default async function text(itemType, dato, apiKey) {
           'unordered_list', 'quote', 'table', 'link', 'image', 'show_source',
         ],
       },
+      addons: [],
     },
     fieldType: 'text',
   });

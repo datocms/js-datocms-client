@@ -4,7 +4,11 @@ export default async function slug(itemType, dato, apiKey) {
   const title = await createStringField(
     itemType, dato, apiKey,
     {
-      appeareance: { editor: 'single_line', parameters: { heading: true } },
+      appeareance: {
+        editor: 'single_line',
+        parameters: { heading: true },
+        addons: [],
+      },
       validators: { required: {} },
     },
   );
