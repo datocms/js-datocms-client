@@ -114,9 +114,9 @@ export default class Client {
       })
       .catch((error) => {
         if (
-          error &&
-            error.body.data &&
-            error.body.data.some(e => e.attributes.code === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
+          error
+            && error.body.data
+            && error.body.data.some(e => e.attributes.code === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
         ) {
           return new Promise(r => setTimeout(r, 1000))
             .then(() => {
@@ -124,7 +124,6 @@ export default class Client {
             });
         }
         throw error;
-      })
-      ;
+      });
   }
 }
