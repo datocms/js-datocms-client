@@ -4,6 +4,7 @@ import pkg from '../package.json';
 import dump from './dump/command';
 import check from './check/command';
 import wpImport from './wpImport/command';
+import contentfulImport from './contentfulImport/command';
 
 dotenv.load({ silent: true });
 
@@ -13,6 +14,7 @@ DatoCMS CLI tool
 Usage:
   dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--config=<file>]
   dato wp-import --token=<datoApiToken> --wpUrl=<url> --wpUser=<user> --wpPassword=<password>
+  dato contentful-import --datoCmsToken=<apiToken> --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId>
   dato check
   dato -h | --help
   dato --version
@@ -33,4 +35,12 @@ if (options.dump) {
   } = options;
 
   wpImport(token, wpUrl, wpUser, wpPassword);
+} else if (options['contentful-import']) {
+  const {
+    '--contentfulToken': contentfulToken,
+    '--contentfulSpaceId': contentfulSpaceId,
+    '--datoCmsToken': datoCmsToken,
+  } = options;
+
+  contentfulImport(contentfulToken, contentfulSpaceId, datoCmsToken);
 }
