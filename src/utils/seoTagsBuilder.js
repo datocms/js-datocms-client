@@ -78,8 +78,14 @@ export const builders = {
     return undefined;
   },
 
-  twitterCard() {
-    return cardTag('twitter:card', 'summary');
+  twitterCard(item, site) {
+    const card = seoAttributeWithFallback(
+      'twitterCard',
+      null,
+      item, site,
+    );
+
+    return cardTag('twitter:card', card || 'summary');
   },
 
   articleModifiedTime(item) {

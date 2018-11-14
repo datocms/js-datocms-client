@@ -446,6 +446,88 @@ describe('seoTagsBuilder', () => {
     });
   });
 
+  describe('twitterCard()', () => {
+    let result; let
+      twitterCardValue;
+
+    beforeEach(() => {
+      result = memo(() => builders.twitterCard(item(), site()));
+      twitterCardValue = memo(() => result().attributes.content);
+    });
+
+    context('with no fallback seo', () => {
+      context('with no item', () => {
+        it('returns no tags', () => {
+          expect(twitterCardValue()).to.eq('summary');
+        });
+      });
+
+      context('with item', () => {
+        beforeEach(() => {
+          item = memo(() => itemsRepo().articles[0]);
+        });
+
+        context('no SEO', () => {
+          it('returns no tags', () => {
+            expect(twitterCardValue()).to.eq('summary');
+          });
+        });
+
+        context('with SEO', () => {
+          beforeEach(() => {
+            seo = memo(() => camelizeKeys({
+              twitterCard: 'summary_large_image',
+            }));
+          });
+
+          it('returns seo twitterCard', () => {
+            expect(twitterCardValue()).to.eq('summary_large_image');
+          });
+        });
+      });
+    });
+
+    context('with fallback seo', () => {
+      beforeEach(() => {
+        globalSeo = memo(() => camelizeKeys({
+          fallback_seo: {
+            twitterCard: 'summary_large_image',
+          },
+        }));
+      });
+
+      context('with no item', () => {
+        it('returns fallback description', () => {
+          expect(twitterCardValue()).to.eq('summary_large_image');
+        });
+      });
+
+      context('with item', () => {
+        beforeEach(() => {
+          item = memo(() => itemsRepo().articles[0]);
+        });
+
+        context('no SEO', () => {
+          it('returns fallback description', () => {
+            expect(twitterCardValue()).to.eq('summary_large_image');
+          });
+        });
+
+        context('with SEO', () => {
+          beforeEach(() => {
+            seo = memo(() => camelizeKeys({
+              twitterCard: 'foobar',
+            }));
+          });
+
+          it('returns seo twitterCard', () => {
+            expect(twitterCardValue()).to.eq('foobar');
+          });
+        });
+      });
+    });
+  });
+
   describe('robots()', () => {
     let result;
 

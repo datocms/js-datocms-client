@@ -15,6 +15,10 @@ export default class Seo {
     return this.value.description;
   }
 
+  get twitterCard() {
+    return this.value.twitterCard;
+  }
+
   get image() {
     const { imgixHost, itemsRepo } = this;
 
@@ -26,6 +30,7 @@ export default class Seo {
     return {
       title: this.title,
       description: this.description,
+      twitterCard: this.twitterCard,
       image: this.image && this.image.toMap(),
     };
   }

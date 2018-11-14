@@ -19,6 +19,10 @@ export default class GlobalSeo {
     return this.value.twitterAccount;
   }
 
+  get twitterCard() {
+    return this.value.twitterCard;
+  }
+
   get facebookPageUrl() {
     return this.value.facebookPageUrl;
   }
@@ -34,6 +38,7 @@ export default class GlobalSeo {
       siteName: this.siteName,
       titleSuffix: this.titleSuffix,
       facebookPageUrl: this.facebookPageUrl,
+      twitterCard: this.twitterCard,
       twitterAccount: this.twitterAccount,
       fallbackSeo: this.fallbackSeo && this.fallbackSeo.toMap(),
     };
