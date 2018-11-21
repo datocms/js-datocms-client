@@ -12,8 +12,6 @@ import importTags from './import/tags';
 import importArticles from './import/articles';
 import importPages from './import/pages';
 
-require('babel-polyfill');
-
 export default async function command(token, wpUrl, wpUser, wpPassword) {
   const dato = new SiteClient(token);
 

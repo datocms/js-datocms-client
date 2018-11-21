@@ -6,6 +6,8 @@ import check from './check/command';
 import wpImport from './wpImport/command';
 import contentfulImport from './contentfulImport/command';
 
+require('babel-polyfill');
+
 dotenv.load({ silent: true });
 
 const doc = `

@@ -1,3 +1,7 @@
+## 0.8.0
+
+* babel-polyfill no longer gets required
+
 ## 0.7.1
 
 * undefined values are now serialized into JSON payload
