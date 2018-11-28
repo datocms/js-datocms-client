@@ -105,6 +105,14 @@ module.exports = {
     "find": true,
     "create": true,
     "update": true,
+    "trigger": true,
+    "destroy": true
+  },
+  "itemTypeFilters": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
     "destroy": true
   }
 };
