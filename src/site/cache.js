@@ -79,6 +79,10 @@ module.exports = {
   "uploadRequest": {
     "create": true
   },
+  "scheduledPublication": {
+    "create": true,
+    "destroy": true
+  },
   "searchResults": {
     "all": true
   },
