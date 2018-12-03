@@ -32,4 +32,8 @@ export default class JsonApiEntity {
   get type() {
     return this.payload.type;
   }
+
+  get meta() {
+    return this.payload.meta || {};
+  }
 }
