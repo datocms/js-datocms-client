@@ -1,22 +1,22 @@
-/* global destroySiteAndWait:true */
+/* global generateNewAccountClient:true */
 
 import path from 'path';
 import rimraf from 'rimraf';
 import tmp from 'tmp';
-import dirCompare from 'dir-compare';
+import fs from 'fs';
+import yaml from 'js-yaml';
+import toml from 'toml';
+import parser from 'parser-front-matter';
+
 import dump from '../../src/dump/dump';
+
 import SiteClient from '../../src/site/SiteClient';
-import AccountClient from '../../src/account/AccountClient';
 import uploadFile from '../../src/upload/uploadFile';
 import uploadImage from '../../src/upload/uploadImage';
 
 describe('CLI tool', () => {
   it('dump', vcr(async () => {
-    const accountClient = new AccountClient(
-      'XXX',
-      {},
-      'http://account-api.lvh.me:3001',
-    );
+    const accountClient = await generateNewAccountClient();
 
     const site = await accountClient.sites.create({
       name: 'Integration new test site',
@@ -88,11 +88,8 @@ describe('CLI tool', () => {
       {
         apiKey: 'title',
         fieldType: 'string',
-        appeareance: { editor: 'single_line', parameters: { heading: true } },
         label: 'Title',
         localized: true,
-        position: 99,
-        hint: '',
         validators: { required: {} },
       },
     );
@@ -102,16 +99,8 @@ describe('CLI tool', () => {
       {
         apiKey: 'slug',
         fieldType: 'slug',
-        appeareance: {
-          editor: 'slug',
-          parameters: {
-            urlPrefix: null,
-          },
-        },
         label: 'Slug',
         localized: false,
-        position: 99,
-        hint: '',
         validators: {
           required: {},
           slugTitleField: {
@@ -126,14 +115,8 @@ describe('CLI tool', () => {
       {
         apiKey: 'image',
         fieldType: 'file',
-        appeareance: {
-          editor: 'file',
-          parameters: {},
-        },
         label: 'Image',
         localized: false,
-        position: 99,
-        hint: '',
         validators: {
           required: {},
           extension: {
@@ -148,14 +131,8 @@ describe('CLI tool', () => {
       {
         apiKey: 'file',
         fieldType: 'file',
-        appeareance: {
-          editor: 'file',
-          parameters: {},
-        },
         label: 'File',
         localized: false,
-        position: 99,
-        hint: '',
         validators: { required: {} },
       },
     );
@@ -176,26 +153,41 @@ describe('CLI tool', () => {
     await client.items.publish(item.id);
 
     const dir = tmp.dirSync();
-
-    // const dirName = dir.name;
-    // FOR DEV
-    const dirName = path.resolve('test/fixtures/dump');
+    const dirName = dir.name;
 
     const configFile = path.resolve('test/fixtures/dato.config.js');
 
     await dump(configFile, client, true, dirName);
 
-    const result = dirCompare.compareSync(
-      dirName,
-      'test/fixtures/dump',
-      { compareContent: true },
-    );
+    const yamlFile = yaml.safeLoad(fs.readFileSync(path.join(dirName, 'site.yml'), 'utf8'));
+    expect(yamlFile.name).to.eq('Integration new test site');
+    expect(yamlFile.locales).to.eql(['en', 'it']);
 
-    expect(result.differences).to.equal(0);
+    const tomlFile = toml.parse(fs.readFileSync(path.join(dirName, 'foobar.toml'), 'utf8'));
+    expect(tomlFile.siteName).to.eq('Integration new test site');
+
+    const articleFile = parser.parseSync(fs.readFileSync(
+      path.join(dirName, 'en', 'posts', 'first-post.md'),
+      'utf8',
+    ));
+
+    expect(articleFile.data.itemType).to.eq('article');
+    expect(articleFile.data.updatedAt).to.not.be.null();
+    expect(articleFile.data.createdAt).to.not.be.null();
+    expect(articleFile.data.title).to.eq('First post');
+    expect(articleFile.data.slug).to.eq('first-post');
+    expect(articleFile.data.image.format).to.eq('png');
+    expect(articleFile.data.image.size).to.eq(22304);
+    expect(articleFile.data.image.height).to.eq(398);
+    expect(articleFile.data.image.width).to.eq(650);
+    expect(articleFile.data.image.url).to.not.be.null();
+    expect(articleFile.data.file.format).to.eq('txt');
+    expect(articleFile.data.file.size).to.eq(115);
+    expect(articleFile.data.file.url).to.not.be.null();
+
+    expect(articleFile.content).to.eq('First post');
 
     rimraf.sync(path.join(dirName, '*'));
     dir.removeCallback();
-
-    await destroySiteAndWait(accountClient, site);
   }));
 });

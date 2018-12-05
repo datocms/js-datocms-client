@@ -1,24 +1,24 @@
-/* global destroySiteAndWait:true */
+/* global generateNewAccountClient:true */
 
 import u from 'updeep';
-import { AccountClient } from '../../src/index';
-
-const client = new AccountClient('XXX', null, 'http://account-api.lvh.me:3001');
 
 describe('Account API', () => {
   describe('account', () => {
     it('find, update', vcr(async () => {
+      const client = await generateNewAccountClient();
       let account = await client.account.find();
       expect(account).to.have.property('id');
       account = await client.account.update(
-        u({ email: 'prettysurethiswillbeunique@bar.com' }, account),
+        u({ company: 'Dundler Mifflin' }, account),
       );
-      expect(account.email).to.equal('prettysurethiswillbeunique@bar.com');
+      expect(account.company).to.equal('Dundler Mifflin');
     }));
   });
 
   describe('site', () => {
     it('find, all, create, update, destroy', vcr(async () => {
+      const client = await generateNewAccountClient();
+
       const newSite = await client.sites.create({ name: 'Foobar' });
       expect(newSite.name).to.equal('Foobar');
 
@@ -29,10 +29,6 @@ describe('Account API', () => {
 
       const site = await client.sites.find(newSite.id);
       expect(site.name).to.equal('Blog');
-
-      await destroySiteAndWait(client, newSite);
-
-      expect(await client.sites.all()).to.have.length(0);
     }));
   });
 });

@@ -1,5 +1,4239 @@
 [
   {
+    "scope": "https://account-api.datocms.com:443",
+    "method": "GET",
+    "path": "/docs/account-api-hyperschema.json",
+    "body": "",
+    "status": 200,
+    "response": {
+      "$schema": "http://interagent.github.io/interagent-hyper-schema",
+      "title": "DatoCMS Account API",
+      "description": "",
+      "type": "object",
+      "id": "dato-api",
+      "links": [
+        {
+          "href": "https://account-api.datocms.com",
+          "rel": "self"
+        }
+      ],
+      "properties": {
+        "session": {
+          "$ref": "#/definitions/session"
+        },
+        "account": {
+          "$ref": "#/definitions/account"
+        },
+        "site": {
+          "$ref": "#/definitions/site"
+        },
+        "subscription": {
+          "$ref": "#/definitions/subscription"
+        },
+        "plan": {
+          "$ref": "#/definitions/plan"
+        },
+        "site_transfer": {
+          "$ref": "#/definitions/site_transfer"
+        },
+        "plan_compatibility": {
+          "$ref": "#/definitions/plan_compatibility"
+        },
+        "job": {
+          "$ref": "#/definitions/job"
+        }
+      },
+      "definitions": {
+        "session": {
+          "links": [
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create a new session",
+              "href": "/sessions",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "attributes"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "type": {
+                            "type": [
+                              "string"
+                            ],
+                            "description": "JSON API type field",
+                            "pattern": "^email_credentials$",
+                            "example": "email_credentials"
+                          },
+                          "attributes": {
+                            "description": "JSON API attributes",
+                            "type": "object",
+                            "required": [
+                              "email",
+                              "password"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "email": {
+                                "type": "string",
+                                "description": "Email",
+                                "example": "foo@bar.com"
+                              },
+                              "password": {
+                                "type": "string",
+                                "description": "Password",
+                                "example": "changeme"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "attributes"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "type": {
+                            "type": [
+                              "string"
+                            ],
+                            "description": "JSON API type field",
+                            "pattern": "^password_reset$",
+                            "example": "password_reset"
+                          },
+                          "attributes": {
+                            "description": "JSON API attributes",
+                            "type": "object",
+                            "required": [
+                              "token",
+                              "password"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "token": {
+                                "type": "string",
+                                "description": "Invitation token",
+                                "example": "XXXYYYZZZ"
+                              },
+                              "password": {
+                                "type": "string",
+                                "description": "Password",
+                                "example": "changeme"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "included"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/session"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/account"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Session",
+          "description": "A session is required to access to read-and-write API endpoints",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/session/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/session/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/session/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^session$",
+              "example": "session"
+            },
+            "id": {
+              "description": "JSON web token for the session",
+              "type": "string",
+              "example": "eyJCJhbGci.eyJhaWwuY29tIn0.32wQOMci"
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "account"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "account": {
+                  "type": "object",
+                  "description": "The account associated with the session",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/account/definitions/data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/session/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/session/definitions/id"
+            },
+            "relationships": {
+              "$ref": "#/definitions/session/definitions/relationships"
+            }
+          }
+        },
+        "account": {
+          "links": [
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Invite a new account",
+              "href": "/account",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/account/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "required": [
+                          "email",
+                          "password"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "email": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/email"
+                          },
+                          "name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/name"
+                          },
+                          "company": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/company"
+                          },
+                          "password": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/password"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/session"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/account"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "PUT",
+              "rel": "update",
+              "title": "Update",
+              "description": "Update a account",
+              "href": "/account",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "id",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/account/properties/type"
+                      },
+                      "id": {
+                        "$ref": "#/definitions/account/properties/id"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "email": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/email"
+                          },
+                          "name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/name"
+                          },
+                          "company": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/company"
+                          },
+                          "password": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/password"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/account"
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "rel": "self",
+              "title": "Show",
+              "description": "Retrieve a account",
+              "href": "/account",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/account"
+                  }
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "rel": "reset_password",
+              "title": "Reset password",
+              "description": "Request a password reset",
+              "href": "/account/reset_password",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/account/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "required": [
+                          "email"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "email": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/email"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "type": "object",
+          "title": "Account",
+          "description": "DatoCMS account",
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/account/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/account/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/account/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^account$",
+              "example": "account"
+            },
+            "id": {
+              "description": "ID of account",
+              "type": "string",
+              "example": "312"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "email",
+                "name",
+                "company"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "description": "Email",
+                  "example": "foo@bar.com"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Name",
+                  "example": "Mark Smith"
+                },
+                "company": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Company name",
+                  "example": "Dundler Mifflin"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "Password"
+                },
+                "api_token": {
+                  "type": "string",
+                  "description": "API token"
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/account/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/account/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/account/definitions/attributes"
+            }
+          }
+        },
+        "site": {
+          "links": [
+            {
+              "rel": "self",
+              "method": "GET",
+              "title": "Get",
+              "description": "Retrieve a site",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Index",
+              "description": "List all sites",
+              "href": "/sites",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "meta"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/site"
+                    }
+                  },
+                  "meta": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create a new site",
+              "href": "/sites",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/site/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/name"
+                          },
+                          "internal_subdomain": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/internal_subdomain"
+                          },
+                          "domain": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/domain"
+                          },
+                          "notes": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/notes"
+                          },
+                          "ssg": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/ssg"
+                          },
+                          "template": {
+                            "description": "Site template",
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "example": "portfolio"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            },
+            {
+              "method": "PUT",
+              "rel": "update",
+              "title": "Update",
+              "description": "Update a new site",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "$ref": "#/definitions/site/definitions/id"
+                      },
+                      "type": {
+                        "$ref": "#/definitions/site/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/name"
+                          },
+                          "domain": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/domain"
+                          },
+                          "internal_subdomain": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/internal_subdomain"
+                          },
+                          "notes": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/notes"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            },
+            {
+              "method": "DELETE",
+              "rel": "destroy",
+              "title": "Delete",
+              "description": "Delete a site",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/job"
+                  }
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "rel": "duplicate",
+              "title": "Duplicate",
+              "description": "Duplicate an existing site",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/duplicate",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes",
+                      "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/site/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/name"
+                          },
+                          "recurrence": {
+                            "$ref": "#/definitions/subscription/definitions/attributes/properties/recurrence"
+                          }
+                        }
+                      },
+                      "relationships": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "plan"
+                        ],
+                        "properties": {
+                          "plan": {
+                            "$ref": "#/definitions/subscription/definitions/relationships/properties/plan"
+                          },
+                          "billing_profile": {
+                            "$ref": "#/definitions/subscription/definitions/relationships/properties/billing_profile"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/job"
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Site",
+          "description": "A site represents a specific DatoCMS administrative area",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "type": "object",
+              "description": "JSON API data",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/site/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/site/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/site/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^site$",
+              "example": "site"
+            },
+            "id": {
+              "description": "ID of site",
+              "type": "string",
+              "example": "155"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "name",
+                "domain",
+                "ssg",
+                "internal_domain",
+                "notes",
+                "last_data_change_at",
+                "access_token",
+                "created_at",
+                "readwrite_token",
+                "readonly_token",
+                "deactivated"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Site name",
+                  "example": "My blog"
+                },
+                "domain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Site domain",
+                  "example": "admin.foobar.com"
+                },
+                "internal_domain": {
+                  "type": "string",
+                  "description": "Internal site domain",
+                  "example": "clueless-star-1231.admin.datocms.com"
+                },
+                "internal_subdomain": {
+                  "type": "string",
+                  "description": "Internal site subdomain",
+                  "example": "clueless-star-1231"
+                },
+                "notes": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Optional notes regarding the site",
+                  "example": "Foo bar"
+                },
+                "ssg": {
+                  "description": "Specifies static site generator used",
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "last_data_change_at": {
+                  "description": "Specifies the last time when a change of data occurred",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "format": "date-time"
+                },
+                "created_at": {
+                  "description": "Date of site creation",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "format": "date-time"
+                },
+                "access_token": {
+                  "description": "Access token",
+                  "type": "string"
+                },
+                "readwrite_token": {
+                  "description": "Read-write API token",
+                  "type": "string"
+                },
+                "readonly_token": {
+                  "description": "Read-only API token",
+                  "type": "string"
+                },
+                "deactivated": {
+                  "description": "Status of site according to billing situation",
+                  "type": "boolean"
+                }
+              }
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "active_subscription",
+                "active_plan",
+                "usage",
+                "transfer"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "active_subscription": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/subscription/definitions/data"
+                    }
+                  }
+                },
+                "active_plan": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/plan/definitions/data"
+                    }
+                  }
+                },
+                "usage": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/plan_compatibility/definitions/data"
+                    }
+                  }
+                },
+                "transfer": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/definitions/site_transfer/definitions/data"
+                        },
+                        {
+                          "type": [
+                            "null"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/site/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/site/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/site/definitions/attributes"
+            },
+            "relationships": {
+              "$ref": "#/definitions/site/definitions/relationships"
+            }
+          }
+        },
+        "subscription": {
+          "links": [
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create a new subscription",
+              "href": "/sites/{(%2Fschemata%2Fsite%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/subscriptions",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes",
+                      "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/subscription/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "required": [
+                          "recurrence"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "recurrence": {
+                            "$ref": "#/definitions/subscription/definitions/attributes/properties/recurrence"
+                          }
+                        }
+                      },
+                      "relationships": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "plan": {
+                            "$ref": "#/definitions/subscription/definitions/relationships/properties/plan"
+                          },
+                          "billing_profile": {
+                            "$ref": "#/definitions/subscription/definitions/relationships/properties/billing_profile"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "included"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/subscription"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/site"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Subscription",
+          "description": "A subscription record",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/subscription/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/subscription/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/subscription/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^subscription$",
+              "example": "subscription"
+            },
+            "id": {
+              "description": "ID of subscription",
+              "type": "string",
+              "example": "124"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "created_at",
+                "recurrence"
+              ],
+              "properties": {
+                "created_at": {
+                  "description": "Date of creation of subscription",
+                  "type": [
+                    "string"
+                  ],
+                  "format": "date-time"
+                },
+                "recurrence": {
+                  "type": [
+                    "string"
+                  ],
+                  "enum": [
+                    "yearly",
+                    "monthly"
+                  ],
+                  "description": "Type of recurrence (yearly/monthly)",
+                  "example": "monthly"
+                }
+              }
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "plan"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "plan": {
+                  "type": "object",
+                  "description": "Subscription plan",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/plan/definitions/data"
+                    }
+                  }
+                },
+                "billing_profile": {
+                  "type": "object",
+                  "description": "Billing profile",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/definitions/billing_profile/definitions/data"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "site": {
+                  "type": "object",
+                  "description": "Subscription site",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/site/definitions/data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/subscription/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/subscription/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/subscription/definitions/attributes"
+            },
+            "relationships": {
+              "$ref": "#/definitions/subscription/definitions/relationships"
+            }
+          }
+        },
+        "plan": {
+          "links": [],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Plan",
+          "description": "A field represents a plan",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/plan/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/plan/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/plan/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^plan$",
+              "example": "plan"
+            },
+            "id": {
+              "description": "ID of plan",
+              "type": "string",
+              "example": "124"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the plan",
+                  "example": "Basic"
+                },
+                "active": {
+                  "type": "boolean",
+                  "description": "Whether this plan is active or legacy",
+                  "example": true
+                },
+                "custom_domain": {
+                  "type": "boolean",
+                  "description": "Whether custom domain can be enabled or not",
+                  "example": true
+                },
+                "users": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of users that can be invited",
+                  "example": 2
+                },
+                "indexable_pages": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of indexable pages",
+                  "example": 1000
+                },
+                "deployment_environments": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of deployment environments",
+                  "example": 4
+                },
+                "plugins": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of plugins",
+                  "example": 4
+                },
+                "items": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of records allowed",
+                  "example": 5000
+                },
+                "monthly_price": {
+                  "type": "integer",
+                  "description": "Monthly price",
+                  "example": 19
+                },
+                "yearly_price": {
+                  "type": "integer",
+                  "description": "Yearly price",
+                  "example": 189
+                },
+                "uploadable_bytes": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Uploadable bytes",
+                  "example": 1073741824
+                },
+                "roles": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of roles allowed",
+                  "example": 10
+                },
+                "locales": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of locales allowed",
+                  "example": 10
+                },
+                "item_types": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of models allowed",
+                  "example": 25
+                },
+                "version_history": {
+                  "type": "boolean",
+                  "description": "Whether version history can be enabled or not",
+                  "example": true
+                },
+                "otp": {
+                  "type": "boolean",
+                  "description": "Whether two-factor authentication can be enabled or not",
+                  "example": true
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/plan/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/plan/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/plan/definitions/attributes"
+            }
+          }
+        },
+        "billing_profile": {
+          "links": [],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Billing profile",
+          "description": "A billing profile",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/billing_profile/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/billing_profile/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/billing_profile/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^billing_profile$",
+              "example": "billing_profile"
+            },
+            "id": {
+              "description": "ID of billing_profile",
+              "type": "string",
+              "example": "124"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "full_name",
+                "company",
+                "card_masked_number"
+              ],
+              "properties": {
+                "full_name": {
+                  "description": "Cardholder full name",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "card_masked_number": {
+                  "description": "Card masked number",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "company": {
+                  "description": "Cardholder company name",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "next_billing_at": {
+                  "description": "Date of next billing",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "is_active": {
+                  "description": "Is the billing profile active?",
+                  "type": [
+                    "boolean"
+                  ]
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/billing_profile/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/billing_profile/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/billing_profile/definitions/attributes"
+            }
+          }
+        },
+        "site_transfer": {
+          "links": [
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Index",
+              "description": "List all pending transfer requests",
+              "href": "/site-transfers",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/site_transfer"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "rel": "self",
+              "title": "Get",
+              "description": "Retrieve a transfer",
+              "href": "/site-transfers/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite_transfer%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site_transfer"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/plan"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create a new site transfer request",
+              "href": "/sites/{(%2Fschemata%2Fsite%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/transfer",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/site_transfer/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "account_email": {
+                            "$ref": "#/definitions/site_transfer/definitions/attributes/properties/account_email"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/site_transfer"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "DELETE",
+              "rel": "destroy",
+              "title": "Destroy",
+              "description": "Destroy a site transfer request",
+              "href": "/sites/{(%2Fschemata%2Fsite%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/transfer",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            },
+            {
+              "method": "PUT",
+              "rel": "accept",
+              "title": "Accept",
+              "description": "Accept a site transfer request",
+              "href": "/site-transfers/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite_transfer%2Fdefinitions%2Fidentity)}/accept",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "type",
+                      "attributes",
+                      "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "$ref": "#/definitions/site_transfer/properties/id"
+                      },
+                      "type": {
+                        "$ref": "#/definitions/site_transfer/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "recurrence": {
+                            "$ref": "#/definitions/subscription/definitions/attributes/properties/recurrence"
+                          }
+                        }
+                      },
+                      "relationships": {
+                        "description": "JSON API links",
+                        "type": "object",
+                        "required": [
+                          "billing_profile"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "billing_profile": {
+                            "type": "object",
+                            "description": "Billing profile",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/billing_profile/definitions/data"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            },
+            {
+              "method": "PUT",
+              "rel": "decline",
+              "title": "Decline",
+              "description": "Decline a site transfer request",
+              "href": "/site-transfers/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite_transfer%2Fdefinitions%2Fidentity)}/decline"
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Site transfer request",
+          "description": "A request to transfer a site to another account",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/site_transfer/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/site_transfer/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/site_transfer/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^site_transfer$",
+              "example": "site_transfer"
+            },
+            "id": {
+              "description": "ID of site_transfer",
+              "type": "string",
+              "example": "124"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "source_account_email",
+                "account_email",
+                "site_name"
+              ],
+              "properties": {
+                "source_account_email": {
+                  "description": "Email of the source account",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "account_email": {
+                  "description": "Email of the destination account",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "site_name": {
+                  "description": "Name of the site to transfer",
+                  "type": [
+                    "string"
+                  ]
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/site_transfer/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/site_transfer/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/site_transfer/definitions/attributes"
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "current_plan"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "current_plan": {
+                  "type": "object",
+                  "description": "Current plan",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/plan/definitions/data"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "plan_compatibility": {
+          "links": [],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Plan compatibility",
+          "description": "",
+          "type": "object",
+          "required": [
+            "type",
+            "id"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "type": "object",
+              "description": "JSON API data",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/plan_compatibility/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/plan_compatibility/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/plan_compatibility/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^plan_compatibility$",
+              "example": "plan_compatibility"
+            },
+            "id": {
+              "description": "ID of plan compatibility",
+              "type": "string",
+              "example": "4235"
+            },
+            "analysis": {
+              "type": "object",
+              "description": "Analysis",
+              "properties": {
+                "current_usage": {
+                  "type": [
+                    "boolean",
+                    "integer"
+                  ]
+                },
+                "plan_limit": {
+                  "type": [
+                    "boolean",
+                    "integer"
+                  ]
+                },
+                "compatible": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "limits",
+                "compatible",
+                "incompatible_limits",
+                "users_analysis",
+                "roles_analysis",
+                "item_types_analysis",
+                "locales_analysis",
+                "indexable_pages_analysis",
+                "version_history_analysis",
+                "items_analysis",
+                "uploadable_bytes_analysis",
+                "custom_domain_analysis",
+                "otp_analysis"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "limits": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "incompatible_limits": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "compatible": {
+                  "type": "boolean"
+                },
+                "users_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "roles_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "item_types_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "locales_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "indexable_pages_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "version_history_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "items_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "uploadable_bytes_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "custom_domain_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "otp_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                }
+              }
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "plan"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "plan": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/plan/definitions/data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/plan_compatibility/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/plan_compatibility/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/plan_compatibility/definitions/attributes"
+            }
+          }
+        },
+        "job": {
+          "links": [],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Asyncronous job",
+          "description": "",
+          "type": "object",
+          "required": [
+            "type",
+            "id"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "type": "object",
+              "description": "JSON API data",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/job/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/job/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/job/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^job$",
+              "example": "job"
+            },
+            "id": {
+              "description": "ID of job",
+              "type": "string",
+              "example": "4235"
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/job/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/job/definitions/id"
+            }
+          }
+        }
+      }
+    },
+    "rawHeaders": [
+      "Server",
+      "Cowboy",
+      "Connection",
+      "close",
+      "Date",
+      "Wed, 05 Dec 2018 13:56:43 GMT",
+      "Last-Modified",
+      "Wed, 05 Dec 2018 09:34:02 GMT",
+      "Content-Type",
+      "application/json",
+      "Content-Length",
+      "61045",
+      "Via",
+      "1.1 vegur"
+    ]
+  },
+  {
+    "scope": "http://account-api.lvh.me:3001",
+    "method": "POST",
+    "path": "/account",
+    "body": {
+      "data": {
+        "type": "account",
+        "attributes": {
+          "email": "y8dfc@example.com",
+          "name": "Test",
+          "company": "DatoCMS",
+          "password": "test123"
+        }
+      }
+    },
+    "status": 201,
+    "response": [
+      "1f8b08001cd9075c0003",
+      "7c8e5b4f83401085ffcb3e53028897f649539a0a6d29a45a51e3c3b20c61cb7209bb6069d3ffeeac8931be384f67ce7c3367ce24a38a92d999f08ccc088c8105c903dff260b5b763be9e0745ba64baf79f4fbe1df2606a2254bc3ae190bd5c5b89234affd0381b2fb6f2d8fcdc476f51992e965b77b0f370d825e964b2888e8327c2abee11a6876105c55addfa2531881a5bc0500952f2a646a30341154a59f056eaa728634d5f2b2dfffc7963b9eeef811fea8265105e33d16780d8fbbfb441a8521d4f7b05df5950512e703ede6539bb8723ad5a01266b2a246b5ae9d527907a0fbd96d6231a1e55cd7cb3c3e48fcb17000000ffff",
+      "0300a876a65d4b010000"
+    ],
+    "rawHeaders": [
+      "Content-Type",
+      "application/json; charset=utf-8",
+      "Vary",
+      "Accept-Encoding",
+      "Content-Encoding",
+      "gzip",
+      "ETag",
+      "W/\"e9a6b637a0a10444b09db515b292bfeb\"",
+      "Cache-Control",
+      "max-age=0, private, must-revalidate",
+      "X-Request-Id",
+      "8d652306-ca64-4ae0-9898-35a15b5168b0",
+      "X-Runtime",
+      "0.069707",
+      "Connection",
+      "close",
+      "Transfer-Encoding",
+      "chunked"
+    ]
+  },
+  {
+    "scope": "https://account-api.datocms.com:443",
+    "method": "GET",
+    "path": "/docs/account-api-hyperschema.json",
+    "body": "",
+    "status": 200,
+    "response": {
+      "$schema": "http://interagent.github.io/interagent-hyper-schema",
+      "title": "DatoCMS Account API",
+      "description": "",
+      "type": "object",
+      "id": "dato-api",
+      "links": [
+        {
+          "href": "https://account-api.datocms.com",
+          "rel": "self"
+        }
+      ],
+      "properties": {
+        "session": {
+          "$ref": "#/definitions/session"
+        },
+        "account": {
+          "$ref": "#/definitions/account"
+        },
+        "site": {
+          "$ref": "#/definitions/site"
+        },
+        "subscription": {
+          "$ref": "#/definitions/subscription"
+        },
+        "plan": {
+          "$ref": "#/definitions/plan"
+        },
+        "site_transfer": {
+          "$ref": "#/definitions/site_transfer"
+        },
+        "plan_compatibility": {
+          "$ref": "#/definitions/plan_compatibility"
+        },
+        "job": {
+          "$ref": "#/definitions/job"
+        }
+      },
+      "definitions": {
+        "session": {
+          "links": [
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create a new session",
+              "href": "/sessions",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "attributes"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "type": {
+                            "type": [
+                              "string"
+                            ],
+                            "description": "JSON API type field",
+                            "pattern": "^email_credentials$",
+                            "example": "email_credentials"
+                          },
+                          "attributes": {
+                            "description": "JSON API attributes",
+                            "type": "object",
+                            "required": [
+                              "email",
+                              "password"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "email": {
+                                "type": "string",
+                                "description": "Email",
+                                "example": "foo@bar.com"
+                              },
+                              "password": {
+                                "type": "string",
+                                "description": "Password",
+                                "example": "changeme"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "attributes"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "type": {
+                            "type": [
+                              "string"
+                            ],
+                            "description": "JSON API type field",
+                            "pattern": "^password_reset$",
+                            "example": "password_reset"
+                          },
+                          "attributes": {
+                            "description": "JSON API attributes",
+                            "type": "object",
+                            "required": [
+                              "token",
+                              "password"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "token": {
+                                "type": "string",
+                                "description": "Invitation token",
+                                "example": "XXXYYYZZZ"
+                              },
+                              "password": {
+                                "type": "string",
+                                "description": "Password",
+                                "example": "changeme"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "included"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/session"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/account"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Session",
+          "description": "A session is required to access to read-and-write API endpoints",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/session/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/session/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/session/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^session$",
+              "example": "session"
+            },
+            "id": {
+              "description": "JSON web token for the session",
+              "type": "string",
+              "example": "eyJCJhbGci.eyJhaWwuY29tIn0.32wQOMci"
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "account"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "account": {
+                  "type": "object",
+                  "description": "The account associated with the session",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/account/definitions/data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/session/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/session/definitions/id"
+            },
+            "relationships": {
+              "$ref": "#/definitions/session/definitions/relationships"
+            }
+          }
+        },
+        "account": {
+          "links": [
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Invite a new account",
+              "href": "/account",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/account/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "required": [
+                          "email",
+                          "password"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "email": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/email"
+                          },
+                          "name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/name"
+                          },
+                          "company": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/company"
+                          },
+                          "password": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/password"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/session"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/account"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "PUT",
+              "rel": "update",
+              "title": "Update",
+              "description": "Update a account",
+              "href": "/account",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "id",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/account/properties/type"
+                      },
+                      "id": {
+                        "$ref": "#/definitions/account/properties/id"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "email": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/email"
+                          },
+                          "name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/name"
+                          },
+                          "company": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/company"
+                          },
+                          "password": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/password"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/account"
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "rel": "self",
+              "title": "Show",
+              "description": "Retrieve a account",
+              "href": "/account",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/account"
+                  }
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "rel": "reset_password",
+              "title": "Reset password",
+              "description": "Request a password reset",
+              "href": "/account/reset_password",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/account/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "required": [
+                          "email"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "email": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/email"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "type": "object",
+          "title": "Account",
+          "description": "DatoCMS account",
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/account/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/account/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/account/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^account$",
+              "example": "account"
+            },
+            "id": {
+              "description": "ID of account",
+              "type": "string",
+              "example": "312"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "email",
+                "name",
+                "company"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "description": "Email",
+                  "example": "foo@bar.com"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Name",
+                  "example": "Mark Smith"
+                },
+                "company": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Company name",
+                  "example": "Dundler Mifflin"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "Password"
+                },
+                "api_token": {
+                  "type": "string",
+                  "description": "API token"
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/account/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/account/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/account/definitions/attributes"
+            }
+          }
+        },
+        "site": {
+          "links": [
+            {
+              "rel": "self",
+              "method": "GET",
+              "title": "Get",
+              "description": "Retrieve a site",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Index",
+              "description": "List all sites",
+              "href": "/sites",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "meta"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/site"
+                    }
+                  },
+                  "meta": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create a new site",
+              "href": "/sites",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/site/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/name"
+                          },
+                          "internal_subdomain": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/internal_subdomain"
+                          },
+                          "domain": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/domain"
+                          },
+                          "notes": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/notes"
+                          },
+                          "ssg": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/ssg"
+                          },
+                          "template": {
+                            "description": "Site template",
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "example": "portfolio"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            },
+            {
+              "method": "PUT",
+              "rel": "update",
+              "title": "Update",
+              "description": "Update a new site",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "$ref": "#/definitions/site/definitions/id"
+                      },
+                      "type": {
+                        "$ref": "#/definitions/site/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/name"
+                          },
+                          "domain": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/domain"
+                          },
+                          "internal_subdomain": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/internal_subdomain"
+                          },
+                          "notes": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/notes"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            },
+            {
+              "method": "DELETE",
+              "rel": "destroy",
+              "title": "Delete",
+              "description": "Delete a site",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/job"
+                  }
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "rel": "duplicate",
+              "title": "Duplicate",
+              "description": "Duplicate an existing site",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/duplicate",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes",
+                      "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/site/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/site/definitions/attributes/properties/name"
+                          },
+                          "recurrence": {
+                            "$ref": "#/definitions/subscription/definitions/attributes/properties/recurrence"
+                          }
+                        }
+                      },
+                      "relationships": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "plan"
+                        ],
+                        "properties": {
+                          "plan": {
+                            "$ref": "#/definitions/subscription/definitions/relationships/properties/plan"
+                          },
+                          "billing_profile": {
+                            "$ref": "#/definitions/subscription/definitions/relationships/properties/billing_profile"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/job"
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Site",
+          "description": "A site represents a specific DatoCMS administrative area",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "type": "object",
+              "description": "JSON API data",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/site/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/site/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/site/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^site$",
+              "example": "site"
+            },
+            "id": {
+              "description": "ID of site",
+              "type": "string",
+              "example": "155"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "name",
+                "domain",
+                "ssg",
+                "internal_domain",
+                "notes",
+                "last_data_change_at",
+                "access_token",
+                "created_at",
+                "readwrite_token",
+                "readonly_token",
+                "deactivated"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Site name",
+                  "example": "My blog"
+                },
+                "domain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Site domain",
+                  "example": "admin.foobar.com"
+                },
+                "internal_domain": {
+                  "type": "string",
+                  "description": "Internal site domain",
+                  "example": "clueless-star-1231.admin.datocms.com"
+                },
+                "internal_subdomain": {
+                  "type": "string",
+                  "description": "Internal site subdomain",
+                  "example": "clueless-star-1231"
+                },
+                "notes": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Optional notes regarding the site",
+                  "example": "Foo bar"
+                },
+                "ssg": {
+                  "description": "Specifies static site generator used",
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "last_data_change_at": {
+                  "description": "Specifies the last time when a change of data occurred",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "format": "date-time"
+                },
+                "created_at": {
+                  "description": "Date of site creation",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "format": "date-time"
+                },
+                "access_token": {
+                  "description": "Access token",
+                  "type": "string"
+                },
+                "readwrite_token": {
+                  "description": "Read-write API token",
+                  "type": "string"
+                },
+                "readonly_token": {
+                  "description": "Read-only API token",
+                  "type": "string"
+                },
+                "deactivated": {
+                  "description": "Status of site according to billing situation",
+                  "type": "boolean"
+                }
+              }
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "active_subscription",
+                "active_plan",
+                "usage",
+                "transfer"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "active_subscription": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/subscription/definitions/data"
+                    }
+                  }
+                },
+                "active_plan": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/plan/definitions/data"
+                    }
+                  }
+                },
+                "usage": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/plan_compatibility/definitions/data"
+                    }
+                  }
+                },
+                "transfer": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/definitions/site_transfer/definitions/data"
+                        },
+                        {
+                          "type": [
+                            "null"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/site/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/site/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/site/definitions/attributes"
+            },
+            "relationships": {
+              "$ref": "#/definitions/site/definitions/relationships"
+            }
+          }
+        },
+        "subscription": {
+          "links": [
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create a new subscription",
+              "href": "/sites/{(%2Fschemata%2Fsite%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/subscriptions",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes",
+                      "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/subscription/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "required": [
+                          "recurrence"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "recurrence": {
+                            "$ref": "#/definitions/subscription/definitions/attributes/properties/recurrence"
+                          }
+                        }
+                      },
+                      "relationships": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "plan": {
+                            "$ref": "#/definitions/subscription/definitions/relationships/properties/plan"
+                          },
+                          "billing_profile": {
+                            "$ref": "#/definitions/subscription/definitions/relationships/properties/billing_profile"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "included"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/subscription"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/site"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Subscription",
+          "description": "A subscription record",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/subscription/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/subscription/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/subscription/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^subscription$",
+              "example": "subscription"
+            },
+            "id": {
+              "description": "ID of subscription",
+              "type": "string",
+              "example": "124"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "created_at",
+                "recurrence"
+              ],
+              "properties": {
+                "created_at": {
+                  "description": "Date of creation of subscription",
+                  "type": [
+                    "string"
+                  ],
+                  "format": "date-time"
+                },
+                "recurrence": {
+                  "type": [
+                    "string"
+                  ],
+                  "enum": [
+                    "yearly",
+                    "monthly"
+                  ],
+                  "description": "Type of recurrence (yearly/monthly)",
+                  "example": "monthly"
+                }
+              }
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "plan"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "plan": {
+                  "type": "object",
+                  "description": "Subscription plan",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/plan/definitions/data"
+                    }
+                  }
+                },
+                "billing_profile": {
+                  "type": "object",
+                  "description": "Billing profile",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/definitions/billing_profile/definitions/data"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "site": {
+                  "type": "object",
+                  "description": "Subscription site",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/site/definitions/data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/subscription/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/subscription/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/subscription/definitions/attributes"
+            },
+            "relationships": {
+              "$ref": "#/definitions/subscription/definitions/relationships"
+            }
+          }
+        },
+        "plan": {
+          "links": [],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Plan",
+          "description": "A field represents a plan",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/plan/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/plan/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/plan/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^plan$",
+              "example": "plan"
+            },
+            "id": {
+              "description": "ID of plan",
+              "type": "string",
+              "example": "124"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the plan",
+                  "example": "Basic"
+                },
+                "active": {
+                  "type": "boolean",
+                  "description": "Whether this plan is active or legacy",
+                  "example": true
+                },
+                "custom_domain": {
+                  "type": "boolean",
+                  "description": "Whether custom domain can be enabled or not",
+                  "example": true
+                },
+                "users": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of users that can be invited",
+                  "example": 2
+                },
+                "indexable_pages": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of indexable pages",
+                  "example": 1000
+                },
+                "deployment_environments": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of deployment environments",
+                  "example": 4
+                },
+                "plugins": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of plugins",
+                  "example": 4
+                },
+                "items": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of records allowed",
+                  "example": 5000
+                },
+                "monthly_price": {
+                  "type": "integer",
+                  "description": "Monthly price",
+                  "example": 19
+                },
+                "yearly_price": {
+                  "type": "integer",
+                  "description": "Yearly price",
+                  "example": 189
+                },
+                "uploadable_bytes": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Uploadable bytes",
+                  "example": 1073741824
+                },
+                "roles": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of roles allowed",
+                  "example": 10
+                },
+                "locales": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of locales allowed",
+                  "example": 10
+                },
+                "item_types": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of models allowed",
+                  "example": 25
+                },
+                "version_history": {
+                  "type": "boolean",
+                  "description": "Whether version history can be enabled or not",
+                  "example": true
+                },
+                "otp": {
+                  "type": "boolean",
+                  "description": "Whether two-factor authentication can be enabled or not",
+                  "example": true
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/plan/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/plan/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/plan/definitions/attributes"
+            }
+          }
+        },
+        "billing_profile": {
+          "links": [],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Billing profile",
+          "description": "A billing profile",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/billing_profile/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/billing_profile/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/billing_profile/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^billing_profile$",
+              "example": "billing_profile"
+            },
+            "id": {
+              "description": "ID of billing_profile",
+              "type": "string",
+              "example": "124"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "full_name",
+                "company",
+                "card_masked_number"
+              ],
+              "properties": {
+                "full_name": {
+                  "description": "Cardholder full name",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "card_masked_number": {
+                  "description": "Card masked number",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "company": {
+                  "description": "Cardholder company name",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "next_billing_at": {
+                  "description": "Date of next billing",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "is_active": {
+                  "description": "Is the billing profile active?",
+                  "type": [
+                    "boolean"
+                  ]
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/billing_profile/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/billing_profile/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/billing_profile/definitions/attributes"
+            }
+          }
+        },
+        "site_transfer": {
+          "links": [
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Index",
+              "description": "List all pending transfer requests",
+              "href": "/site-transfers",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/site_transfer"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "rel": "self",
+              "title": "Get",
+              "description": "Retrieve a transfer",
+              "href": "/site-transfers/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite_transfer%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site_transfer"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/plan"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create a new site transfer request",
+              "href": "/sites/{(%2Fschemata%2Fsite%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/transfer",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/site_transfer/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "account_email": {
+                            "$ref": "#/definitions/site_transfer/definitions/attributes/properties/account_email"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/site_transfer"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "DELETE",
+              "rel": "destroy",
+              "title": "Destroy",
+              "description": "Destroy a site transfer request",
+              "href": "/sites/{(%2Fschemata%2Fsite%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/transfer",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            },
+            {
+              "method": "PUT",
+              "rel": "accept",
+              "title": "Accept",
+              "description": "Accept a site transfer request",
+              "href": "/site-transfers/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite_transfer%2Fdefinitions%2Fidentity)}/accept",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "type",
+                      "attributes",
+                      "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "$ref": "#/definitions/site_transfer/properties/id"
+                      },
+                      "type": {
+                        "$ref": "#/definitions/site_transfer/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "recurrence": {
+                            "$ref": "#/definitions/subscription/definitions/attributes/properties/recurrence"
+                          }
+                        }
+                      },
+                      "relationships": {
+                        "description": "JSON API links",
+                        "type": "object",
+                        "required": [
+                          "billing_profile"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "billing_profile": {
+                            "type": "object",
+                            "description": "Billing profile",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/billing_profile/definitions/data"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            },
+            {
+              "method": "PUT",
+              "rel": "decline",
+              "title": "Decline",
+              "description": "Decline a site transfer request",
+              "href": "/site-transfers/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite_transfer%2Fdefinitions%2Fidentity)}/decline"
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Site transfer request",
+          "description": "A request to transfer a site to another account",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/site_transfer/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/site_transfer/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/site_transfer/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^site_transfer$",
+              "example": "site_transfer"
+            },
+            "id": {
+              "description": "ID of site_transfer",
+              "type": "string",
+              "example": "124"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "source_account_email",
+                "account_email",
+                "site_name"
+              ],
+              "properties": {
+                "source_account_email": {
+                  "description": "Email of the source account",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "account_email": {
+                  "description": "Email of the destination account",
+                  "type": [
+                    "string"
+                  ]
+                },
+                "site_name": {
+                  "description": "Name of the site to transfer",
+                  "type": [
+                    "string"
+                  ]
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/site_transfer/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/site_transfer/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/site_transfer/definitions/attributes"
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "current_plan"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "current_plan": {
+                  "type": "object",
+                  "description": "Current plan",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/plan/definitions/data"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "plan_compatibility": {
+          "links": [],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Plan compatibility",
+          "description": "",
+          "type": "object",
+          "required": [
+            "type",
+            "id"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "type": "object",
+              "description": "JSON API data",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/plan_compatibility/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/plan_compatibility/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/plan_compatibility/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^plan_compatibility$",
+              "example": "plan_compatibility"
+            },
+            "id": {
+              "description": "ID of plan compatibility",
+              "type": "string",
+              "example": "4235"
+            },
+            "analysis": {
+              "type": "object",
+              "description": "Analysis",
+              "properties": {
+                "current_usage": {
+                  "type": [
+                    "boolean",
+                    "integer"
+                  ]
+                },
+                "plan_limit": {
+                  "type": [
+                    "boolean",
+                    "integer"
+                  ]
+                },
+                "compatible": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "limits",
+                "compatible",
+                "incompatible_limits",
+                "users_analysis",
+                "roles_analysis",
+                "item_types_analysis",
+                "locales_analysis",
+                "indexable_pages_analysis",
+                "version_history_analysis",
+                "items_analysis",
+                "uploadable_bytes_analysis",
+                "custom_domain_analysis",
+                "otp_analysis"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "limits": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "incompatible_limits": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "compatible": {
+                  "type": "boolean"
+                },
+                "users_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "roles_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "item_types_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "locales_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "indexable_pages_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "version_history_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "items_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "uploadable_bytes_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "custom_domain_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                },
+                "otp_analysis": {
+                  "$ref": "#/definitions/plan_compatibility/definitions/analysis"
+                }
+              }
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "plan"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "plan": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/plan/definitions/data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/plan_compatibility/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/plan_compatibility/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/plan_compatibility/definitions/attributes"
+            }
+          }
+        },
+        "job": {
+          "links": [],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Asyncronous job",
+          "description": "",
+          "type": "object",
+          "required": [
+            "type",
+            "id"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "type": "object",
+              "description": "JSON API data",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/job/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/job/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/job/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^job$",
+              "example": "job"
+            },
+            "id": {
+              "description": "ID of job",
+              "type": "string",
+              "example": "4235"
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/job/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/job/definitions/id"
+            }
+          }
+        }
+      }
+    },
+    "rawHeaders": [
+      "Server",
+      "Cowboy",
+      "Connection",
+      "close",
+      "Date",
+      "Wed, 05 Dec 2018 13:56:44 GMT",
+      "Last-Modified",
+      "Wed, 05 Dec 2018 09:34:02 GMT",
+      "Content-Type",
+      "application/json",
+      "Content-Length",
+      "61045",
+      "Via",
+      "1.1 vegur"
+    ]
+  },
+  {
     "scope": "http://account-api.lvh.me:3001",
     "method": "POST",
     "path": "/sites",
@@ -13,9 +4247,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b080084624f5b0003",
-      "84545b6fda3018fd2f7e2ec1b93b79dbaaad834d4c9be8759aa22fb10d2ec68e62879656fcf7d930da52d09637fb3be7bbf99c3c230a1650f98c044525cab2224467c8ae5be64e4658e64e606d27eade32e3710a963ef651ea998b51bd04a150a97a29cf905096750a6465fa7a1f41b5430e42e2c0128cad7cbdaa99839ab10aac8b473824039c3bc8344ccb342e131c6012df3982d2dba2bbe46da769df58a155f5c0eab9d68bcaea05f32580d188d48c6710a6392d6856c4d8d18d859950b323388e59ca534830cf79981745c6a98743d330635e506c3dc6ece683f82ec65fafc21fe2dbf9785e5f34fe3cba7c1a8513312e02077a829b9ff226928bd1bd8e26f78b470fbc8d262b7a9de2d17d8b1b7525f98fe0eeb6c825acf8a37e985dd8f32f465faec8f5a89d4c178fa4077cf7793c7a9af6d1f9f4133a9896b256ea7505145ab7defd3ade0fd777d2353db7b635e570f8f7d60472350f966c786ae4e12ef1a063a697d6a0932bfe77da538b3f4efb228bf79a08802e850a9c2474b33441a397874df04e3baaa2bb2e0ee73e156b3a0696d1ffeaca98d99ee218f4a173427f79f7ac061ce704928226382724a943e094347546288ed18ea2955cbf2a25a963967392d524890ac25914d1a6e638e42ca5dcbb84811b68e57b43250769d8c6a791e0a73473d16e9db5c530ef1dd374a2f5317f7d60d03ccee237067d0bdd6ccef6295a09c7d437c6dec63dbe373063c7c8c1e17fc0c32bf738adebb71652d8f5966c3b50867b45eef97ea51bef73675bbbd72d5b3165cd2be8d7ef8dfbfe000000ffff",
-      "0300bbf4c61179040000"
+      "1f8b08001cd9075c0003",
+      "84924f6fe23010c5bf8bcf10e53f496eb4aaaa40c5aaab2e65b94413db0407c78e620736547cf7b553d196ed61739bbcdf1bfb79e60d11d080b237c408ca501227099a203db4d4548a696a2ad0ba6365afa9b29c80c66a775c564623b2012650267ace2788094d3b01bc507d79555069c86912189883d2853dafc07b10152d401bdd77bd64eaf953377af1822c8ab33074a228de1a8390e3a1efcd0163aa54a1e581dab67458b87433673fd862b9f69ed9d3fd625f3e625be7bfceb9b7628bd431d019363ff9c6e787bc96e1aaae420bfef65747f21ab979ddba58acf9eed9a95e963256f375dfbed6e99f797aaed7f1fdc3c3261f6259fbcbed29dfb2bbf6f1f87438a12f49ff8de9006998704c4a891be560d9181a77143425ffcdab54754d6b1ce4d499017c0426b374474a1284186297120c11c5a59fa4411c44c443ef1629f8f0e1706704a7ee2c01ec2749eacd8214621cba240e7088ad8350c09a1deddd50b603aee8c5b6e1a099146acfda71e22343ed4c15ee586b35fbfb6671d2dbc5f98a5e2e936b8b96c377abf7e91b75cbf70a2afa9d9cdeeea7c50bf3c2adb96fc938d3c368d61d08b5a3dda7df3ee9c57c7f010000ffff",
+      "0300d52e9277ee020000"
     ],
     "rawHeaders": [
       "Content-Type",
@@ -25,13 +4259,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"e8b8d0e76b2fedd6af4b7adef6d42057\"",
+      "W/\"05ca7aa2eab603ddb8972133f422f4c3\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "0f9c4775-9424-498a-89c5-6b5d2abf608c",
+      "4f561cd8-c2fe-4203-a073-60d271394fc3",
       "X-Runtime",
-      "0.065758",
+      "0.114149",
       "Connection",
       "close",
       "Transfer-Encoding",

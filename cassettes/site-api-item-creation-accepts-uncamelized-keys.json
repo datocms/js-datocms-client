@@ -30,8 +30,8 @@
         "access_token": {
           "$ref": "#/definitions/access_token"
         },
-        "ui_extension": {
-          "$ref": "#/definitions/ui_extension"
+        "plugin": {
+          "$ref": "#/definitions/plugin"
         },
         "site": {
           "$ref": "#/definitions/site"
@@ -63,11 +63,26 @@
         "upload_request": {
           "$ref": "#/definitions/upload_request"
         },
+        "scheduled_publication": {
+          "$ref": "#/definitions/scheduled_publication"
+        },
         "search_result": {
           "$ref": "#/definitions/search_result"
         },
         "role": {
           "$ref": "#/definitions/role"
+        },
+        "webhook": {
+          "$ref": "#/definitions/webhook"
+        },
+        "webhook_call": {
+          "$ref": "#/definitions/webhook_call"
+        },
+        "deployment_environment": {
+          "$ref": "#/definitions/deployment_environment"
+        },
+        "item_type_filter": {
+          "$ref": "#/definitions/item_type_filter"
         }
       },
       "definitions": {
@@ -214,6 +229,9 @@
                       "attributes": {
                         "$ref": "#/definitions/item/definitions/attributes"
                       },
+                      "meta": {
+                        "type": "object"
+                      },
                       "relationships": {
                         "type": "object",
                         "required": [
@@ -288,6 +306,9 @@
                       "attributes": {
                         "$ref": "#/definitions/item/definitions/attributes"
                       },
+                      "meta": {
+                        "type": "object"
+                      },
                       "relationships": {
                         "type": "object",
                         "required": [
@@ -361,6 +382,9 @@
                       "attributes": {
                         "$ref": "#/definitions/item/definitions/attributes"
                       },
+                      "meta": {
+                        "type": "object"
+                      },
                       "relationships": {
                         "type": "object",
                         "required": [
@@ -424,6 +448,9 @@
                   "data": {
                     "$ref": "#/definitions/item"
                   },
+                  "meta": {
+                    "type": "object"
+                  },
                   "included": {
                     "type": "array",
                     "items": {
@@ -454,6 +481,9 @@
                       "attributes"
                     ],
                     "additionalProperties": false,
+                    "meta": {
+                      "type": "object"
+                    },
                     "properties": {
                       "type": {
                         "$ref": "#/definitions/item/properties/type"
@@ -575,6 +605,29 @@
             },
             {
               "method": "GET",
+              "rel": "references",
+              "title": "References",
+              "private": true,
+              "description": "List all the records of a model that link to a specific record",
+              "href": "/items/{(%2Fschemata%2Fitem%23%2Fdefinitions%2Fitem%2Fdefinitions%2Fidentity)}/references/{(%2Fschemata%2Fitem%23%2Fdefinitions%2Fitem_type%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/item"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
               "rel": "self",
               "title": "Show",
               "description": "Retrieve a record",
@@ -641,6 +694,12 @@
                 "properties": {
                   "data": {
                     "$ref": "#/definitions/item"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/item_type"
+                    }
                   }
                 }
               }
@@ -660,6 +719,12 @@
                 "properties": {
                   "data": {
                     "$ref": "#/definitions/item"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/item_type"
+                    }
                   }
                 }
               }
@@ -672,7 +737,6 @@
           "required": [
             "type",
             "id",
-            "attributes",
             "relationships"
           ],
           "additionalProperties": false,
@@ -706,12 +770,12 @@
               "example": "item"
             },
             "id": {
-              "description": "ID of item",
+              "description": "ID of record",
               "type": "string",
               "example": "4235"
             },
             "attributes": {
-              "description": "The JSON data associated to the item",
+              "description": "The JSON data associated to the record",
               "type": "object",
               "example": {
                 "title": "My first blog post!",
@@ -721,12 +785,61 @@
                 "published_at": "2016-09-20T18:50:24.914Z"
               }
             },
+            "meta": {
+              "type": "object",
+              "description": "Meta information regarding the record",
+              "additionalProperties": false,
+              "properties": {
+                "created_at": {
+                  "description": "Date of creation",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updated_at": {
+                  "description": "Last update time",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "published_at": {
+                  "description": "Date of last publication",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "format": "date-time"
+                },
+                "publication_scheduled_at": {
+                  "description": "Date of future publication",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "format": "date-time"
+                },
+                "status": {
+                  "description": "Status",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "enum": [
+                    "draft",
+                    "updated",
+                    "published"
+                  ]
+                },
+                "is_valid": {
+                  "description": "Whether the current item is valid or not",
+                  "type": "boolean"
+                }
+              }
+            },
             "relationships": {
               "description": "JSON API links",
               "type": "object",
               "required": [
                 "item_type",
-                "published_version"
+                "creator"
               ],
               "additionalProperties": false,
               "properties": {
@@ -743,8 +856,8 @@
                     }
                   }
                 },
-                "published_version": {
-                  "description": "The currently published version",
+                "creator": {
+                  "description": "The entity (account/editor/access token) who created the record",
                   "type": "object",
                   "required": [
                     "data"
@@ -754,34 +867,13 @@
                     "data": {
                       "anyOf": [
                         {
-                          "$ref": "#/definitions/item_version/definitions/data"
+                          "$ref": "#/definitions/account/definitions/data"
                         },
                         {
-                          "type": [
-                            "null"
-                          ]
-                        }
-                      ]
-                    }
-                  }
-                },
-                "current_version": {
-                  "description": "The latest version available",
-                  "type": "object",
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/definitions/item_version/definitions/data"
+                          "$ref": "#/definitions/access_token/definitions/data"
                         },
                         {
-                          "type": [
-                            "null"
-                          ]
+                          "$ref": "#/definitions/user/definitions/data"
                         }
                       ]
                     }
@@ -802,6 +894,9 @@
             },
             "relationships": {
               "$ref": "#/definitions/item/definitions/relationships"
+            },
+            "meta": {
+              "$ref": "#/definitions/item/definitions/meta"
             }
           }
         },
@@ -1019,18 +1114,6 @@
                           "theme": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/theme"
                           },
-                          "production_deploy_adapter": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/production_deploy_adapter"
-                          },
-                          "production_deploy_settings": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/production_deploy_settings"
-                          },
-                          "staging_deploy_adapter": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/staging_deploy_adapter"
-                          },
-                          "staging_deploy_settings": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/staging_deploy_settings"
-                          },
                           "locales": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/locales"
                           },
@@ -1040,26 +1123,8 @@
                           "ssg": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/ssg"
                           },
-                          "production_frontend_url": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/production_frontend_url"
-                          },
-                          "staging_frontend_url": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/staging_frontend_url"
-                          },
-                          "production_spider_enabled": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/production_spider_enabled"
-                          },
-                          "staging_spider_enabled": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/staging_spider_enabled"
-                          },
                           "require_2fa": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/require_2fa"
-                          },
-                          "production_access_policy": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/production_access_policy"
-                          },
-                          "staging_access_policy": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/staging_access_policy"
                           }
                         }
                       }
@@ -1158,16 +1223,6 @@
                   "description": "Imgix host",
                   "example": "www.datocms-assets.com"
                 },
-                "production_webhook_url": {
-                  "type": "string",
-                  "description": "Webhook URL",
-                  "example": "https://webhooks.datocms.com/fc91489bdf5e37193e0/deploy-results"
-                },
-                "staging_webhook_url": {
-                  "type": "string",
-                  "description": "Webhook URL",
-                  "example": "https://webhooks.datocms.com/fc91489bdf5e37193e0/deploy-results"
-                },
                 "internal_domain": {
                   "type": [
                     "string",
@@ -1202,16 +1257,6 @@
                   "description": "Whether the website needs to be indexed by search engines or not",
                   "example": true
                 },
-                "production_spider_enabled": {
-                  "type": "boolean",
-                  "description": "Whether DatoCMS should perform site spidering",
-                  "example": true
-                },
-                "staging_spider_enabled": {
-                  "type": "boolean",
-                  "description": "Whether DatoCMS should perform site spidering",
-                  "example": true
-                },
                 "favicon": {
                   "description": "The upload id for the favicon",
                   "example": "123",
@@ -1225,48 +1270,6 @@
                   "type": "integer",
                   "example": 167
                 },
-                "production_deploy_adapter": {
-                  "description": "Specify the deploy adapter to use",
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "example": "travis"
-                },
-                "production_deploy_settings": {
-                  "description": "Specify the deploy adapter options",
-                  "type": [
-                    "object",
-                    "null"
-                  ],
-                  "example": {
-                    "api_token": "XXXYYY",
-                    "repo": "stefanoverna/sample-datocms-hugo-portfolio",
-                    "branch": "master",
-                    "config": null
-                  }
-                },
-                "staging_deploy_adapter": {
-                  "description": "Specify the deploy adapter to use",
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "example": "travis"
-                },
-                "staging_deploy_settings": {
-                  "description": "Specify the deploy adapter options",
-                  "type": [
-                    "object",
-                    "null"
-                  ],
-                  "example": {
-                    "api_token": "XXXYYY",
-                    "repo": "stefanoverna/sample-datocms-hugo-portfolio",
-                    "branch": "master",
-                    "config": null
-                  }
-                },
                 "last_data_change_at": {
                   "description": "Specifies the last time when a change of data occurred",
                   "type": [
@@ -1275,24 +1278,6 @@
                   ],
                   "format": "date-time",
                   "example": "2017-03-30T09:29:14.872Z"
-                },
-                "production_last_deploy_at": {
-                  "description": "Specifies the last time when a deploy occurred",
-                  "type": [
-                    "null",
-                    "string"
-                  ],
-                  "format": "date-time",
-                  "example": "2017-02-10T11:03:42.208Z"
-                },
-                "staging_last_deploy_at": {
-                  "description": "Specifies the last time when a deploy occurred",
-                  "type": [
-                    "null",
-                    "string"
-                  ],
-                  "format": "date-time",
-                  "example": "2017-02-10T11:03:42.208Z"
                 },
                 "last_dump_at": {
                   "description": "Specifies the last time an integration plugin called the API",
@@ -1308,62 +1293,18 @@
                   "type": "boolean",
                   "example": true
                 },
+                "frontend_url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Frontend website url",
+                  "example": "https://www.mywebsite.com/"
+                },
                 "require_2fa": {
                   "description": "Specifies whether all users of this site need to authenticate using two-factor authentication",
                   "type": "boolean",
                   "example": false
-                },
-                "production_deploy_status": {
-                  "description": "Specifies deploy status",
-                  "type": [
-                    "string"
-                  ],
-                  "enum": [
-                    "unstarted",
-                    "pending",
-                    "success",
-                    "fail"
-                  ],
-                  "example": "success"
-                },
-                "staging_deploy_status": {
-                  "description": "Specifies deploy status",
-                  "type": [
-                    "string"
-                  ],
-                  "enum": [
-                    "unstarted",
-                    "pending",
-                    "success",
-                    "fail"
-                  ],
-                  "example": "success"
-                },
-                "production_scrape_status": {
-                  "description": "Specifies scrape status",
-                  "type": [
-                    "string"
-                  ],
-                  "enum": [
-                    "unstarted",
-                    "pending",
-                    "success",
-                    "fail"
-                  ],
-                  "example": "success"
-                },
-                "staging_scrape_status": {
-                  "description": "Specifies scrape status",
-                  "type": [
-                    "string"
-                  ],
-                  "enum": [
-                    "unstarted",
-                    "pending",
-                    "success",
-                    "fail"
-                  ],
-                  "example": "success"
                 },
                 "ssg": {
                   "description": "Specifies static site generator used",
@@ -1372,46 +1313,6 @@
                     "string"
                   ],
                   "example": "hugo"
-                },
-                "production_frontend_url": {
-                  "description": "Specifies the production URL of the generated static website",
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "example": "https://www.my-awesome-website.com"
-                },
-                "production_access_policy": {
-                  "type": [
-                    "null",
-                    "string"
-                  ],
-                  "description": "Production configuration of the exigo authenticating proxy",
-                  "example": "{}"
-                },
-                "staging_access_policy": {
-                  "type": [
-                    "null",
-                    "string"
-                  ],
-                  "description": "Staging configuration of the exigo authenticating proxy",
-                  "example": "{}"
-                },
-                "frontend_url": {
-                  "description": "Specifies the production URL of the generated static website (deprecated, use `production_frontend_url`)",
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "example": "https://www.my-awesome-website.com"
-                },
-                "staging_frontend_url": {
-                  "description": "Specifies the staging URL of the generated static website",
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "example": "https://staging.my-awesome-website.com"
                 },
                 "theme": {
                   "description": "Specifies the theme to use in administrative area",
@@ -1503,6 +1404,18 @@
                           ],
                           "description": "The id of the image",
                           "example": "123"
+                        },
+                        "twitter_card": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "enum": [
+                            "summary",
+                            "summary_large_image"
+                          ],
+                          "description": "Determines how a Twitter link preview is shown",
+                          "example": "Large Image"
                         }
                       }
                     },
@@ -1556,6 +1469,22 @@
                   "properties": {
                     "data": {
                       "$ref": "#/definitions/account/definitions/data"
+                    }
+                  }
+                },
+                "deployment_environments": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "description": "The list of deployment environment",
+                      "items": {
+                        "$ref": "#/definitions/deployment_environment/definitions/data"
+                      }
                     }
                   }
                 },
@@ -1894,6 +1823,12 @@
                   "description": "The label of the menu item",
                   "example": "Posts"
                 },
+                "external_url": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
                 "position": {
                   "type": "integer",
                   "description": "Ordering index",
@@ -2086,8 +2021,7 @@
               "required": [
                 "event_type",
                 "data",
-                "created_at",
-                "environment"
+                "created_at"
               ],
               "additionalProperties": false,
               "properties": {
@@ -2102,17 +2036,6 @@
                   ],
                   "description": "The type of activity",
                   "example": "response_success"
-                },
-                "environment": {
-                  "description": "Environment",
-                  "type": [
-                    "string"
-                  ],
-                  "example": "production",
-                  "enum": [
-                    "production",
-                    "staging"
-                  ]
                 },
                 "created_at": {
                   "description": "The moment the activity occurred",
@@ -2152,20 +2075,20 @@
               "description": "JSON API links",
               "type": "object",
               "required": [
-                "site"
+                "deployment_environment"
               ],
               "additionalProperties": false,
               "properties": {
-                "site": {
+                "deployment_environment": {
                   "type": "object",
-                  "description": "Source site",
+                  "description": "Source deployment environment",
                   "required": [
                     "data"
                   ],
                   "additionalProperties": false,
                   "properties": {
                     "data": {
-                      "$ref": "#/definitions/site/definitions/data"
+                      "$ref": "#/definitions/deployment_environment/definitions/data"
                     }
                   }
                 }
@@ -2271,11 +2194,6 @@
                 "api_token": {
                   "type": "string",
                   "description": "API token"
-                },
-                "support_hash": {
-                  "type": "string",
-                  "description": "Chat support identity verificator",
-                  "example": "eb5699a6272dbf3b045c9229a8d497cd7f87329d"
                 }
               }
             }
@@ -2312,8 +2230,7 @@
                     "type": "object",
                     "required": [
                       "type",
-                      "attributes",
-                      "relationships"
+                      "attributes"
                     ],
                     "additionalProperties": false,
                     "properties": {
@@ -2321,14 +2238,48 @@
                         "$ref": "#/definitions/item_type/definitions/type"
                       },
                       "attributes": {
-                        "$ref": "#/definitions/item_type/definitions/attributes"
+                        "description": "JSON API attributes",
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "api_key"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/item_type/definitions/attributes/properties/name"
+                          },
+                          "api_key": {
+                            "$ref": "#/definitions/item_type/definitions/attributes/properties/api_key"
+                          },
+                          "singleton": {
+                            "$ref": "#/definitions/item_type/definitions/attributes/properties/singleton"
+                          },
+                          "all_locales_required": {
+                            "$ref": "#/definitions/item_type/definitions/attributes/properties/all_locales_required"
+                          },
+                          "sortable": {
+                            "$ref": "#/definitions/item_type/definitions/attributes/properties/sortable"
+                          },
+                          "modular_block": {
+                            "$ref": "#/definitions/item_type/definitions/attributes/properties/modular_block"
+                          },
+                          "draft_mode_active": {
+                            "$ref": "#/definitions/item_type/definitions/attributes/properties/draft_mode_active"
+                          },
+                          "tree": {
+                            "$ref": "#/definitions/item_type/definitions/attributes/properties/tree"
+                          },
+                          "ordering_direction": {
+                            "$ref": "#/definitions/item_type/definitions/attributes/properties/ordering_direction"
+                          },
+                          "collection_appeareance": {
+                            "$ref": "#/definitions/item_type/definitions/attributes/properties/collection_appeareance"
+                          }
+                        }
                       },
                       "relationships": {
                         "type": "object",
-                        "required": [
-                          "ordering_field",
-                          "title_field"
-                        ],
                         "additionalProperties": false,
                         "properties": {
                           "ordering_field": {
@@ -2569,7 +2520,8 @@
                 "tree",
                 "ordering_direction",
                 "draft_mode_active",
-                "all_locales_required"
+                "all_locales_required",
+                "collection_appeareance"
               ],
               "additionalProperties": false,
               "properties": {
@@ -2580,6 +2532,14 @@
                 "api_key": {
                   "type": "string",
                   "example": "post"
+                },
+                "collection_appeareance": {
+                  "type": "string",
+                  "enum": [
+                    "compact",
+                    "table"
+                  ],
+                  "example": "compact"
                 },
                 "singleton": {
                   "type": "boolean",
@@ -2616,6 +2576,12 @@
                     "asc",
                     "desc"
                   ]
+                },
+                "has_singleton_item": {
+                  "type": [
+                    "boolean"
+                  ],
+                  "example": true
                 }
               }
             },
@@ -2781,7 +2747,43 @@
                         "$ref": "#/definitions/field/definitions/type"
                       },
                       "attributes": {
-                        "$ref": "#/definitions/field/definitions/attributes"
+                        "description": "JSON API attributes",
+                        "type": "object",
+                        "required": [
+                          "label",
+                          "field_type",
+                          "api_key"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "label": {
+                            "$ref": "#/definitions/field/definitions/attributes/properties/label"
+                          },
+                          "field_type": {
+                            "$ref": "#/definitions/field/definitions/attributes/properties/field_type"
+                          },
+                          "api_key": {
+                            "$ref": "#/definitions/field/definitions/attributes/properties/api_key"
+                          },
+                          "localized": {
+                            "$ref": "#/definitions/field/definitions/attributes/properties/localized"
+                          },
+                          "validators": {
+                            "$ref": "#/definitions/field/definitions/attributes/properties/validators"
+                          },
+                          "appeareance": {
+                            "$ref": "#/definitions/field/definitions/attributes/properties/appeareance"
+                          },
+                          "position": {
+                            "$ref": "#/definitions/field/definitions/attributes/properties/position"
+                          },
+                          "hint": {
+                            "$ref": "#/definitions/field/definitions/attributes/properties/hint"
+                          },
+                          "default_value": {
+                            "$ref": "#/definitions/field/definitions/attributes/properties/default_value"
+                          }
+                        }
                       }
                     }
                   }
@@ -3026,7 +3028,8 @@
                     "boolean",
                     "null",
                     "string",
-                    "object"
+                    "object",
+                    "number"
                   ],
                   "description": "Default value for Field",
                   "example": "some default value"
@@ -3061,13 +3064,13 @@
                     "editor",
                     "parameters"
                   ],
-                  "additionalProperties": false,
                   "description": "Field appeareance",
                   "example": {
                     "editor": "single_line",
                     "parameters": {
                       "heading": false
-                    }
+                    },
+                    "addons": []
                   },
                   "properties": {
                     "editor": {
@@ -3439,11 +3442,6 @@
                   "type": "string",
                   "description": "Email",
                   "example": "mark.smith@example.com"
-                },
-                "support_hash": {
-                  "type": "string",
-                  "description": "Chat support identity verificator",
-                  "example": "eb5699a6272dbf3b045c9229a8d497cd7f87329d"
                 },
                 "first_name": {
                   "type": "string",
@@ -4121,12 +4119,14 @@
                 "can_edit_favicon",
                 "can_edit_schema",
                 "can_manage_users",
+                "can_manage_webhooks",
+                "can_manage_deployment_environments",
                 "can_manage_access_tokens",
                 "can_perform_site_search",
-                "can_publish_to_staging",
-                "can_publish_to_production",
                 "positive_item_type_permissions",
-                "negative_item_type_permissions"
+                "negative_item_type_permissions",
+                "positive_deployment_environment_permissions",
+                "negative_deployment_environment_permissions"
               ],
               "additionalProperties": false,
               "properties": {
@@ -4155,6 +4155,21 @@
                   "description": "Can users invite other users?",
                   "example": true
                 },
+                "can_manage_shared_filters": {
+                  "type": "boolean",
+                  "description": "Can users manage shared filters?",
+                  "example": true
+                },
+                "can_manage_deployment_environments": {
+                  "type": "boolean",
+                  "description": "Can users manage deployment environments?",
+                  "example": true
+                },
+                "can_manage_webhooks": {
+                  "type": "boolean",
+                  "description": "Can users manage webhooks?",
+                  "example": true
+                },
                 "can_manage_access_tokens": {
                   "type": "boolean",
                   "description": "Can manage access tokens",
@@ -4165,23 +4180,14 @@
                   "description": "Can perform site search",
                   "example": true
                 },
-                "can_publish_to_staging": {
-                  "type": "boolean",
-                  "description": "Can users publish to staging environment?",
-                  "example": true
-                },
-                "can_publish_to_production": {
-                  "type": "boolean",
-                  "description": "Can users publish to production environment?",
-                  "example": true
-                },
                 "positive_item_type_permissions": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "required": [
                       "item_type",
-                      "action"
+                      "action",
+                      "on_creator"
                     ],
                     "additionalProperties": false,
                     "properties": {
@@ -4211,6 +4217,20 @@
                         ],
                         "description": "Permitted action",
                         "example": "all"
+                      },
+                      "on_creator": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "enum": [
+                          "anyone",
+                          "self",
+                          "role",
+                          null
+                        ],
+                        "description": "Permitted creator",
+                        "example": "self"
                       }
                     }
                   }
@@ -4246,10 +4266,138 @@
                           "read",
                           "update",
                           "create",
-                          "delete"
+                          "delete",
+                          "publish"
                         ],
                         "description": "Permitted action",
                         "example": "all"
+                      },
+                      "on_creator": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "enum": [
+                          "anyone",
+                          "self",
+                          "role",
+                          null
+                        ],
+                        "description": "Permitted creator",
+                        "example": "self"
+                      }
+                    }
+                  }
+                },
+                "positive_deployment_environment_permissions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "deployment_environment"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "deployment_environment": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/deployment_environment/definitions/data/properties/id"
+                          },
+                          {
+                            "type": [
+                              "null"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                "negative_deployment_environment_permissions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "deployment_environment"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "deployment_environment": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/deployment_environment/definitions/data/properties/id"
+                          },
+                          {
+                            "type": [
+                              "null"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "deployment_environments"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "deployment_environments": {
+                  "type": "object",
+                  "description": "Environments on which this role can deploy",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/deployment_environment/definitions/data"
+                      }
+                    }
+                  }
+                },
+                "parent": {
+                  "type": "object",
+                  "description": "Parent menu item",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "anyOf": [
+                        {
+                          "type": [
+                            "null"
+                          ]
+                        },
+                        {
+                          "$ref": "#/definitions/menu_item/definitions/data"
+                        }
+                      ],
+                      "example": null
+                    }
+                  }
+                },
+                "children": {
+                  "type": "object",
+                  "description": "Underlying menu items",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/menu_item/definitions/data"
                       }
                     }
                   }
@@ -4266,6 +4414,9 @@
             },
             "attributes": {
               "$ref": "#/definitions/role/definitions/attributes"
+            },
+            "relationships": {
+              "$ref": "#/definitions/role/definitions/relationships"
             }
           }
         },
@@ -4846,6 +4997,21 @@
                         "type": "object",
                         "additionalProperties": false,
                         "properties": {
+                          "path": {
+                            "$ref": "#/definitions/upload/definitions/attributes/properties/path"
+                          },
+                          "size": {
+                            "$ref": "#/definitions/upload/definitions/attributes/properties/size"
+                          },
+                          "width": {
+                            "$ref": "#/definitions/upload/definitions/attributes/properties/width"
+                          },
+                          "height": {
+                            "$ref": "#/definitions/upload/definitions/attributes/properties/height"
+                          },
+                          "format": {
+                            "$ref": "#/definitions/upload/definitions/attributes/properties/format"
+                          },
                           "alt": {
                             "$ref": "#/definitions/upload/definitions/attributes/properties/alt"
                           },
@@ -4922,6 +5088,7 @@
               "required": [
                 "size",
                 "path",
+                "url",
                 "format"
               ],
               "additionalProperties": false,
@@ -4951,6 +5118,11 @@
                   "type": "string",
                   "description": "Upload path",
                   "example": "/45/1496845848-digital-cats.jpg"
+                },
+                "url": {
+                  "type": "string",
+                  "description": "Upload URL",
+                  "example": "https://www.datocms-assets.com/45/1496845848-digital-cats.jpg"
                 },
                 "format": {
                   "type": "string",
@@ -5024,15 +5196,15 @@
             }
           }
         },
-        "ui_extension": {
+        "plugin": {
           "position": 10,
           "links": [
             {
               "method": "POST",
               "rel": "create",
               "title": "Create",
-              "description": "Create a new UI extension",
-              "href": "/ui-extensions",
+              "description": "Create a new plugin",
+              "href": "/plugins",
               "schema": {
                 "type": "object",
                 "required": [
@@ -5049,7 +5221,7 @@
                     "additionalProperties": false,
                     "properties": {
                       "type": {
-                        "$ref": "#/definitions/ui_extension/definitions/type"
+                        "$ref": "#/definitions/plugin/definitions/type"
                       },
                       "attributes": {
                         "type": "object",
@@ -5058,24 +5230,33 @@
                           "url",
                           "field_types",
                           "parameter_definitions",
-                          "sidebar"
+                          "plugin_type"
                         ],
                         "additionalProperties": false,
                         "properties": {
                           "name": {
-                            "$ref": "#/definitions/ui_extension/definitions/attributes/properties/name"
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/name"
+                          },
+                          "description": {
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/description"
                           },
                           "url": {
-                            "$ref": "#/definitions/ui_extension/definitions/attributes/properties/url"
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/url"
                           },
                           "field_types": {
-                            "$ref": "#/definitions/ui_extension/definitions/attributes/properties/field_types"
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/field_types"
                           },
                           "parameter_definitions": {
-                            "$ref": "#/definitions/ui_extension/definitions/attributes/properties/parameter_definitions"
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/parameter_definitions"
                           },
-                          "sidebar": {
-                            "$ref": "#/definitions/ui_extension/definitions/attributes/properties/sidebar"
+                          "plugin_type": {
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/plugin_type"
+                          },
+                          "package_name": {
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/package_name"
+                          },
+                          "package_version": {
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/package_version"
                           }
                         }
                       }
@@ -5091,7 +5272,7 @@
                 "additionalProperties": false,
                 "properties": {
                   "data": {
-                    "$ref": "#/definitions/ui_extension"
+                    "$ref": "#/definitions/plugin"
                   }
                 }
               }
@@ -5100,8 +5281,8 @@
               "method": "PUT",
               "rel": "update",
               "title": "Update",
-              "description": "Update an UI extension",
-              "href": "/ui-extensions/{(%2Fschemata%2Fui_extension%23%2Fdefinitions%2Fuser%2Fdefinitions%2Fidentity)}",
+              "description": "Update an plugin",
+              "href": "/plugins/{(%2Fschemata%2Fplugin%23%2Fdefinitions%2Fuser%2Fdefinitions%2Fidentity)}",
               "schema": {
                 "type": "object",
                 "required": [
@@ -5119,36 +5300,32 @@
                     "additionalProperties": false,
                     "properties": {
                       "type": {
-                        "$ref": "#/definitions/ui_extension/properties/type"
+                        "$ref": "#/definitions/plugin/properties/type"
                       },
                       "id": {
-                        "$ref": "#/definitions/ui_extension/properties/id"
+                        "$ref": "#/definitions/plugin/properties/id"
                       },
                       "attributes": {
                         "type": "object",
                         "required": [
-                          "name",
-                          "url",
-                          "field_types",
-                          "parameters",
-                          "sidebar"
+                          "parameters"
                         ],
                         "additionalProperties": false,
                         "properties": {
                           "name": {
-                            "$ref": "#/definitions/ui_extension/definitions/attributes/properties/name"
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/name"
+                          },
+                          "description": {
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/description"
                           },
                           "url": {
-                            "$ref": "#/definitions/ui_extension/definitions/attributes/properties/url"
-                          },
-                          "field_types": {
-                            "$ref": "#/definitions/ui_extension/definitions/attributes/properties/field_types"
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/url"
                           },
                           "parameters": {
-                            "$ref": "#/definitions/ui_extension/definitions/attributes/properties/parameters"
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/parameters"
                           },
-                          "sidebar": {
-                            "$ref": "#/definitions/ui_extension/definitions/attributes/properties/sidebar"
+                          "package_version": {
+                            "$ref": "#/definitions/plugin/definitions/attributes/properties/package_version"
                           }
                         }
                       }
@@ -5164,7 +5341,7 @@
                 "additionalProperties": false,
                 "properties": {
                   "data": {
-                    "$ref": "#/definitions/ui_extension"
+                    "$ref": "#/definitions/plugin"
                   }
                 }
               }
@@ -5173,8 +5350,8 @@
               "method": "GET",
               "rel": "instances",
               "title": "Index",
-              "description": "List all UI extensions",
-              "href": "/ui-extensions",
+              "description": "List all plugins",
+              "href": "/plugins",
               "targetSchema": {
                 "type": "object",
                 "required": [
@@ -5185,7 +5362,7 @@
                   "data": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/definitions/ui_extension"
+                      "$ref": "#/definitions/plugin"
                     }
                   }
                 }
@@ -5195,8 +5372,8 @@
               "method": "GET",
               "rel": "self",
               "title": "Show",
-              "description": "Retrieve a UI extensions",
-              "href": "/ui-extensions/{(%2Fschemata%2Fui_extension%23%2Fdefinitions%2Fuser%2Fdefinitions%2Fidentity)}",
+              "description": "Retrieve a plugins",
+              "href": "/plugins/{(%2Fschemata%2Fplugin%23%2Fdefinitions%2Fuser%2Fdefinitions%2Fidentity)}",
               "targetSchema": {
                 "type": "object",
                 "required": [
@@ -5205,7 +5382,7 @@
                 "additionalProperties": false,
                 "properties": {
                   "data": {
-                    "$ref": "#/definitions/ui_extension"
+                    "$ref": "#/definitions/plugin"
                   }
                 }
               }
@@ -5214,8 +5391,8 @@
               "method": "DELETE",
               "rel": "destroy",
               "title": "Delete",
-              "description": "Delete an UI extension",
-              "href": "/ui-extensions/{(%2Fschemata%2Fui_extension%23%2Fdefinitions%2Fuser%2Fdefinitions%2Fidentity)}",
+              "description": "Delete an plugin",
+              "href": "/plugins/{(%2Fschemata%2Fplugin%23%2Fdefinitions%2Fuser%2Fdefinitions%2Fidentity)}",
               "targetSchema": {
                 "type": "object",
                 "required": [
@@ -5224,15 +5401,15 @@
                 "additionalProperties": false,
                 "properties": {
                   "data": {
-                    "$ref": "#/definitions/ui_extension"
+                    "$ref": "#/definitions/plugin"
                   }
                 }
               }
             }
           ],
           "$schema": "http://json-schema.org/draft-04/hyper-schema",
-          "title": "UI extension",
-          "description": "UI Extensions enable developers to replace DatoCMS field components with HTML5 applications so the editing experiences of the DatoCMS web app can be customized.",
+          "title": "Plugin",
+          "description": "Plugins enable developers to replace DatoCMS field components with HTML5 applications so the editing experiences of the DatoCMS web app can be customized.",
           "type": "object",
           "required": [
             "type",
@@ -5251,26 +5428,26 @@
               "additionalProperties": false,
               "properties": {
                 "type": {
-                  "$ref": "#/definitions/ui_extension/properties/type"
+                  "$ref": "#/definitions/plugin/properties/type"
                 },
                 "id": {
-                  "$ref": "#/definitions/ui_extension/properties/id"
+                  "$ref": "#/definitions/plugin/properties/id"
                 }
               }
             },
             "identity": {
-              "$ref": "#/definitions/ui_extension/properties/id"
+              "$ref": "#/definitions/plugin/properties/id"
             },
             "type": {
               "description": "JSON API type field",
               "type": [
                 "string"
               ],
-              "pattern": "^ui_extension$",
-              "example": "ui_extension"
+              "pattern": "^plugin$",
+              "example": "plugin"
             },
             "id": {
-              "description": "ID of ui_extension",
+              "description": "ID of plugin",
               "type": "string",
               "example": "124"
             },
@@ -5283,19 +5460,48 @@
                 "url",
                 "parameters",
                 "parameter_definitions",
-                "sidebar"
+                "plugin_type"
               ],
               "additionalProperties": false,
               "properties": {
                 "name": {
                   "type": "string",
-                  "description": "The name of the UI extension",
+                  "description": "The name of the plugin",
                   "example": "5 stars"
                 },
-                "sidebar": {
-                  "type": "boolean",
-                  "description": "Hides the extension from the entry editor and instead renders it the sidebar",
-                  "example": true
+                "description": {
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "description": "A textual description for the plugin",
+                  "example": "A simple field editor that allows a nicer editing rating experience"
+                },
+                "package_name": {
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "description": "Plugin Npm package name",
+                  "example": "datocms-plugin-star-rating-editor"
+                },
+                "package_version": {
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "description": "Plugin Npm version",
+                  "example": "0.0.4"
+                },
+                "plugin_type": {
+                  "type": "string",
+                  "description": "The type of extension",
+                  "enum": [
+                    "field_editor",
+                    "sidebar",
+                    "field_addon"
+                  ],
+                  "example": "field"
                 },
                 "field_types": {
                   "type": "array",
@@ -5305,7 +5511,6 @@
                       "boolean",
                       "date",
                       "date_time",
-                      "file",
                       "float",
                       "integer",
                       "string",
@@ -5316,12 +5521,10 @@
                       "link",
                       "links",
                       "video",
-                      "slug",
-                      "gallery",
                       "color"
                     ]
                   },
-                  "description": "On which types of field this UI extension can be used",
+                  "description": "On which types of field this plugin can be used",
                   "example": [
                     "integer",
                     "float"
@@ -5329,19 +5532,19 @@
                 },
                 "url": {
                   "type": "string",
-                  "description": "The name of the UI extension",
+                  "description": "The name of the plugin",
                   "example": "https://cdn.rawgit.com/datocms/extensions/master/samples/five-stars/extension.js"
                 },
                 "parameters": {
                   "type": "object",
-                  "description": "Global parameters which are set on on a project level. Values apply globally to every instance of an UI Extension within the project.",
+                  "description": "Global parameters which are set on on a project level. Values apply globally to every instance of an plugin within the project.",
                   "example": {
                     "devMode": true
                   }
                 },
                 "parameter_definitions": {
                   "type": "object",
-                  "description": "Parameter definitions for the UI extension",
+                  "description": "Parameter definitions for the plugin",
                   "required": [
                     "global",
                     "instance"
@@ -5386,13 +5589,13 @@
           },
           "properties": {
             "type": {
-              "$ref": "#/definitions/ui_extension/definitions/type"
+              "$ref": "#/definitions/plugin/definitions/type"
             },
             "id": {
-              "$ref": "#/definitions/ui_extension/definitions/id"
+              "$ref": "#/definitions/plugin/definitions/id"
             },
             "attributes": {
-              "$ref": "#/definitions/ui_extension/definitions/attributes"
+              "$ref": "#/definitions/plugin/definitions/attributes"
             }
           }
         },
@@ -5481,6 +5684,22 @@
                   "description": "Number of indexable pages",
                   "example": 1000
                 },
+                "deployment_environments": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of deployment environments",
+                  "example": 4
+                },
+                "plugins": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Number of plugins",
+                  "example": 4
+                },
                 "items": {
                   "type": [
                     "null",
@@ -5555,6 +5774,1397 @@
               "$ref": "#/definitions/plan/definitions/attributes"
             }
           }
+        },
+        "scheduled_publication": {
+          "position": 15,
+          "links": [
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create a new scheduled publication",
+              "href": "/items/{(%2Fschemata%2Fitem%23%2Fdefinitions%2Fitem%2Fdefinitions%2Fidentity)}/scheduled_publication",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/scheduled_publication/definitions/type"
+                      },
+                      "attributes": {
+                        "$ref": "#/definitions/scheduled_publication/definitions/attributes"
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "included"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/scheduled_publication"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/item"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "DELETE",
+              "rel": "destroy",
+              "title": "Delete",
+              "description": "Delete a scheduled publication",
+              "href": "/items/{(%2Fschemata%2Fitem%23%2Fdefinitions%2Fitem%2Fdefinitions%2Fidentity)}/scheduled_publication",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "included"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/scheduled_publication"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/item"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Scheduled publication",
+          "description": "You can create scheduled publication to publish records in the future",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "type": "object",
+              "description": "JSON API data",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/scheduled_publication/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/scheduled_publication/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/scheduled_publication/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^scheduled_publication$",
+              "example": "scheduled_publication$"
+            },
+            "id": {
+              "description": "ID of scheduled_publication",
+              "type": "string",
+              "example": "34"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "publication_scheduled_at": {
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "format": "date-time",
+                  "description": "The future date for the publication",
+                  "example": "2017-02-10T11:03:42.208Z"
+                }
+              }
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "item"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "item": {
+                  "type": "object",
+                  "description": "Item",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/item/definitions/data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/scheduled_publication/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/scheduled_publication/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/scheduled_publication/definitions/attributes"
+            },
+            "relationships": {
+              "$ref": "#/definitions/scheduled_publication/definitions/relationships"
+            }
+          }
+        },
+        "webhook": {
+          "position": 11,
+          "links": [
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create a new webhook",
+              "href": "/webhooks",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/webhook/definitions/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "url",
+                          "headers",
+                          "events",
+                          "http_basic_user",
+                          "http_basic_password"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/name"
+                          },
+                          "url": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/url"
+                          },
+                          "headers": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/headers"
+                          },
+                          "events": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/events"
+                          },
+                          "http_basic_user": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/http_basic_user"
+                          },
+                          "http_basic_password": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/http_basic_password"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/webhook"
+                  }
+                }
+              }
+            },
+            {
+              "method": "PUT",
+              "rel": "update",
+              "title": "Update",
+              "description": "Update a webhook",
+              "href": "/webhooks/{(%2Fschemata%2Fwebhook%23%2Fdefinitions%2Fuser%2Fdefinitions%2Fidentity)}",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "id",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/webhook/properties/type"
+                      },
+                      "id": {
+                        "$ref": "#/definitions/webhook/properties/id"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/name"
+                          },
+                          "url": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/url"
+                          },
+                          "headers": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/headers"
+                          },
+                          "events": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/events"
+                          },
+                          "http_basic_user": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/http_basic_user"
+                          },
+                          "http_basic_password": {
+                            "$ref": "#/definitions/webhook/definitions/attributes/properties/http_basic_password"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/webhook"
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Index",
+              "description": "List all webhooks",
+              "href": "/webhooks",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/webhook"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "rel": "self",
+              "title": "Show",
+              "description": "Retrieve a webhook",
+              "href": "/webhooks/{(%2Fschemata%2Fwebhook%23%2Fdefinitions%2Fuser%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/webhook"
+                  }
+                }
+              }
+            },
+            {
+              "method": "DELETE",
+              "rel": "destroy",
+              "title": "Delete",
+              "description": "Delete a webhook",
+              "href": "/webhooks/{(%2Fschemata%2Fwebhook%23%2Fdefinitions%2Fuser%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/webhook"
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "type": "object",
+          "title": "Webhook",
+          "description": "A webhook allows to make requests following certain Dato events. It is linked to a Role, which describes what actions can be performed.",
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/webhook/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/webhook/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/webhook/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^webhook$",
+              "example": "webhook"
+            },
+            "id": {
+              "description": "ID of webhook",
+              "type": "string",
+              "example": "312"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "name",
+                "url",
+                "headers",
+                "events",
+                "http_basic_user",
+                "http_basic_password"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Unique name for the webhook",
+                  "example": "Item type creation/update"
+                },
+                "url": {
+                  "type": "string",
+                  "description": "The URL to be called",
+                  "example": "https://www.example.com/webhook"
+                },
+                "http_basic_user": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "HTTP Basic Authorization username",
+                  "example": "user"
+                },
+                "http_basic_password": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "HTTP Basic Authorization password",
+                  "example": "password"
+                },
+                "headers": {
+                  "type": "object",
+                  "description": "Additional headers that will be sent",
+                  "example": {
+                    "X-Foo": "Bar"
+                  }
+                },
+                "events": {
+                  "type": "array",
+                  "description": "All the events you will be notified for",
+                  "example": [
+                    {
+                      "entity_type": "item_type",
+                      "event_types": [
+                        "update",
+                        "create"
+                      ],
+                      "filter": {
+                        "entity_type": "item_type",
+                        "entity_ids": [
+                          "42",
+                          "43"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/webhook/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/webhook/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/webhook/definitions/attributes"
+            }
+          }
+        },
+        "webhook_call": {
+          "position": 12,
+          "links": [
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Index",
+              "description": "List all webhooks calls",
+              "href": "/webhooks/calls",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/webhook_call"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "rel": "resend_webhook",
+              "title": "Resend webhook",
+              "description": "Resends the webhook with the same parameters",
+              "private": true,
+              "href": "/webhooks/{(%2Fschemata%2Faccess_token%23%2Fdefinitions%2Fuser%2Fdefinitions%2Fidentity)}/resend_webhook",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/webhook_call"
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Webhook call",
+          "description": "Represents a log entry in the webhooks activity list.",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "type": "object",
+              "description": "JSON API data",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/webhook_call/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/webhook_call/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/webhook_call/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^webhook_call$",
+              "example": "webhook_call"
+            },
+            "id": {
+              "description": "ID of webhook call",
+              "type": "string",
+              "example": "42"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "entity_type",
+                "event_type",
+                "created_at",
+                "request_url",
+                "request_headers",
+                "request_payload",
+                "response_status",
+                "response_headers",
+                "response_payload"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "entity_type": {
+                  "type": "string",
+                  "enum": [
+                    "item",
+                    "item_type",
+                    "upload"
+                  ],
+                  "description": "The subject of webhook triggering",
+                  "example": "item"
+                },
+                "event_type": {
+                  "type": "string",
+                  "enum": [
+                    "create",
+                    "update",
+                    "delete",
+                    "publish",
+                    "unpublish"
+                  ],
+                  "description": "The event that triggers the webhook call",
+                  "example": "update"
+                },
+                "created_at": {
+                  "description": "The moment the call occurred",
+                  "type": [
+                    "string"
+                  ],
+                  "format": "date-time",
+                  "example": "2016-09-20T18:50:24.914Z"
+                },
+                "request_url": {
+                  "description": "The url that the webhook called",
+                  "type": "string",
+                  "example": "https://www.example.com/webhook"
+                },
+                "request_headers": {
+                  "type": "object",
+                  "description": "The request's headers",
+                  "example": {
+                    "Accept": "*/*",
+                    "User-Agent": "DatoCMS (datocms.com)",
+                    "Authorization": "Basic Y2lhbzptaWFv",
+                    "Content-Type": "application/json"
+                  }
+                },
+                "request_payload": {
+                  "type": "string",
+                  "description": "The body of the request",
+                  "example": "{ \"entity_type\": \"item\", \"event_type\": \"update\", \"entity\": { \"id\": \"293467\", \"type\": \"item\", \"attributes\": { \"created_at\": \"2018-05-22T10:13:00.461Z\", \"updated_at\": \"2018-07-30T14:13:50.068Z\", \"is_valid\": true, \"avatar\": { \"path\": \"/205/1526984443-untitled-drawing.png\", \"format\": \"png\", \"size\": 242630, \"alt\": null, \"title\": null, \"width\": 329, \"height\": 286 }, \"name\": \"3Francesco Falchy\", \"gallery\": [] }, \"relationships\": { \"item_type\": { \"data\": { \"id\": \"1423\", \"type\": \"item_type\" } }, \"published_version\": { \"data\": { \"id\": \"670532\", \"type\": \"item_version\" } }, \"current_version\": { \"data\": { \"id\": \"670532\", \"type\": \"item_version\" } } } } }"
+                },
+                "response_status": {
+                  "description": "The status of the response",
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "example": 200
+                },
+                "response_headers": {
+                  "type": "object",
+                  "description": "The response's headers",
+                  "example": {
+                    "via": "1.1 vegur, 1.1 37c0945d19329fccc23efb283d01aa06.cloudfront.net (CloudFront)",
+                    "date": "Fri, 27 Jul 2018 11:59:20 GMT",
+                    "server": "gunicorn/19.6.0"
+                  }
+                },
+                "response_payload": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The body of the response",
+                  "example": "ok"
+                }
+              }
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "webhook"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "webhook": {
+                  "type": "object",
+                  "description": "The webhook which has been called",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/webhook/definitions/data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/webhook_call/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/webhook_call/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/webhook_call/definitions/attributes"
+            },
+            "relationships": {
+              "$ref": "#/definitions/webhook_call/definitions/relationships"
+            }
+          }
+        },
+        "deployment_environment": {
+          "position": 13,
+          "links": [
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Index",
+              "description": "List all deployment environments for a site",
+              "href": "/deployment-environments",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/deployment_environment"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "rel": "self",
+              "title": "Show",
+              "description": "Retrieve a deployment environment",
+              "href": "/deployment-environments/{(%2Fschemata%2Fdeployment_environment%23%2Fdefinitions%2Fdeployment_environment%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/deployment_environment"
+                  }
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create deployment environment",
+              "href": "/deployment-environments",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/deployment_environment/properties/type"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "deploy_adapter",
+                          "spider_enabled",
+                          "frontend_url",
+                          "deploy_settings"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/name"
+                          },
+                          "webhook_token": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/webhook_token"
+                          },
+                          "deploy_adapter": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_adapter"
+                          },
+                          "spider_enabled": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/spider_enabled"
+                          },
+                          "frontend_url": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/frontend_url"
+                          },
+                          "deploy_settings": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_settings"
+                          },
+                          "access_policy": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/access_policy"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/deployment_environment"
+                  }
+                }
+              }
+            },
+            {
+              "method": "PUT",
+              "rel": "update",
+              "title": "Update",
+              "description": "Update deployment environment",
+              "href": "/deployment-environments/{(%2Fschemata%2Fdeployment_environment%23%2Fdefinitions%2Fdeployment_environment%2Fdefinitions%2Fidentity)}",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "id",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/deployment_environment/properties/type"
+                      },
+                      "id": {
+                        "$ref": "#/definitions/deployment_environment/properties/id"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/name"
+                          },
+                          "deploy_adapter": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_adapter"
+                          },
+                          "spider_enabled": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/spider_enabled"
+                          },
+                          "frontend_url": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/frontend_url"
+                          },
+                          "deploy_settings": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_settings"
+                          },
+                          "access_policy": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/access_policy"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/deployment_environment"
+                  }
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "rel": "trigger",
+              "title": "Trigger",
+              "description": "Trigger a deploy",
+              "href": "/deployment-environments/{(%2Fschemata%2Fdeployment_environment%23%2Fdefinitions%2Fdeployment_environment%2Fdefinitions%2Fidentity)}/trigger"
+            },
+            {
+              "method": "DELETE",
+              "rel": "destroy",
+              "title": "Delete",
+              "description": "Delete a deployment environment",
+              "href": "/deployment-environments/{(%2Fschemata%2Fdeployment_environment%23%2Fdefinitions%2Fdeployment_environment%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/deployment_environment"
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "type": "object",
+          "title": "Deployment environment",
+          "description": "Configuration for different deployment environments. You can have different staging and production environments in order to test your site before final deploy",
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperteis": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/deployment_environment/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/deployment_environment/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/deployment_environment/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^deployment_environment$",
+              "example": "deployment_environment"
+            },
+            "id": {
+              "description": "ID of deployment_environment",
+              "type": "string",
+              "example": "1822"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "name",
+                "deploy_adapter",
+                "deploy_settings",
+                "last_deploy_at",
+                "last_build_at",
+                "deploy_status",
+                "webhook_token",
+                "webhook_url",
+                "scrape_status",
+                "frontend_url",
+                "spider_enabled",
+                "access_policy"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the environment",
+                  "example": "Production"
+                },
+                "deploy_adapter": {
+                  "type": "string",
+                  "description": "The deploy adapter",
+                  "example": "netlify"
+                },
+                "deploy_settings": {
+                  "type": "object",
+                  "description": "Additional configuration for deploy",
+                  "example": {
+                    "trigger_url": "https://api.netlify.com/build_hooks/XXX",
+                    "site_id": "XXX",
+                    "access_token": "YYY"
+                  }
+                },
+                "last_build_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Timestamp of the last build",
+                  "example": "2017-03-30T09:29:14.872Z"
+                },
+                "last_deploy_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Timestamp of the last deploy",
+                  "example": "2017-03-30T09:29:14.872Z"
+                },
+                "deploy_status": {
+                  "type": "string",
+                  "description": "Status of last deploy",
+                  "example": "success"
+                },
+                "webhook_token": {
+                  "type": "string",
+                  "description": "Unique token of the webhook",
+                  "example": "xA1239ajsk123"
+                },
+                "webhook_url": {
+                  "type": "string",
+                  "description": "Notification webhook URL",
+                  "example": "https://webhooks.datocoms.com/xA1239ajsk123/deploy-results"
+                },
+                "scrape_status": {
+                  "type": "string",
+                  "description": "Status of site scraper",
+                  "example": "success"
+                },
+                "frontend_url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Public url of the site",
+                  "example": "https://www.mywebsite.com/"
+                },
+                "spider_enabled": {
+                  "type": "boolean",
+                  "description": "Enable scraper on the site",
+                  "example": true
+                },
+                "access_policy": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Additional access policy"
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/deployment_environment/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/deployment_environment/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/deployment_environment/definitions/attributes"
+            }
+          }
+        },
+        "item_type_filter": {
+          "position": 14,
+          "links": [
+            {
+              "method": "POST",
+              "rel": "create",
+              "title": "Create",
+              "description": "Create a new filter",
+              "href": "/item-type-filters",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes",
+                      "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/item_type_filter/definitions/type"
+                      },
+                      "attributes": {
+                        "$ref": "#/definitions/item_type_filter/definitions/attributes"
+                      },
+                      "relationships": {
+                        "$ref": "#/definitions/item_type_filter/definitions/relationships"
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/item_type_filter"
+                  }
+                }
+              }
+            },
+            {
+              "method": "PUT",
+              "rel": "update",
+              "title": "Update",
+              "description": "Update a filter",
+              "href": "/item-type-filters/{(%2Fschemata%2Fitem_type_filter%23%2Fdefinitions%2Fitem_type_filter%2Fdefinitions%2Fidentity)}",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "id",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/item_type_filter/properties/type"
+                      },
+                      "id": {
+                        "$ref": "#/definitions/item_type_filter/properties/id"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "description": "JSON API attributes",
+                        "required": [
+                          "name",
+                          "filter"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "$ref": "#/definitions/item_type_filter/definitions/attributes/properties/name"
+                          },
+                          "filter": {
+                            "$ref": "#/definitions/item_type_filter/definitions/attributes/properties/filter"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/item_type_filter"
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Index",
+              "description": "List all filters",
+              "href": "/item-type-filters",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/item_type_filter"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "rel": "self",
+              "title": "Show",
+              "description": "Retrieve a filter",
+              "href": "/item-type-filters/{(%2Fschemata%2Fitem_type_filter%23%2Fdefinitions%2Fitem_type_filter%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/item_type_filter"
+                  }
+                }
+              }
+            },
+            {
+              "method": "DELETE",
+              "rel": "destroy",
+              "title": "Delete",
+              "description": "Delete a filter",
+              "href": "/item-type-filters/{(%2Fschemata%2Fitem_type_filter%23%2Fdefinitions%2Fitem_type_filter%2Fdefinitions%2Fidentity)}",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/item_type_filter"
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Model filter",
+          "description": "In DatoCMS you can create filters to help you (and other editors) quickly search for records",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "relationships",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "type": "object",
+              "description": "JSON API data",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/item_type_filter/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/item_type_filter/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/item_type_filter/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^item_type_filter$",
+              "example": "item_type_filter"
+            },
+            "id": {
+              "description": "ID of filter",
+              "type": "string",
+              "example": "34"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "name",
+                "filter"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the filter",
+                  "example": "Draft posts"
+                },
+                "filter": {
+                  "type": "object",
+                  "description": "The actual filter",
+                  "example": {
+                    "status": {
+                      "eq": "draft"
+                    }
+                  }
+                },
+                "shared": {
+                  "type": "boolean",
+                  "description": "Whether it's a shared filter or not",
+                  "example": true
+                }
+              }
+            },
+            "relationships": {
+              "description": "JSON API links",
+              "type": "object",
+              "required": [
+                "item_type"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "item_type": {
+                  "type": "object",
+                  "description": "Model associated with the filter",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/item_type/definitions/data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/item_type_filter/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/item_type_filter/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/item_type_filter/definitions/attributes"
+            },
+            "relationships": {
+              "$ref": "#/definitions/item_type_filter/definitions/relationships"
+            }
+          }
         }
       }
     },
@@ -5564,13 +7174,13 @@
       "Connection",
       "close",
       "Date",
-      "Mon, 30 Jul 2018 13:05:12 GMT",
+      "Wed, 05 Dec 2018 13:57:01 GMT",
       "Last-Modified",
-      "Mon, 30 Jul 2018 10:28:50 GMT",
+      "Wed, 05 Dec 2018 09:33:59 GMT",
       "Content-Type",
       "application/json",
       "Content-Length",
-      "169323",
+      "220831",
       "Via",
       "1.1 vegur"
     ]
@@ -5605,9 +7215,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b0800090d5f5b0003",
-      "6c50414ec4300cfc8bcfbd200e406fbc0321cb6d5cb0d66d8ae3acb45af5ef385d89ad809c9c19cf78ec2b247282fe0a92a087c7a7879767e8c02f2bc7579c67dceb0ec8dd64a8cea5752f34b786577319b5d145960f65cf0bf46e9503c8e63404d74fa425005a054f7cf9659b2db1851693188f2ecd60a9aa91c1f82e9e73aa4a8683e6f1f48326a3c93138460aedf9304c15a395940b1a7fd5304fb7645b07c64a6d52f99475df6612d6b457b76bbcbd6f878db0e5bd932ddd7608be8bffd02eaefc2f17ef1b0000ffff",
-      "0300a354e57b76010000"
+      "1f8b08002dd9075c0003",
+      "6c50cb4ec4300cfc979c7b582171a037be0321cb4d5cd65ab7098e8bb45af5df71ba0f2a2027c7e319cff812121a86fe1238853e3c3f1d0e2fa10b762ee45f369a60abbb8066cac36254dbf48c531b7855e3280dae3c7f08599e436fba9037b21a0e8ef5234af5061686139d7fc9664da4ce85c44ad1b809cc8b887b50fa214f392d820a83e4787a7493e268e018013af76bb74c047c14852a287d2e2e9eeece6216b9ae022c855009e7d8d2c43c15d7715747acf04804cdef4d79ed82926023d72397ed162393a4adbadef2ed7ddddde3c6be832ddbba8bbd91ffc0c626f42fe6ef1b0000ffff",
+      "0300edcc9c19b4010000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -5619,13 +7229,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"5e67e06fc12e6da498ff496d009e1cb5\"",
+      "W/\"80fd820ea1b4850a4c1946f160c761b1\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "d4e77ae8-4907-4cd4-b47c-f68c2baf0d3b",
+      "cf7d76fa-5961-495e-a98a-ce877fe0ec6b",
       "X-Runtime",
-      "0.052722",
+      "0.294216",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -5635,34 +7245,26 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "POST",
-    "path": "/item-types/37198/fields",
+    "path": "/item-types/52009/fields",
     "body": {
       "data": {
         "type": "field",
         "attributes": {
           "label": "Title",
           "field_type": "string",
-          "localized": false,
           "api_key": "title",
-          "hint": "",
+          "localized": false,
           "validators": {
             "required": {}
-          },
-          "appeareance": {
-            "editor": "single_line",
-            "parameters": {
-              "heading": true
-            }
-          },
-          "position": 1
+          }
         }
       }
     },
     "status": 201,
     "response": [
-      "1f8b0800090d5f5b0003",
-      "8452496ec3300cfc8bce3e345d90d6b7fea1b72010688b6e8830b223530152437f2f65bb719a02a96e5c86c3196a300e044c391872a634abe7c78797b5298c9c3bd4b82164a7218804aaa2609f5b192a64ad7e90306a75ecb233a4d74eff99311dd93d9e352573df8ebc98d247e6c2705b03d3172a6b03dc63614e1aeb326d1839021e23855c1e522a4cd7f624d47a53aef2e40e2120f81a732b3a5254a6566246cbe4335b07010e2838cddb21b8bc57292162ba089c56d3d8610391c5ea1611a725351b9021d3f63beac631247898950ebfad7b5aafde5e17e796c694b200f2354797f56cfe03dcdaed558636bc07a17af471d229d98dac46136d10a8b4f6e3e5e2fdf5d83638ccc7b14e9dad273ba76b48c0057c685d6408b6d21bed2f5917a011ab35b4a0d8d31519b31dcf89bd5dce36fbfcc7c1f1b3f48b7d9bbb5f2f6dd3955e9bd52cd0f948175913e4b63c9ef8b6769f54df367d030000ffff",
-      "030092061b151b030000"
+      "1f8b08002ed9075c0003",
+      "8452c16e83300cfd979c39ac953aa9dcf60fbb5555648859a39a84254ea50ef1ef738096164d1d37f3def3b39fd32b030caaec9535aa549bfd7efbbe5385e26b87523716c94809ccc1568931662a418524e8a765424147969e255198ee2b6b3aabcf78955f3cf34ed6b12a5d222a14f91ac8fea0b83640110b75915a86f161f408f89d6cc8703f0c85ea7cb46cbd53e52677ee100282ab3153d15851656b3126d4645d76eb20408b8c53bf1382c9738df6d2108cf14e90c3510a830d24622d2324bc53021264cf78b2ddd8c332b6f39afd736ebbeddbdb7e896d210e439edeba9a92c9cb1cfe13acb376b283103e02db7a0c715a9273141c92e4167d60a804bb05b904ffd8d60783f932da48acf594e5740a0eb8885b6f1241d0951ce87cff6b0234ac05430da2bd3c9811e9f19618f572b369b2da134d56fae96402b49df4c94f02a2be6fa4f3bc73e7bff21fdf595cc23fbc7cb543beecbaf74d3a9ff81eca2459c3e3c35d63af4de53b0ebf000000ffff",
+      "030016dc6fd256030000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -5674,13 +7276,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"ca63113f9483605779c38f46177e2e8b\"",
+      "W/\"e05cec13cae686c2fa4f59c05272988d\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "08389e85-a5e6-42f1-b554-9683d25c1239",
+      "28feaa58-d934-48e4-8e89-1fe6975dc6b4",
       "X-Runtime",
-      "0.046024",
+      "0.609649",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -5690,32 +7292,26 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "POST",
-    "path": "/item-types/37198/fields",
+    "path": "/item-types/52009/fields",
     "body": {
       "data": {
         "type": "field",
         "attributes": {
           "label": "Main content",
           "field_type": "text",
-          "localized": false,
           "api_key": "main_content",
-          "hint": "",
+          "localized": false,
           "validators": {
             "required": {}
-          },
-          "appeareance": {
-            "editor": "markdown",
-            "parameters": {}
-          },
-          "position": 2
+          }
         }
       }
     },
     "status": 201,
     "response": [
-      "1f8b0800090d5f5b0003",
-      "8452c14ec3300cfd1594730f6c8006bdf1017cc134455ee3316b6e52527730a6fc3b4e3bda3221e8a58afd9efdfcecb3712060cab321674ab3b85fde3e3c9ac2c8a9417def08d9e91344226d3bc1364319b6c89a7d01f23755f0825e14d483ed8529f89163d0903de04903b582ed04de93fe4adf31178643054c9fa80a76c02d16e6a86f151662df2fe25b4731a7cf2915a6092d09056fca656ed02044045f6186a22365f5ede2c18577afad1a8850a3605f2c8db38d080d39dc41c762b56f87832c8d4664c88dda3d35bd1012ac2f039e7f1a77b75a3ccd7c9b802965c9e42bee5c9e60fd1fe1da6cafda15f01c852acee996fc2ba3e4f925766a561ba2c05673dfee4da6cfcb86e8302ad73af5b21a0c1cfc978813b90eae638876ab5b398c5117612756736841b9c7593366db2f105b3b2d2a2bfbcdc1fe46dac9bef5fcf056d787978a3fef326dd2cc0e9b879d2a5f76384e3d50aed342c2789dfb5b937e9bf4050000ffff",
-      "03007aeb8a3c38030000"
+      "1f8b08002fd9075c0003",
+      "8453c16edb300cfd9541671fba002d90dcf601fb822010688b8e09d3922b51ddbac0ff3eca4eedd4183a5f648a8fe4e32375330e04cce966c89993f97e3c1e5e5e4c65e47d44b55b42766a8248a43a0ba60265a891d5fb13c87f6b8217f4a2a0196cef9182bfcb1d8c647b7cd78b41c1760377a4c7c967e6ca706880e90f2a8316386165ded4566221cef522be668ac57d9ba6ca8c219150f0e6742805468488e01b2c5074a45173b9d8bbf0cb6ba911220c28b8249310b806859c4d87e0c85f155287b94d12addbe84fd2767b942e867cedd4ce3e44874ac132a5427f67bee620a82793ef4b9e01aec56cb5bdd444446f2e4a1c9c0b5e499c2fabc02b4d753b6c21b3586d3ee3a28dde466428dda68ec6b901121cee2adf3e4feff9f0f474dc86b701a7a9e846bee1ec8a8ce7ff05ec27ee554005fc88420d177752dd18a50c4162d689a510056af57d8c709bfc63da59378db54e07da2c535c964054a63578082e33445beb6af4ebad8bd08a551f5ad0d8b78762cc76de224c76db96855913989752f6d3b2a86318354f59464876edc816bef7ccffd27f5ef3b4897f7e7c3bcffbb733555f3eada9ecc5bef447e6fb06ac9a2d217bb79030ee7d5f73d2ef32fd050000ffff",
+      "0300118d2900fb030000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -5727,13 +7323,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"8ed9c17487708253caf559724119a9b4\"",
+      "W/\"c604a0e703b463cebb951c8bd693c34f\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "15009c89-3d4e-4590-ba01-6accf67281b3",
+      "79b0b8d0-5e3d-429e-88bc-98656e18fb5b",
       "X-Runtime",
-      "0.042282",
+      "0.773092",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -5755,7 +7351,7 @@
           "item_type": {
             "data": {
               "type": "item_type",
-              "id": "37198"
+              "id": "52009"
             }
           }
         }
@@ -5763,9 +7359,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b0800090d5f5b0003",
-      "9c53c16ec2300cfd1594339b5a0ab4e3b6cb6ebbedb409456e63b668a1e91c0709a1fefb1c60c0cab449eb2df17bcfcfcfe94e1960508b9db2462d5431a9cae9548d156f3b94b3655ccb0998c9d69131246443088c46030b6292e5d54d56de14d9535e2cb2d9222f6ef3aa7c1656ecccefb84956249c0d7a032ef5678a28bd2dbbd4fc713b5a590a3caa9d7f1d753eb080d7605bddf896b14db20fde8f6a20d58f15a103b6be0d6fb6dbfb4ce6f56190dd60cc32bfabbe4f7900f6a2d3c5dad9f026c637484104afe8f33c9b57e580ff054e124d24127fff154812b66d5c3428e897bf4c0ff7d3c23a01ee896de35239d8f6d521272387848327863a85bc0217e4023aabdf713b90f5649084ab8d256c783f491b9d130f8467f2da9be880b4aca9793fdd1a82156ba9a106e16e2e9a39a7050a0e8326fc88227edcfd4f5b5c5974269c23fc8a239f4eb2d945867b9cbc83cb7275555ef61771e8fdf3be7a1c3ffd036925a7380e5a275e8aa43f3edb61ed77b3f22dfb4f000000ffff",
-      "030090c2e16083030000"
+      "1f8b08002fd9075c0003",
+      "9453c16edb300cfd9540d7a5831ccf5de3db2ebdedb6db5008b4cc3442644995e80241e07f1f65a74ee616ebe29bf4de23f99ea993688140d427615a518b4a96a5fc26d6828e01f96c083b3e0151344d4f9832930cd90cfe3cae7626265a35d63faf824fc4d40e8c53da3b4247cc79f47ed54064a00fdc095b05f97a238b87bb627327ab5f455957df6b597e95527e91b29692c93ae2ff9287b58868818c77696fc238611e5b4d164e0b831b29b77ffb9b88c370eeeae33b51513d945722d01a5352e40fe858c7c20e27f60d63df1848e81b6bd2fe26ba1e435149b3acb767a9ebad5d0b93d42bd86c8e628f6b9108a8e7e82e7dc6408cd3b66ff950fffe2cbfe59238e832e14724a36d869371cf16c9bbb9a78f044ddea41dd8c417108c3ae07151d6c716236b556b22eaece8cd0445bc883bcf1e212ade457d986fdb083b528ca102d6be5e35b35631152c2615f1a5e7e2731ada5b3bb552100202ff55a7b31bedbbc07578aa3d24353b52e33319c51f6de3cea06dd365abdeb22cb6dbcd7d750973e4f13e5fc3f7efe0a7e12acb73e7e5927ff48af3ff9cb39c6acdba9c27c3e3c35e62ff1e96bfa7e10f000000ffff",
+      "03002860234945040000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -5777,13 +7373,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"16ac27dcfd1ce8f191e311a89a63d91d\"",
+      "W/\"28ee50dbba275d8e0188e9e6697e2a86\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "4fdab639-fd9f-4b59-a77a-41d59bc274c4",
+      "4026b068-c53b-4a72-81e3-29142be806dc",
       "X-Runtime",
-      "0.063553",
+      "0.300941",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -5793,13 +7389,13 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "DELETE",
-    "path": "/items/328744",
+    "path": "/items/503304",
     "body": "",
     "status": 200,
     "response": [
-      "1f8b0800090d5f5b0003",
-      "7c8fcd6ec2300cc75fa5ca1950d23092f501b871e3c4a54adb6c580a49943848a8eabbe30ca6694c9a6f967ffe7fcc6c32685837339858c764abd576cb560c6fd1d20e682fb419c40443419b2b39266bd04ebd41225a2ef49aabb5e447213bfed609b9115a9de8abc4e97faee5b27290fbab71d51f53b1e40de8aaf9e1d67c40cad80c2e7c36316424f862c0f763f0687d95dd87d00c26b165c592750621f87c86f895b386ef1f45e6979a4abcebdf2d1fe0423ab10c0ef299825f6dca24f8f3ee8b73448c2525b2ff7b7fcaef04df69f5a2ff0d2f75ee000000ffff",
-      "03009f36300077010000"
+      "1f8b08002fd9075c0003",
+      "9490cd4ec4300c845fa5ca952e725b2a963cc0deb8718fd2d4b0116952250ed2aaeabbe36c57e2ef428fb6bfd1786611a3262de422ec28a4e8a1ebe041d4822e33f26c09279e3451b443264c85244bae1c9f2fd5ab8d89aac185b76a0e89189db4f5ca044fe889995308d5a0231ff2cc4e382a5dd62d34c743d31ea07f693ad93f4ae8ee01e00e4002306c22fe175e6b11d169b2c1a7b39daf1f96b7d51661f915b00578fa996f03d7f5e61ae21f51d31fbb6f226d0ca6a428bca3671d0b27dce81d6fef2c64ce83b3e9bc0b37d75254322ccbee26f5d9b95ad8a43eb42be12866ac45224d99abfbf229c13e010000ffff",
+      "0300634237621d020000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -5811,13 +7407,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"17c024bde8b1d03d1ba67cd2cb42d9b7\"",
+      "W/\"8eea2ba2e91c23e05dcdab2ec852e74f\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "f8eb419b-d796-4540-8094-964b0dfbb833",
+      "73fa3fa9-2f7b-43a7-9ea6-4427cad34212",
       "X-Runtime",
-      "0.052793",
+      "0.352070",
       "Connection",
       "close",
       "Transfer-Encoding",

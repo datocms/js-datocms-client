@@ -1,23 +1,17 @@
-/* global destroySiteAndWait:true */
+/* global generateNewAccountClient:true */
 
 import u from 'updeep';
-import { SiteClient, AccountClient } from '../../src/index';
-
-const accountClient = new AccountClient('XXX', null, 'http://account-api.lvh.me:3001');
+import omit from 'object.omit';
+import { SiteClient } from '../../src/index';
 
 describe('Site API', () => {
   let site;
   let client;
 
   beforeEach(vcr('before', async () => {
+    const accountClient = await generateNewAccountClient();
     site = await accountClient.sites.create({ name: 'Blog' });
     client = new SiteClient(site.readwriteToken, null, 'http://site-api.lvh.me:3001');
-  }));
-
-  afterEach(vcr('after', async () => {
-    if (site) {
-      await destroySiteAndWait(accountClient, site);
-    }
   }));
 
   describe('site', () => {
@@ -118,10 +112,7 @@ describe('Site API', () => {
           fieldType: 'file',
           localized: false,
           apiKey: 'image',
-          hint: '',
           validators: { required: {} },
-          appeareance: { editor: 'file', parameters: {} },
-          position: 1,
         },
       );
       expect(field.label).to.equal('Image');
@@ -192,10 +183,7 @@ describe('Site API', () => {
           fieldType: 'string',
           localized: false,
           apiKey: 'title',
-          hint: '',
           validators: { required: {} },
-          appeareance: { editor: 'single_line', parameters: { heading: true } },
-          position: 1,
         },
       );
 
@@ -206,15 +194,9 @@ describe('Site API', () => {
           fieldType: 'file',
           localized: false,
           apiKey: 'attachment',
-          hint: '',
           validators: {
             required: {},
           },
-          appeareance: {
-            editor: 'file',
-            parameters: {},
-          },
-          position: 2,
         },
       );
 
@@ -233,7 +215,7 @@ describe('Site API', () => {
 
       const updatedItem = await client.items.update(
         item.id,
-        u({ title: 'Updated' }, item),
+        u({ title: 'Updated' }, omit(item, ['creator'])),
       );
       expect(updatedItem.title).to.equal('Updated');
 
@@ -262,10 +244,7 @@ describe('Site API', () => {
           fieldType: 'string',
           localized: false,
           apiKey: 'title',
-          hint: '',
           validators: { required: {} },
-          appeareance: { editor: 'single_line', parameters: { heading: true } },
-          position: 1,
         },
       );
 
@@ -276,15 +255,9 @@ describe('Site API', () => {
           field_type: 'text',
           localized: false,
           apiKey: 'main_content',
-          hint: '',
           validators: {
             required: {},
           },
-          appeareance: {
-            editor: 'markdown',
-            parameters: {},
-          },
-          position: 2,
         },
       );
 

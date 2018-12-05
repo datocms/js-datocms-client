@@ -2,11 +2,14 @@
 
 import chai, { expect } from 'chai';
 import dirtyChai from 'dirty-chai';
-import vcr from 'nock-vcr-recorder';
+
+import { AccountClient } from '../../src/index';
+import vcr from './vcr';
 
 chai.use(dirtyChai);
 
 global.expect = expect;
+
 global.memo = function memo(fn) {
   let value;
 
@@ -25,6 +28,26 @@ function slugify(text) {
     .replace(/-+$/, '');
 }
 
+
+global.generateNewAccountClient = async () => {
+  const randomString = Math.random().toString(36).substring(7);
+
+  const anonymousClient = new AccountClient(
+    null,
+    {},
+    'http://account-api.lvh.me:3001',
+  );
+
+  const account = await anonymousClient.account.create({
+    email: `${randomString}@example.com`,
+    password: 'test123',
+    name: 'Test',
+    company: 'DatoCMS',
+  });
+
+  return new AccountClient(account.id, {}, 'http://account-api.lvh.me:3001');
+};
+
 global.vcr = function (...args) {
   const suffix = args.length > 1 ? ` ${args.shift()}` : '';
   const action = args[0];
@@ -33,23 +56,24 @@ global.vcr = function (...args) {
     let cassetteName = (this.currentTest || this.test).fullTitle();
     if (suffix) { cassetteName += suffix; }
 
-    return vcr.useCassette('json-api-doc', () => {
-      require('../../src/index');
-    }).then(() => {
-      return vcr.useCassette(slugify(cassetteName), action);
-    });
+    return vcr(
+      slugify(cassetteName),
+      {
+        afterLoad: (nocks) => {
+          nocks.forEach((nock) => {
+            if (
+              nock.interceptors[0].path === '/account'
+              && nock.interceptors[0].method === 'POST'
+            ) {
+              /* eslint-disable no-param-reassign */
+              nock.transformRequestBodyFunction = function (body, aRecordedBody) {
+                return aRecordedBody;
+              };
+            }
+          });
+        },
+      },
+      action,
+    );
   };
-};
-
-global.destroySiteAndWait = async function (client, site) {
-  await client.sites.destroy(site.id);
-
-  while (true) {
-    try {
-      await client.sites.find(site.id);
-      // await wait(3000);
-    } catch (e) {
-      break;
-    }
-  }
 };

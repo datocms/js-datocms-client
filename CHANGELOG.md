@@ -1,3 +1,7 @@
+## 0.8.4
+
+* add Item .meta method to fetch record meta information
+
 ## 0.8.0
 
 * babel-polyfill no longer gets required

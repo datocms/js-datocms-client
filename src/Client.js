@@ -115,6 +115,7 @@ export default class Client {
       .catch((error) => {
         if (
           error
+            && error.body
             && error.body.data
             && error.body.data.some(e => e.attributes.code === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
         ) {

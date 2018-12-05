@@ -41,11 +41,15 @@ export default class Item {
   }
 
   get updatedAt() {
-    return new DateTime(Date.parse(this.entity.meta.updatedAt));
+    return new DateTime(Date.parse(this.meta.updatedAt));
   }
 
   get createdAt() {
-    return new DateTime(Date.parse(this.entity.meta.createdAt));
+    return new DateTime(Date.parse(this.meta.createdAt));
+  }
+
+  get meta() {
+    return this.entity.meta;
   }
 
   get parent() {

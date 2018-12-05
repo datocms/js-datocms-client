@@ -30,12 +30,14 @@ describe('seoTagsBuilder', () => {
             id: '24038',
             type: 'item',
             attributes: {
-              updated_at: '2016-12-07T09:14:22Z',
               is_valid: true,
               title: itemTitle(),
               another_string: 'Foo bar',
               seo_settings: seo(),
               image: itemImage(),
+            },
+            meta: {
+              updated_at: '2016-12-07T09:14:22Z',
             },
             relationships: {
               item_type: {
