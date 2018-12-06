@@ -1,5 +1,6 @@
 import { decamelizeKeys, camelize } from 'humps';
 import diff from 'arr-diff';
+import omit from 'object.omit';
 
 const linkAttributes = schema => schema.properties.data.properties.attributes;
 const requiredAttributes = schema => (linkAttributes(schema).required || []);
@@ -94,10 +95,7 @@ function serializedAttributes(type, unserializedBody = {}, schema) {
   const attrs = type === 'item'
     ? diff(
       Object.keys(decamelizeKeys(unserializedBody)),
-      [
-        'item_type', 'id', 'created_at', 'updated_at', 'is_valid',
-        'published_version', 'current_version',
-      ],
+      ['item_type', 'id', 'created_at', 'updated_at'],
     )
     : Object.keys(linkAttributes(schema).properties);
 
@@ -138,10 +136,14 @@ export default function serializeJsonApi(...args) {
       data.id = itemId || unserializedBody.id;
     }
 
-    data.attributes = serializedAttributes(type, unserializedBody, link.schema);
+    const bodyWithoutMeta = hasKey(unserializedBody, 'meta')
+      ? omit(unserializedBody, ['meta'])
+      : unserializedBody;
+
+    data.attributes = serializedAttributes(type, bodyWithoutMeta, link.schema);
 
     if (link.schema.properties && linkRelationships(link.schema)) {
-      data.relationships = serializedRelationships(type, unserializedBody, link.schema);
+      data.relationships = serializedRelationships(type, bodyWithoutMeta, link.schema);
     }
 
     return { data };

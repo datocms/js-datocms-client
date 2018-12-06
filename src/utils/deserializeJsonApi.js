@@ -1,5 +1,16 @@
-function deserialize({ id, attributes, relationships }) {
-  const result = Object.assign({ id }, attributes);
+function deserialize({
+  id,
+  attributes,
+  meta,
+  relationships,
+}) {
+  const result = { id };
+
+  if (meta) {
+    result.meta = meta;
+  }
+
+  Object.assign(result, attributes);
 
   if (relationships) {
     const relationshipKeys = Object.keys(relationships);
@@ -14,6 +25,7 @@ function deserialize({ id, attributes, relationships }) {
       result[key] = relationshipData ? relationshipData.id : null;
     });
   }
+
   return result;
 }
 
