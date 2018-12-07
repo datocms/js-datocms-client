@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { spin, progress } = require('../utils/progress');
 
 const allPages = async (label, requestPromise, tick = null, page = 0) => {
