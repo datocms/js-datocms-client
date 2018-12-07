@@ -7,15 +7,15 @@ const allPages = async (label, requestPromise, tick = null, page = 0) => {
       : spin(label, requestPromise)
   );
 
-  if (!response.paging || !response.paging.next) {
+  if (!response._paging || !response._paging.next) {
     return response;
   }
 
   return response.concat(
     await allPages(
       label,
-      response.paging.next,
-      tick || progress(label, response.paging.totalPages - 1),
+      response._paging.next,
+      tick || progress(label, response._paging.totalPages - 1),
       page + 1,
     ),
   );

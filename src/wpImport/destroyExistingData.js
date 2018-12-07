@@ -7,7 +7,8 @@ export default async function destroyExistingData(dato) {
   );
 
   const itemTypesToDestroy = itemTypes.filter(it => (
-    ['author', 'category', 'tag', 'article', 'page'].includes(it.apiKey)
+    ['author', 'category', 'tag', 'article', 'page'].includes(it.apiKey) ||
+    ['Author', 'Category', 'Tag', 'Article', 'Page'].includes(it.name)
   ));
 
   const tick = progress('Destroying existing data', itemTypesToDestroy.length);
