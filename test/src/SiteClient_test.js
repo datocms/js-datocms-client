@@ -56,6 +56,22 @@ describe('Site API', () => {
     }));
   });
 
+  describe('deployment environment', () => {
+    it('create, trigger', vcr(async () => {
+      const env = await client.deploymentEnvironments.create({
+        accessPolicy: null,
+        deployAdapter: 'custom',
+        buildOnScheduledPublications: false,
+        deploySettings: { triggerUrl: 'https://www.google.com' },
+        frontendUrl: null,
+        name: 'Foo',
+        spiderEnabled: false,
+      });
+
+      await client.deploymentEnvironments.trigger(env.id);
+    }));
+  });
+
   describe('item type', () => {
     it('create, find, all, update, destroy', vcr(async () => {
       const itemType = await client.itemTypes.create({

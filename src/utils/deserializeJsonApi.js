@@ -30,6 +30,10 @@ function deserialize({
 }
 
 export default function deserializeJsonApi(json) {
+  if (!json) {
+    return json;
+  }
+
   const { data } = json;
 
   if (Array.isArray(data)) {

@@ -1,3 +1,7 @@
+## 0.8.6
+
+* Support empty responses from server
+
 ## 0.8.4
 
 * add Item .meta method to fetch record meta information
