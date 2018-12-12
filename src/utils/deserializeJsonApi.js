@@ -7,7 +7,7 @@ function deserialize(
     attributes,
     meta,
     relationships,
-  }
+  },
 ) {
   const result = { id };
 
@@ -26,14 +26,12 @@ function deserialize(
 
         if (types.length > 1) {
           value = relData;
+        } else if (!relData) {
+          value = null;
+        } else if (collection) {
+          value = relData.map(x => x.id);
         } else {
-          if (!relData) {
-            value = null;
-          } else if (collection) {
-            value = relData.map(x => x.id);
-          } else {
-            value = relData.id;
-          }
+          value = relData.id;
         }
 
         result[relationship] = value;

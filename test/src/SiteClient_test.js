@@ -1,7 +1,6 @@
 /* global generateNewAccountClient:true */
 
 import u from 'updeep';
-import omit from 'object.omit';
 import { SiteClient } from '../../src/index';
 
 describe('Site API', () => {

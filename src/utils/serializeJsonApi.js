@@ -13,7 +13,7 @@ const findAttributes = (schema) => {
   }
 
   return [];
-}
+};
 
 const hasKey = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
 
@@ -111,8 +111,13 @@ export default function serializeJsonApi(...args) {
 
     data.attributes = serializedAttributes(type, bodyWithoutMeta, link.schema);
 
-    if (jsonSchemaRelationships(link.schema).length > 0)
-    data.relationships = serializedRelationships(type, bodyWithoutMeta, link.schema);
+    if (jsonSchemaRelationships(link.schema).length > 0) {
+      data.relationships = serializedRelationships(
+        type,
+        bodyWithoutMeta,
+        link.schema,
+      );
+    }
 
     return { data };
   }

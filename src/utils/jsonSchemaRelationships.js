@@ -7,7 +7,7 @@ const type = (definition) => {
   }
 
   return null;
-}
+};
 
 export default function jsonSchemaRelationships(schema) {
   const infoForProperty = findInfoForProperty('relationships', schema);
@@ -30,6 +30,6 @@ export default function jsonSchemaRelationships(schema) {
       types = relAttributes.properties.data.anyOf.map(x => type(x)).filter(x => !!x);
     }
 
-    return { relationship, collection: isCollection, types: types };
+    return { relationship, collection: isCollection, types };
   });
 }
