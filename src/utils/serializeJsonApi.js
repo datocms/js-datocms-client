@@ -3,7 +3,10 @@ import diff from 'arr-diff';
 import omit from 'object.omit';
 import findInfoForProperty from './findInfoForProperty';
 import jsonSchemaRelationships from './jsonSchemaRelationships';
-import jsonSchemaRequired from './jsonSchemaRequired';
+import {
+  jsonSchemaPropertyRequired,
+  jsonSchemaValueRequired,
+} from './jsonSchemaRequired';
 
 const findAttributes = (schema) => {
   const info = findInfoForProperty('attributes', schema);
@@ -42,6 +45,10 @@ function serializedRelationships(type, unserializedBody, schema) {
           data = { type: types[0], id: value };
         }
       } else {
+        if (jsonSchemaValueRequired('relationships', schema).includes(relationship)) {
+          throw new Error(`Required relationship: ${camelizedRelationship}`);
+        }
+
         data = null;
       }
 
@@ -52,8 +59,8 @@ function serializedRelationships(type, unserializedBody, schema) {
       return Object.assign(acc, { [relationship]: { data } });
     }
 
-    if (jsonSchemaRequired('relationships', schema).includes(relationship)) {
-      throw new Error(`Required attribute: ${camelizedRelationship}`);
+    if (jsonSchemaPropertyRequired('relationships', schema).includes(relationship)) {
+      throw new Error(`Required relationship: ${camelizedRelationship}`);
     }
 
     return Object.assign(acc, { [relationship]: { data: null } });
@@ -86,7 +93,7 @@ function serializedAttributes(type, unserializedBody = {}, schema) {
       return Object.assign(acc, { [attr]: unserializedBody[camelizedAttr] });
     }
 
-    if (jsonSchemaRequired('attributes', schema).includes(attr)) {
+    if (jsonSchemaPropertyRequired('attributes', schema).includes(attr)) {
       throw new Error(`Required attribute: ${camelizedAttr}`);
     }
 

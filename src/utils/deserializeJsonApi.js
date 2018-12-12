@@ -1,3 +1,4 @@
+import { camelize } from 'humps';
 import jsonSchemaRelationships from './jsonSchemaRelationships';
 
 function deserialize(
@@ -19,8 +20,8 @@ function deserialize(
 
   if (relationships) {
     relationshipsMeta.forEach(({ relationship, collection, types }) => {
-      if (relationships[relationship]) {
-        const relData = relationships[relationship].data;
+      if (relationships[camelize(relationship)]) {
+        const relData = relationships[camelize(relationship)].data;
 
         let value;
 

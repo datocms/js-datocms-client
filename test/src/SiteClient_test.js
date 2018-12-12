@@ -80,7 +80,7 @@ describe('Site API', () => {
 
       await client.itemTypes.update(
         other.id,
-        u({ name: 'UpdatedArticle' }, other),
+        u({ name: 'Other 2' }, other),
       );
 
       await client.itemTypes.destroy(other.id);

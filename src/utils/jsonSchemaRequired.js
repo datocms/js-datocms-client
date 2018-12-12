@@ -2,9 +2,14 @@ import findInfoForProperty from './findInfoForProperty';
 
 const toArray = obj => (Array.isArray(obj) ? obj : [obj]);
 
-export default function jsonSchemaRequired(propertyName, schema) {
+export function jsonSchemaPropertyRequired(propertyName, schema) {
   const info = findInfoForProperty(propertyName, schema);
-  const maybeRequired = (info && info.required) || [];
+  return (info && info.required) || [];
+}
+
+export function jsonSchemaValueRequired(propertyName, schema) {
+  const info = findInfoForProperty(propertyName, schema);
+  const maybeRequired = jsonSchemaPropertyRequired(propertyName, schema);
 
   return maybeRequired.filter((property) => {
     const propertySchema = propertyName === 'relationships'
