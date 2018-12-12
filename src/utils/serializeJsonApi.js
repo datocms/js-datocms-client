@@ -63,7 +63,7 @@ function serializedRelationships(type, unserializedBody, schema) {
       throw new Error(`Required relationship: ${camelizedRelationship}`);
     }
 
-    return Object.assign(acc, { [relationship]: { data: null } });
+    return acc;
   }, {});
 }
 

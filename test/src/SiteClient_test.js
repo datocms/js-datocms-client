@@ -246,6 +246,12 @@ describe('Site API', () => {
       );
       expect(updatedItem.title).to.equal('Updated');
 
+      const updatedItem2 = await client.items.update(
+        item.id,
+        { title: 'Updated 2' },
+      );
+      expect(updatedItem2.title).to.equal('Updated 2');
+
       await client.items.destroy(item.id);
     }));
 
