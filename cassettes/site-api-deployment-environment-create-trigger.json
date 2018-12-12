@@ -250,6 +250,28 @@
                                 "$ref": "#/definitions/item_type/definitions/data"
                               }
                             }
+                          },
+                          "creator": {
+                            "type": "object",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/account/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/access_token/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/user/definitions/data"
+                                  }
+                                ]
+                              }
+                            }
                           }
                         }
                       }
@@ -282,7 +304,7 @@
               "rel": "validate_new",
               "private": true,
               "title": "Validate new record",
-              "description": "Validates a record fields",
+              "description": "Validates a record field",
               "href": "/items/validate",
               "schema": {
                 "type": "object",
@@ -493,6 +515,34 @@
                       },
                       "attributes": {
                         "$ref": "#/definitions/item/properties/attributes"
+                      },
+                      "relationships": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "creator": {
+                            "type": "object",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/account/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/access_token/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/user/definitions/data"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -838,8 +888,7 @@
               "description": "JSON API links",
               "type": "object",
               "required": [
-                "item_type",
-                "creator"
+                "item_type"
               ],
               "additionalProperties": false,
               "properties": {
@@ -4213,7 +4262,8 @@
                           "update",
                           "create",
                           "delete",
-                          "publish"
+                          "publish",
+                          "edit_creator"
                         ],
                         "description": "Permitted action",
                         "example": "all"
@@ -4267,7 +4317,8 @@
                           "update",
                           "create",
                           "delete",
-                          "publish"
+                          "publish",
+                          "edit_creator"
                         ],
                         "description": "Permitted action",
                         "example": "all"
@@ -7187,13 +7238,13 @@
       "Connection",
       "close",
       "Date",
-      "Fri, 07 Dec 2018 07:09:08 GMT",
+      "Wed, 12 Dec 2018 09:20:04 GMT",
       "Last-Modified",
-      "Thu, 06 Dec 2018 22:18:32 GMT",
+      "Tue, 11 Dec 2018 12:42:21 GMT",
       "Content-Type",
       "application/json",
       "Content-Length",
-      "221568",
+      "223610",
       "Via",
       "1.1 vegur"
     ]
@@ -7220,9 +7271,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b0800981c0a5c0003",
-      "6c905d6e83301084efe2670a446d8ac2017a0dcb3f0b5831b6e55d07451177ef52d244adf2b69e9df934eb9bb08a94e86fc259d18bf7437b1095a06b027e59483e5e670824215c5c8e619b79af88b2d38500b76450f3e6fe8a715b1903883245efcc55f4a1785fdd4152599508327b4d418ab3786c10885c187f708c1e47c8b264cfce892861df34cbb2d4638ca387da70727d464951e1a02881c74c60193b7057826077c85ec22b24a98bf3562afa23fed67ba868b24af01a8dc9596e074169cf423f288f508905f414e359523c43e04877f83c0dc7ae6d3fb435fad49e8e5d279eb67fc7ed2ad6fe32d53334afc2cddef22d03164fc8acfd9618249a096ce1363215cdffaec8c580f76aebba7e030000ffff",
-      "0300850b588be5010000"
+      "1f8b0800c6d2105c0003",
+      "6c90616ec2300c85ef92dfac1d2060f4005c237213d346a449143b5408f5ee735706dac43fe7f9bd4fcfb92b0b0caab92b6755a3b6ebed46ad14df12cacb62f2f13660608de1ea720cf32c7b60ceae2d8c3427030cb3fb14e3bc320689748ade999b6a42f17ef50069b09018b3784d218e837a6e08995de87e7082ee3accba642fce9e395153d7e338565d8c9dc7ca48727a4519b8485095206366b4823d4b57c66017c852c203b16e8bf35603ff117feb3d55321912be47537256da6180d68bd09cc113aed4886d1fe34573bc6090c8e7e60bd7c71ddafd6e7338ecf170de1fd5cbf6efb845a5ca5ffb6ac0fa5db85e5a7e64a4e29984b5dc128326d3a32dd246a7d2cabf03bb18e8516d9aa66f000000ffff",
+      "030030843449e5010000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7234,13 +7285,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"d87fa6229f99eee0006f1f0c529e5ba1\"",
+      "W/\"96d60684d8d2a5e5a367e164c5f7e5d5\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "57efdb34-cca5-45f4-ae34-37bec9be04ea",
+      "9aae896c-71ef-4676-8806-86bbd4d1ac11",
       "X-Runtime",
-      "2.892734",
+      "0.413601",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7250,7 +7301,7 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "POST",
-    "path": "/deployment-environments/3101/trigger",
+    "path": "/deployment-environments/3132/trigger",
     "body": {},
     "status": 204,
     "response": "",
@@ -7260,9 +7311,9 @@
       "Cache-Control",
       "no-cache",
       "X-Request-Id",
-      "bdae009f-fae9-4ff0-b7d0-21d552b7a322",
+      "594462ce-d32d-4865-ab59-998014d4b530",
       "X-Runtime",
-      "0.021948",
+      "0.083112",
       "Connection",
       "close"
     ]

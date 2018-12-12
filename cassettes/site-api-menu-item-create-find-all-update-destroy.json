@@ -250,6 +250,28 @@
                                 "$ref": "#/definitions/item_type/definitions/data"
                               }
                             }
+                          },
+                          "creator": {
+                            "type": "object",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/account/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/access_token/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/user/definitions/data"
+                                  }
+                                ]
+                              }
+                            }
                           }
                         }
                       }
@@ -282,7 +304,7 @@
               "rel": "validate_new",
               "private": true,
               "title": "Validate new record",
-              "description": "Validates a record fields",
+              "description": "Validates a record field",
               "href": "/items/validate",
               "schema": {
                 "type": "object",
@@ -493,6 +515,34 @@
                       },
                       "attributes": {
                         "$ref": "#/definitions/item/properties/attributes"
+                      },
+                      "relationships": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "creator": {
+                            "type": "object",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/account/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/access_token/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/user/definitions/data"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -838,8 +888,7 @@
               "description": "JSON API links",
               "type": "object",
               "required": [
-                "item_type",
-                "creator"
+                "item_type"
               ],
               "additionalProperties": false,
               "properties": {
@@ -4213,7 +4262,8 @@
                           "update",
                           "create",
                           "delete",
-                          "publish"
+                          "publish",
+                          "edit_creator"
                         ],
                         "description": "Permitted action",
                         "example": "all"
@@ -4267,7 +4317,8 @@
                           "update",
                           "create",
                           "delete",
-                          "publish"
+                          "publish",
+                          "edit_creator"
                         ],
                         "description": "Permitted action",
                         "example": "all"
@@ -6585,7 +6636,8 @@
                           "deploy_adapter",
                           "spider_enabled",
                           "frontend_url",
-                          "deploy_settings"
+                          "deploy_settings",
+                          "build_on_scheduled_publications"
                         ],
                         "additionalProperties": false,
                         "properties": {
@@ -6603,6 +6655,9 @@
                           },
                           "frontend_url": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/frontend_url"
+                          },
+                          "build_on_scheduled_publications": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/build_on_scheduled_publications"
                           },
                           "deploy_settings": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_settings"
@@ -6672,6 +6727,9 @@
                           },
                           "frontend_url": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/frontend_url"
+                          },
+                          "build_on_scheduled_publications": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/build_on_scheduled_publications"
                           },
                           "deploy_settings": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_settings"
@@ -6784,7 +6842,8 @@
                 "scrape_status",
                 "frontend_url",
                 "spider_enabled",
-                "access_policy"
+                "access_policy",
+                "build_on_scheduled_publications"
               ],
               "additionalProperties": false,
               "properties": {
@@ -6850,6 +6909,11 @@
                   ],
                   "description": "Public url of the site",
                   "example": "https://www.mywebsite.com/"
+                },
+                "build_on_scheduled_publications": {
+                  "type": "boolean",
+                  "description": "Deploy on scheduled publication",
+                  "example": true
                 },
                 "spider_enabled": {
                   "type": "boolean",
@@ -7174,13 +7238,13 @@
       "Connection",
       "close",
       "Date",
-      "Wed, 05 Dec 2018 13:56:44 GMT",
+      "Wed, 12 Dec 2018 09:20:01 GMT",
       "Last-Modified",
-      "Wed, 05 Dec 2018 09:33:59 GMT",
+      "Tue, 11 Dec 2018 12:42:21 GMT",
       "Content-Type",
       "application/json",
       "Content-Length",
-      "220831",
+      "223610",
       "Via",
       "1.1 vegur"
     ]
@@ -7208,9 +7272,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b08001dd9075c0003",
-      "648e410ac2400c45af2259cf42c16ebad36b8894b41368209d0e990c2aa57737d5820bb3cb7f8ffc2c10d110da0538420be7a6393610c05e997c9d28d58e8d268fd04cb9af4665b3057b1237ae3a3f0a1d2e6a3c88a300792e6c3c27684f01e869a409a5abea76aa226b0025c1cd2823e7cfb1ada1fb562efb3fbb9a5129d95f3c8c2cd1c90fdceeabcf1b0000ffff",
-      "03000352fb96ce000000"
+      "1f8b0800c2d2105c0003",
+      "648e410ac2400c45af2259cfa6282ebad36b8894b41368209d0e990c2aa57737d5820bb3cb7f8ffc2c10d110da0538420ba773736c2080bd32f93a51aa1d1b4d1ea199725f8dca660bf6246e5c757e143a5cd478104701f25cd8784ed03601e869a409a5abea76aa226b0025c1cd2823e7cfb1ada1fb562efb3fbb9a5129d95f3c8c2cd1c90fdceeabcf1b0000ffff",
+      "0300bbee3c27ce000000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7222,13 +7286,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"dc287133fc4f57ec55167cb873d70b3e\"",
+      "W/\"7517e0d9bb7fccb6014b1db78f5dd8c1\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "e9ccfdee-6571-4873-a684-234414a74dfd",
+      "202059b6-914c-4551-b79d-6e63f57391ca",
       "X-Runtime",
-      "0.024679",
+      "0.132657",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7238,13 +7302,13 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "GET",
-    "path": "/menu-items/45505",
+    "path": "/menu-items/46131",
     "body": "",
     "status": 200,
     "response": [
-      "1f8b08001dd9075c0003",
-      "648e410ac2400c45af2259cf42c16ebad36b8894b41368209d0e990c2aa57737d5820bb3cb7f8ffc2c10d110da0538420be7a6393610c05e997c9d28d58e8d268fd04cb9af4665b3057b1237ae3a3f0a1d2e6a3c88a300792e6c3c27684f01e869a409a5abea76aa226b0025c1cd2823e7cfb1ada1fb562efb3fbb9a5129d95f3c8c2cd1c90fdceeabcf1b0000ffff",
-      "03000352fb96ce000000"
+      "1f8b0800c2d2105c0003",
+      "648e410ac2400c45af2259cfa6282ebad36b8894b41368209d0e990c2aa57737d5820bb3cb7f8ffc2c10d110da0538420ba773736c2080bd32f93a51aa1d1b4d1ea199725f8dca660bf6246e5c757e143a5cd478104701f25cd8784ed03601e869a409a5abea76aa226b0025c1cd2823e7cfb1ada1fb562efb3fbb9a5129d95f3c8c2cd1c90fdceeabcf1b0000ffff",
+      "0300bbee3c27ce000000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7256,13 +7320,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"dc287133fc4f57ec55167cb873d70b3e\"",
+      "W/\"7517e0d9bb7fccb6014b1db78f5dd8c1\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "f41c8ebc-0203-44b3-a202-2c2670cdebac",
+      "5e7c281d-95f4-427e-839a-6889f9e4844b",
       "X-Runtime",
-      "0.017557",
+      "0.027852",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7276,9 +7340,9 @@
     "body": "",
     "status": 200,
     "response": [
-      "1f8b08001dd9075c0003",
-      "648e310ac3300c45af52347b68a159bcb5d7082128b12002c531b64c5b8cef5ea70d74e8a8ff1effab804345b07d017660e1da75e70e0ce82b503b57f27964a5b545a81a79ca4a096c01c189a419f7b83d129d6e517996860c842db1f2e6c15e0cd053297a9431c766fb2c520d4412dc8db470f894ed0be377b21c0f1d6ac0485effe27961718dfc403fd45a87fa060000ffff",
-      "0300978c860dd0000000"
+      "1f8b0800c2d2105c0003",
+      "648e310ac3300c45af52347b092d1dbcb5d7082128b12002c531b64c5b8cef5ea70d74e8a8ff1effab804345b07d017660e172edce1d18d057a076aee4f3c84a6b8b5035f2949512d80282134933ee717b243adda2f22c0d19085b62e5cd83ed0cd053297a9431c766fb2c520d4412dc8db470f894ed0be377b21c0f1d6ac0485effe27961718dfc403fd45a87fa060000ffff",
+      "030095708dc8d0000000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7290,13 +7354,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"892fa1dedf6975b842c57ea86003a84b\"",
+      "W/\"d9f04a400296e497ebb1410f60749871\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "65c443b6-c9fd-42dc-a507-d9f3685c8fba",
+      "3d796dee-9e24-4394-b9d9-2089d46e347f",
       "X-Runtime",
-      "0.017244",
+      "0.030668",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7306,11 +7370,11 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "PUT",
-    "path": "/menu-items/45505",
+    "path": "/menu-items/46131",
     "body": {
       "data": {
         "type": "menu_item",
-        "id": "45505",
+        "id": "46131",
         "attributes": {
           "label": "Updated",
           "external_url": null,
@@ -7328,9 +7392,9 @@
     },
     "status": 200,
     "response": [
-      "1f8b08001dd9075c0003",
-      "648ec10a02310c44ff25e71e14eca5ffe149a4646d6003d96e69535096fd77535df0606e997999c9060915216cc009025cbc3f7970a0af42b62e947b64a5c52454ad3c75a53668c189c4886bb17b4ae697b5b1f29a219c1dd053a96694d8ab51b98bec0e2a090ea2cd5c3e2123397eabb6e38f032d5829eb9ffc985992393fe376df6dde000000ffff",
-      "03008d845ba4c6000000"
+      "1f8b0800c2d2105c0003",
+      "648ec10a02310c44ff25e75e8ae2a1ffe149a4646d6003d96e69535096fd77535df0606e997999c9060915216cc009029c2ffee4c181be0ad9ba50ee9195169350b5f2d495daa005271223aec5ee29995fd6c6ca6b86e01dd053a96694d8ab51b98bec0e2a090ea2cd5c3e2123397eabb6e38f032d5829eb9ffc985992393fe376df6dde000000ffff",
+      "030069460fa6c6000000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7342,13 +7406,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"f5ea06a70cea555792a9ce539105dd0e\"",
+      "W/\"267cf051c559510a0a26d16d878e5f50\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "3a234593-3da5-4b4d-b167-26c99ad446c9",
+      "406a46ae-2ee9-4f01-be04-e6e8a51f3f26",
       "X-Runtime",
-      "0.023207",
+      "0.047875",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7358,13 +7422,13 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "DELETE",
-    "path": "/menu-items/45505",
+    "path": "/menu-items/46131",
     "body": "",
     "status": 200,
     "response": [
-      "1f8b08001dd9075c0003",
-      "648ec10a02310c44ff25e71e14eca5ffe149a4646d6003d96e69535096fd77535df0606e997999c9060915216cc009025cbc3f7970a0af42b62e947b64a5c52454ad3c75a53668c189c4886bb17b4ae697b5b1f29a219c1dd053a96694d8ab51b98bec0e2a090ea2cd5c3e2123397eabb6e38f032d5829eb9ffc985992393fe376df6dde000000ffff",
-      "03008d845ba4c6000000"
+      "1f8b0800c2d2105c0003",
+      "648ec10a02310c44ff25e75e8ae2a1ffe149a4646d6003d96e69535096fd77535df0606e997999c9060915216cc009029c2ffee4c181be0ad9ba50ee9195169350b5f2d495daa005271223aec5ee29995fd6c6ca6b86e01dd053a96694d8ab51b98bec0e2a090ea2cd5c3e2123397eabb6e38f032d5829eb9ffc985992393fe376df6dde000000ffff",
+      "030069460fa6c6000000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7376,13 +7440,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"f5ea06a70cea555792a9ce539105dd0e\"",
+      "W/\"267cf051c559510a0a26d16d878e5f50\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "ee1a4f81-ee11-44c5-91cf-4c21a7629810",
+      "10086bd7-3fbd-4bde-8681-95d6cbb21a50",
       "X-Runtime",
-      "0.022579",
+      "0.043121",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7396,7 +7460,7 @@
     "body": "",
     "status": 200,
     "response": [
-      "1f8b08001dd9075c0003",
+      "1f8b0800c2d2105c0003",
       "aa564a492c4954b28a8ead05000000ffff",
       "03009464b25e0b000000"
     ],
@@ -7410,13 +7474,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"8c2f77ddcdcfefd499dc6277d146d17d\"",
+      "W/\"3b1da675607dbb6304dbc2a032bbf48f\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "b3da514a-eb88-4bbd-9b87-e218cbe21109",
+      "95ab71d8-8db7-4952-8a06-bf5d32136965",
       "X-Runtime",
-      "0.013724",
+      "0.028889",
       "Connection",
       "close",
       "Transfer-Encoding",

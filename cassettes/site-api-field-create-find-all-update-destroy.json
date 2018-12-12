@@ -250,6 +250,28 @@
                                 "$ref": "#/definitions/item_type/definitions/data"
                               }
                             }
+                          },
+                          "creator": {
+                            "type": "object",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/account/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/access_token/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/user/definitions/data"
+                                  }
+                                ]
+                              }
+                            }
                           }
                         }
                       }
@@ -282,7 +304,7 @@
               "rel": "validate_new",
               "private": true,
               "title": "Validate new record",
-              "description": "Validates a record fields",
+              "description": "Validates a record field",
               "href": "/items/validate",
               "schema": {
                 "type": "object",
@@ -493,6 +515,34 @@
                       },
                       "attributes": {
                         "$ref": "#/definitions/item/properties/attributes"
+                      },
+                      "relationships": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "creator": {
+                            "type": "object",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/account/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/access_token/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/user/definitions/data"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -838,8 +888,7 @@
               "description": "JSON API links",
               "type": "object",
               "required": [
-                "item_type",
-                "creator"
+                "item_type"
               ],
               "additionalProperties": false,
               "properties": {
@@ -4213,7 +4262,8 @@
                           "update",
                           "create",
                           "delete",
-                          "publish"
+                          "publish",
+                          "edit_creator"
                         ],
                         "description": "Permitted action",
                         "example": "all"
@@ -4267,7 +4317,8 @@
                           "update",
                           "create",
                           "delete",
-                          "publish"
+                          "publish",
+                          "edit_creator"
                         ],
                         "description": "Permitted action",
                         "example": "all"
@@ -6585,7 +6636,8 @@
                           "deploy_adapter",
                           "spider_enabled",
                           "frontend_url",
-                          "deploy_settings"
+                          "deploy_settings",
+                          "build_on_scheduled_publications"
                         ],
                         "additionalProperties": false,
                         "properties": {
@@ -6603,6 +6655,9 @@
                           },
                           "frontend_url": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/frontend_url"
+                          },
+                          "build_on_scheduled_publications": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/build_on_scheduled_publications"
                           },
                           "deploy_settings": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_settings"
@@ -6672,6 +6727,9 @@
                           },
                           "frontend_url": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/frontend_url"
+                          },
+                          "build_on_scheduled_publications": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/build_on_scheduled_publications"
                           },
                           "deploy_settings": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_settings"
@@ -6784,7 +6842,8 @@
                 "scrape_status",
                 "frontend_url",
                 "spider_enabled",
-                "access_policy"
+                "access_policy",
+                "build_on_scheduled_publications"
               ],
               "additionalProperties": false,
               "properties": {
@@ -6850,6 +6909,11 @@
                   ],
                   "description": "Public url of the site",
                   "example": "https://www.mywebsite.com/"
+                },
+                "build_on_scheduled_publications": {
+                  "type": "boolean",
+                  "description": "Deploy on scheduled publication",
+                  "example": true
                 },
                 "spider_enabled": {
                   "type": "boolean",
@@ -7174,13 +7238,13 @@
       "Connection",
       "close",
       "Date",
-      "Wed, 05 Dec 2018 13:56:49 GMT",
+      "Wed, 12 Dec 2018 09:20:13 GMT",
       "Last-Modified",
-      "Wed, 05 Dec 2018 09:33:59 GMT",
+      "Tue, 11 Dec 2018 12:42:21 GMT",
       "Content-Type",
       "application/json",
       "Content-Length",
-      "220831",
+      "223610",
       "Via",
       "1.1 vegur"
     ]
@@ -7215,9 +7279,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b080022d9075c0003",
-      "6c50cb6ac4300cfc179f73580aa5905bbfa314a1d84a57ac12bbb2525896fc7be5eca3a1ad4fb246339ad12524340cfd25700a7d787e3a1c5e4217ec5cc8bf6c34c1567701cd9487c5a8b6e919a736f0aac6511a5c79fe10b23c87de74216f64351c1ceb4794ea0d2c0c273aff92cd9a489d0b8995a27113981711f7a0f4439e725a041506c9f1f4e826c5d1c0310274eed76e9908f8280a5550fa5c5c3cdd9dc52c725d05580aa112ceb1a589792aaee3ae8e58e191089adf9bf2da0525c146ae472edb2d4626495b75bde5dbfbbabbc78d7d075bb675177b23ff818d4de85fccdf37000000ffff",
-      "03000bdf1dd1b4010000"
+      "1f8b0800ced2105c0003",
+      "6c50cb4ec4300cfc979c7b000197def80e842c3771596bdd26382ed26ad57fc7e93ea8809c1c8f673ce373486818fa73e014faf0f2f4f0f81cba60a742fe65a309b6ba0b68a63c2c46b54dcf38b58157358ed2e0caf38790e539f4a60b7923abe1e0583fa2546f606138d2e9976cd644ea5c48ac148d9bc0bc88b807a51ff294d322a830488ec77b37298e068e11a073bf76cb44c04751a882d2e7e2e2e9e62c6691cb2ac0520895708e2d4dcc53711d7775c00af744d0fc5e95d72e280936723d70d96e313249daaacb2ddfded7dd3daeec1bd8b2adbbd81bf90f6c6c42ff62febe010000ffff",
+      "030067f4d4afb4010000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7229,13 +7293,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"2c03f6682e6f8b7b22c4ba4f153fc949\"",
+      "W/\"4fd0d35ed46d9eb0236db9fbf866ede0\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "c1a5202e-0f77-4369-a5e3-37d61f550a26",
+      "02925436-6dfc-401e-b9da-03b92862b3c6",
       "X-Runtime",
-      "0.347635",
+      "0.284556",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7245,7 +7309,7 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "POST",
-    "path": "/item-types/52007/fields",
+    "path": "/item-types/53014/fields",
     "body": {
       "data": {
         "type": "field",
@@ -7262,9 +7326,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b080022d9075c0003",
-      "8452c16e83300cfd979c39ac95b6a9dc76dc375453648869ad1ac21253a943fcfb1ca0d056d5768bfdfc9eede7f4c68180c97b43cee466b3db6ddfb62633726951e38a909d862012a8e804632a65289015fdace1808a8e5576a170ca414bf684174dd05c75a4464cde74cc99615f02d30f6acf0a386266ce1aeb283e8c1d027e771412dc0f43665a1f49c83726df24e51621203425a65274a4acb5710b016a141c85940bcef946dffb2f0d1c56d0b158edd6e1348c66033224f978a4766c4f82f5bc4f7f6fd0ebf6e5e57df5672d1c8634283525772ecdbdff8ff0686aa3536bc147102ac74522350746495b4be8d4a2e88340a1d8d5b31b8f6f647d7018946b9d3a584eb64dae4bc0955c7bd731045be82d4e4bd605a8c42a8616947bbe69c66cc7b361b4eb79a6c94acf3cb5b277d751a06e55275d1fa25d36b269de59f999ffe3878aabf9fb3fbfe7902efba87da5ce275e4c99288fb090303ec50655ff050000ffff",
-      "03007136f3f625030000"
+      "1f8b0800ced2105c0003",
+      "8452c16e83300cfd979c39b46b77e1b6e3bea19a22434c6bd51096984a1de2dfe7002db4aab65bece7f76c3fa7370e044cde1b7226376f9bdd76bf3799916b8b1a5784ec3404914045271853294381ace8670d475474acb2770aa71cb464cf78d504cd55276ac4e44dc79c19f62530fda0f6ac802366e6a2b18ee2c3d821e0774721c1fd3064a6f591847c63f26d526e11024253622a4547ca5a1ab710a046c15148b9e09c6ff47df8d2c061051d8bd56e1d4ec368362043928f276ac7f62458cffbf48f06bdef36db953f4be130a441a929b97369eec37f8467531b9d5a0b3e8250392e12a939324ada5a42a716451f040ac56e9ead3c5ec9fae03028d73a75b09c6c9b5c97800bb9f6ae6308b6d05b9cef5917a012ab185a50ee65d58cd98e67c36897f34c93959e796a651faea340ddaa4eba3e447bdfc8a67967e557fe8f1f2a2ee61ffefc9e43baecb3f68d3a9ff86eca4479868584f12536a8fa2f000000ffff",
+      "0300001bab4825030000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7276,13 +7340,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"401c9d70ff98d4876bb7aba6b4ee8606\"",
+      "W/\"5088df28fff42428498cb79f8fafa35f\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "a53efd9f-6ef6-4428-b5c6-1571727899c3",
+      "a6e8ef94-2bda-4db6-8c80-a8935c2fbf9e",
       "X-Runtime",
-      "0.543409",
+      "0.569734",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7292,13 +7356,13 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "GET",
-    "path": "/fields/199262",
+    "path": "/fields/203144",
     "body": "",
     "status": 200,
     "response": [
-      "1f8b080022d9075c0003",
-      "5450d14ec3300cfc173ff761ab0468fd03be01a1ca5baeccc24d43ea4c1a55ff1da74c54e429773edfd95e28b031750b49a08e8ea753fbdc5243764f703c08343864b32ce76298ab54f90cf5eaebc81ff0eaa6eaff5ab4729ca4ffc4dd0979a8ae128dba58541bd2e9c22adff0cc8175464337c73eca94b7848caf22b99697756d284db3984c91ba63754ee00c8e1754298278d71e9c38f308c366e4bd1cc214fdfff6ee2060e0a2d67b5ac1ef30ce662857fbf92a698b17c3f8d867f97fa0a7f67078d9efb30bd7fa7e000000ffff",
-      "0300c2c005844e010000"
+      "1f8b0800ced2105c0003",
+      "5450416ec3300cfb8bce39346b77c90ff6866208d49a59852a8ee7c805ba207f9f9c15ebe6934951a4a485021b53b79004eae865b76f0f076ac8ee098e078106876c96e5540c73952a9fa05e7d1bf9035edd54fd6f8b568e93f457dc9d9087ea22d1a88b45b5219dceacf205cf1c5867347473eca34c794bc8f82c926b7959d786d2348bc914a96bab730267703ca34a11c4bb9ec189338f306c46decb214cd1ffc77707010317b5ded30a7e86713643b9dacf17495bbc18c6c73ecbff03bdee77ed9ffb3c856b7ddf000000ffff",
+      "0300eb646c094e010000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7310,13 +7374,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"4d49afc5be795cd2c4d30f387a493132\"",
+      "W/\"f2f3755195cf7adfde4ed0b7d1fd6337\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "a2346b56-b7a5-4c0b-8fc6-79e723c1bc50",
+      "310dc74b-06f1-4706-9f1e-15fe18424378",
       "X-Runtime",
-      "0.018316",
+      "0.019588",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7326,13 +7390,13 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "GET",
-    "path": "/item-types/52007/fields",
+    "path": "/item-types/53014/fields",
     "body": "",
     "status": 200,
     "response": [
-      "1f8b080022d9075c0003",
-      "4450416ec3300cfb8bce39b401b6a1fec1de5014815a2bad30c5f61c794067e4ef93d360f1c9a4285252058f8ae0ce15d88383e3e9d4bff7d0813e13191e99c41b44d5ccd7a23483ab207825b1eae78477b2eaaa1afe5ba4719878f8a2a711bca91e1c145c28221d48bca1f02f59e6883253073f866d9698d7844cdf85732bd765e920c599956300776cce893013861b352979b6ae3d3861c689945623eb45ef63b0fff962c0d3884574b0b442af618ccd24d8ece707a7359e95a66d9fba5d683bd05b7f387cecf7d9858bbdcbf2070000ffff",
-      "0300ee37357050010000"
+      "1f8b0800ced2105c0003",
+      "4c50418ec2300cfc8bcf3d50602ff9c1be01a1ca1077b17093903a2bb151ffbe4eb75ac829331ecfd8aee05111dca9027b70b0df1dfae3113ad06722c323937883a89af95294667015042f2456fd9cf08bacbaaa86ff16691c261eeef4348237d58d83820b45a403895714fe21cb1c5166eae0dbb0cd12f39a90e95138b7725d960e529c593906707d734e8499305ca949c9b375bd8213669c486935b25ef43e06fb9fce063c8d5844074b2bf4378cb199049bfd7ce3b4c6b3d2b4ed53b70b6d07fa38ecfab7fbbc848bbdf3f20b0000ffff",
+      "030026c60a3250010000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7344,13 +7408,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"ee5cbdc18418d3e1314513ba9255c99d\"",
+      "W/\"987b948740d44b0bc0f3bcaa802c721d\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "68c3da6d-74db-49f6-bb4a-7eafc2bb7756",
+      "fdd628b5-83a7-4361-9dbd-75465b0a550f",
       "X-Runtime",
-      "0.016188",
+      "0.018268",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7360,11 +7424,11 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "PUT",
-    "path": "/fields/199262",
+    "path": "/fields/203144",
     "body": {
       "data": {
         "type": "field",
-        "id": "199262",
+        "id": "203144",
         "attributes": {
           "label": "Updated"
         }
@@ -7372,9 +7436,9 @@
     },
     "status": 200,
     "response": [
-      "1f8b080023d9075c0003",
-      "5450db4ec3300cfd173ff761ab0468f90f9e10aabcc5dd2cdc24a40ed2a8faefd81da2224f39c7e7927881888a1016e008018ea753ffdc43077a2f647864926810552b9f9bd2ec52c133894d5f8b99c9e79b6ef83309b9a7f0f041772378c2ab33374e0a2135910e245f50f8dbdc614499a9832fc39697ebd651e9b371f5f1b2ae1d943cb3724e108e9e5c082b61ba904b29b2b9f6e282152752da82cc8b31e664f7b7770391466ca283b5357a3cc6d84a821e3fdfb86cf5ac34fdfe67f9bfa2a7fe7078d937b40b573f3f000000ffff",
-      "03009041ee8b50010000"
+      "1f8b0800cfd2105c0003",
+      "5450cb4ec33010fc973de7d0d072c97f704228dad613ba62631b678d54a2fc3beb8028f8e4999d87bd2b0536a661250934d0c3e1d89f4ed491dd321c4f020d0ed9acc8b91a9626553e437dfa94dd8c36df75e3af49d13c59c637dc9c90995f1b73956834c4aada91a60bab7cba7b98581774f4e1d8f352d93b0adeab94365eb7ada39c1631499186be25677001c70b9a1441dc752fce5c7886610f722f8790a2df9f5f1c044c5cd5466fabf87e8cb305ca2d7eb94adeebc530fffc67fdbfa2c7e3a1ffb3a1bb706be70b0000ffff",
+      "0300ac2df18e50010000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7386,13 +7450,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"5a85041c10f1b15cb526e667846b67ac\"",
+      "W/\"162d29b63d0c361515b367c537039aa3\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "3c6fec8f-9d12-4464-a116-395c93d07243",
+      "1310490e-a7ea-4f4d-9306-4341c1c51241",
       "X-Runtime",
-      "0.317631",
+      "0.266692",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7402,13 +7466,13 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "DELETE",
-    "path": "/fields/199262",
+    "path": "/fields/203144",
     "body": "",
     "status": 200,
     "response": [
-      "1f8b080023d9075c0003",
-      "84524d6fc2300cfd2f39f73090b689def623764228721b172cdca64b1c2456f5bfcf69810242da2df6f3f3c77b198c0301530e869c29cd6ab3597fac4d61e4dca3c60d213b0d4124509504632e65a89015fdee958c199feaec8dc498393dd9239e35412dec73e6409d98b24bcc85615f03d3afb2cb063862614e1a6b3f1fa619017f12850c0fe35898de4712f29d2957b9738f1010ba1a73293a52d632b887002d0a4e8d940bcef94edfdb9d060e1b482c56a7259c97d16c4086dc3e1ea89fc693607bb9677894e87dfdf6f6b928b4148e635e94ba9a93cb7b6fff233ccbdae9d65af01584eae99048dd9e51f2d512924a147d10a814bb6a76a7f15d5b1f1c06e55aa70ad6b36cb3ea127021b7de2586602bf5e278cbba008d58c5d082724f77c398ed641b46bbd8336f567be679947d704781b6d73ed97d88f67691cdfb5e3abfd27ffa5071117ff2ee997d052f26dece9e7fed332c248c2fb171dc8d7f000000ffff",
-      "030071acc96c09030000"
+      "1f8b0800cfd2105c0003",
+      "8452cb8e83300cfc979c39b4dbee85db7ec49eaa2a32c4b4560d611353a98bf8f775a0055a55da5becf1f83193de381030796fc899dc7c6c76dbfdde64466e2d6a5c11b2d3104402159d604ca50c05b2a2dfad9231e1639d9d498c89d392bde04d1354c32965ced488c99b8e3933ec4b60fa55765e0147cccc5563ede7c33823e04f4721c1fd3064a6f591847c63f26deadc220484a6c4548a8e94b50c6e21408d826323e58273bed1f7e1a881c30a3a16abd33a9c96d16c4086d43e9ea91dc793607dbfa77f96e873b7d9ae145a0a87212d4a4dc99d4b7b1ffe23bccadae8d65af01584caf19048cd8951d2d5123a9528fa205028f6d06ca5f1aaad0f0e8372ad5305cb49b6497509b8906bef3a86600bf5e232675d804aac626841b9d7d530663bda86d12ef64c9b959e791a659fdc51a06eb54f721fa29d2fb269df7be777fa8f1f2a2ee28fdebdb21fe0ddc4f9ece9d7bec242c2f8161b86e3f0070000ffff",
+      "0300ef82e5b609030000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7420,13 +7484,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"e4a9935680ed2f5588d4b3e3827a6041\"",
+      "W/\"e1215a063bc0851aeddcc5a6f99ecad8\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "0fc57fe6-1034-4766-99af-11f75f9503ea",
+      "eb0986d7-acaa-4c75-9566-666e51ab5278",
       "X-Runtime",
-      "0.292511",
+      "0.288304",
       "Connection",
       "close",
       "Transfer-Encoding",

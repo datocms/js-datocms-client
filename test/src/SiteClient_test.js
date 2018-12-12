@@ -74,6 +74,18 @@ describe('Site API', () => {
 
   describe('item type', () => {
     it('create, find, all, update, destroy', vcr(async () => {
+      const other = await client.itemTypes.create({
+        name: 'Other',
+        apiKey: 'other',
+      });
+
+      await client.itemTypes.update(
+        other.id,
+        u({ name: 'UpdatedArticle' }, other),
+      );
+
+      await client.itemTypes.destroy(other.id);
+
       const itemType = await client.itemTypes.create({
         name: 'Article',
         apiKey: 'item_type',
@@ -231,7 +243,7 @@ describe('Site API', () => {
 
       const updatedItem = await client.items.update(
         item.id,
-        u({ title: 'Updated' }, omit(item, ['creator'])),
+        u({ title: 'Updated' }, item),
       );
       expect(updatedItem.title).to.equal('Updated');
 

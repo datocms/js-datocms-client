@@ -1,9 +1,14 @@
-function deserialize({
-  id,
-  attributes,
-  meta,
-  relationships,
-}) {
+import jsonSchemaRelationships from './jsonSchemaRelationships';
+
+function deserialize(
+  relationshipsMeta,
+  {
+    id,
+    attributes,
+    meta,
+    relationships,
+  }
+) {
   const result = { id };
 
   if (meta) {
@@ -13,32 +18,44 @@ function deserialize({
   Object.assign(result, attributes);
 
   if (relationships) {
-    const relationshipKeys = Object.keys(relationships);
-    relationshipKeys.forEach((key) => {
-      const relationshipData = relationships[key].data;
+    relationshipsMeta.forEach(({ relationship, collection, types }) => {
+      if (relationships[relationship]) {
+        const relData = relationships[relationship].data;
 
-      if (Array.isArray(relationshipData)) {
-        const relationshipBody = relationshipData.map(obj => obj.id);
-        result[key] = relationshipBody;
-        return;
+        let value;
+
+        if (types.length > 1) {
+          value = relData;
+        } else {
+          if (!relData) {
+            value = null;
+          } else if (collection) {
+            value = relData.map(x => x.id);
+          } else {
+            value = relData.id;
+          }
+        }
+
+        result[relationship] = value;
       }
-      result[key] = relationshipData ? relationshipData.id : null;
     });
   }
 
   return result;
 }
 
-export default function deserializeJsonApi(json) {
+export default function deserializeJsonApi(link, json) {
   if (!json) {
     return json;
   }
 
+  const relationshipsMeta = jsonSchemaRelationships(link.targetSchema);
+
   const { data } = json;
 
   if (Array.isArray(data)) {
-    return data.map(item => deserialize(item));
+    return data.map(item => deserialize(relationshipsMeta, item));
   }
 
-  return deserialize(data);
+  return deserialize(relationshipsMeta, data);
 }

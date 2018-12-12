@@ -1,103 +1,72 @@
 import { decamelizeKeys, camelize } from 'humps';
 import diff from 'arr-diff';
 import omit from 'object.omit';
+import findInfoForProperty from './findInfoForProperty';
+import jsonSchemaRelationships from './jsonSchemaRelationships';
+import jsonSchemaRequired from './jsonSchemaRequired';
 
-const linkAttributes = schema => schema.properties.data.properties.attributes;
-const requiredAttributes = schema => (linkAttributes(schema).required || []);
-const hasKey = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+const findAttributes = (schema) => {
+  const info = findInfoForProperty('attributes', schema);
 
-const linkRelationships = schema => (
-  !schema || !schema.properties.data
-    ? {}
-    : schema.properties.data.properties.relationships
-);
-const requiredRelationships = schema => (linkRelationships(schema).required || []);
-
-function relationships(type, schema) {
-  if (type === 'item') {
-    return { item_type: { collection: false, type: 'item_type' } };
+  if (info && info.properties) {
+    return Object.keys(info.properties);
   }
 
-  if (!linkRelationships(schema).properties) {
-    return {};
-  }
-
-  return Object.entries(linkRelationships(schema).properties)
-    .reduce((acc, [relationship, relAttributes]) => {
-      const isCollection = relAttributes.properties.data.type === 'array';
-
-      const isObject = relAttributes.properties.data.type === 'object';
-
-      let definition;
-
-      if (isCollection) {
-        definition = relAttributes.properties.data.items;
-      } else if (isObject) {
-        definition = relAttributes.properties.data;
-      } else {
-        definition = relAttributes.properties.data.anyOf
-          .find(x => x.type[0] !== 'null');
-      }
-
-      const relType = definition.properties.type.pattern
-        .replace(new RegExp(/(^\^|\$$)/, 'g'), '');
-
-      return Object.assign(
-        acc,
-        { [relationship]: { collection: isCollection, type: relType } },
-      );
-    }, {});
+  return [];
 }
 
+const hasKey = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+
 function serializedRelationships(type, unserializedBody, schema) {
-  return Object.entries(relationships(type, schema))
-    .reduce((acc, [relationship, meta]) => {
-      const camelizedRelationship = camelize(relationship);
+  return jsonSchemaRelationships(schema).reduce((acc, { relationship, collection, types }) => {
+    const camelizedRelationship = camelize(relationship);
 
-      if (relationship !== camelizedRelationship && hasKey(unserializedBody, relationship)
-        && hasKey(unserializedBody, camelizedRelationship)) {
-        throw new Error(`Attribute ${camelizedRelationship} is expressed both in camel-case and snake-case`);
-      }
+    if (relationship !== camelizedRelationship && hasKey(unserializedBody, relationship)
+      && hasKey(unserializedBody, camelizedRelationship)) {
+      throw new Error(`Attribute ${camelizedRelationship} is expressed both in camel-case and snake-case`);
+    }
 
-      if (hasKey(unserializedBody, camelizedRelationship)
-        || hasKey(unserializedBody, relationship)) {
-        const value = unserializedBody[camelizedRelationship]
-          || unserializedBody[relationship];
+    if (hasKey(unserializedBody, camelizedRelationship)
+      || hasKey(unserializedBody, relationship)) {
+      const value = unserializedBody[camelizedRelationship]
+        || unserializedBody[relationship];
 
-        let data;
+      let data;
 
-        if (value) {
-          if (meta.collection) {
-            data = value.map(id => ({ type: meta.type, id }));
-          } else {
-            data = { type: meta.type, id: value };
-          }
+      if (value) {
+        if (types.length > 1) {
+          data = value;
+        } else if (collection) {
+          data = value.map(id => ({ type: types[0], id }));
         } else {
-          data = null;
+          data = { type: types[0], id: value };
         }
-
-        if (relationship !== camelizedRelationship && hasKey(unserializedBody, relationship)) {
-          console.warn(`Warning: Attribute ${relationship} should be expressed in camel-case syntax (${camelizedRelationship})`);
-        }
-
-        return Object.assign(acc, { [relationship]: { data } });
+      } else {
+        data = null;
       }
 
-      if (requiredRelationships(schema).includes(relationship)) {
-        throw new Error(`Required attribute: ${camelizedRelationship}`);
+      if (relationship !== camelizedRelationship && hasKey(unserializedBody, relationship)) {
+        console.warn(`Warning: Attribute ${relationship} should be expressed in camel-case syntax (${camelizedRelationship})`);
       }
 
-      return Object.assign(acc, { [relationship]: { data: null } });
-    }, {});
+      return Object.assign(acc, { [relationship]: { data } });
+    }
+
+    if (jsonSchemaRequired('relationships', schema).includes(relationship)) {
+      throw new Error(`Required attribute: ${camelizedRelationship}`);
+    }
+
+    return Object.assign(acc, { [relationship]: { data: null } });
+  }, {});
 }
 
 function serializedAttributes(type, unserializedBody = {}, schema) {
   const attrs = type === 'item'
     ? diff(
       Object.keys(decamelizeKeys(unserializedBody)),
-      ['item_type', 'id', 'created_at', 'updated_at'],
+      ['item_type', 'id', 'created_at', 'updated_at', 'creator'],
     )
-    : Object.keys(linkAttributes(schema).properties);
+    : findAttributes(schema);
 
   return attrs.reduce((acc, attr) => {
     const camelizedAttr = camelize(attr);
@@ -117,7 +86,7 @@ function serializedAttributes(type, unserializedBody = {}, schema) {
       return Object.assign(acc, { [attr]: unserializedBody[camelizedAttr] });
     }
 
-    if (requiredAttributes(schema).includes(attr)) {
+    if (jsonSchemaRequired('attributes', schema).includes(attr)) {
       throw new Error(`Required attribute: ${camelizedAttr}`);
     }
 
@@ -142,9 +111,8 @@ export default function serializeJsonApi(...args) {
 
     data.attributes = serializedAttributes(type, bodyWithoutMeta, link.schema);
 
-    if (link.schema.properties && linkRelationships(link.schema)) {
-      data.relationships = serializedRelationships(type, bodyWithoutMeta, link.schema);
-    }
+    if (jsonSchemaRelationships(link.schema).length > 0)
+    data.relationships = serializedRelationships(type, bodyWithoutMeta, link.schema);
 
     return { data };
   }

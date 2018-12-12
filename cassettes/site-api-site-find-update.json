@@ -250,6 +250,28 @@
                                 "$ref": "#/definitions/item_type/definitions/data"
                               }
                             }
+                          },
+                          "creator": {
+                            "type": "object",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/account/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/access_token/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/user/definitions/data"
+                                  }
+                                ]
+                              }
+                            }
                           }
                         }
                       }
@@ -282,7 +304,7 @@
               "rel": "validate_new",
               "private": true,
               "title": "Validate new record",
-              "description": "Validates a record fields",
+              "description": "Validates a record field",
               "href": "/items/validate",
               "schema": {
                 "type": "object",
@@ -493,6 +515,34 @@
                       },
                       "attributes": {
                         "$ref": "#/definitions/item/properties/attributes"
+                      },
+                      "relationships": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "creator": {
+                            "type": "object",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/account/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/access_token/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/user/definitions/data"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -838,8 +888,7 @@
               "description": "JSON API links",
               "type": "object",
               "required": [
-                "item_type",
-                "creator"
+                "item_type"
               ],
               "additionalProperties": false,
               "properties": {
@@ -4213,7 +4262,8 @@
                           "update",
                           "create",
                           "delete",
-                          "publish"
+                          "publish",
+                          "edit_creator"
                         ],
                         "description": "Permitted action",
                         "example": "all"
@@ -4267,7 +4317,8 @@
                           "update",
                           "create",
                           "delete",
-                          "publish"
+                          "publish",
+                          "edit_creator"
                         ],
                         "description": "Permitted action",
                         "example": "all"
@@ -6585,7 +6636,8 @@
                           "deploy_adapter",
                           "spider_enabled",
                           "frontend_url",
-                          "deploy_settings"
+                          "deploy_settings",
+                          "build_on_scheduled_publications"
                         ],
                         "additionalProperties": false,
                         "properties": {
@@ -6603,6 +6655,9 @@
                           },
                           "frontend_url": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/frontend_url"
+                          },
+                          "build_on_scheduled_publications": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/build_on_scheduled_publications"
                           },
                           "deploy_settings": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_settings"
@@ -6672,6 +6727,9 @@
                           },
                           "frontend_url": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/frontend_url"
+                          },
+                          "build_on_scheduled_publications": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/build_on_scheduled_publications"
                           },
                           "deploy_settings": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_settings"
@@ -6784,7 +6842,8 @@
                 "scrape_status",
                 "frontend_url",
                 "spider_enabled",
-                "access_policy"
+                "access_policy",
+                "build_on_scheduled_publications"
               ],
               "additionalProperties": false,
               "properties": {
@@ -6850,6 +6909,11 @@
                   ],
                   "description": "Public url of the site",
                   "example": "https://www.mywebsite.com/"
+                },
+                "build_on_scheduled_publications": {
+                  "type": "boolean",
+                  "description": "Deploy on scheduled publication",
+                  "example": true
                 },
                 "spider_enabled": {
                   "type": "boolean",
@@ -7174,13 +7238,13 @@
       "Connection",
       "close",
       "Date",
-      "Wed, 05 Dec 2018 13:56:41 GMT",
+      "Wed, 12 Dec 2018 09:19:51 GMT",
       "Last-Modified",
-      "Wed, 05 Dec 2018 09:33:59 GMT",
+      "Tue, 11 Dec 2018 12:42:21 GMT",
       "Content-Type",
       "application/json",
       "Content-Length",
-      "220831",
+      "223610",
       "Via",
       "1.1 vegur"
     ]
@@ -7192,9 +7256,9 @@
     "body": "",
     "status": 200,
     "response": [
-      "1f8b080019d9075c0003",
-      "6c52cb6ee3300cfc179ddd34565e468e0bec6dffa02804c6666c6125d1ab47d234c8bf2f95d44eeac62779863343513c8b062288ed59e8466c45b5aed6a210f1d423ff051d91ff2046af772962c8750e6ce67e196a99335483c9c49b4027de59da61e6cfccb424b62e19537086ffab6a32e433e391a35665217626e1ed04a6efb80bb95a15a2f5c8560c5fd85eb75d9c28a5dc0c52b9924fb57259b118ea1add0ff57c14cf974fc5e566c1e2de6b0bfe3451976374b9a99eabb96f96376441bbe1feda45f40e8c1a6036a1f6a52a67d058ed66fc0654db30abc9f24c5b433bae0d38ce6f0f075dd368e74869d7e087d8eec1042c4408ed58ea89c35ca3923763bc6df587ea28444e3e1e8f43de0b848071883510a2cadba0ea0e5c8b0ae26070a392ed1f30de0d1b783cc931c4438ddae227b9bc1bbf93a71e5fff906bb8e98247f72f698f4aeee1abe54b060d444d2e74babf2e163fd7cdecfc7d27d7f3a5bcefe45095879c02fa70af7f7b67cca24beadadb84c898ca2653c293f9867dc5966bb978c8cd55e2523c908b2999cd1aec0d9d6cde3b7407cd8f91cfd348a8a33ea0ea0db81fd72defb657fe92bfff000000ffff",
-      "0300b0fc7bd3a7030000"
+      "1f8b0800b7d2105c0003",
+      "6c52cb72e23010fc179d1d365630b838a66a6ff983544a35d883ad5a49e3d503c252fcfb8e2036c4c127b97bba7b349a93682182d89c846ec546d4f572250a118f03f25fd011f90f62f47a9b22865ce7c066eed550c79ca1064c26de053af1c1d21e337f62a623b171c9988233fc1fd590219f198f1c559585d89a84d71398a1e72e645515a2f3c8560c9fd95e777d9c29a55c8f5259c9875ab9ac590c4d83ee87fa79123f2f1f8acbf50b8b07af2df8e34c5d4ed1e5ba7eace6be59de9205edc6fb6b17d13b306a84d984ba27b9ae17d05aed16fc08d4d8b068c8f2503b435b2e0e380d70077bddd0e4e74869d7e2a7d8ecc0042c4408dd54ea89d35cab923753beedf4a7ea29448e3e1c0e63de138480718c3510a2caeba09a1e5c870ae26870a5921dee305e0e1b783ec931c4538ddae23f7279397e274f03fe7a23d772d305cfee6fd21e95dcc157cbe70c1a889a5ce8f570d92c7eafabd9e9fb52ae4a59dd9672acca534e017db8d5bf7f3066d12575e96d46644c659339e1c97cc3be62cb5555dde5e62a712eeec8d59ccc662d0e868e362f1ebabde6c7c8e779243451ef510d06dc8feb9637db0b7fcedf7f000000ffff",
+      "0300a4d19cb7a8030000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7206,13 +7270,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"de8dd4f4f4d74fb19910899adc20ea8c\"",
+      "W/\"c34946aa271c4679faaa10873c2b6851\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "732ec8cb-d1dd-40ac-8c66-3c641b4c1509",
+      "06cbd94d-5d88-4f9a-bbd7-85ece1ace8e4",
       "X-Runtime",
-      "0.029110",
+      "0.163082",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7226,7 +7290,7 @@
     "body": {
       "data": {
         "type": "site",
-        "id": "8686",
+        "id": "8846",
         "attributes": {
           "name": "New blog",
           "ssg": null
@@ -7235,9 +7299,9 @@
     },
     "status": 200,
     "response": [
-      "1f8b08001ad9075c0003",
-      "6c524b73da3010fe2b1d9d0db504068fefbd7572eaa9998c66b1175b133d1c49865086ffde15c12671f049deefa55ded993510815567a61a56b172536e58c6e2a947fa0b2a22fd418c5eed868821f12c98843de1f1c74ebb9670ed6ad0097c6668d90bc93b4c9c3321ad63951db4ce28c7bfcada69e713e291e20a9eb19d1ef0e304baefe826a22832d67a242b2a5fc85eb55d9c2985d88e525188875ab12e490c758df69b3a9fc4f9faa1986f5724eebd32e04f33359fa2f9b67caca67b93bc7106941dfb5736a2b7a0e55866697c8b922fa131ca2ee91d5c6dc2b2768666da6ab7236ec0697e7b38a8da4d76d649651b7c67d51e74c08c85d04e54ef28cc3672f07a8a37ad7a979d0b91928fc7e398b78010308eb11a4294692364dd816d5142a28b9c970b2e1679f187afaa6253adf9729baffe4e82c1f457e62d2aa20934b4c15289461d95c17fcea6adf93578d7e3cfdfce36d44a46037d1b944729f6706be4928a1aa2723674aabfae1c3de287d9f9ebb66ef2b5b86febc84aa31f02fa70e73fbf50cda01de4f56e3320d564329903dee92fb55b2cdf88d5a7dcc46297ec13b89a83c9acc15ebb9349db88f6a0e889d2791e0975540794bd06fbad5d7eb7bde297f4fd070000ffff",
-      "03002b7d768ec1030000"
+      "1f8b0800bbd2105c0003",
+      "6c524d939b300cfd2b1d9f498add1058eebd757aeaa93b3b1e0514f0d41fd436c9a699fcf7cad94076d9301c6cbdf7f4245967d64204569f996a59cdaa6ab365198ba701e9165444ba418c5eedc68821f12c9884fdc4e3979d761de1da35a013f8ccd0b21792f7983867423ac76a3b6a9d918fff231ba79d4f8847b22b78c6767ac4b713e8a1a74a445164acf348a9287ca1f4aaebe3422944394945211e6ac5a62231340dda4fea7c16e79b87625e7e23f1e095017f5aa8f96ccdcbeab19aea2679eb0c283bf5af6c446f41cb29ccd2f856a2acd6d01a65d7f410ae3161dd384343edb4db1139e03cc03d1c54e3e67cd649655b7c65f51e74c08c85d0cd54efc8cdb672f47af6379d7a95bd0b91ac8fc7e3e4b78210304eb61a4294692564d383ed5042a28b9c572b2ee8ff953fd5fca92e8a35cfcbdfb36034c39579b38a68024d6db414a2594765f09fb3696dbe8fde0df8f587b32db592d144ff8ecaa3147bb8357249410d51391b7a355c778e5ef12dd9f9e3ba6eb928eeeb3ab1d2ecc7803edcf9cf2f1433684779ad6d01a4984c49968077fa43ec66cbb745f1ce37b1d8257b076e97604ad6e2a0ddc9a475447b50f444e9bcb48426aa03ca4183fdd42ebfa7bde297f4fd070000ffff",
+      "03000a9f4e4fc2030000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7249,13 +7313,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"18dae4b5a8370fff48fdacd3cbd4d3cd\"",
+      "W/\"8d25a510eacce66e8830bd203f6a1ea6\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "0c86c249-c8bd-4ca0-aa9e-40646d68bbdd",
+      "fd2e0f59-18df-4646-b35c-8a89c7c113f9",
       "X-Runtime",
-      "0.360907",
+      "3.721257",
       "Connection",
       "close",
       "Transfer-Encoding",

@@ -250,6 +250,28 @@
                                 "$ref": "#/definitions/item_type/definitions/data"
                               }
                             }
+                          },
+                          "creator": {
+                            "type": "object",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/account/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/access_token/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/user/definitions/data"
+                                  }
+                                ]
+                              }
+                            }
                           }
                         }
                       }
@@ -282,7 +304,7 @@
               "rel": "validate_new",
               "private": true,
               "title": "Validate new record",
-              "description": "Validates a record fields",
+              "description": "Validates a record field",
               "href": "/items/validate",
               "schema": {
                 "type": "object",
@@ -493,6 +515,34 @@
                       },
                       "attributes": {
                         "$ref": "#/definitions/item/properties/attributes"
+                      },
+                      "relationships": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "creator": {
+                            "type": "object",
+                            "required": [
+                              "data"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "data": {
+                                "anyOf": [
+                                  {
+                                    "$ref": "#/definitions/account/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/access_token/definitions/data"
+                                  },
+                                  {
+                                    "$ref": "#/definitions/user/definitions/data"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -838,8 +888,7 @@
               "description": "JSON API links",
               "type": "object",
               "required": [
-                "item_type",
-                "creator"
+                "item_type"
               ],
               "additionalProperties": false,
               "properties": {
@@ -4213,7 +4262,8 @@
                           "update",
                           "create",
                           "delete",
-                          "publish"
+                          "publish",
+                          "edit_creator"
                         ],
                         "description": "Permitted action",
                         "example": "all"
@@ -4267,7 +4317,8 @@
                           "update",
                           "create",
                           "delete",
-                          "publish"
+                          "publish",
+                          "edit_creator"
                         ],
                         "description": "Permitted action",
                         "example": "all"
@@ -6585,7 +6636,8 @@
                           "deploy_adapter",
                           "spider_enabled",
                           "frontend_url",
-                          "deploy_settings"
+                          "deploy_settings",
+                          "build_on_scheduled_publications"
                         ],
                         "additionalProperties": false,
                         "properties": {
@@ -6603,6 +6655,9 @@
                           },
                           "frontend_url": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/frontend_url"
+                          },
+                          "build_on_scheduled_publications": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/build_on_scheduled_publications"
                           },
                           "deploy_settings": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_settings"
@@ -6672,6 +6727,9 @@
                           },
                           "frontend_url": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/frontend_url"
+                          },
+                          "build_on_scheduled_publications": {
+                            "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/build_on_scheduled_publications"
                           },
                           "deploy_settings": {
                             "$ref": "#/definitions/deployment_environment/definitions/attributes/properties/deploy_settings"
@@ -6784,7 +6842,8 @@
                 "scrape_status",
                 "frontend_url",
                 "spider_enabled",
-                "access_policy"
+                "access_policy",
+                "build_on_scheduled_publications"
               ],
               "additionalProperties": false,
               "properties": {
@@ -6850,6 +6909,11 @@
                   ],
                   "description": "Public url of the site",
                   "example": "https://www.mywebsite.com/"
+                },
+                "build_on_scheduled_publications": {
+                  "type": "boolean",
+                  "description": "Deploy on scheduled publication",
+                  "example": true
                 },
                 "spider_enabled": {
                   "type": "boolean",
@@ -7174,13 +7238,13 @@
       "Connection",
       "close",
       "Date",
-      "Wed, 05 Dec 2018 13:56:56 GMT",
+      "Wed, 12 Dec 2018 09:28:47 GMT",
       "Last-Modified",
-      "Wed, 05 Dec 2018 09:33:59 GMT",
+      "Tue, 11 Dec 2018 12:42:21 GMT",
       "Content-Type",
       "application/json",
       "Content-Length",
-      "220831",
+      "223610",
       "Via",
       "1.1 vegur"
     ]
@@ -7215,9 +7279,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b080029d9075c0003",
-      "6c50cb6ac4300cfc179f73580a85925bbfa314a1d84a57ac12bbb2525896fc7be5eca3a1ad4fb246339ad12524340cfd25700a7d787e3a1c5e4217ec5cc8bf6c34c1567701cd9487c5a8b6e919a736f0aac6511a5c79fe10b23c87de74216f64351c1ceb4794ea0d2c0c273aff92cd9a489d0b8995a27113981711f7a0f4439e725a041506c9f1f4e826c5d1c0310274eed76e9908f8280a5550fa5c5c3cdd9dc52c725d05580aa112ceb1a589792aaee3ae8e58e191089adf9bf2da0525c146ae472edb2d4626495b75bde5dbfbbabbc78d7d075bb675177b23ff818d4de85fccdf37000000ffff",
-      "03003d97dac1b4010000"
+      "1f8b0800d0d4105c0003",
+      "6c50cb4ec4300cfc979c7b002124d41bdf8190e5262e6baddb04c7455aadfaef38dd07159093e3f18c677c0e090d437f0e9c421f9e9f1e1e5f4217ec54c8bf6c34c1567701cd9487c5a8b6e919a736f0aac6511a5c79fe10b23c87de74216f64351c1ceb4794ea0d2c0c473afd92cd9a489d0b8995a27113981711f7a0f4439e725a041506c9f178ef26c5d1c0310274eed76e9908f8280a5550fa5c5c3cdd9cc52c725905580aa112ceb1a589792aaee3ae0e58e19e089adfabf2da0525c146ae072edb2d4626495b75b9e5dbfbbabbc7957d035bb675177b23ff818d4de85fccdf37000000ffff",
+      "03006056a80cb4010000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7229,13 +7293,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"3be185edaa44a86f9a975d19179e525a\"",
+      "W/\"65aa5034803a4c3d3e9fb4c874ec135d\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "8d9f3eab-8b9d-47f6-bd4b-efbd88ac6895",
+      "fb5a2b9d-43a6-4b74-b9e7-a2079a10b429",
       "X-Runtime",
-      "0.351248",
+      "0.312457",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7245,7 +7309,7 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "POST",
-    "path": "/item-types/52008/fields",
+    "path": "/item-types/53018/fields",
     "body": {
       "data": {
         "type": "field",
@@ -7262,9 +7326,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b080029d9075c0003",
-      "8452c16e83300cfd979c39b49d36addcf60fbb5555648859a39a8425a65287f8f73940a14553c7cdbcf7fcece774ca0083ca3b658dcad576bfdfbdbda84cf1b541a92b8b64a404e6608b9631262a418124e8a765424107969e245198ee2b691aabcf78955f3cf14ed6b1ca5d4b9429f22590fd4171ad802266ea22b50ce3c3e011f0bbb521c15ddf67aaf1d1b2f54ee5dbd4b9410808aec44445634595acc598509375c9ad810035328efd4e0826cd35d84b4330c63b410e47290c56d0126b19a1c59912902079c6936d861e96b19ed6ec1e737bdd6d36ef4b6c0bb1efd3f4d695d49ab4cce13fc13a6b273b08e123b02d8710c7253945c1a195dca20f0c8560b72097e0efdbfa60305d461b89b51cb31c4fc1011771ed4d4b107421073acf7f4d808ab560a841b4973b33223ddc12a35e6e364e567aa2d14a3f9c4c80ba913ee94940d4f3463acd3b75fe2bffe19dc525fcc3d357dba7cbae7bdfa4d389e75046c91a1e1eee1a7b6e2adfb1ff050000ffff",
-      "03000cbb0aee56030000"
+      "1f8b0800d0d4105c0003",
+      "8452c16e83300cfd979c39945595266efb87ddaa2a32c4ac514dc21253a943fcfb1ca0d0a2a9e366de7b7ef6737a65804115bdb24615ea6db7cf0fb9ca14df5a94bab648464a600eb6ec1863a2129448827e5a26147464e9591285e9be92a6b5fa8237f9c533ef6c1dabc2754499225f01d91f14d71a2862a6ae52cb303e8c1e01bf3b1b12dc0f43a65a1f2d5bef5491a7ce2d42407015262a1a2baa642dc6849aac4b6e2d04689071ea77463069aed15e1a8231de09723c4961b0868e58cb081d2e948004c9339e6d3bf6b08ccdbc66ff9cdb61bfcbdfd7d856e230a4e9adaba8336999e37f826dd64e7610c247605b8d214e4b728a824327b9451f184ac1ee41aec13fb6f5c160ba8c36126b3565399d8203aee2c69b8e20e8520e7459fe9a00356bc1508368af0f66447abc2546bdde6c9aacf24493957e3a99004d2b7dd29380a8978d749a77eefc57fee33b8b6bf8c797af764897ddf6be4be7132fa14c922d3c3edc2df6da54bed3f00b0000ffff",
+      "0300ed2ca45456030000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7276,13 +7340,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"796cb0234320ec96e62c6b3261b22db8\"",
+      "W/\"bf566654fbde8fd418b606af6395f7bc\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "86e372fa-0807-4d1d-bb2b-c0d58ef4de1e",
+      "cbbbba8a-be46-48e3-ba4d-7982040ddb3c",
       "X-Runtime",
-      "0.615469",
+      "0.517241",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7292,7 +7356,7 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "POST",
-    "path": "/item-types/52008/fields",
+    "path": "/item-types/53018/fields",
     "body": {
       "data": {
         "type": "field",
@@ -7309,9 +7373,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b08002ad9075c0003",
-      "8452db6e83300cfd973cf3d07517adbced3baa2932c4ac514dc212a75287f8f739d0168aa6ae2fd4b18fcff1b17b65804195bdb24695ea69b7dbbebda842f1b943891b8b642404e660abc4187329418524d90f66a80f2d3a9692b154df708419d6597dc4b33cc0b2f460e553ba445428f23590fd41616f802216ea24b188f261e40af89d6cc8e97e180ad5f968d97aa7ca6d6edf21040457632e45630535b37710a045c6b19160c118efe4fffe5302830d24622d6c092731f21a9020b78f07db8df496b1bd0cd5df5bf5badd6cde67a7e6c261c842adab2999ac7bff1f606daf13d5d9ddc0b61e0789d67d11729e9a43128ba20f0c95e4ae9ecd462fdbfa603008561b71b09e6c9b5ce78033b8f52611045dc92e8eb75713a0612d39d420d8d3828c488f6bc3a8e7f54cca6a4f3451e9bbed48a2eda44fde3e447d9b4867bd97ce7ff93f5e559ccddf2f0ff5797da843f1f08e87bcf835f5b5f3e5026e9e4d90759a2d13ae738f35c9ef73f8050000ffff",
-      "03003b8f078168030000"
+      "1f8b0800d1d4105c0003",
+      "8452cb8e83300cfc979c39f4a14a2b6efb1d5515b9c46ca39a844d9c4a5dc4bfaf032d50b4eaf6421d7b3ce3b13b658041959db246956ab7d96f0f3b5528beb728716d918c84c01cec3931c65c4a704692ec27335497061d4bc950aa271c6186b5565ff12e0fb02cbd58f9942e11158a7c05647f50d86ba08885ba492ca27c18b8027e271b72baebfb42b53e5ab6dea97297dbb70801c155984bd15841cdec2d0468907168245830c63bf97f3c4960b08644ac852de128465e0312e4f6f162db81de32368fa1ba57ab0efbcdf663766a2eecfb2cd4ba8a92c9ba8fff01d6f63a519ddd0d6cab619068dd1721e7a93924b128fac07096dcd3b3d9e8655b1f0c06c16a230e56a36da3eb1c700637de2482a0cfb28bebf46a02d4ac25871a047b5b9011e9616d18f5bc9e5159e589462afdb21d4934adf4c9db87a8a78974d6fbe8fc97ffc355c5d9fce3f250b7eb43ed8bb777dce7c5afa99f9d1f1730793642d669b64cb8cebdd724bf53ff0b0000ffff",
+      "0300fd612cc568030000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7323,13 +7387,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"1334287910151fe11e0ac403e8b0f898\"",
+      "W/\"8ab57c8b2e910c8f23c9830f2b0736dc\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "eae178d0-7039-4c6e-bc89-0ce5afa0eb3d",
+      "82a0bcd2-cf05-464d-a00a-8ebfa3827e28",
       "X-Runtime",
-      "0.794254",
+      "0.509803",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7350,9 +7414,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b08002ad9075c0003",
-      "8c8f5b4bc3401085ff4ba06f6eb2bbc9e6520892d64aab58908a8622c8343b6903b999ddd068e97f77ab548a4fbe0cc3cc77e69c3958123458e38355486b6c39a11fb90e139e4759c859486adc6b1c745e94b8d3ba55b61eb47565e98f160ddeb76503f2adc3f71ed5690e5a77c5a6d7a84e27fbae34d0b76eec38c6a82145055b54b67209f6646f4484d950c16753c35ed95953fd2bc1754a92ea9324e5b6e90abdabe2e465e591f9433225ab79c285ffda53cafd1f6adaa1c45a1750c6c9fd22592cd3c794af97e97236993edf25237ecb8d15e35498f63795e9956b8a89e59d1fbcbc7a031ae3b3f089b9c217e1fa12980d6dd1a18a234a2fc7ab625ba39c2348ec54bc6b941eb9938180594156fe2541f79db18170e363c002ee8759ce240f5c6afc40660c59940b370b5828329732f0b8909b90651113527839cd83087ceb783c7e010000ffff",
-      "0300f1b37e72e9010000"
+      "1f8b0800d1d4105c0003",
+      "8c8f6f4bc33010c6bf4b61ef4c9ba469da0c8a7473b2290e64a2630892b6d72dd07f3629ab8e7d773365327ce59be378eef7dc3d77707269a4333e382a77c68e174541e89180318eb9a002d5b03730984295b033a6d5ae198c73e5988f162cdeb76523f3b70ede7bd0275d1ad3a9b437a04f2bfbaeb4d0b76fec79f650835425b7a05ded23e8d1de9a107165253f9b5aeeb59b35d5bf125caf51527da2a4dc369d32bb2a4e5e560ccd1f92295acd131af0d71e63ca7fa8690739d446c9324eee17c962b97e5cd3cd72bd9c4da6cf77c988de524c224209b5ed6f2adb6bdf161b8b9d1fbcdc7a230dc467e313163462627309cc865675a06381f1a5bc52db1af239c81c3a1def1a6d46fe6440d28e6456fe25a5e93b8871467914160cc230a384093f153893f626b78260420025392784842904a248318e78e8f342e469280183733c1ebf000000ffff",
+      "0300bb1cf0bbe9010000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7364,13 +7428,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"a63ae8b9c7730555469e409b45a1030a\"",
+      "W/\"0eeb93e51c0f19c9b97f6226256ba086\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "612b18b7-115b-45b4-b24f-ef364df6f3a5",
+      "99a6aab2-1799-4875-a762-07513ded267b",
       "X-Runtime",
-      "0.020420",
+      "0.020289",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7380,17 +7444,17 @@
   {
     "scope": "https://dato-images.s3-eu-west-1.amazonaws.com:443",
     "method": "PUT",
-    "path": "/8693/1544018218-newtextfilehttps.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAINXQX2ZNXNEBCVJA%2F20181205%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20181205T135658Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host%3Bx-amz-acl&X-Amz-Signature=2a8b6e717268cf1d2730565adc1e19f53c7185c301a425db81c915d54f0f79a6",
+    "path": "/8857/1544606929-newtextfilehttps.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAINXQX2ZNXNEBCVJA%2F20181212%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20181212T092849Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host%3Bx-amz-acl&X-Amz-Signature=0c2687f4e77c21493b90ca092677c9499e21d61117be59fb0086736f9db7ae0e",
     "body": "This is a Dato test text file uploaded with https",
     "status": 200,
     "response": "",
     "rawHeaders": [
       "x-amz-id-2",
-      "rapPRBGIdUSeRC1X3x5sHcM4+hBDYkm3Twmb3oEbjbiqvN2p1mlr3+XkEp/gKuKdIZQc916NshY=",
+      "hi0wbJ68wx58N07xz13SEej/wWB+EtwzFccBM5vJ3w8WV9GoPThaKSWL66jmK/IHoRkkmWrx/uI=",
       "x-amz-request-id",
-      "AC9B23F97358D26B",
+      "A8C2B7BE83C98D24",
       "Date",
-      "Wed, 05 Dec 2018 13:56:59 GMT",
+      "Wed, 12 Dec 2018 09:28:50 GMT",
       "ETag",
       "\"1c7f3f297bb16171b58dac0df409be13\"",
       "Content-Length",
@@ -7412,7 +7476,7 @@
           "size": 49,
           "width": null,
           "height": null,
-          "path": "/8693/1544018218-newtextfilehttps.txt",
+          "path": "/8857/1544606929-newtextfilehttps.txt",
           "format": "txt",
           "alt": "",
           "title": ""
@@ -7421,9 +7485,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b08002ad9075c0003",
-      "8c8f4b8ec2300c86efe2751fa44d509a73b09a0d328d4b23a5b46a5c8501f5ee631831eb597efa5ff6133c32827b42f0e04037add5060ae0ef8584b725cee88591790d978d29bdbc293c44d55d0139781ec1ddb6180b18295c47fed0822f056a7becda5a19ad0fca36ca9637ca4c771e42a491794915df591686799d50c2f08b18ff8a3870a40f84740e135e85078c890ae85742267f7e671bd92855531ecc49b5ce1c9db15567bb2f29dcd62886f7a2abeb9c73259fcffd944a4c893855fd3cfdefd67ddf7f000000ffff",
-      "0300cca7be4637010000"
+      "1f8b0800d1d4105c0003",
+      "8c8fcd8ec2300c84dfc5e7fea58492e639f6b417641a97464a69d5b80a3feabb6340ec79255f3e8d3d337e804346b00ff00e2c68ad765a41067c9b49789dc3844e1899177f5a99e26b37fabba8bacd2079c703d8cb1a420603f9f3c05f9af1a54069ccfe50aabdd64dd5b4759b5f28315db9f78106e639167c6549e8a7654439860f62f83362cf81bee0e3d18f7816ee3144caa05b0899dcf17d5b57cae4aa96f9a95a5b1be95834e6f02b86eb1264e19d68cb32a554c8e75337c61c63248e45378dffebba6ddb130000ffff",
+      "030041601e8b37010000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7435,13 +7499,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"45e0b495ecf8b3484a830fa95aa1e5c2\"",
+      "W/\"1871700f585cef2ae82a2dd642337f34\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "d3b88614-be3d-4afd-a49e-ed921caa593d",
+      "abdb91de-d349-43ce-9492-86fff6c6dc5f",
       "X-Runtime",
-      "0.027125",
+      "0.023416",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7457,13 +7521,13 @@
         "type": "item",
         "attributes": {
           "title": "My first blog post",
-          "attachment": "423845"
+          "attachment": "441341"
         },
         "relationships": {
           "item_type": {
             "data": {
               "type": "item_type",
-              "id": "52008"
+              "id": "53018"
             }
           }
         }
@@ -7471,9 +7535,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b08002bd9075c0003",
-      "9453416ee3300cfc4aa06bd3856cc76de2db3ea0b7de1685c0c84c234496bc125d2008fcf7a5ecd4c9ba45dbf8267286e48cc993a881405427616a51895216852cc452d0b1457e1bc2865f4014ccb6238c0949866c4a3e1d173b13222db6d6bf2e5a1f698482de37e88811abbc58af4a8e762db7c15a418ae6325bdf67f9bd2c9fb3a22a1faa72f34b4a79276525258375c09f82fba50868818c77716fda61bc34b31ae73fcdd4e552aeff173702fbfedcd5870fa4ac5c178f1712688d312af20774cc63628323fa86b16f34a4edb6d6c4fd4d703d98a2a2665a67cf54d759bb1426aa37b0491c850e97221250c7d65dfa0c8618a76d57f3a3faf39d7ff30d71d024c0ef4046db948ec6bd5a24efa69e3e106cd31aedc0460e406bd4018fb3b23ed41898ab6a13502745ef2228e085dc78d60841f122eac314ad03ec48710e1530f7edaa99b58aa16031aa807f3b2e3eb9a1bdb5632b056d8bc07fd5e9a446fba6e53a3cd51ea29a14a9e14606f267dbb83368eb78d9aa772fb3cd267fb8bab401c7fb7c9d5e7d48bff4575e9e3bcf97fcb3134eff73f272ac35f1929f9c1eae7a9efb7a58fe5efa7f000000ffff",
-      "0300b150617f42040000"
+      "1f8b0800d2d4105c0003",
+      "9453c16edb300cfd9540d765836c2741ea5b3f60b7dd86426064a611225b9a44150802fffb283bb533b7d816c31791ef917c4fd455344020eaab308da8c57627f75525d6822e1ef96c085b3e01513087441833920cd99cfc7e591d4d88b43a58f7baf22ed208057d6ab123466c3645b529389a3cb7c146418e96b2d87f2d4afe7fc8a7badcd79ba76f52ca2f52d652325807fc5f70bf16012d90715d3c193f8c976756e3fcd785ba8a8bfd296e04f6fdadab0b1f48c5aed86d6712688d312a7267ec98c7c41647f403633f68884f076be2e921b81e4c5151332dd91bb54bd6ae8589ea0d6c164721e15a44024a6cdddc6730c474daa6860ff5cf7ff9b7dc900eda0c780e64b4cde968ba578be4baa9a70b0487bc4647b09103e08d3ae36551d685060373556302eaace85d04059cc9ad638d10142fa23e4fd126c09114e7500173dfee9a59ab180a16a30af82b71f1c90dedac1d5b29f01e816fb5d3598d76ade73a3cd509a29a14a9e18d0ce4cfb6f168d03671deaa772f4b5915db623673c0f13edfa7cb0fe997fececb5be7e5927ff684f37d4e5e8eb5265ef693d3c3ab5ee6fe3e2c7f2ffd6f000000ffff",
+      "03007be8645842040000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7485,13 +7549,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"67e0cdb3c7aa715e79422d58ddaa5df1\"",
+      "W/\"1cb0840c41b001f621830ed21fd00047\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "ebffa8c3-6a53-48a4-9025-8e26b0bc03a1",
+      "93580b28-c030-4488-955b-10096363afee",
       "X-Runtime",
-      "0.298164",
+      "0.410651",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7501,13 +7565,13 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "GET",
-    "path": "/items/503303",
+    "path": "/items/560833",
     "body": "",
     "status": 200,
     "response": [
-      "1f8b08002bd9075c0003",
-      "9490c14ec4300c447fa5ca952e729b0d94fc0337ee559a1a1a913651e220adaafe3bc976a51570a147db6fe49959d9a84831b9323332c904700e9cd58c2e1ef36c08e73c29a2608644180b49866c39be5eaa7713225583751f9577917654e969c68532716e797716799b7c7e8363afcab685a63b35ed09c45bc3a57892e2e511001e0024408675c0ffc25bcd025a45c62d7132fe6aaf78ee77ffebaf742d40f733dc0e6edbedab0b7f448de8f8f35da4b4c6187b729fb8645d16ceb8d3076c1f2cc4a7c19a381dc2f5b5943eea2c4bf6265d92b53533b1ff52b684a390b0669114a55cddfd4f09f60d0000ffff",
-      "0300b618ce921a020000"
+      "1f8b0800d2d4105c0003",
+      "9490c16e83300c865f05e53a3a254011cd3becb63b0ac11bd102891267528578f739a552d5ed32a45c6c7f7ffcff5ed9a85031b9323332c9ce2defea9a950caf1ea8360833550a31982121c44ca2419b876fd7e2c38488c560dd67e15dc41d557a9a6141229a46d48da06ef2b406c65ee56ec545771215bd777e9155279bcb2be7fc8573c939c13ac07fe1ad6401ac42e39638197fb3973df7bbfff557ba9a3e7b0eb783db76dfeac21f9168457b7e8894d610638fee0b16d29170869d3e60fbe0417c1aac89d3215cdf8ed2474db264efd225595b3213fb6f6573380c094a165161a2d33df6e4603f000000ffff",
+      "03009af0bc211a020000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7519,13 +7583,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"8d88649bc06fe83a992c2432c6707997\"",
+      "W/\"9435c191176c59056909456ba0322918\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "b7e7446d-0ba0-4dcb-ae70-05c05ee17e04",
+      "03bc5e51-7f2e-4054-b794-308db0ca4eda",
       "X-Runtime",
-      "0.032733",
+      "0.030932",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7539,9 +7603,9 @@
     "body": "",
     "status": 200,
     "response": [
-      "1f8b08002bd9075c0003",
-      "9491414f84301085ff0a99abac19e856b1ffc19b37639a52aadb582869a7261bc27fb72c1862bcc871a6dfcbbcf73a41a74881789dc07620802363c8a004ba8e26cf964c9f2745146c9bc84410139025b73c3e5f8b771b2215adf31fc5e823ada8d297de0c948973cd9a33cfdb34e63ba6936ad9d65835a7aa3e217fa998e00f823fdd23e21da240ccb00ee6bff05c42304e91f543bcd8f1666ff12c57ffd316ef275d8dd8fc0eb782f3bc5df5e18fa8e20d7bdc454a6b13a324ff6986accbc2deacf401db070b1953eb6cbc1cc2f5ad1419759625b74987e45c0936ca2fe596701492292192a294abdbefe4606f7b30f2a49cd43e2d7f5acdf337000000ffff",
-      "03009e44ad6835020000"
+      "1f8b0800d2d4105c0003",
+      "9491c16e852010457fc5ccb6b601f5191fffd05d774d43106925453130347931fe7bc7a78d69baa9099b19ce65ee1d66e8142a10af33d80e045c6ad69425e480b7c9506dd10c5429c460db84268298012dbaf5f2f996bddb10316b9dffc8261f714395ee0733221155c5cb8a53374d34c77452addd82f1e69117745ed855148da8ae4f8cb107c6046304eb60fe0b2f3904e3145a3fc6de4e777bab67b9f99ff7783fe94a7aec77b80d5c967daa0f7f44bce6f5e51029ad4d8c12fda7194947c2c16cf409db271732a5d6d9d89fc2f57d29326a9225b74bc7e45c0e36ca2fe5d6701892c921a2c244ab3be650b0b723187a544e6a9fd63fe5cbf20d0000ffff",
+      "0300180e5b1235020000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7555,13 +7619,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"f831c1e38e21b299c1fb4fe8e65d4a29\"",
+      "W/\"e0b914cfd315f14ff19f777799fccfeb\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "2ffa9594-e59d-40c6-9076-9946dc79849f",
+      "76ad7b2a-988d-496a-b9c9-12c13a2999bd",
       "X-Runtime",
-      "0.030943",
+      "0.033083",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7571,22 +7635,30 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "PUT",
-    "path": "/items/503303",
+    "path": "/items/560833",
     "body": {
       "data": {
         "type": "item",
-        "id": "503303",
+        "id": "560833",
         "attributes": {
           "title": "Updated",
-          "attachment": "423845"
+          "attachment": "441341"
+        },
+        "relationships": {
+          "creator": {
+            "data": {
+              "id": "16165",
+              "type": "access_token"
+            }
+          }
         }
       }
     },
     "status": 200,
     "response": [
-      "1f8b08002bd9075c0003",
-      "9490c16ac4300c44ffc5d7668b12afdbd4dfb13d9512bc8e20a68e1362b95042febd72bcb0b4bd344749f3d0ccaca23764845e85eb85160aa404292a415f33f2ec08479e0cd1e2ae8930662539f2f9f83a338b7db91b3b8c1888d7e746b667c5db54ee9dc9db06eaf654372750975a6af5a4d5cb23003c00680016db05ff2bde2ab1a037e4a6100737ef9eb2d1ae985e7f456a00da9f898a70db6e5fa7e50f54ab563edf21632dc6d8d1f481813906472cea03b60f1632a7ab77713824b77b295db48c257f4343f2be122e769fc6e770b424ac44244389abbbffd90b71c1fad4f3a0dfdeb76f000000ffff",
-      "03004ad280dc1d020000"
+      "1f8b0800d2d4105c0003",
+      "9490cb6ac4300c45ffc5dba645ce8b8cbfa35d95623c8e20a68e136cb95042febd4a32307d4021e08da473adabbb88de90116a11ae174a342d7455250a419f3372ed0847ae0c5174d74c9836921cf96df832b316fb636eec3062206ed7b5ac6ac9dd7cccb5d9ba25c8ee5196fc9ee1a2ca4e35f004000f000a80611bf11fb8be7c83d74244f486dc14d2e0e6ddd366541fa6975f2755fcd9cf8b0e705d6f5ba7f847245bd9367791b11653d234bd63601d0b473ce813b64f0632e7ab77693885db3d149d2ccbb2bf4943f6be102ee90fe3b7e328662c44224399a3bbefd90371c1fadc73a15edfd62f000000ffff",
+      "0300e6d378951d020000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7598,13 +7670,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"43f2e3ac8a414bb27bb0386bd970cc85\"",
+      "W/\"667ed7d5c6a2695e7485d23490c05f59\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "408ea3ae-f3de-4391-81e8-d6d3455a07ec",
+      "49717943-6b01-4ad0-9520-bcb7593ab72e",
       "X-Runtime",
-      "0.302639",
+      "0.308120",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -7614,13 +7686,13 @@
   {
     "scope": "http://site-api.lvh.me:3001",
     "method": "DELETE",
-    "path": "/items/503303",
+    "path": "/items/560833",
     "body": "",
     "status": 200,
     "response": [
-      "1f8b08002bd9075c0003",
-      "9490cd6ac4300c84df45d7668b12afdbd4cfb13d1baf2388a9f3832d174ac8bbd75e2f2c6d2fcd51d27c686636180c1b501bb801144814020534c05f2be5d9314d7932ccc15d13532c4a76eccbf17dcd2c0df56eec38d1cc797dee447f96799bea5d9bb2edb0ed4f6d7742796985922f4abe3d23e213a242cc621be8bfe2bd8140deb05be638baf5e6a918d5d5f4f62b5287d8ff4c5485fb7effba843f502b7bf1fa808cb514a3e6e583e6cc6570a2aa3e60fb60216bba7a17c743727b2b45479bb1e4efe89cbc6fc045fd697c09c7215103910da75cdde34f09f60d0000ffff",
-      "030053359a6c0f020000"
+      "1f8b0800d2d4105c0003",
+      "9490d96ac4300c45ffc5af4d8b9c8d8cbfa37d361e47105367c1960b25e4df2b8f07a60b14027e91748f75af76311a3242edc28d4289ae87a1694425e87343ae1de1cc95210aee9a08635692239f876f1bb33896b9b1d38c0b71bb6d65d34aeea632d726776b90c3b3acf9bdc245d583eae005009e0014008b6dc07fc4ede59bf8a844406fc8ad4b9cdc76f3948dea627aff15a9e1cf7e262ac2e3b86f5dc31f48f6b2ef1e90b11663d4b4bee3c21c833316f509db270fb2a5ab77713a25b7b7a3e868194bfe8e2ec9fb4ab8a83f8ccfe12824ac442443894ff7d893837d010000ffff",
+      "0300bce62a5e0f020000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -7632,13 +7704,13 @@
       "Content-Encoding",
       "gzip",
       "ETag",
-      "W/\"e00ef8ba244bffefacd413840d143cd8\"",
+      "W/\"b0829676420fe6bf781a0927a69904a9\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "6c3e1054-e73c-4fe6-aff2-c1bc1842da2d",
+      "d06e0882-1873-4182-82de-bd532145981f",
       "X-Runtime",
-      "0.281338",
+      "0.477963",
       "Connection",
       "close",
       "Transfer-Encoding",
