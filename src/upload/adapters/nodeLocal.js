@@ -27,19 +27,16 @@ function uploadToS3(url, filePath, size) {
   });
 }
 
-export default async function nodeLocal(client, filePath) {
-  const { size } = await stat(filePath);
+export default function nodeLocal(client, filePath) {
   const format = path.extname(filePath).slice(1);
 
-  const { id, url } = await client.uploadRequest.create({
-    filename: path.basename(filePath),
-  });
-
-  await uploadToS3(url, filePath, size);
-
-  return {
-    path: id,
-    size,
-    format,
-  };
+  return stat(filePath)
+    .then(({ size }) => {
+      return client.uploadRequest.create({ filename: path.basename(filePath) })
+        .then(({ id, url }) => ({ id, url, size }));
+    })
+    .then(({ id, url, size }) => {
+      return uploadToS3(url, filePath, size)
+        .then(() => ({ path: id, size, format }));
+    });
 }
