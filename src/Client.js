@@ -4,6 +4,7 @@ import { camelizeKeys, decamelizeKeys as humpsDecamelizeKeys } from 'humps';
 import ApiException from './ApiException';
 import pkg from '../package.json';
 import fetch from './utils/fetch';
+import wait from './utils/wait';
 
 const undefinedToNull = (k, v) => (v === undefined ? null : v);
 
@@ -101,30 +102,36 @@ export default class Client {
 
     return fetch(url, fullOptions)
       .then((res) => {
-        if (res.status !== 204) {
-          return res.json().then(body => [res, body]);
-        }
-        return Promise.resolve([res, null]);
-      })
-      .then(([res, body]) => {
-        if (res.status >= 200 && res.status < 300) {
-          return Promise.resolve(camelizeKeys(body));
-        }
-        return Promise.reject(new ApiException(res, camelizeKeys(body)));
-      })
-      .catch((error) => {
-        if (
-          error
-            && error.body
-            && error.body.data
-            && error.body.data.some(e => e.attributes.code === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
-        ) {
-          return new Promise(r => setTimeout(r, 1000))
-            .then(() => {
+        if (res.status === 429) {
+          const waitTime = res.headers.get('X-RateLimit-Reset');
+          if (waitTime) {
+            console.log(`Rate limit exceeded, waiting ${waitTime} seconds...`);
+            return wait(parseInt(waitTime, 10) * 1000).then(() => {
               return this.request(url, options);
             });
+          }
         }
-        throw error;
+
+        return (res.status !== 204 ? res.json() : Promise.resolve(null))
+          .then((body) => {
+            if (res.status >= 200 && res.status < 300) {
+              return Promise.resolve(camelizeKeys(body));
+            }
+            return Promise.reject(new ApiException(res, camelizeKeys(body)));
+          })
+          .catch((error) => {
+            if (
+              error
+                && error.body
+                && error.body.data
+                && error.body.data.some(e => e.attributes.code === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
+            ) {
+              return wait(1000).then(() => {
+                return this.request(url, options);
+              });
+            }
+            throw error;
+          });
       });
   }
 }

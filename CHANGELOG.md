@@ -1,3 +1,7 @@
+## 0.8.11
+
+* Automatically wait in case we get API rate limits
+
 ## 0.8.6
 
 * Support empty responses from server
