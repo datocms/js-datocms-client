@@ -1,3 +1,7 @@
+## 0.8.12
+
+* Fix Contentful importer. Fixes issues with spaces in model names and with linking assets and items
+
 ## 0.8.11
 
 * Automatically wait in case we get API rate limits

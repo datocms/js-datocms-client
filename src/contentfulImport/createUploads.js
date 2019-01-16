@@ -1,8 +1,6 @@
 import ora from 'ora';
 import Progress from './progress';
-import {
-  toFieldApiKey,
-} from './toApiKey';
+import { toItemApiKey, toFieldApiKey } from './toApiKey';
 
 const { camelize } = require('humps');
 
@@ -66,14 +64,14 @@ export default async ({
     try {
       for (const key of Object.keys(entry.fields)) {
         const entryFieldValue = entry.fields[key];
-        const contentTypeApiKey = entry.sys.contentType.sys.id;
+        const contentTypeApiKey = toItemApiKey(entry.sys.contentType.sys.id);
         const apiKey = toFieldApiKey(key);
 
         const field = fieldsMapping[contentTypeApiKey].find(f => f.apiKey === apiKey);
 
         let uploadedFile = null;
 
-        if (field.fieldType === 'file' && field.fieldType === 'gallery') {
+        if (field.fieldType === 'file' || field.fieldType === 'gallery') {
           if (field.localized) {
             const localizedValue = Object.keys(entryFieldValue)
               .reduce((innerAcc, locale) => {
@@ -116,7 +114,6 @@ export default async ({
               [camelize(apiKey)]: uploadedFile,
             });
           }
-          return;
         }
       }
       await datoClient.items.update(datoItemId, recordAttributes);

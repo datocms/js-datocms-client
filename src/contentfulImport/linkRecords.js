@@ -42,7 +42,8 @@ export default async ({
               );
             }
             return Object.assign(innerAcc, {
-              [locale.slice(0, 2)]: innerValue.map(link => contentfulRecordMap[link.sys.id]),
+              [locale.slice(0, 2)]: innerValue.filter(link => contentfulRecordMap[link.sys.id])
+                .map(link => contentfulRecordMap[link.sys.id]),
             });
           }, {});
 
@@ -66,7 +67,8 @@ export default async ({
       }
 
       return Object.assign(outerAcc, {
-        [camelize(apiKey)]: innerValue.map(link => contentfulRecordMap[link.sys.id]),
+        [camelize(apiKey)]: innerValue.filter(link => contentfulRecordMap[link.sys.id])
+          .map(link => contentfulRecordMap[link.sys.id]),
       });
     }, {});
 
