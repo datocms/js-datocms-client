@@ -28,7 +28,7 @@ export default async ({
         const fieldApiKey = toFieldApiKey(field.id);
         const datoField = itemTypeFields.find(f => f.apiKey === fieldApiKey);
         if (!datoField) {
-          return;
+          break;
         }
 
         const validators = await datoFieldValidatorsFor({ field, itemTypes });
