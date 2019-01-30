@@ -1,3 +1,7 @@
+## 0.8.13
+
+* Fixed regression where you could no longer access items' item type via .itemType
+
 ## 0.8.12
 
 * Fix Contentful importer. Fixes issues with spaces in model names and with linking assets and items

@@ -233,12 +233,15 @@ describe('Site API', () => {
         attachment: (await client.uploadFile('test/fixtures/newTextFileHttps.txt')),
       });
       expect(item.title).to.equal('My first blog post');
+      expect(item.itemType).to.not.be.undefined();
 
       const foundItem = await client.items.find(item.id);
       expect(foundItem.id).to.equal(item.id);
+      expect(foundItem.itemType).to.not.be.undefined();
 
       const allItems = await client.items.all();
       expect(allItems).to.have.length(1);
+      expect(allItems[0].itemType).to.not.be.undefined();
 
       const updatedItem = await client.items.update(
         item.id,

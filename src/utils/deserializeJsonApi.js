@@ -35,7 +35,7 @@ function deserialize(
           value = relData.id;
         }
 
-        result[relationship] = value;
+        result[camelize(relationship)] = value;
       }
     });
   }
