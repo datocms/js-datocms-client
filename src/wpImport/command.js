@@ -18,12 +18,9 @@ export default async function command(token, wpUrl, wpUser, wpPassword) {
   const wp = await WPAPI.discover(wpUrl);
   await wp.auth({ username: wpUser, password: wpPassword });
 
-  await wp.media();
-
   await destroyExistingData(dato, wp);
 
   const schema = await createSchema(dato, wp);
-
   const media = await importMedia(dato, wp);
   const categories = await importCategories(dato, wp, schema.categoryId);
   const tags = await importTags(dato, wp, schema.tagId);
