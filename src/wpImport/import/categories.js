@@ -7,7 +7,7 @@ export default async function categories(dato, wp, itemTypeId) {
 
   const resources = await allPages('Fetching categories', wp.categories());
 
-  const tick = progress('Creating categories', resources.length);
+  const tick = progress('Creating categories', resources.length + 1);
 
   for (const category of resources) {
     mapping[category.id] = (await tick(
@@ -20,6 +20,15 @@ export default async function categories(dato, wp, itemTypeId) {
       }),
     )).id;
   }
+  mapping[1] = (await tick(
+    'Uncategorized',
+    dato.items.create({
+      itemType: itemTypeId,
+      name: 'Uncategorized',
+      slug: 'uncategorized',
+      description: 'Uncategorized',
+    }),
+  )).id;
 
   const childCategories = resources.filter(c => c.parent);
 
