@@ -1,3 +1,7 @@
+## 0.8.14
+
+* Fixed two bugs in the WP importer, one about retrieve paginated contend and another with creating the "uncategorized" category that is not returned by the WP APIs.
+
 ## 0.8.13
 
 * Fixed regression where you could no longer access items' item type via .itemType
