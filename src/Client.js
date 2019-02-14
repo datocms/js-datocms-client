@@ -103,13 +103,11 @@ export default class Client {
     return fetch(url, fullOptions)
       .then((res) => {
         if (res.status === 429) {
-          const waitTime = res.headers.get('X-RateLimit-Reset');
-          if (waitTime) {
-            console.log(`Rate limit exceeded, waiting ${waitTime} seconds...`);
-            return wait(parseInt(waitTime, 10) * 1000).then(() => {
-              return this.request(url, options);
-            });
-          }
+          const waitTime = res.headers.get('X-RateLimit-Reset') || '10';
+          console.log(`Rate limit exceeded, waiting ${waitTime} seconds...`);
+          return wait(parseInt(waitTime, 10) * 1000).then(() => {
+            return this.request(url, options);
+          });
         }
 
         return (res.status !== 204 ? res.json() : Promise.resolve(null))

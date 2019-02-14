@@ -1,3 +1,7 @@
+## 0.8.15
+
+* If the client receives a 429 error message with no indication of wait time, assume it's 10 seconds
+
 ## 0.8.14
 
 * Fixed two bugs in the WP importer, one about retrieve paginated contend and another with creating the "uncategorized" category that is not returned by the WP APIs.
