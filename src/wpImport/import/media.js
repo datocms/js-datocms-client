@@ -12,8 +12,8 @@ export default async function media(dato, wp) {
 
   for (const mediaItem of mediaItems) {
     const create = async () => {
+      const mediaItemUrl = mediaItem.source_url;
       try {
-        const mediaItemUrl = mediaItem.source_url;
         const uploadId = await dato.uploadFile(mediaItemUrl);
         const upload = await dato.uploads.update(uploadId, {
           title: mediaItem.title.rendered,
@@ -35,6 +35,7 @@ export default async function media(dato, wp) {
           }
         }
       } catch (e) {
+        console.log(`Cannot import: ${mediaItemUrl}`);
         console.log(e);
       }
     };
