@@ -1,7 +1,8 @@
 import { resolve, relative } from 'path';
 import denodeify from 'denodeify';
+import PrettyError from 'pretty-error';
 import nodeRimraf from 'rimraf';
-import Loader from '../local/Loader';
+import ora from 'ora';
 import createPost from './createPost';
 import createDataFile from './createDataFile';
 import addToDataFile from './addToDataFile';
@@ -68,10 +69,10 @@ function start(path, config) {
   };
 }
 
-export default async function dump(
+export default function dump(
   configFile,
-  client,
-  previewMode,
+  itemsRepo,
+  quiet = false,
   destinationPath = process.cwd(),
 ) {
   /* eslint-disable global-require, import/no-dynamic-require */
@@ -79,16 +80,27 @@ export default async function dump(
   const config = require(configFile);
   /* eslint-enable global-require, import/no-dynamic-require */
 
-  const loader = new Loader(client, previewMode);
-  await loader.load();
-
-  i18n.availableLocales = loader.itemsRepo.site.locales;
+  i18n.availableLocales = itemsRepo.site.locales;
   [i18n.locale] = i18n.availableLocales;
 
   const startOperation = start(
     destinationPath,
-    config.bind(config, loader.itemsRepo),
+    config.bind(config, itemsRepo),
   );
 
-  return startOperation();
+  const spinner = ora('Writing content').start();
+
+  return startOperation()
+    .then((operations) => {
+      spinner.succeed();
+      if (!quiet) {
+        process.stdout.write('\n');
+        operations.forEach(operation => process.stdout.write(`* ${operation}\n`));
+        process.stdout.write('\n');
+      }
+    })
+    .catch((e) => {
+      spinner.fail();
+      process.stderr.write(new PrettyError().render(e));
+    });
 }

@@ -1,9 +1,9 @@
-import queryString from 'querystring';
+import buildFileUrl from '../../utils/buildFileUrl';
 
 export default class File {
   constructor(value, {
     itemsRepo,
-    imgixHost = 'https://www.datocms-assets.com',
+    imgixHost,
   }) {
     this.imgixHost = imgixHost;
     this.itemsRepo = itemsRepo;
@@ -39,10 +39,7 @@ export default class File {
   }
 
   url(params = {}) {
-    if (params && Object.keys(params).length > 0) {
-      return `${this.imgixHost}${this.path}?${queryString.stringify(params)}`;
-    }
-    return `${this.imgixHost}${this.path}`;
+    return buildFileUrl(this.upload, this.itemsRepo.entitiesRepo, params);
   }
 
   toMap() {

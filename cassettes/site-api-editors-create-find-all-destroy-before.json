@@ -624,9 +624,6 @@
                           "notes": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/notes"
                           },
-                          "ssg": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/ssg"
-                          },
                           "template": {
                             "description": "Site template",
                             "type": [
@@ -857,7 +854,6 @@
               "required": [
                 "name",
                 "domain",
-                "ssg",
                 "internal_domain",
                 "notes",
                 "last_data_change_at",
@@ -899,13 +895,6 @@
                   ],
                   "description": "Optional notes regarding the site",
                   "example": "Foo bar"
-                },
-                "ssg": {
-                  "description": "Specifies static site generator used",
-                  "type": [
-                    "null",
-                    "string"
-                  ]
                 },
                 "last_data_change_at": {
                   "description": "Specifies the last time when a change of data occurred",
@@ -1374,6 +1363,30 @@
                   ],
                   "description": "Uploadable bytes",
                   "example": 1073741824
+                },
+                "traffic_bytes": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Amount of asset data transferred between our Asset CDN and GraphQL Content Delivery API and content consumers",
+                  "example": 1073741824
+                },
+                "api_calls": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "The number of requests made to both our Content Management and Content Delivery APIs",
+                  "example": 100000
+                },
+                "access_tokens": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "The number of different API tokens you can generate, each which different permissions",
+                  "example": 10
                 },
                 "roles": {
                   "type": [
@@ -2081,16 +2094,30 @@
     "rawHeaders": [
       "Server",
       "Cowboy",
+      "Date",
+      "Wed, 20 Mar 2019 16:00:48 GMT",
       "Connection",
       "close",
-      "Date",
-      "Wed, 12 Dec 2018 10:18:39 GMT",
       "Last-Modified",
-      "Tue, 11 Dec 2018 12:42:24 GMT",
+      "Wed, 20 Mar 2019 13:55:46 GMT",
       "Content-Type",
       "application/json",
+      "X-Queue-Time",
+      "5ms",
+      "Access-Control-Allow-Credentials",
+      "true",
+      "Access-Control-Allow-Headers",
+      "authorization, content-type, x-site-domain, x-api-version, user-agent",
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, OPTIONS, DELETE",
+      "Access-Control-Expose-Headers",
+      "x-ratelimit-limit, x-ratelimit-remaining, x-ratelimit-reset",
+      "Access-Control-Max-Age",
+      "1728000",
+      "Access-Control-Allow-Origin",
+      "*",
       "Content-Length",
-      "61045",
+      "61565",
       "Via",
       "1.1 vegur"
     ]
@@ -2103,18 +2130,18 @@
       "data": {
         "type": "account",
         "attributes": {
-          "email": "51sn5o@example.com",
+          "email": "guu4n@example.com",
           "name": "Test",
           "company": "DatoCMS",
-          "password": "test123"
+          "password": "STRONG_pass123!"
         }
       }
     },
     "status": 201,
     "response": [
-      "1f8b08007fe0105c0003",
-      "7c8e5b4f83401085ffcb3e13021834ed93f412cb6a41522f6d8d0f0b4c65db6517d9050b4dffbb8389697c719ece9cf966ce9c48ce0c23e313e1391913e8a803eb80c79cdebfb8097f98d222bdcb863e7cee4337e2746423546cbca8cd5f7d67ed8943b857de723fef7789bdf814cecde8abfd88c2228ae263b208e3b4afd563de164eb09d4f768772b2da3601dd108b98ae020cd5a03557128d1a04332875c12b3d3cc5b24c35d20cf2cf9fd79e7b7539f04b9db12cc265269a1c107bfb97b60833a6e66963e0270b4ac605ce7d574b5fddc2919595003b5325a29295c3ee13e86111bd8ac90e8d19336aba5c61f4fbf91b0000ffff",
-      "0300e6c42d464c010000"
+      "1f8b0800b063925c0003",
+      "7c8f4d7382301086ff4bce8e032ab57a2a056ba12045a9829d1e22a41284404dd2888effbd4b673a9d5ebaa7dd779f773f2e28c302a3e905d10c4d11695d8dc4260da8fbb4d643ea596ebe9ba75dedbc9c1d7d41dd491fa03c192c3eb38da1c583f2e014f5d0b79313c06cbb31cab47ad0b69be57b128760745adf9e195e649ebdc8516b7b360c0a53054538f28ab40d565cf951ad7c0b0667fae4766f8d95673a46988c3f46727948ee95df3097eff2673998ef1fcfc144c586423d24da86c0c99c704e6b06c291945840ca73daf0ee259ca6b564a24bff7c39d66ef4df013fd415a287284b4b9911c05effa57b080b71a43b29c8f72e52615a427f2fe588dd9113ae9a92f4d3ba0292e1aab34684773ed01acc5a106c2c6acb5fc1e6b7eb17000000ffff",
+      "030096bf223a89010000"
     ],
     "rawHeaders": [
       "Content-Type",
@@ -2123,14 +2150,30 @@
       "Accept-Encoding",
       "Content-Encoding",
       "gzip",
+      "X-RateLimit-Limit",
+      "30",
+      "X-RateLimit-Remaining",
+      "29",
       "ETag",
-      "W/\"d40759d11ec73830415268218ec8f3fd\"",
+      "W/\"8a5ea718dd3baa08b13cb4237b9518b7\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "620527f5-e8f3-4f42-9880-563c88bfb584",
+      "383f57d7-3aae-48de-91be-952b6fc3f256",
       "X-Runtime",
-      "0.071187",
+      "0.081068",
+      "Access-Control-Allow-Credentials",
+      "true",
+      "Access-Control-Allow-Headers",
+      "authorization, content-type, x-site-domain, x-api-version, user-agent",
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, OPTIONS, DELETE",
+      "Access-Control-Expose-Headers",
+      "x-ratelimit-limit, x-ratelimit-remaining, x-ratelimit-reset",
+      "Access-Control-Max-Age",
+      "1728000",
+      "Access-Control-Allow-Origin",
+      "*",
       "Connection",
       "close",
       "Transfer-Encoding",
@@ -2762,9 +2805,6 @@
                           "notes": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/notes"
                           },
-                          "ssg": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/ssg"
-                          },
                           "template": {
                             "description": "Site template",
                             "type": [
@@ -2995,7 +3035,6 @@
               "required": [
                 "name",
                 "domain",
-                "ssg",
                 "internal_domain",
                 "notes",
                 "last_data_change_at",
@@ -3037,13 +3076,6 @@
                   ],
                   "description": "Optional notes regarding the site",
                   "example": "Foo bar"
-                },
-                "ssg": {
-                  "description": "Specifies static site generator used",
-                  "type": [
-                    "null",
-                    "string"
-                  ]
                 },
                 "last_data_change_at": {
                   "description": "Specifies the last time when a change of data occurred",
@@ -3512,6 +3544,30 @@
                   ],
                   "description": "Uploadable bytes",
                   "example": 1073741824
+                },
+                "traffic_bytes": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Amount of asset data transferred between our Asset CDN and GraphQL Content Delivery API and content consumers",
+                  "example": 1073741824
+                },
+                "api_calls": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "The number of requests made to both our Content Management and Content Delivery APIs",
+                  "example": 100000
+                },
+                "access_tokens": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "The number of different API tokens you can generate, each which different permissions",
+                  "example": 10
                 },
                 "roles": {
                   "type": [
@@ -4219,16 +4275,30 @@
     "rawHeaders": [
       "Server",
       "Cowboy",
+      "Date",
+      "Wed, 20 Mar 2019 16:00:48 GMT",
       "Connection",
       "close",
-      "Date",
-      "Wed, 12 Dec 2018 10:18:39 GMT",
       "Last-Modified",
-      "Tue, 11 Dec 2018 12:42:24 GMT",
+      "Wed, 20 Mar 2019 13:55:46 GMT",
       "Content-Type",
       "application/json",
+      "X-Queue-Time",
+      "11ms",
+      "Access-Control-Allow-Credentials",
+      "true",
+      "Access-Control-Allow-Headers",
+      "authorization, content-type, x-site-domain, x-api-version, user-agent",
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, OPTIONS, DELETE",
+      "Access-Control-Expose-Headers",
+      "x-ratelimit-limit, x-ratelimit-remaining, x-ratelimit-reset",
+      "Access-Control-Max-Age",
+      "1728000",
+      "Access-Control-Allow-Origin",
+      "*",
       "Content-Length",
-      "61045",
+      "61565",
       "Via",
       "1.1 vegur"
     ]
@@ -4247,9 +4317,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b080080e0105c0003",
-      "84924d73da301086ff8bcee0b16cfc79a39969c7a60da5104273f1ace535289165d792934286ff5e890c09190ed5e8b2dae75de9d5ee2ba94003495f09af484ae2c477c988e87d8726525ca38940eb9e9783466539098dcd7d11edd6e4aab6012e492a072146844b8dbd0451a8a13c674869c8b14f7d430b50bab017166c07728b056803782e8dc7d4337b45dd94c6a99f3849441f8c40b6a75bdfaa0363a854a1db27b475719fbbb899f239cf676bbae0df6ff25df98dd938bb3b64f496e78963a0036c7e898d279eb2c776325ffd78b1e06feff6b9ba0fdcecb173995c8b7ae1fc59eefa7a7e53ae8bc557b55ae4f7b39055b01c58bc923fa328c86687bfcb584c878729b9b07ae5d381aae1d231365bd62887b58dc1598fa0b1faaf61a5b667bb4651bdf4a605ef8e430c7d17c338aca3328aca49155410075112d0244812f22669a5d8bf2bdcba0e10c12b63ac23465d5686b4464ae9c4f3d8c4f60f8169fe6cdf46d21a84c2a32d2340f356aa1def4e3d3f3168bbaa58cf3b9bb3c79f462749fce862742ed1e371742ed109b896d20fdd296ff941c116afc9f1e709b578617eb833ef2db9e07a7f12eb1ea4aab1ffd0db2f3d9af50f0000ffff",
-      "0300683ef91cf0020000"
+      "1f8b0800b163925c0003",
+      "849251739a401485ff0bcfe2ec2242f0cd4a9368834eb4b1c417e6ee72d15504875d8a98f1bf67d736894d3b53de2ee73b7777ce9e172b0505d6e0c512a935b028f109b13a966a0fa8472914ea0994aa04ab154a0316b037da97bc5c6b2d2df7200a6b50d479deb144a1b02a204f64cdde148b69d2f65d0de72055620e4cf8068a3526a0b4ee101ad8a4673be43bf506840cdca0ebf6bc953614e5e5d05fcb8173943251e50ecd5a6c2704e3a19889c9b7257d140fa3c986dd71338f9f4e633a1593a0aba113c4f33c76f2dd785b1ea39037d1a811cf3fa65bd65bd6e968eca5f713ba5a3462e52ceb553cd9a477cb5decdc12cd8b683b3cce16a4895ad246b78fc7e9a96ca2b024b3854b66e15315855fbd281c8aecb13bb657b0c266e8240cf72eed9f223b0eef0beed5beef55cde2b9decee60fcddc97a57595d4e798ba90ee45d1d529957c2fbbbcdc6b9a57080ad3ffe6a5b1b4a9f4abbda7043c4007fc80620a143d2499e3f80e12e02c75f1b7a52cf2f6dd4128524618cf68e0a6377df002d6ef395ec69c8cb3c03c390257e2a7b99035c8209778366b7250a22ce4461c2e35b930688a2079250e4633bfffac1bbd71afeb76cd9ecf9db71d871cfee1fdf05d74c3d712d6f837697faab5e1131dec41df98895ca8f6e256151432c3ea6381e9dd597faf000000ffff",
+      "03003205cc5726030000"
     ],
     "rawHeaders": [
       "Content-Type",
@@ -4258,14 +4328,30 @@
       "Accept-Encoding",
       "Content-Encoding",
       "gzip",
+      "X-RateLimit-Limit",
+      "30",
+      "X-RateLimit-Remaining",
+      "28",
       "ETag",
-      "W/\"7b7706d96226d3cb071b751d8e5e428b\"",
+      "W/\"253502c4e087a8123cbf6feaec502f31\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "ba3d772c-9d48-4332-8b23-2475b6afe1da",
+      "b30613db-923a-4990-bd63-82fa7ae3c8eb",
       "X-Runtime",
-      "0.326635",
+      "0.174398",
+      "Access-Control-Allow-Credentials",
+      "true",
+      "Access-Control-Allow-Headers",
+      "authorization, content-type, x-site-domain, x-api-version, user-agent",
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, OPTIONS, DELETE",
+      "Access-Control-Expose-Headers",
+      "x-ratelimit-limit, x-ratelimit-remaining, x-ratelimit-reset",
+      "Access-Control-Max-Age",
+      "1728000",
+      "Access-Control-Allow-Origin",
+      "*",
       "Connection",
       "close",
       "Transfer-Encoding",

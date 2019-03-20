@@ -51,8 +51,7 @@ const fieldTypeParser = {
 
 export default function build(fieldType, value, itemsRepo) {
   if (fieldTypeParser[fieldType]) {
-    const imgixHost = `https://${itemsRepo.site.imgixHost}`;
-    return fieldTypeParser[fieldType](value, { itemsRepo, imgixHost });
+    return fieldTypeParser[fieldType](value, { itemsRepo, imgixHost: itemsRepo.site.imgixHost });
   }
 
   return value;

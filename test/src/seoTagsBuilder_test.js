@@ -2,18 +2,15 @@
 
 import { camelizeKeys } from 'humps';
 import EntitiesRepo from '../../src/local/EntitiesRepo';
-import ItemsRepo from '../../src/local/ItemsRepo';
 import { builders } from '../../src/utils/seoTagsBuilder';
-import i18n from '../../src/utils/i18n';
 
 describe('seoTagsBuilder', () => {
   let itemTitle;
   let seo;
   let globalSeo;
-  let itemsRepo;
   let item;
-  let site;
   let noIndex;
+  let entitiesRepo;
   let itemImage;
 
   beforeEach(() => {
@@ -23,7 +20,7 @@ describe('seoTagsBuilder', () => {
     noIndex = memo(() => null);
     itemImage = memo(() => null);
 
-    itemsRepo = memo(() => {
+    entitiesRepo = memo(() => {
       const payload = camelizeKeys({
         data: [
           {
@@ -266,12 +263,10 @@ describe('seoTagsBuilder', () => {
         ],
       });
 
-      const entitiesRepo = new EntitiesRepo(payload);
-      return new ItemsRepo(entitiesRepo);
+      return new EntitiesRepo(payload);
     });
 
     item = memo(() => null);
-    site = memo(() => itemsRepo().site);
   });
 
   describe('title()', () => {
@@ -279,7 +274,7 @@ describe('seoTagsBuilder', () => {
       titleValue;
 
     beforeEach(() => {
-      result = memo(() => builders.title(item(), site()));
+      result = memo(() => builders.title(item(), entitiesRepo()));
       titleValue = memo(() => result()[0].content);
     });
 
@@ -292,7 +287,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -332,7 +327,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -361,7 +356,7 @@ describe('seoTagsBuilder', () => {
       cardValue;
 
     beforeEach(() => {
-      result = memo(() => builders.description(item(), site()));
+      result = memo(() => builders.description(item(), entitiesRepo()));
       descriptionValue = memo(() => result()[0].attributes.content);
       ogValue = memo(() => result()[1].attributes.content);
       cardValue = memo(() => result()[2].attributes.content);
@@ -376,7 +371,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -420,7 +415,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -453,7 +448,7 @@ describe('seoTagsBuilder', () => {
       twitterCardValue;
 
     beforeEach(() => {
-      result = memo(() => builders.twitterCard(item(), site()));
+      result = memo(() => builders.twitterCard(item(), entitiesRepo()));
       twitterCardValue = memo(() => result().attributes.content);
     });
 
@@ -466,7 +461,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -506,7 +501,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -534,7 +529,7 @@ describe('seoTagsBuilder', () => {
     let result;
 
     beforeEach(() => {
-      result = memo(() => builders.robots(null, site()));
+      result = memo(() => builders.robots(null, entitiesRepo()));
     });
 
     context('with site noIndex set', () => {
@@ -558,7 +553,7 @@ describe('seoTagsBuilder', () => {
     let result;
 
     beforeEach(() => {
-      result = memo(() => builders.twitterSite(null, site()));
+      result = memo(() => builders.twitterSite(null, entitiesRepo()));
     });
 
     context('with twitter account not set', () => {
@@ -584,7 +579,7 @@ describe('seoTagsBuilder', () => {
     let result;
 
     beforeEach(() => {
-      result = memo(() => builders.articleModifiedTime(item(), site()));
+      result = memo(() => builders.articleModifiedTime(item(), entitiesRepo()));
     });
 
     context('with no item', () => {
@@ -595,7 +590,7 @@ describe('seoTagsBuilder', () => {
 
     context('with item', () => {
       beforeEach(() => {
-        item = memo(() => itemsRepo().articles[0]);
+        item = memo(() => entitiesRepo().findEntity('item', '24038'));
       });
 
       it('returns iso 8601 datetime', () => {
@@ -608,7 +603,7 @@ describe('seoTagsBuilder', () => {
     let result;
 
     beforeEach(() => {
-      result = memo(() => builders.articlePublisher(null, site()));
+      result = memo(() => builders.articlePublisher(null, entitiesRepo()));
     });
 
     context('with FB page not set', () => {
@@ -632,8 +627,13 @@ describe('seoTagsBuilder', () => {
 
   describe('ogLocale()', () => {
     it('returns current i18n locale', () => {
-      const result = i18n.withLocale('en', () => builders.ogLocale(null, null));
+      const result = builders.ogLocale(null, null, { locale: 'en' });
       expect(result.attributes.content).to.eq('en_EN');
+    });
+
+    it('returns current i18n locale', () => {
+      const result = builders.ogLocale(null, null, { locale: 'en-US' });
+      expect(result.attributes.content).to.eq('en_US');
     });
   });
 
@@ -641,7 +641,7 @@ describe('seoTagsBuilder', () => {
     let result;
 
     beforeEach(() => {
-      result = memo(() => builders.ogType(item(), site()));
+      result = memo(() => builders.ogType(item(), entitiesRepo()));
     });
 
     context('with no item', () => {
@@ -652,7 +652,7 @@ describe('seoTagsBuilder', () => {
 
     context('with item', () => {
       beforeEach(() => {
-        item = memo(() => itemsRepo().articles[0]);
+        item = memo(() => entitiesRepo().findEntity('item', '24038'));
       });
 
       it('returns article og:type', () => {
@@ -665,7 +665,7 @@ describe('seoTagsBuilder', () => {
     let result;
 
     beforeEach(() => {
-      result = memo(() => builders.ogSiteName(null, site()));
+      result = memo(() => builders.ogSiteName(null, entitiesRepo()));
     });
 
     context('with site name not set', () => {
@@ -694,7 +694,7 @@ describe('seoTagsBuilder', () => {
     beforeEach(() => {
       ogValue = memo(() => result()[0].attributes.content);
       cardValue = memo(() => result()[1].attributes.content);
-      result = memo(() => builders.image(item(), site()));
+      result = memo(() => builders.image(item(), entitiesRepo()));
     });
 
     context('with no fallback seo', () => {
@@ -706,7 +706,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('with no image', () => {
@@ -776,7 +776,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => itemsRepo().articles[0]);
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('with no image', () => {

@@ -125,7 +125,7 @@ export default class ItemsRepo {
   }
 
   get site() {
-    return new Site(this.entitiesRepo.findEntitiesOfType('site')[0], this);
+    return new Site(this.entitiesRepo.site, this);
   }
 
   get itemTypes() {

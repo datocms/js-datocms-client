@@ -2,6 +2,7 @@ import { camelize } from 'humps';
 import build from './fields/build';
 import DateTime from './fields/DateTime';
 import slugify from '../utils/slugify';
+import i18n from '../utils/i18n';
 import seoTagsBuilder from '../utils/seoTagsBuilder';
 import localizedRead from '../utils/localizedRead';
 
@@ -162,16 +163,7 @@ export default class Item {
   }
 
   readAttribute(field) {
-    const { fieldType, localized } = field;
-
-    let value;
-
-    if (localized) {
-      value = localizedRead(this.entity[camelize(field.apiKey)] || {});
-    } else {
-      value = this.entity[camelize(field.apiKey)];
-    }
-
-    return build(fieldType, value, this.itemsRepo);
+    const value = localizedRead(this.entity, camelize(field.apiKey), field.localized, i18n);
+    return build(field.fieldType, value, this.itemsRepo);
   }
 }

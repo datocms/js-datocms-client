@@ -11,6 +11,8 @@ import parser from 'parser-front-matter';
 import dump from '../../src/dump/dump';
 
 import SiteClient from '../../src/site/SiteClient';
+import Loader from '../../src/local/Loader';
+import ItemsRepo from '../../src/local/ItemsRepo';
 import uploadFile from '../../src/upload/uploadFile';
 import uploadImage from '../../src/upload/uploadImage';
 
@@ -142,8 +144,7 @@ describe('CLI tool', () => {
     const item = await client.items.create({
       itemType: itemType.id,
       title: {
-        en: 'First post',
-        it: 'Primo post',
+        en: 'First post', it: 'Primo post',
       },
       slug: 'first-post',
       file: await uploadFile(client, 'https://www.datocms.com/robots.txt'),
@@ -156,8 +157,15 @@ describe('CLI tool', () => {
     const dirName = dir.name;
 
     const configFile = path.resolve('test/fixtures/dato.config.js');
+    const loader = new Loader(client, false);
+    await loader.load();
 
-    await dump(configFile, client, true, dirName);
+    await dump(
+      configFile,
+      new ItemsRepo(loader.entitiesRepo),
+      true,
+      dirName,
+    );
 
     const yamlFile = yaml.safeLoad(fs.readFileSync(path.join(dirName, 'site.yml'), 'utf8'));
     expect(yamlFile.name).to.eq('Integration new test site');
@@ -182,7 +190,7 @@ describe('CLI tool', () => {
     expect(articleFile.data.image.width).to.eq(650);
     expect(articleFile.data.image.url).to.not.be.null();
     expect(articleFile.data.file.format).to.eq('txt');
-    expect(articleFile.data.file.size).to.eq(115);
+    expect(articleFile.data.file.size).to.eq(163);
     expect(articleFile.data.file.url).to.not.be.null();
 
     expect(articleFile.content).to.eq('First post');

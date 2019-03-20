@@ -3,6 +3,7 @@ import Theme from './fields/Theme';
 import GlobalSeo from './fields/GlobalSeo';
 import faviconTagsBuilder from '../utils/faviconTagsBuilder';
 import localizedRead from '../utils/localizedRead';
+import i18n from '../utils/i18n';
 
 export default class Site {
   constructor(entity, itemsRepo) {
@@ -51,7 +52,7 @@ export default class Site {
   }
 
   get faviconMetaTags() {
-    return faviconTagsBuilder(this);
+    return faviconTagsBuilder(this.entity.repo);
   }
 
   toMap() {
@@ -80,16 +81,7 @@ export default class Site {
   }
 
   readAttribute(attribute, TypeKlass, localized) {
-    let value;
-
-    if (localized) {
-      value = localizedRead(this.entity[attribute] || {});
-    } else {
-      value = this.entity[attribute];
-    }
-
-    const imgixHost = `https://${this.imgixHost}`;
-
-    return value && new TypeKlass(value, { imgixHost, itemsRepo: this.itemsRepo });
+    const value = localizedRead(this.entity, attribute, localized, i18n);
+    return value && new TypeKlass(value, { imgixHost: this.imgixHost, itemsRepo: this.itemsRepo });
   }
 }

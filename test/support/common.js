@@ -40,7 +40,7 @@ global.generateNewAccountClient = async () => {
 
   const account = await anonymousClient.account.create({
     email: `${randomString}@example.com`,
-    password: 'test123',
+    password: 'STRONG_pass123!',
     name: 'Test',
     company: 'DatoCMS',
   });

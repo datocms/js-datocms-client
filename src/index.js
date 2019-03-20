@@ -12,11 +12,11 @@ export { default as JsonApiEntity } from './local/JsonApiEntity';
 export { default as EntitiesRepo } from './local/EntitiesRepo';
 export { default as Loader } from './local/Loader';
 
-export { default as SiteChangeWatcher } from './dump/SiteChangeWatcher';
-
 export { default as Site } from './local/Site';
 
 export { default as seoTagsBuilder } from './utils/seoTagsBuilder';
 export { default as faviconTagsBuilder } from './utils/faviconTagsBuilder';
+export { default as localizedRead } from './utils/localizedRead';
+export { default as buildFileUrl } from './utils/buildFileUrl';
 
 export { default as i18n } from './utils/i18n';

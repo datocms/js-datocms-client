@@ -28,11 +28,11 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
     const extraProps = getProps(extraMethods);
     const rawClientProps = getProps(rawClient);
 
-    Object.assign(cache, { client: true }, toMap(extraProps), toMap(rawClientProps));
+    Object.assign(cache, { rawClient: true }, toMap(extraProps), toMap(rawClientProps));
 
     const client = new Proxy(cache, {
       get(obj1, namespace) {
-        if (namespace === 'client') {
+        if (namespace === 'rawClient') {
           return rawClient;
         }
 

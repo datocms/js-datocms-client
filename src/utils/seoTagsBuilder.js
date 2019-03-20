@@ -1,5 +1,6 @@
 import { camelize } from 'humps';
-import i18n from './i18n';
+import localizedRead from './localizedRead';
+import buildFileUrl from './buildFileUrl';
 
 const tag = (tagName, attributes) => ({ tagName, attributes });
 const metaTag = (name, content) => tag('meta', { name, content });
@@ -7,13 +8,15 @@ const ogTag = (property, content) => tag('meta', { property, content });
 const cardTag = (name, content) => tag('meta', { name, content });
 const contentTag = (tagName, content) => ({ tagName, content });
 
-function seoAttributeWithFallback(attribute, alternative, item, site) {
+function seoAttributeWithFallback(attribute, alternative, itemEntity, entitiesRepo, i18n) {
+  const { site } = entitiesRepo;
+
   const fallbackSeo = site.globalSeo && site.globalSeo.fallbackSeo;
-  const seoField = item && item.fields.find(f => f.fieldType === 'seo');
+  const seoField = itemEntity && itemEntity.itemType.fields.find(f => f.fieldType === 'seo');
 
   const itemSeoValue = seoField
-    && item[camelize(seoField.apiKey)]
-    && item[camelize(seoField.apiKey)][attribute];
+    && localizedRead(itemEntity, camelize(seoField.apiKey), seoField.localized, i18n)
+    && localizedRead(itemEntity, camelize(seoField.apiKey), seoField.localized, i18n)[attribute];
 
   const fallbackSeoValue = fallbackSeo && fallbackSeo[attribute];
 
@@ -21,13 +24,21 @@ function seoAttributeWithFallback(attribute, alternative, item, site) {
 }
 
 export const builders = {
-  title(item, site) {
-    const titleField = item && item.itemType.titleField;
+  title(itemEntity, entitiesRepo, i18n) {
+    const { site } = entitiesRepo;
+
+    const titleField = itemEntity && itemEntity.itemType.titleField;
 
     const title = seoAttributeWithFallback(
       'title',
-      titleField && item[camelize(titleField.apiKey)],
-      item, site,
+      titleField
+        && localizedRead(
+          itemEntity,
+          camelize(titleField.apiKey),
+          titleField.localized,
+          i18n,
+        ),
+      itemEntity, entitiesRepo, i18n,
     );
 
     if (title) {
@@ -46,11 +57,11 @@ export const builders = {
     return undefined;
   },
 
-  description(item, site) {
+  description(itemEntity, entitiesRepo, i18n) {
     const description = seoAttributeWithFallback(
       'description',
       null,
-      item, site,
+      itemEntity, entitiesRepo, i18n,
     );
 
     if (description) {
@@ -64,13 +75,15 @@ export const builders = {
     return undefined;
   },
 
-  robots(item, site) {
-    if (!site.noIndex) return undefined;
+  robots(itemEntity, entitiesRepo) {
+    if (!entitiesRepo.site.noIndex) return undefined;
 
     return metaTag('robots', 'noindex');
   },
 
-  twitterSite(item, site) {
+  twitterSite(itemEntity, entitiesRepo) {
+    const { site } = entitiesRepo;
+
     if (site.globalSeo && site.globalSeo.twitterAccount) {
       return cardTag('twitter:site', site.globalSeo.twitterAccount);
     }
@@ -78,25 +91,42 @@ export const builders = {
     return undefined;
   },
 
-  twitterCard(item, site) {
+  twitterCard(itemEntity, entitiesRepo, i18n) {
     const card = seoAttributeWithFallback(
       'twitterCard',
       null,
-      item, site,
+      itemEntity, entitiesRepo, i18n,
     );
 
     return cardTag('twitter:card', card || 'summary');
   },
 
-  articleModifiedTime(item) {
-    if (!item) return undefined;
+  articleModifiedTime(itemEntity) {
+    if (!itemEntity) return undefined;
+
+    const date = new Date(Date.parse(itemEntity.meta.updatedAt));
+
     return ogTag(
       'article:modified_time',
-      `${item.updatedAt.toISOString().split('.')[0]}Z`,
+      `${date.toISOString().split('.')[0]}Z`,
     );
   },
 
-  articlePublisher(item, site) {
+  articlePublishedTime(itemEntity) {
+    if (!itemEntity) return undefined;
+    if (!itemEntity.meta.firstPublishedAt) return undefined;
+
+    const date = new Date(Date.parse(itemEntity.meta.firstPublishedAt));
+
+    return ogTag(
+      'article:published_time',
+      `${date.toISOString().split('.')[0]}Z`,
+    );
+  },
+
+  articlePublisher(itemEntity, entitiesRepo) {
+    const { site } = entitiesRepo;
+
     if (site.globalSeo && site.globalSeo.facebookPageUrl) {
       return ogTag('article:publisher', site.globalSeo.facebookPageUrl);
     }
@@ -104,19 +134,25 @@ export const builders = {
     return undefined;
   },
 
-  ogLocale() {
+  ogLocale(itemEntity, entitiesRepo, i18n) {
+    if (i18n.locale.includes('-')) {
+      return ogTag('og:locale', i18n.locale.replace(/-/, '_'));
+    }
+
     return ogTag('og:locale', `${i18n.locale}_${i18n.locale.toUpperCase()}`);
   },
 
-  ogType(item) {
-    if (!item || item.singleton) {
+  ogType(itemEntity) {
+    if (!itemEntity || itemEntity.singleton) {
       return ogTag('og:type', 'website');
     }
 
     return ogTag('og:type', 'article');
   },
 
-  ogSiteName(item, site) {
+  ogSiteName(itemEntity, entitiesRepo) {
+    const { site } = entitiesRepo;
+
     if (site.globalSeo && site.globalSeo.siteName) {
       return ogTag('og:site_name', site.globalSeo.siteName);
     }
@@ -124,20 +160,32 @@ export const builders = {
     return undefined;
   },
 
-  image(item, site) {
-    const itemImage = item && item.fields
+  image(itemEntity, entitiesRepo, i18n) {
+    const itemImage = itemEntity && itemEntity.itemType.fields
       .filter(f => f.fieldType === 'file')
-      .map(field => item[camelize(field.apiKey)])
-      .filter(image => image)
+      .map(field => (
+        localizedRead(itemEntity, camelize(field.apiKey), field.localized, i18n)
+      ))
+      .filter(id => !!id)
+      .map(id => entitiesRepo.findEntity('upload', id))
       .find(image => (
         image.width && image.height
             && image.width >= 200 && image.height >= 200
       ));
 
-    const image = seoAttributeWithFallback('image', itemImage, item, site);
+    const itemImageId = itemImage && itemImage.id;
 
-    if (image) {
-      const url = image.url();
+    const imageId = seoAttributeWithFallback(
+      'image',
+      itemImageId,
+      itemEntity,
+      entitiesRepo,
+      i18n,
+    );
+
+    if (imageId) {
+      const upload = entitiesRepo.findEntity('upload', imageId);
+      const url = buildFileUrl(upload, entitiesRepo);
 
       return [
         ogTag('og:image', url),
@@ -149,9 +197,9 @@ export const builders = {
   },
 };
 
-export default function seoTagsBuilder(item, site) {
+export default function seoTagsBuilder(itemEntity, entitiesRepo, i18n) {
   return Object.values(builders).reduce((acc, builder) => {
-    const result = builder(item, site);
+    const result = builder(itemEntity, entitiesRepo, i18n);
 
     if (result) {
       if (Array.isArray(result)) {

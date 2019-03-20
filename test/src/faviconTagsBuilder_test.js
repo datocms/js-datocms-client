@@ -2,18 +2,16 @@
 
 import { camelizeKeys } from 'humps';
 import EntitiesRepo from '../../src/local/EntitiesRepo';
-import ItemsRepo from '../../src/local/ItemsRepo';
 import faviconTagsBuilder from '../../src/utils/faviconTagsBuilder';
 
 describe('faviconTagsBuilder', () => {
-  let favicon; let result; let itemsRepo; let site;
+  let favicon; let result; let entitiesRepo;
 
   beforeEach(() => {
     favicon = memo(() => null);
-    result = memo(() => faviconTagsBuilder(site(), '#ff0000'));
-    site = memo(() => itemsRepo().site);
+    result = memo(() => faviconTagsBuilder(entitiesRepo()));
 
-    itemsRepo = memo(() => {
+    entitiesRepo = memo(() => {
       const payload = camelizeKeys({
         data: [
           {
@@ -41,8 +39,7 @@ describe('faviconTagsBuilder', () => {
         ],
       });
 
-      const entitiesRepo = new EntitiesRepo(payload);
-      return new ItemsRepo(entitiesRepo);
+      return new EntitiesRepo(payload);
     });
   });
 
@@ -50,8 +47,6 @@ describe('faviconTagsBuilder', () => {
     it('builds meta tags', () => {
       expect(JSON.stringify(result())).to.eq(JSON.stringify([
         { tagName: 'meta', attributes: { name: 'application-name', content: 'Site name' } },
-        { tagName: 'meta', attributes: { name: 'theme-color', content: '#ff0000' } },
-        { tagName: 'meta', attributes: { name: 'msapplication-TileColor', content: '#ff0000' } },
       ]));
     });
   });
@@ -101,8 +96,6 @@ describe('faviconTagsBuilder', () => {
           },
         },
         { tagName: 'meta', attributes: { name: 'application-name', content: 'Site name' } },
-        { tagName: 'meta', attributes: { name: 'theme-color', content: '#ff0000' } },
-        { tagName: 'meta', attributes: { name: 'msapplication-TileColor', content: '#ff0000' } },
       ]));
     });
   });
