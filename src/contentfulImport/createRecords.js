@@ -106,10 +106,6 @@ export default async ({
           itemType: itemType.id.toString(),
         });
 
-        if (entry.sys.publishedVersion) {
-          await datoClient.items.publish(record.id);
-        }
-
         spinner.text = progress.tick();
         contentfulRecordMap[entry.sys.id] = record.id;
       } catch (e) {

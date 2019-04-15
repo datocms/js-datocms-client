@@ -14,7 +14,7 @@ DatoCMS CLI tool
 Usage:
   dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--config=<file>]
   dato wp-import --token=<datoApiToken> --wpUrl=<url> --wpUser=<user> --wpPassword=<password>
-  dato contentful-import --datoCmsToken=<apiToken> --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId>
+  dato contentful-import --datoCmsToken=<apiToken> --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--skipContent]
   dato check
   dato -h | --help
   dato --version
@@ -40,7 +40,8 @@ if (options.dump) {
     '--contentfulToken': contentfulToken,
     '--contentfulSpaceId': contentfulSpaceId,
     '--datoCmsToken': datoCmsToken,
+    '--skipContent': skipContent,
   } = options;
 
-  contentfulImport(contentfulToken, contentfulSpaceId, datoCmsToken);
+  contentfulImport(contentfulToken, contentfulSpaceId, datoCmsToken, skipContent);
 }
