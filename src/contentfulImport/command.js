@@ -55,7 +55,7 @@ export default async (contentfulToken, contentfulSpaceId, datoCmsToken, skipCont
     await publishRecords({
       contentfulData,
       contentfulRecordMap,
-      datoClient
+      datoClient,
     });
   }
 
