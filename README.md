@@ -2,19 +2,18 @@
 
 [![Build Status](https://travis-ci.org/datocms/js-datocms-client.svg?branch=master)](https://travis-ci.org/datocms/js-datocms-client)
 
-API client and CLI tool for [DatoCMS](https://www.datocms.com). Take a look at the full [API documentation](https://www.datocms.com/content-management-api/) for examples.
+API client and CLI tool for [DatoCMS](https://www.datocms.com). Take a look at the full [API documentation](https://www.datocms.com/docs/content-management-api) for examples.
 
 ## How to integrate DatoCMS with your static website
 
 Please head over our documentation to learn everything you need:
 
-* [Hugo](https://docs.datocms.com/hugo/overview.html)
-* [Metalsmith](https://docs.datocms.com/metalsmith/overview.html)
-* [Other generators](https://docs.datocms.com/other/overview.html)
+* [Hugo](https://www.datocms.com/docs/static-generators/hugo)
+* [Metalsmith](https://www.datocms.com/docs/static-generators/metalsmith)
 
 ## Development
 
-After checking out the repo, run `npm install` and `bundle install` to install dependencies. Then, run `npm test` to run the tests.
+After checking out the repo, run `yarn install` to install dependencies. Then, run `yarn test` to run the tests.
 
 ## Contributing
 
