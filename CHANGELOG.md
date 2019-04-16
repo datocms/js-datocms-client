@@ -1,3 +1,7 @@
+## 1.0.0
+
+* Big rewrite, faster --watch mode
+
 ## 0.8.15
 
 * If the client receives a 429 error message with no indication of wait time, assume it's 10 seconds
