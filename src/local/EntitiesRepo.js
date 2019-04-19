@@ -69,7 +69,7 @@ export default class EntitiesRepo {
   }
 
   destroyItemType(id) {
-    const itemIds = Object.values(this.entitiesRepo.entities.item)
+    const itemIds = Object.values(this.entities.item)
       .filter(item => item.itemType.id === id)
       .map(item => item.id);
 
