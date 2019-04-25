@@ -30,7 +30,7 @@ export default async (contentfulToken, contentfulSpaceId, datoCmsToken, skipCont
   const fieldsMapping = await createFields({ itemTypes, datoClient, contentfulData });
 
   if (!skipContent) {
-    const contentfulRecordMap = await createRecords({
+    const { contentfulRecordMap, recordsToPublish } = await createRecords({
       itemTypes,
       fieldsMapping,
       datoClient,
@@ -45,16 +45,25 @@ export default async (contentfulToken, contentfulSpaceId, datoCmsToken, skipCont
       contentfulRecordMap,
     });
 
-    await linkRecords({
+    // publish all records that should be published...
+    await publishRecords({
+      recordIds: recordsToPublish,
+      datoClient,
+    });
+
+    // ... and link records afterwards, to make it simple. If we link before 
+    // wou would need to build a tree structure and publish in the correct order...
+    const linkedRecords = await linkRecords({
       fieldsMapping,
       datoClient,
       contentfulData,
       contentfulRecordMap,
     });
 
+    // ...but then we need to re-publish the records that 
+    // had link fields set.
     await publishRecords({
-      contentfulData,
-      contentfulRecordMap,
+      recordIds: linkedRecords,
       datoClient,
     });
   }

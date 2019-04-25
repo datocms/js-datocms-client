@@ -2,19 +2,15 @@ import ora from 'ora';
 import Progress from './progress';
 
 export default async ({
-  contentfulData, contentfulRecordMap, datoClient,
+  recordIds, datoClient,
 }) => {
   const spinner = ora('').start();
-  const { entries } = contentfulData;
-  const progress = new Progress(entries.length, 'Publishing records');
+  const progress = new Progress(recordIds.length, 'Publishing records');
 
   spinner.text = progress.tick();
-  for (const entry of entries) {
+  for (const recordId of recordIds) {
     try {
-      if (entry.sys.publishedVersion) {
-        await datoClient.items.publish(contentfulRecordMap[entry.sys.id]);
-      }
-
+      await datoClient.items.publish(recordId);
       spinner.text = progress.tick();
     } catch (e) {
       spinner.fail(e);
