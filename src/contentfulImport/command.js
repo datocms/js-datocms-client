@@ -51,7 +51,7 @@ export default async (contentfulToken, contentfulSpaceId, datoCmsToken, skipCont
       datoClient,
     });
 
-    // ... and link records afterwards, to make it simple. If we link before 
+    // ... and link records afterwards, to make it simple. If we link before
     // wou would need to build a tree structure and publish in the correct order...
     const linkedRecords = await linkRecords({
       fieldsMapping,
@@ -60,7 +60,7 @@ export default async (contentfulToken, contentfulSpaceId, datoCmsToken, skipCont
       contentfulRecordMap,
     });
 
-    // ...but then we need to re-publish the records that 
+    // ...but then we need to re-publish the records that
     // had link fields set.
     await publishRecords({
       recordIds: linkedRecords,

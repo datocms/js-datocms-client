@@ -12,7 +12,7 @@ export default async ({
   const progress = new Progress(entries.length, 'Creating records');
 
   const contentfulRecordMap = {};
-  let recordsToPublish = [];
+  const recordsToPublish = [];
 
   spinner.text = progress.tick();
 
