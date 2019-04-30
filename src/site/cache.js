@@ -66,6 +66,9 @@ module.exports = {
     "references": true,
     "find": true,
     "destroy": true,
+    "batchDestroy": true,
+    "batchPublish": true,
+    "batchUnpublish": true,
     "publish": true,
     "unpublish": true
   },
@@ -74,6 +77,7 @@ module.exports = {
     "all": true,
     "find": true,
     "destroy": true,
+    "batchDestroy": true,
     "update": true
   },
   "uploadRequest": {

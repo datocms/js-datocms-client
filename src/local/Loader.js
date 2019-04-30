@@ -19,13 +19,16 @@ export default class Loader {
       ),
       this.client.uploads.all({}, { deserializeResponse: false, allPages: true }),
     ])
-      .then((payloads) => {
-        this.entitiesRepo.upsertEntities(...payloads);
+      .then(([site, items, uploads]) => {
+        this.siteId = site.data.id;
+        this.entitiesRepo.upsertEntities(site, items, uploads);
       });
   }
 
   async watch(notifier) {
-    const site = await this.client.site.find();
+    if (!this.siteId) {
+      await this.load();
+    }
 
     const pusher = new Pusher(
       PUSHER_API_KEY,
@@ -41,7 +44,7 @@ export default class Loader {
       },
     );
 
-    const watcher = pusher.subscribe(`private-site-${site.id}`);
+    const watcher = pusher.subscribe(`private-site-${this.siteId}`);
 
     watcher.bind('pusher:subscription_error', () => {
       process.stdout.write('Could not subscribe to the project live events... :(');
