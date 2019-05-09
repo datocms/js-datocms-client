@@ -1,21 +1,11 @@
 import queryString from 'querystring';
-
-import { camelizeKeys, decamelizeKeys as humpsDecamelizeKeys } from 'humps';
+import { camelizeKeys, decamelizeKeys } from './utils/keyFormatter';
 import ApiException from './ApiException';
 import pkg from '../package.json';
 import fetch from './utils/fetch';
 import wait from './utils/wait';
 
 const undefinedToNull = (k, v) => (v === undefined ? null : v);
-
-const decamelizeKeys = (payload) => {
-  return humpsDecamelizeKeys(payload, (key, convert, options) => {
-    if (key === 'require2fa') {
-      return 'require_2fa';
-    }
-    return convert(key, options);
-  });
-};
 
 export default class Client {
   constructor(token, extraHeaders, baseUrl) {

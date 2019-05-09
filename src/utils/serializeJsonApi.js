@@ -1,6 +1,6 @@
-import { decamelizeKeys, camelize } from 'humps';
 import diff from 'arr-diff';
 import omit from 'object.omit';
+import { decamelizeKeys, camelize } from './keyFormatter';
 import findInfoForProperty from './findInfoForProperty';
 import jsonSchemaRelationships from './jsonSchemaRelationships';
 import {
