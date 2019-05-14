@@ -1,3 +1,7 @@
+## 1.0.5
+
+* Return 1 on `dato dump` errors, to allow better error handling inside CI processes or scripts.
+
 ## 1.0.0
 
 * Big rewrite, faster --watch mode
