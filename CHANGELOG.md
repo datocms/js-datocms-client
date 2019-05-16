@@ -1,6 +1,8 @@
 ## 1.0.5
 
 * Return 1 on `dato dump` errors, to allow better error handling inside CI processes or scripts.
+* Contentful importer improvements (https://github.com/datocms/js-datocms-client/pull/35)
+* Minor bug fixes
 
 ## 1.0.0
 
