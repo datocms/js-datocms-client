@@ -169,7 +169,8 @@ export const builders = {
       .filter(id => !!id)
       .map(id => entitiesRepo.findEntity('upload', id))
       .find(image => (
-        image.width && image.height
+        image
+            && image.width && image.height
             && image.width >= 200 && image.height >= 200
       ));
 

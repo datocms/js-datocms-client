@@ -115,7 +115,7 @@ export default class Item {
     const seoField = this.fields.find(f => f.fieldType === 'seo');
 
     if (seoField) {
-      return seoTagsBuilder(this, this.itemsRepo.site);
+      return seoTagsBuilder(this, this.entity.repo, i18n);
     }
 
     return null;
