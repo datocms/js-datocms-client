@@ -25,7 +25,7 @@ export default async ({ datoClient, contentfulData }) => {
       sortable: false,
       tree: false,
       orderingField: null,
-      draftModeActive: false,
+      draftModeActive: true,
     };
 
     try {

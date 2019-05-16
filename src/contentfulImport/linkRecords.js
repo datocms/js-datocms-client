@@ -13,6 +13,7 @@ export default async ({
   const spinner = ora('').start();
   const { entries, defaultLocale } = contentfulData;
   const progress = new Progress(entries.length, 'Linking records');
+  const recordsToPublish = [];
 
   spinner.text = progress.tick();
 
@@ -73,7 +74,13 @@ export default async ({
     }, {});
 
     try {
-      await datoClient.items.update(datoItemId, recordAttributes);
+      // if no links found, no update needed.
+      if (Object.entries(recordAttributes).length > 0) {
+        await datoClient.items.update(datoItemId, recordAttributes);
+        if (entry.sys.publishedVersion) {
+          recordsToPublish.push(datoItemId);
+        }
+      }
       spinner.text = progress.tick();
     } catch (e) {
       spinner.fail(e);
@@ -83,4 +90,5 @@ export default async ({
     spinner.text = progress.tick();
   }
   spinner.succeed();
+  return recordsToPublish;
 };

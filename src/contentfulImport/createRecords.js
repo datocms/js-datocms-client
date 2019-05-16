@@ -12,6 +12,7 @@ export default async ({
   const progress = new Progress(entries.length, 'Creating records');
 
   const contentfulRecordMap = {};
+  const recordsToPublish = [];
 
   spinner.text = progress.tick();
 
@@ -106,6 +107,10 @@ export default async ({
           itemType: itemType.id.toString(),
         });
 
+        if (entry.sys.publishedVersion) {
+          recordsToPublish.push(record.id);
+        }
+
         spinner.text = progress.tick();
         contentfulRecordMap[entry.sys.id] = record.id;
       } catch (e) {
@@ -125,5 +130,5 @@ export default async ({
 
   spinner.succeed();
 
-  return contentfulRecordMap;
+  return { contentfulRecordMap, recordsToPublish };
 };
