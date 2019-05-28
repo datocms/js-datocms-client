@@ -176,7 +176,7 @@ export const builders = {
 
     const itemImageId = itemImage && itemImage.id;
 
-    const imageId = seoAttributeWithFallback(
+    const imageField = seoAttributeWithFallback(
       'image',
       itemImageId,
       itemEntity,
@@ -184,8 +184,8 @@ export const builders = {
       i18n,
     );
 
-    if (imageId) {
-      const upload = entitiesRepo.findEntity('upload', imageId);
+    if (imageField) {
+      const upload = entitiesRepo.findEntity('upload', imageField.upload.id);
       const url = buildFileUrl(upload, entitiesRepo);
 
       return [
