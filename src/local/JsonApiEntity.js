@@ -1,14 +1,16 @@
+import { camelize, camelizeKeys } from '../utils/keyFormatter';
+
 export default class JsonApiEntity {
   constructor(payload, repo) {
     this.payload = payload;
     this.repo = repo;
 
     Object.entries(payload.attributes || {}).forEach(([name, value]) => {
-      Object.defineProperty(this, name, { enumerable: true, value });
+      Object.defineProperty(this, camelize(name), { enumerable: true, value: camelizeKeys(value) });
     });
 
     Object.entries(payload.relationships || {}).forEach(([name, value]) => {
-      Object.defineProperty(this, name, {
+      Object.defineProperty(this, camelize(name), {
         enumerable: true,
         get() {
           const linkage = value.data;
@@ -34,6 +36,6 @@ export default class JsonApiEntity {
   }
 
   get meta() {
-    return this.payload.meta || {};
+    return this.payload.meta ? camelizeKeys(this.payload.meta) : {};
   }
 }

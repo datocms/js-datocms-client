@@ -36,11 +36,17 @@
         "site_transfer": {
           "$ref": "#/definitions/site_transfer"
         },
+        "site_invitation": {
+          "$ref": "#/definitions/site_invitation"
+        },
         "plan_compatibility": {
           "$ref": "#/definitions/plan_compatibility"
         },
         "job": {
           "$ref": "#/definitions/job"
+        },
+        "oauth_application": {
+          "$ref": "#/definitions/oauth_application"
         }
       },
       "definitions": {
@@ -95,6 +101,11 @@
                                 "type": "string",
                                 "description": "Password",
                                 "example": "changeme"
+                              },
+                              "otp_code": {
+                                "type": "string",
+                                "description": "Two-factor authentication one-time password",
+                                "example": "123512"
                               }
                             }
                           }
@@ -250,7 +261,7 @@
               "method": "POST",
               "rel": "create",
               "title": "Create",
-              "description": "Invite a new account",
+              "description": "Create a new account",
               "href": "/account",
               "schema": {
                 "type": "object",
@@ -281,8 +292,11 @@
                           "email": {
                             "$ref": "#/definitions/account/definitions/attributes/properties/email"
                           },
-                          "name": {
-                            "$ref": "#/definitions/account/definitions/attributes/properties/name"
+                          "first_name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/first_name"
+                          },
+                          "last_name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/last_name"
                           },
                           "company": {
                             "$ref": "#/definitions/account/definitions/attributes/properties/company"
@@ -350,8 +364,11 @@
                           "email": {
                             "$ref": "#/definitions/account/definitions/attributes/properties/email"
                           },
-                          "name": {
-                            "$ref": "#/definitions/account/definitions/attributes/properties/name"
+                          "first_name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/first_name"
+                          },
+                          "last_name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/last_name"
                           },
                           "company": {
                             "$ref": "#/definitions/account/definitions/attributes/properties/company"
@@ -368,12 +385,19 @@
               "targetSchema": {
                 "type": "object",
                 "required": [
-                  "data"
+                  "data",
+                  "included"
                 ],
                 "additionalProperties": false,
                 "properties": {
                   "data": {
-                    "$ref": "#/definitions/account"
+                    "$ref": "#/definitions/session"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/account"
+                    }
                   }
                 }
               }
@@ -437,6 +461,66 @@
                   }
                 }
               }
+            },
+            {
+              "method": "PUT",
+              "rel": "activate_2fa",
+              "title": "Activate 2-factor authorization",
+              "description": "Activates 2-factor authorization",
+              "href": "/account/activate-2fa",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "description": "JSON API type field",
+                        "type": [
+                          "string"
+                        ],
+                        "pattern": "^2fa_activation$",
+                        "example": "2fa_activation"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "otp_code"
+                        ],
+                        "properties": {
+                          "otp_code": {
+                            "type": "string",
+                            "description": "OTP code",
+                            "example": "123 456"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/account"
+                  }
+                }
+              }
             }
           ],
           "$schema": "http://json-schema.org/draft-04/hyper-schema",
@@ -488,7 +572,6 @@
               "type": "object",
               "required": [
                 "email",
-                "name",
                 "company"
               ],
               "additionalProperties": false,
@@ -498,13 +581,21 @@
                   "description": "Email",
                   "example": "foo@bar.com"
                 },
-                "name": {
+                "first_name": {
                   "type": [
                     "string",
                     "null"
                   ],
-                  "description": "Name",
-                  "example": "Mark Smith"
+                  "description": "First name",
+                  "example": "Mark"
+                },
+                "last_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Last name",
+                  "example": "Smith"
                 },
                 "company": {
                   "type": [
@@ -521,6 +612,14 @@
                 "api_token": {
                   "type": "string",
                   "description": "API token"
+                },
+                "is_2fa_active": {
+                  "type": "boolean",
+                  "description": "Whether 2-factor authentication is active for this account or not"
+                },
+                "provisioning_2fa_uri": {
+                  "type": "string",
+                  "description": "2-factor authentication provisioning URI"
                 }
               }
             }
@@ -611,6 +710,9 @@
                       "attributes": {
                         "type": "object",
                         "additionalProperties": false,
+                        "required": [
+                          "name"
+                        ],
                         "properties": {
                           "name": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/name"
@@ -859,8 +961,6 @@
                 "last_data_change_at",
                 "access_token",
                 "created_at",
-                "readwrite_token",
-                "readonly_token",
                 "deactivated"
               ],
               "additionalProperties": false,
@@ -918,11 +1018,17 @@
                 },
                 "readwrite_token": {
                   "description": "Read-write API token",
-                  "type": "string"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "readonly_token": {
                   "description": "Read-only API token",
-                  "type": "string"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "deactivated": {
                   "description": "Status of site according to billing situation",
@@ -937,7 +1043,8 @@
                 "active_subscription",
                 "active_plan",
                 "usage",
-                "transfer"
+                "transfer",
+                "owner"
               ],
               "additionalProperties": false,
               "properties": {
@@ -974,6 +1081,18 @@
                   "properties": {
                     "data": {
                       "$ref": "#/definitions/plan_compatibility/definitions/data"
+                    }
+                  }
+                },
+                "owner": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/account/definitions/data"
                     }
                   }
                 },
@@ -1866,6 +1985,68 @@
             }
           }
         },
+        "site_invitation": {
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Site invitation",
+          "description": "Site invitation",
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "token": {
+            "description": "Token of invitation",
+            "type": "string",
+            "example": "XXXXXXXXX"
+          },
+          "definitions": {
+            "identity": {
+              "$ref": "#/definitions/site_invitation/properties/id"
+            },
+            "id": {
+              "description": "ID of site invitation",
+              "type": "string",
+              "example": "4235"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^site_invitation$",
+              "example": "site_invitation"
+            }
+          },
+          "properties": {
+            "id": {
+              "$ref": "#/definitions/site_invitation/definitions/id"
+            },
+            "type": {
+              "$ref": "#/definitions/site_invitation/definitions/type"
+            }
+          },
+          "links": [
+            {
+              "method": "PUT",
+              "rel": "redeem",
+              "title": "Redeem",
+              "description": "Redeem token",
+              "href": "/site_invitations/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite_invitation%2Ftoken)}/redeem",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            }
+          ]
+        },
         "plan_compatibility": {
           "links": [],
           "$schema": "http://json-schema.org/draft-04/hyper-schema",
@@ -1929,6 +2110,9 @@
                 },
                 "compatible": {
                   "type": "boolean"
+                },
+                "compatible_with_extra_charges": {
+                  "type": "boolean"
                 }
               }
             },
@@ -1938,6 +2122,7 @@
               "required": [
                 "limits",
                 "compatible",
+                "compatible_with_extra_charges",
                 "incompatible_limits",
                 "users_analysis",
                 "roles_analysis",
@@ -1965,6 +2150,9 @@
                   }
                 },
                 "compatible": {
+                  "type": "boolean"
+                },
+                "compatible_with_extra_charges": {
                   "type": "boolean"
                 },
                 "users_analysis": {
@@ -2088,6 +2276,88 @@
               "$ref": "#/definitions/job/definitions/id"
             }
           }
+        },
+        "oauth_application": {
+          "links": [],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "type": "object",
+          "title": "OAuth application",
+          "description": "An OAuth application that allows access to our API from third party services.",
+          "required": [
+            "type",
+            "id",
+            "attributes",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/oauth_application/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/oauth_application/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/oauth_application/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^oauth_application$",
+              "example": "oauth_application"
+            },
+            "id": {
+              "description": "ID of access_token",
+              "type": "string",
+              "example": "312"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "name",
+                "created_at"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of application",
+                  "example": "Netlify OAuth application"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Date of token creation",
+                  "example": "2018-11-20 12:06:49.803166"
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/oauth_application/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/oauth_application/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/oauth_application/definitions/attributes"
+            }
+          }
         }
       }
     },
@@ -2095,15 +2365,15 @@
       "Server",
       "Cowboy",
       "Date",
-      "Wed, 20 Mar 2019 16:00:48 GMT",
+      "Mon, 17 Jun 2019 10:23:45 GMT",
       "Connection",
       "close",
       "Last-Modified",
-      "Wed, 20 Mar 2019 13:55:46 GMT",
+      "Mon, 17 Jun 2019 09:20:24 GMT",
       "Content-Type",
       "application/json",
       "X-Queue-Time",
-      "5ms",
+      "-3ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -2117,7 +2387,7 @@
       "Access-Control-Allow-Origin",
       "*",
       "Content-Length",
-      "61565",
+      "69643",
       "Via",
       "1.1 vegur"
     ]
@@ -2130,8 +2400,7 @@
       "data": {
         "type": "account",
         "attributes": {
-          "email": "guu4n@example.com",
-          "name": "Test",
+          "email": "r55teu@example.com",
           "company": "DatoCMS",
           "password": "STRONG_pass123!"
         }
@@ -2139,9 +2408,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b0800b063925c0003",
-      "7c8f4d7382301086ff4bce8e032ab57a2a056ba12045a9829d1e22a41284404dd2888effbd4b673a9d5ebaa7dd779f773f2e28c302a3e905d10c4d11695d8dc4260da8fbb4d643ea596ebe9ba75dedbc9c1d7d41dd491fa03c192c3eb38da1c583f2e014f5d0b79313c06cbb31cab47ad0b69be57b128760745adf9e195e649ebdc8516b7b360c0a53054538f28ab40d565cf951ad7c0b0667fae4766f8d95673a46988c3f46727948ee95df3097eff2673998ef1fcfc144c586423d24da86c0c99c704e6b06c291945840ca73daf0ee259ca6b564a24bff7c39d66ef4df013fd415a287284b4b9911c05effa57b080b71a43b29c8f72e52615a427f2fe588dd9113ae9a92f4d3ba0292e1aab34684773ed01acc5a106c2c6acb5fc1e6b7eb17000000ffff",
-      "030096bf223a89010000"
+      "1f8b0800326a075d0003",
+      "7c8f614bc3301086ff4b3ef8696edde6d40d448b05e9b49d7528139111dbd45dcd92905c5c5bd97ff7268aa860bee4cddd93f7bd7b630547ce266f0c0a3661a299066211c20ca69777fd0caecea7aba78b7cf78e6fdbb89fc274dc25681057baa6a6a17b94b4b743d28a34245558cfe6c12685a04efb599d54ba495a1da47050cfa2179b44f16112855066ddf87ae82eb009301a1f47fba6ca9af930bef7838554ad8dd2c58d4aeee7a843c842d661d81841033ae11c6845052b2447926e05c6ed16e079aebdc29dfcb1d378383afa36f8a2b6743a0c542e7d21087bf897ee308e68e1c9a3f8c8126b0e92fa763442e1cf44cdd7468a6eaed78496601d2e155f9383f2527698e4bf0a041aae1a728838eaf3644edf8cd5afb05b0ed4f37250f2a5b7408046c33dae26bd1e92ec7df293bfc9a74ee456e04959b58ddd1c15c6e6eef9e0a5d803e7bcb027df49e03efc798ef04a23955c3ab1dd3e6edf010000ffff",
+      "0300846279d50d020000"
     ],
     "rawHeaders": [
       "Content-Type",
@@ -2155,13 +2424,13 @@
       "X-RateLimit-Remaining",
       "29",
       "ETag",
-      "W/\"8a5ea718dd3baa08b13cb4237b9518b7\"",
+      "W/\"b78c8a610e50b0ea8be1dd1287a93aa8\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "383f57d7-3aae-48de-91be-952b6fc3f256",
+      "4fb5c6a1-e7e0-4e6b-a6f7-4368654332c1",
       "X-Runtime",
-      "0.081068",
+      "0.083868",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -2217,11 +2486,17 @@
         "site_transfer": {
           "$ref": "#/definitions/site_transfer"
         },
+        "site_invitation": {
+          "$ref": "#/definitions/site_invitation"
+        },
         "plan_compatibility": {
           "$ref": "#/definitions/plan_compatibility"
         },
         "job": {
           "$ref": "#/definitions/job"
+        },
+        "oauth_application": {
+          "$ref": "#/definitions/oauth_application"
         }
       },
       "definitions": {
@@ -2276,6 +2551,11 @@
                                 "type": "string",
                                 "description": "Password",
                                 "example": "changeme"
+                              },
+                              "otp_code": {
+                                "type": "string",
+                                "description": "Two-factor authentication one-time password",
+                                "example": "123512"
                               }
                             }
                           }
@@ -2431,7 +2711,7 @@
               "method": "POST",
               "rel": "create",
               "title": "Create",
-              "description": "Invite a new account",
+              "description": "Create a new account",
               "href": "/account",
               "schema": {
                 "type": "object",
@@ -2462,8 +2742,11 @@
                           "email": {
                             "$ref": "#/definitions/account/definitions/attributes/properties/email"
                           },
-                          "name": {
-                            "$ref": "#/definitions/account/definitions/attributes/properties/name"
+                          "first_name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/first_name"
+                          },
+                          "last_name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/last_name"
                           },
                           "company": {
                             "$ref": "#/definitions/account/definitions/attributes/properties/company"
@@ -2531,8 +2814,11 @@
                           "email": {
                             "$ref": "#/definitions/account/definitions/attributes/properties/email"
                           },
-                          "name": {
-                            "$ref": "#/definitions/account/definitions/attributes/properties/name"
+                          "first_name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/first_name"
+                          },
+                          "last_name": {
+                            "$ref": "#/definitions/account/definitions/attributes/properties/last_name"
                           },
                           "company": {
                             "$ref": "#/definitions/account/definitions/attributes/properties/company"
@@ -2549,12 +2835,19 @@
               "targetSchema": {
                 "type": "object",
                 "required": [
-                  "data"
+                  "data",
+                  "included"
                 ],
                 "additionalProperties": false,
                 "properties": {
                   "data": {
-                    "$ref": "#/definitions/account"
+                    "$ref": "#/definitions/session"
+                  },
+                  "included": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/account"
+                    }
                   }
                 }
               }
@@ -2618,6 +2911,66 @@
                   }
                 }
               }
+            },
+            {
+              "method": "PUT",
+              "rel": "activate_2fa",
+              "title": "Activate 2-factor authorization",
+              "description": "Activates 2-factor authorization",
+              "href": "/account/activate-2fa",
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "description": "JSON API type field",
+                        "type": [
+                          "string"
+                        ],
+                        "pattern": "^2fa_activation$",
+                        "example": "2fa_activation"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "otp_code"
+                        ],
+                        "properties": {
+                          "otp_code": {
+                            "type": "string",
+                            "description": "OTP code",
+                            "example": "123 456"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/account"
+                  }
+                }
+              }
             }
           ],
           "$schema": "http://json-schema.org/draft-04/hyper-schema",
@@ -2669,7 +3022,6 @@
               "type": "object",
               "required": [
                 "email",
-                "name",
                 "company"
               ],
               "additionalProperties": false,
@@ -2679,13 +3031,21 @@
                   "description": "Email",
                   "example": "foo@bar.com"
                 },
-                "name": {
+                "first_name": {
                   "type": [
                     "string",
                     "null"
                   ],
-                  "description": "Name",
-                  "example": "Mark Smith"
+                  "description": "First name",
+                  "example": "Mark"
+                },
+                "last_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Last name",
+                  "example": "Smith"
                 },
                 "company": {
                   "type": [
@@ -2702,6 +3062,14 @@
                 "api_token": {
                   "type": "string",
                   "description": "API token"
+                },
+                "is_2fa_active": {
+                  "type": "boolean",
+                  "description": "Whether 2-factor authentication is active for this account or not"
+                },
+                "provisioning_2fa_uri": {
+                  "type": "string",
+                  "description": "2-factor authentication provisioning URI"
                 }
               }
             }
@@ -2792,6 +3160,9 @@
                       "attributes": {
                         "type": "object",
                         "additionalProperties": false,
+                        "required": [
+                          "name"
+                        ],
                         "properties": {
                           "name": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/name"
@@ -3040,8 +3411,6 @@
                 "last_data_change_at",
                 "access_token",
                 "created_at",
-                "readwrite_token",
-                "readonly_token",
                 "deactivated"
               ],
               "additionalProperties": false,
@@ -3099,11 +3468,17 @@
                 },
                 "readwrite_token": {
                   "description": "Read-write API token",
-                  "type": "string"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "readonly_token": {
                   "description": "Read-only API token",
-                  "type": "string"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "deactivated": {
                   "description": "Status of site according to billing situation",
@@ -3118,7 +3493,8 @@
                 "active_subscription",
                 "active_plan",
                 "usage",
-                "transfer"
+                "transfer",
+                "owner"
               ],
               "additionalProperties": false,
               "properties": {
@@ -3155,6 +3531,18 @@
                   "properties": {
                     "data": {
                       "$ref": "#/definitions/plan_compatibility/definitions/data"
+                    }
+                  }
+                },
+                "owner": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/account/definitions/data"
                     }
                   }
                 },
@@ -4047,6 +4435,68 @@
             }
           }
         },
+        "site_invitation": {
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Site invitation",
+          "description": "Site invitation",
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "token": {
+            "description": "Token of invitation",
+            "type": "string",
+            "example": "XXXXXXXXX"
+          },
+          "definitions": {
+            "identity": {
+              "$ref": "#/definitions/site_invitation/properties/id"
+            },
+            "id": {
+              "description": "ID of site invitation",
+              "type": "string",
+              "example": "4235"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^site_invitation$",
+              "example": "site_invitation"
+            }
+          },
+          "properties": {
+            "id": {
+              "$ref": "#/definitions/site_invitation/definitions/id"
+            },
+            "type": {
+              "$ref": "#/definitions/site_invitation/definitions/type"
+            }
+          },
+          "links": [
+            {
+              "method": "PUT",
+              "rel": "redeem",
+              "title": "Redeem",
+              "description": "Redeem token",
+              "href": "/site_invitations/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite_invitation%2Ftoken)}/redeem",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
+              }
+            }
+          ]
+        },
         "plan_compatibility": {
           "links": [],
           "$schema": "http://json-schema.org/draft-04/hyper-schema",
@@ -4110,6 +4560,9 @@
                 },
                 "compatible": {
                   "type": "boolean"
+                },
+                "compatible_with_extra_charges": {
+                  "type": "boolean"
                 }
               }
             },
@@ -4119,6 +4572,7 @@
               "required": [
                 "limits",
                 "compatible",
+                "compatible_with_extra_charges",
                 "incompatible_limits",
                 "users_analysis",
                 "roles_analysis",
@@ -4146,6 +4600,9 @@
                   }
                 },
                 "compatible": {
+                  "type": "boolean"
+                },
+                "compatible_with_extra_charges": {
                   "type": "boolean"
                 },
                 "users_analysis": {
@@ -4269,6 +4726,88 @@
               "$ref": "#/definitions/job/definitions/id"
             }
           }
+        },
+        "oauth_application": {
+          "links": [],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "type": "object",
+          "title": "OAuth application",
+          "description": "An OAuth application that allows access to our API from third party services.",
+          "required": [
+            "type",
+            "id",
+            "attributes",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "description": "JSON API data",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/oauth_application/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/oauth_application/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/oauth_application/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^oauth_application$",
+              "example": "oauth_application"
+            },
+            "id": {
+              "description": "ID of access_token",
+              "type": "string",
+              "example": "312"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "name",
+                "created_at"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of application",
+                  "example": "Netlify OAuth application"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Date of token creation",
+                  "example": "2018-11-20 12:06:49.803166"
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/oauth_application/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/oauth_application/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/oauth_application/definitions/attributes"
+            }
+          }
         }
       }
     },
@@ -4276,15 +4815,15 @@
       "Server",
       "Cowboy",
       "Date",
-      "Wed, 20 Mar 2019 16:00:48 GMT",
+      "Mon, 17 Jun 2019 10:23:45 GMT",
       "Connection",
       "close",
       "Last-Modified",
-      "Wed, 20 Mar 2019 13:55:46 GMT",
+      "Mon, 17 Jun 2019 09:20:24 GMT",
       "Content-Type",
       "application/json",
       "X-Queue-Time",
-      "11ms",
+      "-1ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -4298,7 +4837,7 @@
       "Access-Control-Allow-Origin",
       "*",
       "Content-Length",
-      "61565",
+      "69643",
       "Via",
       "1.1 vegur"
     ]
@@ -4317,9 +4856,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b0800b163925c0003",
-      "849251739a401485ff0bcfe2ec2242f0cd4a9368834eb4b1c417e6ee72d15504875d8a98f1bf67d736894d3b53de2ee73b7777ce9e172b0505d6e0c512a935b028f109b13a966a0fa8472914ea0994aa04ab154a0316b037da97bc5c6b2d2df7200a6b50d479deb144a1b02a204f64cdde148b69d2f65d0de72055620e4cf8068a3526a0b4ee101ad8a4673be43bf506840cdca0ebf6bc953614e5e5d05fcb8173943251e50ecd5a6c2704e3a19889c9b7257d140fa3c986dd71338f9f4e633a1593a0aba113c4f33c76f2dd785b1ea39037d1a811cf3fa65bd65bd6e968eca5f713ba5a3462e52ceb553cd9a477cb5decdc12cd8b683b3cce16a4895ad246b78fc7e9a96ca2b024b3854b66e15315855fbd281c8aecb13bb657b0c266e8240cf72eed9f223b0eef0beed5beef55cde2b9decee60fcddc97a57595d4e798ba90ee45d1d529957c2fbbbcdc6b9a57080ad3ffe6a5b1b4a9f4abbda7043c4007fc80620a143d2499e3f80e12e02c75f1b7a52cf2f6dd4128524618cf68e0a6377df002d6ef395ec69c8cb3c03c390257e2a7b99035c8209778366b7250a22ce4461c2e35b930688a2079250e4633bfffac1bbd71afeb76cd9ecf9db71d871cfee1fdf05d74c3d712d6f837697faab5e1131dec41df98895ca8f6e256151432c3ea6381e9dd597faf000000ffff",
-      "03003205cc5726030000"
+      "1f8b0800326a075d0003",
+      "84925d939a301885ff4bae952108e1e3ce6a6707b7405db5dbe90d1342d0282494c455dcf1bf6fe27e68bb9d29374c729e739239799f41891506d133602588007402148001507d4bf5523245f50a2bd5b162afa83420c78dd1bed462adb55234987110f17d5d0f00e38a761cd7b9dc17ef0a28343984c8d7748da5cacd8939d960bea639561a706c180e6d3484fe12da91338a5c64058ef34b1bb8b89cfa9a8e09a152e64aeca8c9a5fdcca63fc72c63b3fb1f70cebe4d669be28e9875bc3ac53065b3d0d290136fc5518b27f34fb66b279b1c185ec4285b2630ed0fac9cc4286ebe9a00ae19966cc7c76c611f52661f5338d71ed1272761a7cc75d36dd225d31825d331abe6d6fae97ef5b00cb27631f1665947564bfa7bda3dd449be9cf0bbc73efb0e772e19eea63b1bdcd4f3a91b0b970de396ae4690465a44341a271dc58a96ff2d4963e5a1d36ff5518d8f3d5a40770471000b6c4397861495818f5051b8e4cd2278dd7f38dc92da811fd8a30a5595e785347448e815da857c681c25c544b12773211055b896f46c626aac98e072c3dacb705c186a9e5f928eb54633db7f0e99eb78e1cd90ddb2e7f3e03da3adf13fbc57df4537fc5ee235fd4c0eff1a66c3e7bad856dfb8603553fdc5ad3acc6545bb6b8019362d8803bfdd7d8b0d479e7fcdd41329f65ce920fdbd000000ffff",
+      "0300a141abbc4c030000"
     ],
     "rawHeaders": [
       "Content-Type",
@@ -4333,13 +4872,13 @@
       "X-RateLimit-Remaining",
       "28",
       "ETag",
-      "W/\"253502c4e087a8123cbf6feaec502f31\"",
+      "W/\"4e5752f429ebffd35764ff7a37062a19\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "b30613db-923a-4990-bd63-82fa7ae3c8eb",
+      "d8973a35-2e3f-464b-b18e-b8a6a1287e2c",
       "X-Runtime",
-      "0.174398",
+      "0.309351",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",

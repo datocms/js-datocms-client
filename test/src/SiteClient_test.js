@@ -157,26 +157,22 @@ describe('Site API', () => {
     }));
   });
 
-  describe('editors', () => {
+  describe('site invitations', () => {
     it('create, find, all, destroy', vcr(async () => {
       const roles = await client.roles.all();
 
-      const user = await client.users.create({
+      const invitation = await client.siteInvitations.create({
         email: 'user.tester@datocms.com',
-        firstName: 'user',
-        lastName: 'tester',
         role: roles[0].id,
       });
 
-      expect(user.firstName).to.equal('user');
+      const foundInvitation = await client.siteInvitations.find(invitation.id);
+      expect(foundInvitation.id).to.equal(invitation.id);
 
-      const foundUser = await client.users.find(user.id);
-      expect(foundUser.id).to.equal(user.id);
+      const allInvitations = await client.siteInvitations.all();
+      expect(allInvitations).to.have.length(1);
 
-      const allUsers = await client.users.all();
-      expect(allUsers).to.have.length(1);
-
-      await client.users.destroy(foundUser.id);
+      await client.siteInvitations.destroy(foundInvitation.id);
     }));
   });
 
@@ -188,7 +184,7 @@ describe('Site API', () => {
   });
 
   describe('item', () => {
-    it('create, find, all, update, destroy', vcr(async () => {
+    it('xxx create, find, all, update, destroy', vcr(async () => {
       const itemType = await client.itemTypes.create({
         name: 'Article',
         apiKey: 'item_type',
@@ -306,6 +302,21 @@ describe('Site API', () => {
       expect(item.mainContent).to.equal('Foo bar');
 
       await client.items.destroy(item.id);
+    }));
+  });
+
+  describe('plugins', () => {
+    it('create, find, all, update, destroy', vcr(async () => {
+      const plugin = await client.plugins.create({
+        packageName: 'datocms-plugin-tag-editor',
+      });
+
+      await client.plugins.update(
+        plugin.id,
+        { parameters: { developmentMode: true } },
+      );
+
+      await client.plugins.destroy(plugin.id);
     }));
   });
 });

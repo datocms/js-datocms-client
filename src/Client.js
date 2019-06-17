@@ -1,5 +1,4 @@
 import queryString from 'querystring';
-import { camelizeKeys, decamelizeKeys } from './utils/keyFormatter';
 import ApiException from './ApiException';
 import pkg from '../package.json';
 import fetch from './utils/fetch';
@@ -27,7 +26,7 @@ export default class Client {
       Object.assign(
         {
           method: 'PUT',
-          body: JSON.stringify(decamelizeKeys(body), undefinedToNull),
+          body: JSON.stringify(body, undefinedToNull),
         },
         options,
       ),
@@ -40,7 +39,7 @@ export default class Client {
       Object.assign(
         {
           method: 'POST',
-          body: JSON.stringify(decamelizeKeys(body), undefinedToNull),
+          body: JSON.stringify(body, undefinedToNull),
         },
         options,
       ),
@@ -90,6 +89,8 @@ export default class Client {
       { headers: fullHeaders },
     );
 
+    // TODO console.log(url, fullOptions);
+
     return fetch(url, fullOptions)
       .then((res) => {
         if (res.status === 429) {
@@ -103,9 +104,9 @@ export default class Client {
         return (res.status !== 204 ? res.json() : Promise.resolve(null))
           .then((body) => {
             if (res.status >= 200 && res.status < 300) {
-              return Promise.resolve(camelizeKeys(body));
+              return Promise.resolve(body);
             }
-            return Promise.reject(new ApiException(res, camelizeKeys(body)));
+            return Promise.reject(new ApiException(res, body));
           })
           .catch((error) => {
             if (

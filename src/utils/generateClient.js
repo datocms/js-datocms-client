@@ -90,6 +90,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                 let body = {};
                 if (link.schema && (link.method === 'PUT' || link.method === 'POST')) {
                   const unserializedBody = args.shift();
+
                   body = serializeJsonApi(
                     singularized,
                     unserializedBody,
@@ -100,13 +101,13 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
 
                 if (link.method === 'POST') {
                   return rawClient.post(`${url}`, body)
-                    .then(response => Promise.resolve(deserializeJsonApi(link, response)));
+                    .then(response => deserializeJsonApi(singularized, link, response));
                 } if (link.method === 'PUT') {
                   return rawClient.put(`${url}`, body)
-                    .then(response => Promise.resolve(deserializeJsonApi(link, response)));
+                    .then(response => deserializeJsonApi(singularized, link, response));
                 } if (link.method === 'DELETE') {
                   return rawClient.delete(url)
-                    .then(response => Promise.resolve(deserializeJsonApi(link, response)));
+                    .then(response => deserializeJsonApi(singularized, link, response));
                 }
 
                 const queryString = args.shift();
@@ -127,7 +128,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                 return request
                   .then(response => Promise.resolve(
                     deserializeResponse
-                      ? deserializeJsonApi(link, response)
+                      ? deserializeJsonApi(singularized, link, response)
                       : response,
                   ));
               });

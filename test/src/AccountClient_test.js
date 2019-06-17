@@ -6,11 +6,16 @@ describe('Account API', () => {
   describe('account', () => {
     it('find, update', vcr(async () => {
       const client = await generateNewAccountClient();
+
       let account = await client.account.find();
+
       expect(account).to.have.property('id');
+
       account = await client.account.update(
         u({ company: 'Dundler Mifflin' }, account),
       );
+
+      account = await client.account.find();
       expect(account.company).to.equal('Dundler Mifflin');
     }));
   });

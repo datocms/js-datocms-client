@@ -1,8 +1,26 @@
-import { camelize } from 'humps';
+import { camelize, camelizeKeys } from './keyFormatter';
 import jsonSchemaRelationships from './jsonSchemaRelationships';
+import findInfoForProperty from './findInfoForProperty';
+
+const hasKey = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+
+const findKey = (jsonApiKey, schema) => {
+  const info = findInfoForProperty(jsonApiKey, schema);
+
+  if (info && info.properties) {
+    return Object.entries(info.properties).map(([key, details]) => ({ key, details }));
+  }
+
+  return [];
+};
+
+const findAttributes = findKey.bind(null, 'attributes');
+const findMeta = findKey.bind(null, 'meta');
 
 function deserialize(
+  type,
   relationshipsMeta,
+  schema,
   {
     id,
     attributes,
@@ -12,16 +30,33 @@ function deserialize(
 ) {
   const result = { id };
 
-  if (meta) {
-    result.meta = meta;
-  }
+  const attrs = type === 'item'
+    ? Object.keys(attributes).map(key => ({ key, details: null }))
+    : findAttributes(schema);
 
-  Object.assign(result, attributes);
+  attrs.forEach(({ key, details }) => {
+    if (hasKey(attributes, key)) {
+      result[camelize(key)] = details && details.keepOriginalCaseOnKeys
+        ? attributes[key]
+        : camelizeKeys(attributes[key]);
+    }
+  });
+
+  if (meta) {
+    result.meta = {};
+    findMeta(schema).forEach(({ key, details }) => {
+      if (hasKey(meta, key)) {
+        result.meta[camelize(key)] = details && details.keepOriginalCaseOnKeys
+          ? meta[key]
+          : camelizeKeys(meta[key]);
+      }
+    });
+  }
 
   if (relationships) {
     relationshipsMeta.forEach(({ relationship, collection, types }) => {
-      if (relationships[camelize(relationship)]) {
-        const relData = relationships[camelize(relationship)].data;
+      if (relationships[relationship]) {
+        const relData = relationships[relationship].data;
 
         let value;
 
@@ -43,7 +78,7 @@ function deserialize(
   return result;
 }
 
-export default function deserializeJsonApi(link, json) {
+export default function deserializeJsonApi(type, link, json) {
   if (!json) {
     return json;
   }
@@ -53,8 +88,8 @@ export default function deserializeJsonApi(link, json) {
   const { data } = json;
 
   if (Array.isArray(data)) {
-    return data.map(item => deserialize(relationshipsMeta, item));
+    return data.map(item => deserialize(type, relationshipsMeta, link.targetSchema, item));
   }
 
-  return deserialize(relationshipsMeta, data);
+  return deserialize(type, relationshipsMeta, link.targetSchema, data);
 }

@@ -18,6 +18,16 @@ const findAttributes = (schema) => {
   return [];
 };
 
+const attributeProperties = (schema, attribute) => {
+  const info = findInfoForProperty('attributes', schema);
+
+  if (info && info.properties) {
+    return info.properties[attribute];
+  }
+
+  return null;
+};
+
 const hasKey = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
 
 function serializedRelationships(type, unserializedBody, schema) {
@@ -60,7 +70,11 @@ function serializedRelationships(type, unserializedBody, schema) {
     }
 
     if (jsonSchemaPropertyRequired('relationships', schema).includes(relationship)) {
-      throw new Error(`Required relationship: ${camelizedRelationship}`);
+      if (jsonSchemaValueRequired('relationships', schema).includes(relationship)) {
+        throw new Error(`Required relationship: ${camelizedRelationship}`);
+      }
+
+      return Object.assign(acc, { [relationship]: { data: null } });
     }
 
     return acc;
@@ -78,6 +92,13 @@ function serializedAttributes(type, unserializedBody = {}, schema) {
   return attrs.reduce((acc, attr) => {
     const camelizedAttr = camelize(attr);
 
+    const properties = attributeProperties(schema, attr);
+
+    const decamelizeKeysIfRequired = obj => (
+      !properties || !properties.keepOriginalCaseOnKeys
+        ? decamelizeKeys(obj) : obj
+    );
+
     if (attr !== camelizedAttr
       && hasKey(unserializedBody, attr)
       && hasKey(unserializedBody, camelizedAttr)) {
@@ -86,11 +107,17 @@ function serializedAttributes(type, unserializedBody = {}, schema) {
 
     if (attr !== camelizedAttr && hasKey(unserializedBody, attr)) {
       console.warn(`Warning: Attribute ${attr} should be expressed in camel-case syntax (${camelizedAttr})`);
-      return Object.assign(acc, { [attr]: unserializedBody[attr] });
+      return Object.assign(
+        acc,
+        { [attr]: decamelizeKeysIfRequired(unserializedBody[attr]) },
+      );
     }
 
     if (hasKey(unserializedBody, camelizedAttr)) {
-      return Object.assign(acc, { [attr]: unserializedBody[camelizedAttr] });
+      return Object.assign(
+        acc,
+        { [attr]: decamelizeKeysIfRequired(unserializedBody[camelizedAttr]) },
+      );
     }
 
     if (jsonSchemaPropertyRequired('attributes', schema).includes(attr)) {
