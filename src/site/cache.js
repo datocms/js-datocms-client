@@ -4,11 +4,9 @@ module.exports = {
     "create": true
   },
   "users": {
-    "create": true,
     "update": true,
     "all": true,
     "find": true,
-    "resetPassword": true,
     "destroy": true
   },
   "accessTokens": {
@@ -117,6 +115,13 @@ module.exports = {
     "destroy": true
   },
   "itemTypeFilters": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
+    "destroy": true
+  },
+  "siteInvitations": {
     "create": true,
     "update": true,
     "all": true,

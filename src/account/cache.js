@@ -7,7 +7,8 @@ module.exports = {
     "create": true,
     "update": true,
     "find": true,
-    "resetPassword": true
+    "resetPassword": true,
+    "activate2fa": true
   },
   "sites": {
     "find": true,
@@ -27,5 +28,8 @@ module.exports = {
     "destroy": true,
     "accept": true,
     "decline": true
+  },
+  "siteInvitation": {
+    "redeem": true
   }
 };
