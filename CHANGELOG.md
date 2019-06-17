@@ -1,3 +1,7 @@
+## 2.0.0
+
+* `deserializeResponse: false` option no longer camelizes response
+
 ## 1.0.5
 
 * Return 1 on `dato dump` errors, to allow better error handling inside CI processes or scripts.
