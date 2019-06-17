@@ -87,50 +87,53 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   return lastUrlId;
                 });
 
-                let body = {};
-                if (link.schema && (link.method === 'PUT' || link.method === 'POST')) {
-                  const unserializedBody = args.shift();
-
-                  body = serializeJsonApi(
-                    singularized,
-                    unserializedBody,
-                    link,
-                    link.method === 'PUT' && lastUrlId,
-                  );
-                }
-
-                if (link.method === 'POST') {
-                  return rawClient.post(`${url}`, body)
-                    .then(response => deserializeJsonApi(singularized, link, response));
-                } if (link.method === 'PUT') {
-                  return rawClient.put(`${url}`, body)
-                    .then(response => deserializeJsonApi(singularized, link, response));
-                } if (link.method === 'DELETE') {
-                  return rawClient.delete(url)
-                    .then(response => deserializeJsonApi(singularized, link, response));
-                }
-
-                const queryString = args.shift();
+                let bodyOrQueryString = args.shift() || {};
                 const options = args.shift() || {};
 
                 const deserializeResponse = Object.prototype.hasOwnProperty.call(options, 'deserializeResponse')
                   ? options.deserializeResponse
                   : true;
 
+                const deserialize = response => (
+                  deserializeResponse
+                    ? deserializeJsonApi(singularized, link, response)
+                    : response
+                );
+
+                const serializeRequest = Object.prototype.hasOwnProperty.call(options, 'serializeRequest')
+                  ? options.serializeRequest
+                  : true;
+
+                if (link.schema && (link.method === 'PUT' || link.method === 'POST') && serializeRequest) {
+                  bodyOrQueryString = serializeJsonApi(
+                    singularized,
+                    bodyOrQueryString,
+                    link,
+                    link.method === 'PUT' && lastUrlId,
+                  );
+                }
+
+                if (link.method === 'POST') {
+                  return rawClient.post(`${url}`, bodyOrQueryString)
+                    .then(response => deserialize(response));
+                } if (link.method === 'PUT') {
+                  return rawClient.put(`${url}`, bodyOrQueryString)
+                    .then(response => deserialize(response));
+                } if (link.method === 'DELETE') {
+                  return rawClient.delete(url)
+                    .then(response => deserialize(response));
+                }
+
                 const allPages = Object.prototype.hasOwnProperty.call(options, 'allPages')
                   ? options.allPages
                   : false;
 
                 const request = allPages
-                  ? fetchAllPages(rawClient, url, queryString)
-                  : rawClient.get(url, queryString);
+                  ? fetchAllPages(rawClient, url, bodyOrQueryString)
+                  : rawClient.get(url, bodyOrQueryString);
 
                 return request
-                  .then(response => Promise.resolve(
-                    deserializeResponse
-                      ? deserializeJsonApi(singularized, link, response)
-                      : response,
-                  ));
+                  .then(response => deserialize(response));
               });
             };
           },

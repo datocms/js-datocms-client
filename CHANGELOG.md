@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Introduced option `serializeRequest: false` option to every call. Use it if you want to send a raw JSON API requst to DatoCMS.
+
 ## 2.0.0
 
 * `deserializeResponse: false` option no longer camelizes response
