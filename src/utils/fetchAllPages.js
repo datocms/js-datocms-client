@@ -12,7 +12,7 @@ export default function fetchAllPages(client, endpoint, params) {
     Object.assign({}, params, { 'page[limit]': itemsPerPage }),
   )
     .then((baseResponse) => {
-      const pages = Math.ceil(baseResponse.meta.totalCount / itemsPerPage);
+      const pages = Math.ceil(baseResponse.meta.total_count / itemsPerPage);
 
       return times(pages - 1).reduce((chain, extraPage) => {
         return chain.then((result) => {
