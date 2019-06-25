@@ -19,7 +19,8 @@ module.exports = {
     "duplicate": true
   },
   "subscription": {
-    "create": true
+    "create": true,
+    "validate": true
   },
   "siteTransfers": {
     "all": true,
