@@ -11,12 +11,14 @@ const contentTag = (tagName, content) => ({ tagName, content });
 function seoAttributeWithFallback(attribute, alternative, itemEntity, entitiesRepo, i18n) {
   const { site } = entitiesRepo;
 
-  const fallbackSeo = site.globalSeo && site.globalSeo.fallbackSeo;
   const seoField = itemEntity && itemEntity.itemType.fields.find(f => f.fieldType === 'seo');
 
   const itemSeoValue = seoField
     && localizedRead(itemEntity, camelize(seoField.apiKey), seoField.localized, i18n)
     && localizedRead(itemEntity, camelize(seoField.apiKey), seoField.localized, i18n)[attribute];
+
+  const fallbackSeo = localizedRead(site, 'globalSeo', !!i18n, i18n)
+    && localizedRead(site, 'globalSeo', !!i18n, i18n).fallbackSeo;
 
   const fallbackSeoValue = fallbackSeo && fallbackSeo[attribute];
 
