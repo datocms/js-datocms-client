@@ -828,5 +828,79 @@ describe('seoTagsBuilder', () => {
         });
       });
     });
+
+    context('with translated fallback seo', () => {
+      beforeEach(() => {
+        globalSeo = memo(() => camelizeKeys({
+          en: {
+            fallbackSeo: {
+              image: '100001',
+            },
+          },
+        }));
+        result = memo(() => builders.image(item(), entitiesRepo(), { locale: 'en' }));
+      });
+
+      context('with no item', () => {
+        it('returns fallback image', () => {
+          expect(ogValue()).to.include('fallback.png');
+          expect(cardValue()).to.include('fallback.png');
+        });
+      });
+
+      context('with item', () => {
+        beforeEach(() => {
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
+        });
+
+        context('with no image', () => {
+          context('no SEO', () => {
+            it('returns fallback image', () => {
+              expect(ogValue()).to.include('fallback.png');
+              expect(cardValue()).to.include('fallback.png');
+            });
+          });
+
+          context('with SEO', () => {
+            beforeEach(() => {
+              seo = memo(() => camelizeKeys({
+                image: '100000',
+              }));
+            });
+
+            it('returns seo image', () => {
+              expect(ogValue()).to.include('seo.png');
+              expect(cardValue()).to.include('seo.png');
+            });
+          });
+        });
+
+        context('with image', () => {
+          beforeEach(() => {
+            itemImage = memo(() => '100002');
+          });
+
+          context('no SEO', () => {
+            it('returns item image', () => {
+              expect(ogValue()).to.include('image.png');
+              expect(cardValue()).to.include('image.png');
+            });
+          });
+
+          context('with SEO', () => {
+            beforeEach(() => {
+              seo = memo(() => camelizeKeys({
+                image: '100000',
+              }));
+            });
+
+            it('returns SEO image', () => {
+              expect(ogValue()).to.include('seo.png');
+              expect(cardValue()).to.include('seo.png');
+            });
+          });
+        });
+      });
+    });
   });
 });
