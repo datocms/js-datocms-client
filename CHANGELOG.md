@@ -1,3 +1,11 @@
+## 2.0.3 - 2.0.4
+
+* Fix in how we build SEO tags
+
+## 2.0.2
+
+* Fix in getting paginated items
+
 ## 2.0.1
 
 * Introduced option `serializeRequest: false` option to every call. Use it if you want to send a raw JSON API requst to DatoCMS.
