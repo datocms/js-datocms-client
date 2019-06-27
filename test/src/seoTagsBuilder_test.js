@@ -12,6 +12,7 @@ describe('seoTagsBuilder', () => {
   let noIndex;
   let entitiesRepo;
   let itemImage;
+  let locales;
 
   beforeEach(() => {
     itemTitle = memo(() => null);
@@ -19,6 +20,7 @@ describe('seoTagsBuilder', () => {
     seo = memo(() => null);
     noIndex = memo(() => null);
     itemImage = memo(() => null);
+    locales = memo(() => ['en']);
 
     entitiesRepo = memo(() => {
       const payload = camelizeKeys({
@@ -50,9 +52,7 @@ describe('seoTagsBuilder', () => {
             type: 'site',
             attributes: {
               name: 'XXX',
-              locales: [
-                'en',
-              ],
+              locales: locales(),
               theme_hue: 190,
               domain: null,
               internal_domain: 'wispy-sun-3056.admin.datocms.com',
@@ -838,6 +838,7 @@ describe('seoTagsBuilder', () => {
             },
           },
         }));
+        locales = memo(() => ['en', 'it']);
         result = memo(() => builders.image(item(), entitiesRepo(), { locale: 'en' }));
       });
 
