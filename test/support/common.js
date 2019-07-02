@@ -2,11 +2,13 @@
 
 import chai, { expect } from 'chai';
 import dirtyChai from 'dirty-chai';
+import chaiAsPromised from 'chai-as-promised';
 
 import { AccountClient } from '../../src/index';
 import vcr from './vcr';
 
 chai.use(dirtyChai);
+chai.use(chaiAsPromised);
 
 global.expect = expect;
 

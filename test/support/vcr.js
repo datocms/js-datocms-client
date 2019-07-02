@@ -50,7 +50,10 @@ function afterTest(cassettePath) {
 
   if (cassettes.length) {
     return mkdirp(path.dirname(cassettePath)).then(() => {
-      return writeFile(cassettePath, JSON.stringify(cassettes, null, 2));
+      const sanitizedCassettes = cassettes.map((cassette) => {
+        return Object.assign(cassette, { response: cassette.response });
+      });
+      return writeFile(cassettePath, JSON.stringify(sanitizedCassettes, null, 2));
     });
   }
 

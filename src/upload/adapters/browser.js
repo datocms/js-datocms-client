@@ -25,13 +25,7 @@ export default function browser(client, file) {
 
   return client.uploadRequest.create({ filename: file.name })
     .then(({ id, url }) => {
-      return uploadToS3(id, url, file);
-    })
-    .then((id) => {
-      return {
-        path: id,
-        size: file.size,
-        format,
-      };
+      return uploadToS3(id, url, file)
+        .then(() => ({ path: id, size: file.size, format }));
     });
 }

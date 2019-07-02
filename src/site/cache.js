@@ -127,5 +127,10 @@ module.exports = {
     "all": true,
     "find": true,
     "destroy": true
+  },
+  "editingSessions": {
+    "all": true,
+    "update": true,
+    "destroy": true
   }
 };

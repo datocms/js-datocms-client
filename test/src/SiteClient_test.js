@@ -184,7 +184,7 @@ describe('Site API', () => {
   });
 
   describe('item', () => {
-    it('xxx create, find, all, update, destroy', vcr(async () => {
+    it('create, find, all, update, destroy', vcr(async () => {
       const itemType = await client.itemTypes.create({
         name: 'Article',
         apiKey: 'item_type',

@@ -1,5 +1,5 @@
 import tmp from 'tmp';
-import request from 'request';
+import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 import url from 'url';
@@ -12,20 +12,30 @@ export default function nodeUrl(client, fileUrl) {
         reject(err);
       }
 
-      const { pathname } = url.parse(fileUrl);
-      const filePath = path.join(dir, path.basename(pathname));
-      const writeStream = fs.createWriteStream(filePath);
+      return axios({
+        url: fileUrl,
+        maxRedirects: 10,
+        responseType: 'arraybuffer',
+      })
+        .then((response) => {
+          const { pathname } = url.parse(fileUrl);
+          const filePath = path.join(dir, path.basename(pathname));
+          fs.writeFileSync(filePath, Buffer.from(response.data));
 
-      request(fileUrl).pipe(writeStream);
-
-      writeStream.on('close', () => {
-        local(client, filePath)
-          .then((result) => {
-            fs.unlinkSync(filePath);
-            cleanupCallback();
-            resolve(result);
-          });
-      });
+          return local(client, filePath)
+            .then((result) => {
+              fs.unlinkSync(filePath);
+              cleanupCallback();
+              resolve(result);
+            });
+        })
+        .catch((error) => {
+          if (error.response) {
+            reject(new Error(`Invalid status code for ${fileUrl}: ${error.response.status}`));
+          } else {
+            reject(error);
+          }
+        });
     });
   });
 }
