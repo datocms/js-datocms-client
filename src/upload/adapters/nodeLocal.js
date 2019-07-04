@@ -1,11 +1,15 @@
 import axios from 'axios';
 import path from 'path';
 import fs from 'fs';
+import mime from 'mime-types';
 
 function uploadToS3(url, filePath) {
   return axios({
     url,
     method: 'put',
+    headers: {
+      'content-type': mime.lookup(filePath),
+    },
     data: fs.readFileSync(filePath),
   });
 }
