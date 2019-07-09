@@ -15,7 +15,6 @@ function uploadToS3(id, url, file) {
     };
 
     xhr.open('PUT', url);
-    xhr.setRequestHeader('x-amz-acl', 'public-read');
     xhr.send(file);
   });
 }
