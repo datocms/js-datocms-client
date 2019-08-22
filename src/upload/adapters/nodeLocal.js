@@ -11,13 +11,12 @@ function uploadToS3(url, filePath) {
       'content-type': mime.lookup(filePath),
     },
     data: fs.readFileSync(filePath),
+    maxContentLength: 100000000,
   });
 }
 
 export default function nodeLocal(client, filePath) {
-  return client.uploadRequest.create({ filename: path.basename(filePath) })
-    .then(({ id, url }) => {
-      return uploadToS3(url, filePath)
-        .then(() => ({ path: id }));
-    });
+  return client.uploadRequest.create({ filename: path.basename(filePath) }).then(({ id, url }) => {
+    return uploadToS3(url, filePath).then(() => ({ path: id }));
+  });
 }
