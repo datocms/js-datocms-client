@@ -11,7 +11,7 @@ function uploadToS3(url, filePath) {
       'content-type': mime.lookup(filePath),
     },
     data: fs.readFileSync(filePath),
-    maxContentLength: 100000000,
+    maxContentLength: 1000000000,
   });
 }
 
