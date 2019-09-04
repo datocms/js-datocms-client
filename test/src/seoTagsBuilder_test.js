@@ -346,6 +346,18 @@ describe('seoTagsBuilder', () => {
           it('returns seo title', () => {
             expect(titleValue()).to.eq('SEO title');
           });
+
+          context('with title suffix', () => {
+            beforeEach(() => {
+              globalSeo = memo(() => camelizeKeys({
+                title_suffix: ' - Suffix!',
+              }));
+            });
+
+            it('returns seo title with suffix', () => {
+              expect(titleValue()).to.eq('SEO title - Suffix!');
+            });
+          });
         });
       });
     });
