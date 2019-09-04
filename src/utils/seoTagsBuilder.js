@@ -45,8 +45,12 @@ export const builders = {
       itemEntity, entitiesRepo, i18n,
     );
 
+
     if (title) {
-      const suffix = (site.globalSeo && site.globalSeo.titleSuffix) || '';
+      const multiLocaleSite = site.locales.length > 1;
+      const suffix = (localizedRead(site, 'globalSeo', multiLocaleSite, i18n)
+        && localizedRead(site, 'globalSeo', multiLocaleSite, i18n).titleSuffix) || '';
+
       const titleWithSuffix = (title + suffix).length <= 60
         ? title + suffix
         : title;
