@@ -15,7 +15,7 @@ describe('seoTagsBuilder', () => {
   let locales;
 
   beforeEach(() => {
-    itemTitle = memo(() => ({en: null}));
+    itemTitle = memo(() => ({ en: null }));
     globalSeo = memo(() => null);
     seo = memo(() => null);
     noIndex = memo(() => null);
