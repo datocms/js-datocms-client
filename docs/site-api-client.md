@@ -33,30 +33,34 @@ import { SiteClient } from 'datocms-client';
   });
 
   // add a Title field to the Article item type
-  await client.fields.create({
+  await client.fields.create(
     articleType.id,
-    apiKey: 'title',
-    fieldType: 'string',
-    appeareance: { type: 'title' },
-    label: 'Title',
-    localized: false,
-    position: 99,
-    hint: '',
-    validators: { required: {} },
-  });
+    {
+      apiKey: 'title',
+      fieldType: 'string',
+      appeareance: { type: 'title' },
+      label: 'Title',
+      localized: false,
+      position: 99,
+      hint: '',
+      validators: { required: {} },
+    }
+  );
 
   // add an Image field to the Article item type
-  await client.fields.create({
+  await client.fields.create(
     articleType.id,
-    apiKey: 'image',
-    fieldType: 'image',
-    appeareance: null,
-    label: 'Image',
-    localized: false,
-    position: 99,
-    hint: '',
-    validators: { required: {} },
-  });
+    {
+      apiKey: 'image',
+      fieldType: 'image',
+      appeareance: null,
+      label: 'Image',
+      localized: false,
+      position: 99,
+      hint: '',
+      validators: { required: {} },
+    }
+  );
 
   // create a new Article
   await client.items.create({
