@@ -10,7 +10,8 @@
   },
   "scripts": {
     "lint:autocorrect": "eslint ./ --fix",
-    "test": "eslint ./ && mocha ./test/**/*_test.js --require \"@babel/register\" --require babel-polyfill --require \"./test/support/common\" --timeout 15000",
+    "test": "eslint ./ && npm run mocha",
+    "mocha": "mocha ./test/**/*_test.js --require \"@babel/register\" --require babel-polyfill --require \"./test/support/common\" --timeout 15000",
     "prepublish": "rimraf lib dist && mkdir lib dist && node build/buildApiMethods.js && node build/transformPackageJson.js && npm run lib && npm run dist",
     "dist": "NODE_ENV=production webpack --progress",
     "dev": "NODE_ENV=production webpack --progress --watch",
@@ -72,8 +73,8 @@
     "parser-front-matter": "^1.6.4",
     "toml": "^2.3.3",
     "toml-parser": "^0.0.7",
-    "webpack": "^4.16.5",
-    "webpack-bundle-analyzer": "^2.13.1",
+    "webpack": "^4.35.2",
+    "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
@@ -103,7 +104,8 @@
     "pluralize": "^7.0.0",
     "pretty-error": "^2.1.1",
     "proxy-polyfill": "^0.3.0",
-    "pusher-js": "^4.3.0",
+    "pusher-js": "^4.4.0",
+    "qs": "^6.9.0",
     "request": "^2.88.0",
     "rimraf": "^2.6.2",
     "speakingurl": "^14.0.1",

@@ -35,6 +35,9 @@ module.exports = {
     "find": true,
     "destroy": true
   },
+  "jobResult": {
+    "find": true
+  },
   "deployEvents": {
     "all": true,
     "find": true
@@ -132,5 +135,19 @@ module.exports = {
     "all": true,
     "update": true,
     "destroy": true
+  },
+  "ssoUsers": {
+    "all": true,
+    "syncSsoUsers": true,
+    "destroy": true
+  },
+  "ssoGroups": {
+    "all": true,
+    "update": true,
+    "destroy": true
+  },
+  "ssoSetting": {
+    "find": true,
+    "update": true
   }
 };

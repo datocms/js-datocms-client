@@ -8,6 +8,11 @@ export default function uploadFile(client, source) {
       return client.uploads.create(attributes);
     })
     .then((upload) => {
-      return Promise.resolve(upload.id);
+      return Promise.resolve({
+        uploadId: upload.id,
+        alt: null,
+        title: null,
+        customData: {},
+      });
     });
 }

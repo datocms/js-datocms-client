@@ -1,7 +1,4 @@
-import Pusher from 'pusher-js/node';
 import EntitiesRepo from './EntitiesRepo';
-
-const PUSHER_API_KEY = '75e6ef0fe5d39f481626';
 
 export default class Loader {
   constructor(client, previewMode = false) {
@@ -18,11 +15,10 @@ export default class Loader {
         { deserializeResponse: false, allPages: true },
       ),
       this.client.uploads.all({}, { deserializeResponse: false, allPages: true }),
-    ])
-      .then(([site, items, uploads]) => {
-        this.siteId = site.data.id;
-        this.entitiesRepo.upsertEntities(site, items, uploads);
-      });
+    ]).then(([site, items, uploads]) => {
+      this.siteId = site.data.id;
+      this.entitiesRepo.upsertEntities(site, items, uploads);
+    });
   }
 
   async watch(notifier) {
@@ -30,25 +26,7 @@ export default class Loader {
       await this.load();
     }
 
-    const pusher = new Pusher(
-      PUSHER_API_KEY,
-      {
-        authEndpoint: 'https://site-api.datocms.com/pusher/authenticate',
-        auth: {
-          headers: {
-            Authorization: `Bearer ${this.client.rawClient.token}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        },
-      },
-    );
-
-    const watcher = pusher.subscribe(`private-site-${this.siteId}`);
-
-    watcher.bind('pusher:subscription_error', () => {
-      process.stdout.write('Could not subscribe to the project live events... :(');
-    });
+    const [watcher, disconnect] = await this.client.subscribeToChannel(this.siteId);
 
     const addEventListener = (eventName, entitiesRepoRefresher) => {
       watcher.bind(eventName, (data) => {
@@ -120,6 +98,6 @@ export default class Loader {
       });
     });
 
-    return pusher.disconnect.bind(pusher);
+    return disconnect;
   }
 }

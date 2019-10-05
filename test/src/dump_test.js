@@ -39,9 +39,9 @@ describe('CLI tool', () => {
         newSite,
         {
           locales: ['en', 'it'],
-          favicon: await uploadImage(client, faviconFilePath),
+          favicon: await uploadImage(client, faviconFilePath).uploadId,
           theme: {
-            logo: await uploadImage(client, logoFilePath),
+            logo: await uploadImage(client, logoFilePath).uploadId,
             primaryColor: {
               red: 127,
               green: 127,

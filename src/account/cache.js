@@ -20,13 +20,18 @@ module.exports = {
   },
   "subscription": {
     "create": true,
+    "simulate": true,
     "validate": true
+  },
+  "jobResult": {
+    "find": true
   },
   "siteTransfers": {
     "all": true,
     "find": true,
     "create": true,
     "destroy": true,
+    "simulateAccept": true,
     "accept": true,
     "decline": true
   },

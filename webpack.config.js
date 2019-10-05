@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
-//   .BundleAnalyzerPlugin;
+//    .BundleAnalyzerPlugin;
 
 const BUILD_DIR = path.resolve(__dirname, 'dist');
 const APP_DIR = path.resolve(__dirname, 'src');

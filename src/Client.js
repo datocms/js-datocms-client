@@ -1,10 +1,14 @@
-import queryString from 'querystring';
+import qs from 'qs';
 import ApiException from './ApiException';
 import pkg from '../package.json';
 import fetch from './utils/fetch';
 import wait from './utils/wait';
 
 const undefinedToNull = (k, v) => (v === undefined ? null : v);
+
+function queryString(query) {
+  return qs.stringify(query, { arrayFormat: 'brackets' });
+}
 
 export default class Client {
   constructor(token, extraHeaders, baseUrl) {
@@ -64,13 +68,13 @@ export default class Client {
       accept: 'application/json',
       authorization: `Bearer ${this.token}`,
       'user-agent': `js-client v${pkg.version}`,
-      'X-Api-Version': '2',
+      'X-Api-Version': '3',
     };
   }
 
   buildUrl(path, params = {}) {
     const query = Object.keys(params).length
-      ? `?${queryString.stringify(params)}`
+      ? `?${queryString(params)}`
       : '';
     return `${this.baseUrl}${path}${query}`;
   }
@@ -89,7 +93,7 @@ export default class Client {
       { headers: fullHeaders },
     );
 
-    // TODO console.log(url, fullOptions);
+    // console.log('---->', url, fullOptions);
 
     return fetch(url, fullOptions)
       .then((res) => {
@@ -104,6 +108,7 @@ export default class Client {
         return (res.status !== 204 ? res.json() : Promise.resolve(null))
           .then((body) => {
             if (res.status >= 200 && res.status < 300) {
+              // console.log('<----', JSON.stringify(body));
               return Promise.resolve(body);
             }
             return Promise.reject(new ApiException(res, body));

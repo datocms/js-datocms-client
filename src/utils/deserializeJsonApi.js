@@ -17,28 +17,19 @@ const findKey = (jsonApiKey, schema) => {
 const findAttributes = findKey.bind(null, 'attributes');
 const findMeta = findKey.bind(null, 'meta');
 
-function deserialize(
-  type,
-  relationshipsMeta,
-  schema,
-  {
-    id,
-    attributes,
-    meta,
-    relationships,
-  },
-) {
+function deserialize(type, relationshipsMeta, schema, {
+  id, attributes, meta, relationships,
+}) {
   const result = { id };
 
-  const attrs = type === 'item'
+  const attrs = type === 'item' && attributes
     ? Object.keys(attributes).map(key => ({ key, details: null }))
     : findAttributes(schema);
 
   attrs.forEach(({ key, details }) => {
     if (hasKey(attributes, key)) {
       result[camelize(key)] = details && details.keepOriginalCaseOnKeys
-        ? attributes[key]
-        : camelizeKeys(attributes[key]);
+        ? attributes[key] : camelizeKeys(attributes[key]);
     }
   });
 
@@ -47,8 +38,7 @@ function deserialize(
     findMeta(schema).forEach(({ key, details }) => {
       if (hasKey(meta, key)) {
         result.meta[camelize(key)] = details && details.keepOriginalCaseOnKeys
-          ? meta[key]
-          : camelizeKeys(meta[key]);
+          ? meta[key] : camelizeKeys(meta[key]);
       }
     });
   }
@@ -78,18 +68,17 @@ function deserialize(
   return result;
 }
 
-export default function deserializeJsonApi(type, link, json) {
+export default function deserializeJsonApi(type, targetSchema, json) {
   if (!json) {
     return json;
   }
-
-  const relationshipsMeta = jsonSchemaRelationships(link.targetSchema);
+  const relationshipsMeta = jsonSchemaRelationships(targetSchema);
 
   const { data } = json;
 
   if (Array.isArray(data)) {
-    return data.map(item => deserialize(type, relationshipsMeta, link.targetSchema, item));
+    return data.map(item => deserialize(type, relationshipsMeta, targetSchema, item));
   }
 
-  return deserialize(type, relationshipsMeta, link.targetSchema, data);
+  return deserialize(type, relationshipsMeta, targetSchema, data);
 }

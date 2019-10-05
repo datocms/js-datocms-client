@@ -7,15 +7,15 @@ import deserializeJsonApi from './deserializeJsonApi';
 import serializeJsonApi from './serializeJsonApi';
 import RawClient from '../Client';
 import fetchAllPages from './fetchAllPages';
+import ApiException from '../ApiException';
+import wait from './wait';
 
-const getProps = obj => (
-  Object.getOwnPropertyNames(obj)
-    .concat(
-      Object.getPrototypeOf(obj) !== Object.prototype
+const getProps = obj => Object.getOwnPropertyNames(obj)
+  .concat(
+    Object.getPrototypeOf(obj) !== Object.prototype
         && Object.getOwnPropertyNames(Object.getPrototypeOf(obj)),
-    )
-    .filter(p => p !== 'constructor')
-);
+  )
+  .filter(p => p !== 'constructor');
 
 const toMap = keys => keys.reduce((acc, prop) => Object.assign(acc, { [prop]: true }), {});
 
@@ -52,12 +52,14 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
           get(obj2, apiCall) {
             return function call(...args) {
               if (!schemaPromise) {
-                schemaPromise = fetch(`https://${subdomain}.datocms.com/docs/${subdomain}-hyperschema.json`)
+                schemaPromise = fetch(
+                  `https://${subdomain}.datocms.com/docs/${subdomain}-hyperschema.json`,
+                )
                   .then(res => res.json())
                   .then(schema => jsonref.dereference(schema));
               }
 
-              return schemaPromise.then((schema) => {
+              return schemaPromise.then(async (schema) => {
                 const singularized = decamelize(pluralize.singular(namespace));
                 const sub = schema.properties[singularized];
 
@@ -87,40 +89,87 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   return lastUrlId;
                 });
 
-                let bodyOrQueryString = args.shift() || {};
+                let body = {};
+
+                if (
+                  link.schema
+                  && (link.method === 'PUT' || link.method === 'POST')
+                ) {
+                  body = args.shift() || {};
+                }
+
+                const queryString = args.shift() || {};
                 const options = args.shift() || {};
 
-                const deserializeResponse = Object.prototype.hasOwnProperty.call(options, 'deserializeResponse')
+                const deserializeResponse = Object.prototype.hasOwnProperty.call(
+                  options,
+                  'deserializeResponse',
+                )
                   ? options.deserializeResponse
                   : true;
 
-                const deserialize = response => (
-                  deserializeResponse
-                    ? deserializeJsonApi(singularized, link, response)
-                    : response
-                );
+                const deserialize = async (response) => {
+                  if (response && response.data.type === 'job') {
+                    let jobResult;
 
-                const serializeRequest = Object.prototype.hasOwnProperty.call(options, 'serializeRequest')
+                    do {
+                      try {
+                        await wait(1000);
+                        jobResult = await client.jobResult.find(response.data.id);
+                      } catch (e) {
+                        if (!(e instanceof ApiException) || e.statusCode !== 404) {
+                          throw e;
+                        }
+                      }
+                    } while (!jobResult);
+
+                    if (jobResult.status < 200 || jobResult.status >= 300) {
+                      throw new ApiException(jobResult, jobResult.payload);
+                    }
+
+                    return deserializeResponse
+                      ? deserializeJsonApi(singularized, link.jobSchema, jobResult.payload)
+                      : jobResult.payload;
+                  }
+
+                  return deserializeResponse
+                    ? deserializeJsonApi(singularized, link.targetSchema, response)
+                    : response;
+                };
+
+                const serializeRequest = Object.prototype.hasOwnProperty.call(
+                  options,
+                  'serializeRequest',
+                )
                   ? options.serializeRequest
                   : true;
 
-                if (link.schema && (link.method === 'PUT' || link.method === 'POST') && serializeRequest) {
-                  bodyOrQueryString = serializeJsonApi(
+                if (
+                  link.schema
+                  && (link.method === 'PUT' || link.method === 'POST')
+                  && serializeRequest
+                ) {
+                  body = serializeJsonApi(
                     singularized,
-                    bodyOrQueryString,
+                    body,
                     link,
                     link.method === 'PUT' && lastUrlId,
                   );
                 }
 
                 if (link.method === 'POST') {
-                  return rawClient.post(`${url}`, bodyOrQueryString)
+                  return rawClient
+                    .post(`${url}`, body, queryString)
                     .then(response => deserialize(response));
-                } if (link.method === 'PUT') {
-                  return rawClient.put(`${url}`, bodyOrQueryString)
+                }
+                if (link.method === 'PUT') {
+                  return rawClient
+                    .put(`${url}`, body, queryString)
                     .then(response => deserialize(response));
-                } if (link.method === 'DELETE') {
-                  return rawClient.delete(url)
+                }
+                if (link.method === 'DELETE') {
+                  return rawClient
+                    .delete(url, queryString)
                     .then(response => deserialize(response));
                 }
 
@@ -129,11 +178,10 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   : false;
 
                 const request = allPages
-                  ? fetchAllPages(rawClient, url, bodyOrQueryString)
-                  : rawClient.get(url, bodyOrQueryString);
+                  ? fetchAllPages(rawClient, url, queryString)
+                  : rawClient.get(url, queryString);
 
-                return request
-                  .then(response => deserialize(response));
+                return request.then(response => deserialize(response));
               });
             };
           },
