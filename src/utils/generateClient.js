@@ -1,4 +1,3 @@
-import 'proxy-polyfill';
 import jsonref from 'json-schema-ref-parser';
 import pluralize from 'pluralize';
 import { decamelize, camelize } from 'humps';
