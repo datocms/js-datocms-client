@@ -1,5 +1,3 @@
-import 'core-js/fn/object/entries';
-import 'core-js/fn/object/values';
 import 'babel-polyfill';
 
 export { default as AccountClient } from './account/AccountClient';

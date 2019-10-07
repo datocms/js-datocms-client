@@ -26,21 +26,7 @@ export default async function command(token, wpUrl, wpUser, wpPassword) {
   const tags = await importTags(dato, wp, schema.tagId);
   const authors = await importAuthors(dato, wp, schema.authorId);
 
-  await importArticles(
-    dato,
-    wp,
-    schema,
-    media,
-    categories,
-    tags,
-    authors,
-  );
+  await importArticles(dato, wp, schema, media, categories, tags, authors);
 
-  await importPages(
-    dato,
-    wp,
-    schema,
-    media,
-    authors,
-  );
+  await importPages(dato, wp, schema, media, authors);
 }

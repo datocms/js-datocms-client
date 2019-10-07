@@ -1,4 +1,4 @@
-export default (field) => {
+export default field => {
   switch (field.type) {
     case 'Symbol':
       return 'string';

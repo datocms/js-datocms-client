@@ -4,10 +4,10 @@ const rawUploadFile = process.browser
 
 export default function uploadFile(client, source) {
   return rawUploadFile(client, source)
-    .then((attributes) => {
+    .then(attributes => {
       return client.uploads.create(attributes);
     })
-    .then((upload) => {
+    .then(upload => {
       return Promise.resolve({
         uploadId: upload.id,
         alt: null,

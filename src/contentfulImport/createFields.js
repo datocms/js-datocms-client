@@ -6,7 +6,6 @@ import datoFieldTypeFor from './datoFieldTypeFor';
 import datoLinkItemTypeFor from './datoLinkItemTypeFor';
 import delay from './delay';
 
-
 export default async ({ itemTypes, datoClient, contentfulData }) => {
   const spinner = ora('').start();
   const { contentTypes } = contentfulData;
@@ -22,7 +21,7 @@ export default async ({ itemTypes, datoClient, contentfulData }) => {
     const contentTypeApiKey = toItemApiKey(contentType.sys.id);
     fieldsMapping[contentTypeApiKey] = [];
 
-    const itemType = itemTypes.find((iT) => {
+    const itemType = itemTypes.find(iT => {
       return iT.apiKey === contentTypeApiKey;
     });
 
@@ -30,22 +29,31 @@ export default async ({ itemTypes, datoClient, contentfulData }) => {
       const position = contentType.fields.indexOf(contentfulField);
       let validators = {};
 
-      if (contentfulField.type === 'Link' && contentfulField.linkType === 'Entry') {
+      if (
+        contentfulField.type === 'Link' &&
+        contentfulField.linkType === 'Entry'
+      ) {
         validators = {
           itemItemType: {
-            itemTypes: datoLinkItemTypeFor({ itemTypes, field: contentfulField }),
+            itemTypes: datoLinkItemTypeFor({
+              itemTypes,
+              field: contentfulField,
+            }),
           },
         };
       }
 
       if (
-        contentfulField.type === 'Array'
-          && contentfulField.items.type === 'Link'
-          && contentfulField.items.linkType === 'Entry'
+        contentfulField.type === 'Array' &&
+        contentfulField.items.type === 'Link' &&
+        contentfulField.items.linkType === 'Entry'
       ) {
         validators = {
           itemsItemType: {
-            itemTypes: datoLinkItemTypeFor({ itemTypes, field: contentfulField.items }),
+            itemTypes: datoLinkItemTypeFor({
+              itemTypes,
+              field: contentfulField.items,
+            }),
           },
         };
       }
@@ -59,21 +67,31 @@ export default async ({ itemTypes, datoClient, contentfulData }) => {
         validators,
       };
 
-      if (contentfulField.id === contentType.displayField && contentfulField.type === 'Symbol') {
-        fieldAttributes.appeareance = { editor: 'single_line', parameters: { heading: true }, addons: [] };
+      if (
+        contentfulField.id === contentType.displayField &&
+        contentfulField.type === 'Symbol'
+      ) {
+        fieldAttributes.appeareance = {
+          editor: 'single_line',
+          parameters: { heading: true },
+          addons: [],
+        };
       }
 
       while (true) {
         try {
-          const datoField = await datoClient.fields.create(itemType.id, fieldAttributes);
+          const datoField = await datoClient.fields.create(
+            itemType.id,
+            fieldAttributes,
+          );
           spinner.text = progress.tick();
           fieldsMapping[contentTypeApiKey].push(datoField);
           break;
         } catch (e) {
           if (
-            !e.body
-              || !e.body.data
-              || !e.body.data.some(d => d.id === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
+            !e.body ||
+            !e.body.data ||
+            !e.body.data.some(d => d.id === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
           ) {
             spinner.fail(e);
             process.exit();

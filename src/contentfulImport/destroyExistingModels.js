@@ -7,8 +7,8 @@ export default async ({ datoClient, contentfulData }) => {
 
   const itemTypes = await datoClient.itemTypes.all();
 
-  const importedItemTypes = itemTypes.filter((itemType) => {
-    return contentfulData.contentTypes.some((contentType) => {
+  const importedItemTypes = itemTypes.filter(itemType => {
+    return contentfulData.contentTypes.some(contentType => {
       return itemType.apiKey === toItemApiKey(contentType.sys.id);
     });
   });

@@ -4,9 +4,11 @@ import denodeify from 'denodeify';
 
 const fsAppendFile = denodeify(fs.appendFile);
 
-export default function () {
+export default function() {
   return new Promise((resolve, reject) => {
-    process.stdout.write('Site token is not specified! Please paste your DatoCMS site read-only API token.\n');
+    process.stdout.write(
+      'Site token is not specified! Please paste your DatoCMS site read-only API token.\n',
+    );
 
     const rl = readline.createInterface({
       input: process.stdin,
@@ -21,7 +23,7 @@ export default function () {
       rl.prompt();
     });
 
-    rl.question('> ', (token) => {
+    rl.question('> ', token => {
       rl.close();
 
       if (token) {
@@ -32,7 +34,7 @@ export default function () {
       reject();
     });
   })
-    .then((token) => {
+    .then(token => {
       return fsAppendFile('.env', `DATO_API_TOKEN=${token}`)
         .then(() => process.stdout.write('\nToken added to .env file.\n\n'))
         .then(() => token);

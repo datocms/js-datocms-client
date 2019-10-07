@@ -22,22 +22,25 @@ function collectOperations(base, config) {
 
     createDataFile(file, format, data) {
       operations.push(() => {
-        return Promise.resolve(data)
-          .then(dr => createDataFile.bind(null, resolve(base, file), format, dr)());
+        return Promise.resolve(data).then(dr =>
+          createDataFile.bind(null, resolve(base, file), format, dr)(),
+        );
       });
     },
 
     createPost(file, format, data) {
       operations.push(() => {
-        return Promise.resolve(data)
-          .then(dr => createPost.bind(null, resolve(base, file), format, dr)());
+        return Promise.resolve(data).then(dr =>
+          createPost.bind(null, resolve(base, file), format, dr)(),
+        );
       });
     },
 
     addToDataFile(file, format, data) {
       operations.push(() => {
-        return Promise.resolve(data)
-          .then(dr => addToDataFile.bind(null, resolve(base, file), format, dr)());
+        return Promise.resolve(data).then(dr =>
+          addToDataFile.bind(null, resolve(base, file), format, dr)(),
+        );
       });
     },
   };
@@ -53,7 +56,7 @@ createDirectory = (dir, config) => {
   return () => {
     return rimraf(resolve(dir, '*'))
       .then(() => Promise.all(operations.map(o => o())))
-      .then((descriptions) => {
+      .then(descriptions => {
         const description = `Created ${relative(process.cwd(), dir)}`;
         return [].concat(description, ...descriptions);
       });
@@ -64,8 +67,9 @@ function start(path, config) {
   const operations = collectOperations(path, config);
 
   return () => {
-    return Promise.all(operations.map(o => o()))
-      .then(descriptions => [].concat(...descriptions));
+    return Promise.all(operations.map(o => o())).then(descriptions =>
+      [].concat(...descriptions),
+    );
   };
 }
 
@@ -83,23 +87,22 @@ export default function dump(
   i18n.availableLocales = itemsRepo.site.locales;
   [i18n.locale] = i18n.availableLocales;
 
-  const startOperation = start(
-    destinationPath,
-    config.bind(config, itemsRepo),
-  );
+  const startOperation = start(destinationPath, config.bind(config, itemsRepo));
 
   const spinner = ora('Writing content').start();
 
   return startOperation()
-    .then((operations) => {
+    .then(operations => {
       spinner.succeed();
       if (!quiet) {
         process.stdout.write('\n');
-        operations.forEach(operation => process.stdout.write(`* ${operation}\n`));
+        operations.forEach(operation =>
+          process.stdout.write(`* ${operation}\n`),
+        );
         process.stdout.write('\n');
       }
     })
-    .catch((e) => {
+    .catch(e => {
       spinner.fail();
       process.stderr.write(new PrettyError().render(e));
     });

@@ -1,9 +1,11 @@
 import findInfoForProperty from './findInfoForProperty';
 
-const type = (definition) => {
+const type = definition => {
   if (definition.properties && definition.properties.type) {
-    return definition.properties.type.pattern
-      .replace(new RegExp(/(^\^|\$$)/, 'g'), '');
+    return definition.properties.type.pattern.replace(
+      new RegExp(/(^\^|\$$)/, 'g'),
+      '',
+    );
   }
 
   return null;
@@ -16,20 +18,24 @@ export default function jsonSchemaRelationships(schema) {
     return [];
   }
 
-  return Object.entries(infoForProperty.properties).map(([relationship, relAttributes]) => {
-    const isCollection = relAttributes.properties.data.type === 'array';
-    const isObject = relAttributes.properties.data.type === 'object';
+  return Object.entries(infoForProperty.properties).map(
+    ([relationship, relAttributes]) => {
+      const isCollection = relAttributes.properties.data.type === 'array';
+      const isObject = relAttributes.properties.data.type === 'object';
 
-    let types;
+      let types;
 
-    if (isCollection) {
-      types = [type(relAttributes.properties.data.items)];
-    } else if (isObject) {
-      types = [type(relAttributes.properties.data)];
-    } else {
-      types = relAttributes.properties.data.anyOf.map(x => type(x)).filter(x => !!x);
-    }
+      if (isCollection) {
+        types = [type(relAttributes.properties.data.items)];
+      } else if (isObject) {
+        types = [type(relAttributes.properties.data)];
+      } else {
+        types = relAttributes.properties.data.anyOf
+          .map(x => type(x))
+          .filter(x => !!x);
+      }
 
-    return { relationship, collection: isCollection, types };
-  });
+      return { relationship, collection: isCollection, types };
+    },
+  );
 }

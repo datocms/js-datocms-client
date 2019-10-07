@@ -14,14 +14,13 @@ const builders = {
 
     if (!site.favicon) return undefined;
 
-    return [57, 60, 72, 76, 114, 120, 144, 152, 180].map(size => tag(
-      'link',
-      {
+    return [57, 60, 72, 76, 114, 120, 144, 152, 180].map(size =>
+      tag('link', {
         rel: 'apple-touch-icon',
         sizes: `${size}x${size}`,
         href: url(site.favicon, entitiesRepo, { w: size, h: size }),
-      },
-    ));
+      }),
+    );
   },
 
   windows(entitiesRepo) {
@@ -29,9 +28,12 @@ const builders = {
 
     if (!site.favicon) return undefined;
 
-    return [[70, 70], [150, 150], [310, 310], [310, 150]].map(([w, h]) => (
-      metaTag(`msapplication-square${w}x${h}`, url(site.favicon, entitiesRepo, { w, h }))
-    ));
+    return [[70, 70], [150, 150], [310, 310], [310, 150]].map(([w, h]) =>
+      metaTag(
+        `msapplication-square${w}x${h}`,
+        url(site.favicon, entitiesRepo, { w, h }),
+      ),
+    );
   },
 
   icon(entitiesRepo) {
@@ -41,15 +43,14 @@ const builders = {
 
     const upload = entitiesRepo.findEntity('upload', site.favicon);
 
-    return [16, 32, 96, 192].map(size => tag(
-      'link',
-      {
+    return [16, 32, 96, 192].map(size =>
+      tag('link', {
         rel: 'icon',
         sizes: `${size}x${size}`,
         href: url(site.favicon, entitiesRepo, { w: size, h: size }),
         type: `image/${upload.format}`,
-      },
-    ));
+      }),
+    );
   },
 
   appName(entitiesRepo) {

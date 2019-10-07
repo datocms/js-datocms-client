@@ -16,7 +16,9 @@ function uploadToS3(url, filePath) {
 }
 
 export default function nodeLocal(client, filePath) {
-  return client.uploadRequest.create({ filename: path.basename(filePath) }).then(({ id, url }) => {
-    return uploadToS3(url, filePath).then(() => ({ path: id }));
-  });
+  return client.uploadRequest
+    .create({ filename: path.basename(filePath) })
+    .then(({ id, url }) => {
+      return uploadToS3(url, filePath).then(() => ({ path: id }));
+    });
 }

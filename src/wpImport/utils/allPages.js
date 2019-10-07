@@ -3,11 +3,9 @@
 const { spin, progress } = require('../utils/progress');
 
 const allPages = async (label, requestPromise, tick = null, page = 1) => {
-  const response = await (
-    tick
-      ? tick('', requestPromise)
-      : spin(label, requestPromise)
-  );
+  const response = await (tick
+    ? tick('', requestPromise)
+    : spin(label, requestPromise));
 
   if (!response._paging || response._paging.totalPages <= page) {
     return response;

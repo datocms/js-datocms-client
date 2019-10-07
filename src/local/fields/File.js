@@ -2,10 +2,7 @@ import buildFileUrl from '../../utils/buildFileUrl';
 import i18n from '../../utils/i18n';
 
 export default class File {
-  constructor(value, {
-    itemsRepo,
-    imgixHost,
-  }) {
+  constructor(value, { itemsRepo, imgixHost }) {
     this.value = value;
     this.imgixHost = imgixHost;
     this.itemsRepo = itemsRepo;
@@ -45,13 +42,13 @@ export default class File {
   }
 
   get alt() {
-    return this.value.alt
-      || this.upload.defaultFieldMetadata[i18n.locale].alt;
+    return this.value.alt || this.upload.defaultFieldMetadata[i18n.locale].alt;
   }
 
   get title() {
-    return this.value.title
-      || this.upload.defaultFieldMetadata[i18n.locale].title;
+    return (
+      this.value.title || this.upload.defaultFieldMetadata[i18n.locale].title
+    );
   }
 
   get customData() {

@@ -1,9 +1,7 @@
 import ora from 'ora';
 import Progress from './progress';
 
-export default async ({
-  recordIds, datoClient,
-}) => {
+export default async ({ recordIds, datoClient }) => {
   const spinner = ora('').start();
   const progress = new Progress(recordIds.length, 'Publishing records');
 

@@ -18,48 +18,30 @@ export default class Client {
   }
 
   get(url, params = {}, options = {}) {
-    return this.request(
-      this.buildUrl(url, params),
-      options,
-    );
+    return this.request(this.buildUrl(url, params), options);
   }
 
   put(url, body, params = {}, options = {}) {
-    return this.request(
-      this.buildUrl(url, params),
-      Object.assign(
-        {
-          method: 'PUT',
-          body: JSON.stringify(body, undefinedToNull),
-        },
-        options,
-      ),
-    );
+    return this.request(this.buildUrl(url, params), {
+      method: 'PUT',
+      body: JSON.stringify(body, undefinedToNull),
+      ...options,
+    });
   }
 
   post(url, body, params = {}, options = {}) {
-    return this.request(
-      this.buildUrl(url, params),
-      Object.assign(
-        {
-          method: 'POST',
-          body: JSON.stringify(body, undefinedToNull),
-        },
-        options,
-      ),
-    );
+    return this.request(this.buildUrl(url, params), {
+      method: 'POST',
+      body: JSON.stringify(body, undefinedToNull),
+      ...options,
+    });
   }
 
   delete(url, params = {}, options = {}) {
-    return this.request(
-      this.buildUrl(url, params),
-      Object.assign(
-        {
-          method: 'DELETE',
-        },
-        options,
-      ),
-    );
+    return this.request(this.buildUrl(url, params), {
+      method: 'DELETE',
+      ...options,
+    });
   }
 
   defaultHeaders() {
@@ -73,59 +55,53 @@ export default class Client {
   }
 
   buildUrl(path, params = {}) {
-    const query = Object.keys(params).length
-      ? `?${queryString(params)}`
-      : '';
+    const query = Object.keys(params).length ? `?${queryString(params)}` : '';
     return `${this.baseUrl}${path}${query}`;
   }
 
   request(url, options = {}) {
-    const fullHeaders = Object.assign(
-      {},
-      this.defaultHeaders(),
-      this.extraHeaders,
-      options.headers,
-    );
+    const fullHeaders = {
+      ...this.defaultHeaders(),
+      ...this.extraHeaders,
+      ...options.headers,
+    };
 
-    const fullOptions = Object.assign(
-      {},
-      options,
-      { headers: fullHeaders },
-    );
+    const fullOptions = { ...options, headers: fullHeaders };
 
     // console.log('---->', url, fullOptions);
 
-    return fetch(url, fullOptions)
-      .then((res) => {
-        if (res.status === 429) {
-          const waitTime = res.headers.get('X-RateLimit-Reset') || '10';
-          console.log(`Rate limit exceeded, waiting ${waitTime} seconds...`);
-          return wait(parseInt(waitTime, 10) * 1000).then(() => {
-            return this.request(url, options);
-          });
-        }
+    return fetch(url, fullOptions).then(res => {
+      if (res.status === 429) {
+        const waitTime = res.headers.get('X-RateLimit-Reset') || '10';
+        console.log(`Rate limit exceeded, waiting ${waitTime} seconds...`);
+        return wait(parseInt(waitTime, 10) * 1000).then(() => {
+          return this.request(url, options);
+        });
+      }
 
-        return (res.status !== 204 ? res.json() : Promise.resolve(null))
-          .then((body) => {
-            if (res.status >= 200 && res.status < 300) {
-              // console.log('<----', JSON.stringify(body));
-              return Promise.resolve(body);
-            }
-            return Promise.reject(new ApiException(res, body));
-          })
-          .catch((error) => {
-            if (
-              error
-                && error.body
-                && error.body.data
-                && error.body.data.some(e => e.attributes.code === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
-            ) {
-              return wait(1000).then(() => {
-                return this.request(url, options);
-              });
-            }
-            throw error;
-          });
-      });
+      return (res.status !== 204 ? res.json() : Promise.resolve(null))
+        .then(body => {
+          if (res.status >= 200 && res.status < 300) {
+            // console.log('<----', JSON.stringify(body));
+            return Promise.resolve(body);
+          }
+          return Promise.reject(new ApiException(res, body));
+        })
+        .catch(error => {
+          if (
+            error &&
+            error.body &&
+            error.body.data &&
+            error.body.data.some(
+              e => e.attributes.code === 'BATCH_DATA_VALIDATION_IN_PROGRESS',
+            )
+          ) {
+            return wait(1000).then(() => {
+              return this.request(url, options);
+            });
+          }
+          throw error;
+        });
+    });
   }
 }

@@ -9,7 +9,7 @@ import requireToken from './requireToken';
 import Loader from '../local/Loader';
 import ItemsRepo from '../local/ItemsRepo';
 
-export default async function (options) {
+export default async function(options) {
   const configFile = path.resolve(options['--config'] || 'dato.config.js');
   const tokenOption = options['--token'] || process.env.DATO_API_TOKEN;
   const watch = options['--watch'];
@@ -44,8 +44,10 @@ export default async function (options) {
     await dump(configFile, new ItemsRepo(loader.entitiesRepo), quiet);
 
     if (watch) {
-      const unwatch = loader.watch(async (promise) => {
-        const watchSpinner = ora('Detected change in content, loading new data').start();
+      const unwatch = loader.watch(async promise => {
+        const watchSpinner = ora(
+          'Detected change in content, loading new data',
+        ).start();
         await promise;
         watchSpinner.succeed();
         return dump(configFile, new ItemsRepo(loader.entitiesRepo), quiet);
@@ -56,11 +58,10 @@ export default async function (options) {
         process.exit();
       });
 
-      chokidar.watch(configFile)
-        .on('change', () => {
-          process.stdout.write('Detected change to config file!');
-          return dump(configFile, loader.itemsRepo, quiet);
-        });
+      chokidar.watch(configFile).on('change', () => {
+        process.stdout.write('Detected change to config file!');
+        return dump(configFile, loader.itemsRepo, quiet);
+      });
     }
   } catch (e) {
     process.stderr.write(e.message);

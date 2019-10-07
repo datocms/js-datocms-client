@@ -82,6 +82,12 @@ export default class Site {
 
   readAttribute(attribute, TypeKlass, localized) {
     const value = localizedRead(this.entity, attribute, localized, i18n);
-    return value && new TypeKlass(value, { imgixHost: this.imgixHost, itemsRepo: this.itemsRepo });
+    return (
+      value &&
+      new TypeKlass(value, {
+        imgixHost: this.imgixHost,
+        itemsRepo: this.itemsRepo,
+      })
+    );
   }
 }

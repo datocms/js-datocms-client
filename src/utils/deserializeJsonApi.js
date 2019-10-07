@@ -8,7 +8,10 @@ const findKey = (jsonApiKey, schema) => {
   const info = findInfoForProperty(jsonApiKey, schema);
 
   if (info && info.properties) {
-    return Object.entries(info.properties).map(([key, details]) => ({ key, details }));
+    return Object.entries(info.properties).map(([key, details]) => ({
+      key,
+      details,
+    }));
   }
 
   return [];
@@ -17,19 +20,25 @@ const findKey = (jsonApiKey, schema) => {
 const findAttributes = findKey.bind(null, 'attributes');
 const findMeta = findKey.bind(null, 'meta');
 
-function deserialize(type, relationshipsMeta, schema, {
-  id, attributes, meta, relationships,
-}) {
+function deserialize(
+  type,
+  relationshipsMeta,
+  schema,
+  { id, attributes, meta, relationships },
+) {
   const result = { id };
 
-  const attrs = type === 'item' && attributes
-    ? Object.keys(attributes).map(key => ({ key, details: null }))
-    : findAttributes(schema);
+  const attrs =
+    type === 'item' && attributes
+      ? Object.keys(attributes).map(key => ({ key, details: null }))
+      : findAttributes(schema);
 
   attrs.forEach(({ key, details }) => {
     if (hasKey(attributes, key)) {
-      result[camelize(key)] = details && details.keepOriginalCaseOnKeys
-        ? attributes[key] : camelizeKeys(attributes[key]);
+      result[camelize(key)] =
+        details && details.keepOriginalCaseOnKeys
+          ? attributes[key]
+          : camelizeKeys(attributes[key]);
     }
   });
 
@@ -37,8 +46,10 @@ function deserialize(type, relationshipsMeta, schema, {
     result.meta = {};
     findMeta(schema).forEach(({ key, details }) => {
       if (hasKey(meta, key)) {
-        result.meta[camelize(key)] = details && details.keepOriginalCaseOnKeys
-          ? meta[key] : camelizeKeys(meta[key]);
+        result.meta[camelize(key)] =
+          details && details.keepOriginalCaseOnKeys
+            ? meta[key]
+            : camelizeKeys(meta[key]);
       }
     });
   }
@@ -77,7 +88,9 @@ export default function deserializeJsonApi(type, targetSchema, json) {
   const { data } = json;
 
   if (Array.isArray(data)) {
-    return data.map(item => deserialize(type, relationshipsMeta, targetSchema, item));
+    return data.map(item =>
+      deserialize(type, relationshipsMeta, targetSchema, item),
+    );
   }
 
   return deserialize(type, relationshipsMeta, targetSchema, data);

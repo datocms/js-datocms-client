@@ -26,8 +26,9 @@ export default class Theme {
   get logo() {
     const { imgixHost, itemsRepo } = this;
 
-    return this.value.logo
-      && new UploadId(this.value.logo, { itemsRepo, imgixHost });
+    return (
+      this.value.logo && new UploadId(this.value.logo, { itemsRepo, imgixHost })
+    );
   }
 
   toMap() {

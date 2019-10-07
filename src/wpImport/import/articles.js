@@ -3,7 +3,15 @@ import allPages from '../utils/allPages';
 
 const { progress } = require('../utils/progress');
 
-export default async function articles(dato, wp, schema, media, categories, tags, authors) {
+export default async function articles(
+  dato,
+  wp,
+  schema,
+  media,
+  categories,
+  tags,
+  authors,
+) {
   const resources = await allPages('Fetching articles', wp.posts());
 
   const tick = progress('Creating articles', resources.length);
@@ -17,14 +25,14 @@ export default async function articles(dato, wp, schema, media, categories, tags
         itemType: schema.articleId,
         title: article.title.rendered,
         slug: article.slug,
-        content: Object.entries(media.urls)
-          .reduce((acc, [k, v]) => (
-            acc.replace(new RegExp(convertToRegExp(k), 'ig'), v)
-          ), article.content.rendered),
-        excerpt: Object.entries(media.urls)
-          .reduce((acc, [k, v]) => (
-            acc.replace(new RegExp(convertToRegExp(k), 'ig'), v)
-          ), article.excerpt.rendered),
+        content: Object.entries(media.urls).reduce(
+          (acc, [k, v]) => acc.replace(new RegExp(convertToRegExp(k), 'ig'), v),
+          article.content.rendered,
+        ),
+        excerpt: Object.entries(media.urls).reduce(
+          (acc, [k, v]) => acc.replace(new RegExp(convertToRegExp(k), 'ig'), v),
+          article.excerpt.rendered,
+        ),
         date: article.date,
         author: authors[article.author],
         categories: newCategories,

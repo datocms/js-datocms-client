@@ -17,21 +17,24 @@ export default function nodeUrl(client, fileUrl) {
         maxRedirects: 10,
         responseType: 'arraybuffer',
       })
-        .then((response) => {
+        .then(response => {
           const { pathname } = url.parse(fileUrl);
           const filePath = path.join(dir, path.basename(pathname));
           fs.writeFileSync(filePath, Buffer.from(response.data));
 
-          return local(client, filePath)
-            .then((result) => {
-              fs.unlinkSync(filePath);
-              cleanupCallback();
-              resolve(result);
-            });
+          return local(client, filePath).then(result => {
+            fs.unlinkSync(filePath);
+            cleanupCallback();
+            resolve(result);
+          });
         })
-        .catch((error) => {
+        .catch(error => {
           if (error.response) {
-            reject(new Error(`Invalid status code for ${fileUrl}: ${error.response.status}`));
+            reject(
+              new Error(
+                `Invalid status code for ${fileUrl}: ${error.response.status}`,
+              ),
+            );
           } else {
             reject(error);
           }

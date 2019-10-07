@@ -2,7 +2,7 @@ export default function ApiException(response, body) {
   if ('captureStackTrace' in Error) {
     Error.captureStackTrace(this, ApiException);
   } else {
-    this.stack = (new Error()).stack;
+    this.stack = new Error().stack;
   }
 
   if (response) {

@@ -3,7 +3,7 @@ import readFile from './readFile';
 import serializeData from './serializeData';
 
 export default async function addToDataFile(file, format, data) {
-  const oldContent = await readFile(file) || '';
+  const oldContent = (await readFile(file)) || '';
   const contentToAdd = serializeData(format, data);
 
   const newContent = oldContent.replace(

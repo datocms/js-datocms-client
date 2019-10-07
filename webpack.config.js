@@ -31,8 +31,9 @@ const config = {
     libraryTarget: 'umd',
     umdNamedDefine: true,
   },
-  devtool: 'source-map',
-  optimization: { minimize: true },
+  devtool: process.env.NODE_ENV === 'production'
+    ? 'source-map'
+    : 'cheap-eval-source-map',
   resolve: {
     alias: {
       'js-yaml$': path.resolve(__dirname, 'src/utils/nop.js'),

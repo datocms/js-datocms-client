@@ -8,19 +8,38 @@ const ogTag = (property, content) => tag('meta', { property, content });
 const cardTag = (name, content) => tag('meta', { name, content });
 const contentTag = (tagName, content) => ({ tagName, content });
 
-function seoAttributeWithFallback(attribute, alternative, itemEntity, entitiesRepo, i18n) {
+function seoAttributeWithFallback(
+  attribute,
+  alternative,
+  itemEntity,
+  entitiesRepo,
+  i18n,
+) {
   const { site } = entitiesRepo;
 
-  const seoField = itemEntity && itemEntity.itemType.fields.find(f => f.fieldType === 'seo');
+  const seoField =
+    itemEntity && itemEntity.itemType.fields.find(f => f.fieldType === 'seo');
 
-  const itemSeoValue = seoField
-    && localizedRead(itemEntity, camelize(seoField.apiKey), seoField.localized, i18n)
-    && localizedRead(itemEntity, camelize(seoField.apiKey), seoField.localized, i18n)[attribute];
+  const itemSeoValue =
+    seoField &&
+    localizedRead(
+      itemEntity,
+      camelize(seoField.apiKey),
+      seoField.localized,
+      i18n,
+    ) &&
+    localizedRead(
+      itemEntity,
+      camelize(seoField.apiKey),
+      seoField.localized,
+      i18n,
+    )[attribute];
 
   const multiLocaleSite = site.locales.length > 1;
 
-  const fallbackSeo = localizedRead(site, 'globalSeo', multiLocaleSite, i18n)
-    && localizedRead(site, 'globalSeo', multiLocaleSite, i18n).fallbackSeo;
+  const fallbackSeo =
+    localizedRead(site, 'globalSeo', multiLocaleSite, i18n) &&
+    localizedRead(site, 'globalSeo', multiLocaleSite, i18n).fallbackSeo;
 
   const fallbackSeoValue = fallbackSeo && fallbackSeo[attribute];
 
@@ -35,25 +54,28 @@ export const builders = {
 
     const title = seoAttributeWithFallback(
       'title',
-      titleField
-        && localizedRead(
+      titleField &&
+        localizedRead(
           itemEntity,
           camelize(titleField.apiKey),
           titleField.localized,
           i18n,
         ),
-      itemEntity, entitiesRepo, i18n,
+      itemEntity,
+      entitiesRepo,
+      i18n,
     );
-
 
     if (title) {
       const multiLocaleSite = site.locales.length > 1;
-      const suffix = (localizedRead(site, 'globalSeo', multiLocaleSite, i18n)
-        && localizedRead(site, 'globalSeo', multiLocaleSite, i18n).titleSuffix) || '';
+      const suffix =
+        (localizedRead(site, 'globalSeo', multiLocaleSite, i18n) &&
+          localizedRead(site, 'globalSeo', multiLocaleSite, i18n)
+            .titleSuffix) ||
+        '';
 
-      const titleWithSuffix = (title + suffix).length <= 60
-        ? title + suffix
-        : title;
+      const titleWithSuffix =
+        (title + suffix).length <= 60 ? title + suffix : title;
 
       return [
         contentTag('title', titleWithSuffix),
@@ -69,7 +91,9 @@ export const builders = {
     const description = seoAttributeWithFallback(
       'description',
       null,
-      itemEntity, entitiesRepo, i18n,
+      itemEntity,
+      entitiesRepo,
+      i18n,
     );
 
     if (description) {
@@ -103,7 +127,9 @@ export const builders = {
     const card = seoAttributeWithFallback(
       'twitterCard',
       null,
-      itemEntity, entitiesRepo, i18n,
+      itemEntity,
+      entitiesRepo,
+      i18n,
     );
 
     return cardTag('twitter:card', card || 'summary');
@@ -169,18 +195,28 @@ export const builders = {
   },
 
   image(itemEntity, entitiesRepo, i18n) {
-    const itemImage = itemEntity && itemEntity.itemType.fields
-      .filter(f => f.fieldType === 'file')
-      .map(field => (
-        localizedRead(itemEntity, camelize(field.apiKey), field.localized, i18n)
-      ))
-      .filter(id => !!id)
-      .map(id => entitiesRepo.findEntity('upload', id))
-      .find(image => (
-        image
-            && image.width && image.height
-            && image.width >= 200 && image.height >= 200
-      ));
+    const itemImage =
+      itemEntity &&
+      itemEntity.itemType.fields
+        .filter(f => f.fieldType === 'file')
+        .map(field =>
+          localizedRead(
+            itemEntity,
+            camelize(field.apiKey),
+            field.localized,
+            i18n,
+          ),
+        )
+        .filter(id => !!id)
+        .map(id => entitiesRepo.findEntity('upload', id))
+        .find(
+          image =>
+            image &&
+            image.width &&
+            image.height &&
+            image.width >= 200 &&
+            image.height >= 200,
+        );
 
     const itemImageId = itemImage && itemImage.id;
 
@@ -196,10 +232,7 @@ export const builders = {
       const upload = entitiesRepo.findEntity('upload', imageId);
       const url = buildFileUrl(upload, entitiesRepo);
 
-      return [
-        ogTag('og:image', url),
-        cardTag('twitter:image', url),
-      ];
+      return [ogTag('og:image', url), cardTag('twitter:image', url)];
     }
 
     return undefined;

@@ -7,10 +7,18 @@ export default async function text(itemType, dato, apiKey) {
     appeareance: {
       editor: 'wysiwyg',
       parameters: {
-        toolbar:
-        [
-          'format', 'bold', 'italic', 'strikethrough', 'ordered_list',
-          'unordered_list', 'quote', 'table', 'link', 'image', 'show_source',
+        toolbar: [
+          'format',
+          'bold',
+          'italic',
+          'strikethrough',
+          'ordered_list',
+          'unordered_list',
+          'quote',
+          'table',
+          'link',
+          'image',
+          'show_source',
         ],
       },
       addons: [],

@@ -5,7 +5,9 @@ export default function buildFileUrl(uploadEntity, entitiesRepo, params = {}) {
     return null;
   }
 
-  const { site: { imgixHost } } = entitiesRepo;
+  const {
+    site: { imgixHost },
+  } = entitiesRepo;
   const { path } = uploadEntity;
 
   if (params && Object.keys(params).length > 0) {

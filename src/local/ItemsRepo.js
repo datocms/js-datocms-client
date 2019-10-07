@@ -8,12 +8,12 @@ function buildCollectionsByType(repo, itemTypeMethods) {
   const itemsById = {};
   const itemsByParentId = {};
 
-  repo.itemTypes.forEach((itemType) => {
+  repo.itemTypes.forEach(itemType => {
     const method = itemTypeMethods[itemType.apiKey];
     collectionsByType[method] = itemType.singleton ? null : [];
   });
 
-  repo.entitiesRepo.findEntitiesOfType('item').forEach((entity) => {
+  repo.entitiesRepo.findEntitiesOfType('item').forEach(entity => {
     const item = new Item(entity, repo);
     const method = itemTypeMethods[entity.itemType.apiKey];
 
@@ -29,21 +29,23 @@ function buildCollectionsByType(repo, itemTypeMethods) {
     }
   });
 
-  repo.itemTypes.forEach((itemType) => {
+  repo.itemTypes.forEach(itemType => {
     const method = itemTypeMethods[itemType.apiKey];
 
     if (!itemType.singleton && itemType.sortable) {
-      collectionsByType[method] = collectionsByType[method]
-        .sort((a, b) => a.position - b.position);
+      collectionsByType[method] = collectionsByType[method].sort(
+        (a, b) => a.position - b.position,
+      );
     } else if (itemType.orderingField) {
       const field = camelize(itemType.orderingField.apiKey);
       const direction = itemType.orderingDirection === 'asc' ? 1 : -1;
-      collectionsByType[method] = collectionsByType[method]
-        .sort((a, b) => (a[field] - b[field]) * direction);
+      collectionsByType[method] = collectionsByType[method].sort(
+        (a, b) => (a[field] - b[field]) * direction,
+      );
     }
   });
 
-  repo.itemTypes.forEach((itemType) => {
+  repo.itemTypes.forEach(itemType => {
     const method = itemTypeMethods[itemType.apiKey];
 
     if (itemType.singleton && itemType.singletonItem) {
@@ -61,7 +63,7 @@ function buildItemTypeMethods(repo) {
   const collectionKeys = repo.collectionItemTypes.map(t => pluralize(t.apiKey));
   const clashingKeys = singletonKeys.filter(k => collectionKeys.includes(k));
 
-  repo.itemTypes.forEach((itemType) => {
+  repo.itemTypes.forEach(itemType => {
     const { singleton, modularBlock } = itemType;
 
     if (modularBlock) {
@@ -115,7 +117,7 @@ export default class ItemsRepo {
     this.itemsByParentId = itemsByParentId;
     this.itemTypeMethods = itemTypeMethods;
 
-    Object.values(itemTypeMethods).forEach((method) => {
+    Object.values(itemTypeMethods).forEach(method => {
       Object.defineProperty(this, method, {
         get() {
           return collectionsByType[method];
@@ -137,8 +139,7 @@ export default class ItemsRepo {
   }
 
   get collectionItemTypes() {
-    return this.itemTypes
-      .filter(t => !t.singleton && !t.modularBlock);
+    return this.itemTypes.filter(t => !t.singleton && !t.modularBlock);
   }
 
   find(id) {

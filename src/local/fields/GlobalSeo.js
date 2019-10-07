@@ -29,8 +29,10 @@ export default class GlobalSeo {
 
   get fallbackSeo() {
     const { imgixHost, itemsRepo } = this;
-    return this.value.fallbackSeo
-      && new Seo(this.value.fallbackSeo, { imgixHost, itemsRepo });
+    return (
+      this.value.fallbackSeo &&
+      new Seo(this.value.fallbackSeo, { imgixHost, itemsRepo })
+    );
   }
 
   toMap() {

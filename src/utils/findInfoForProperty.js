@@ -16,9 +16,9 @@ export default function findInfoForProperty(propertyName, schema) {
   }
 
   if (schema.properties.data.anyOf) {
-    const subSchema = schema.properties.data.anyOf.find(x => (
-      x.definitions.type.example !== 'job'
-    ));
+    const subSchema = schema.properties.data.anyOf.find(
+      x => x.definitions.type.example !== 'job',
+    );
 
     return subSchema.properties[propertyName];
   }

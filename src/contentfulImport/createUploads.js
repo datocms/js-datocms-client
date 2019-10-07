@@ -37,11 +37,13 @@ export default async ({
         spinner.text = progress.tick();
       } catch (e) {
         if (
-          e.body
-            && e.body.data
-            && e.body.data.some(d => d.id === 'FILE_STORAGE_QUOTA_EXCEEDED')
+          e.body &&
+          e.body.data &&
+          e.body.data.some(d => d.id === 'FILE_STORAGE_QUOTA_EXCEEDED')
         ) {
-          spinner.fail('You\'ve reached your site\'s plan storage limit: upgrade to complete the import');
+          spinner.fail(
+            "You've reached your site's plan storage limit: upgrade to complete the import",
+          );
         } else {
           spinner.fail(e);
         }
@@ -67,33 +69,46 @@ export default async ({
         const contentTypeApiKey = toItemApiKey(entry.sys.contentType.sys.id);
         const apiKey = toFieldApiKey(key);
 
-        const field = fieldsMapping[contentTypeApiKey].find(f => f.apiKey === apiKey);
+        const field = fieldsMapping[contentTypeApiKey].find(
+          f => f.apiKey === apiKey,
+        );
 
         let uploadedFile = null;
 
         if (field.fieldType === 'file' || field.fieldType === 'gallery') {
           if (field.localized) {
-            const localizedValue = Object.keys(entryFieldValue)
-              .reduce((innerAcc, locale) => {
+            const localizedValue = Object.keys(entryFieldValue).reduce(
+              (innerAcc, locale) => {
                 const innerValue = entryFieldValue[locale];
                 if (field.fieldType === 'file') {
-                  return Object.assign(
-                    innerAcc, { [locale.slice(0, 2)]: contentfulAssetsMap[innerValue.sys.id] },
-                  );
+                  return Object.assign(innerAcc, {
+                    [locale.slice(0, 2)]: contentfulAssetsMap[
+                      innerValue.sys.id
+                    ],
+                  });
                 }
                 return Object.assign(innerAcc, {
-                  [locale.slice(0, 2)]: innerValue.map(link => contentfulAssetsMap[link.sys.id]),
+                  [locale.slice(0, 2)]: innerValue.map(
+                    link => contentfulAssetsMap[link.sys.id],
+                  ),
                 });
-              }, {});
-            const fallbackValues = contentfulData.locales.reduce((innerAcc, locale) => {
-              return Object.assign(
-                innerAcc, { [locale.slice(0, 2)]: localizedValue[defaultLocale.slice(0, 2)] },
-              );
-            }, {});
-
-            recordAttributes = Object.assign(
-              recordAttributes, { [camelize(apiKey)]: { ...fallbackValues, ...localizedValue } },
+              },
+              {},
             );
+            const fallbackValues = contentfulData.locales.reduce(
+              (innerAcc, locale) => {
+                return Object.assign(innerAcc, {
+                  [locale.slice(0, 2)]: localizedValue[
+                    defaultLocale.slice(0, 2)
+                  ],
+                });
+              },
+              {},
+            );
+
+            recordAttributes = Object.assign(recordAttributes, {
+              [camelize(apiKey)]: { ...fallbackValues, ...localizedValue },
+            });
           } else {
             const innerValue = entryFieldValue[defaultLocale];
 
@@ -102,7 +117,7 @@ export default async ({
                 uploadedFile = contentfulAssetsMap[innerValue.sys.id];
                 break;
               case 'gallery':
-                uploadedFile = innerValue.map((link) => {
+                uploadedFile = innerValue.map(link => {
                   return contentfulAssetsMap[link.sys.id];
                 });
                 break;

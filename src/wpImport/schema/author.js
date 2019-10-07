@@ -11,7 +11,12 @@ export default async function author(dato) {
   await createTitleSlugField(itemType, dato, 'name');
 
   const authorsFields = [
-    'username', 'first_name', 'last_name', 'email', 'url', 'nickname',
+    'username',
+    'first_name',
+    'last_name',
+    'email',
+    'url',
+    'nickname',
   ];
 
   for (const apiKey of authorsFields) {

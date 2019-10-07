@@ -122,14 +122,18 @@ const datoValidatorsForAsset = ({ field }) => {
 
   for (const validation of field.validations) {
     if (Object.prototype.hasOwnProperty.call(validation, 'assetFileSize')) {
-      if (Object.prototype.hasOwnProperty.call(validation.assetFileSize, 'min')) {
+      if (
+        Object.prototype.hasOwnProperty.call(validation.assetFileSize, 'min')
+      ) {
         validators.file_size = {
           ...validators.file_size,
           min_value: validation.assetFileSize.min,
           min_unit: 'B',
         };
       }
-      if (Object.prototype.hasOwnProperty.call(validation.assetFileSize, 'max')) {
+      if (
+        Object.prototype.hasOwnProperty.call(validation.assetFileSize, 'max')
+      ) {
         validators.file_size = {
           ...validators.file_size,
           max_value: validation.assetFileSize.max,

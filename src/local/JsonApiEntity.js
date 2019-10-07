@@ -6,7 +6,10 @@ export default class JsonApiEntity {
     this.repo = repo;
 
     Object.entries(payload.attributes || {}).forEach(([name, value]) => {
-      Object.defineProperty(this, camelize(name), { enumerable: true, value: camelizeKeys(value) });
+      Object.defineProperty(this, camelize(name), {
+        enumerable: true,
+        value: camelizeKeys(value),
+      });
     });
 
     Object.entries(payload.relationships || {}).forEach(([name, value]) => {
@@ -17,7 +20,8 @@ export default class JsonApiEntity {
 
           if (Array.isArray(linkage)) {
             return linkage.map(item => repo.findEntity(item.type, item.id));
-          } if (linkage) {
+          }
+          if (linkage) {
             return repo.findEntity(linkage.type, linkage.id);
           }
 

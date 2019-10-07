@@ -14,14 +14,14 @@ export default async function pages(dato, wp, schema, media, authors) {
         itemType: schema.pageId,
         title: page.title.rendered,
         slug: page.slug,
-        content: Object.entries(media.urls)
-          .reduce((acc, [k, v]) => (
-            acc.replace(new RegExp(convertToRegExp(k), 'ig'), v)
-          ), page.content.rendered),
-        excerpt: Object.entries(media.urls)
-          .reduce((acc, [k, v]) => (
-            acc.replace(new RegExp(convertToRegExp(k), 'ig'), v)
-          ), page.excerpt.rendered),
+        content: Object.entries(media.urls).reduce(
+          (acc, [k, v]) => acc.replace(new RegExp(convertToRegExp(k), 'ig'), v),
+          page.content.rendered,
+        ),
+        excerpt: Object.entries(media.urls).reduce(
+          (acc, [k, v]) => acc.replace(new RegExp(convertToRegExp(k), 'ig'), v),
+          page.excerpt.rendered,
+        ),
         date: page.date,
         author: authors[page.author],
         featuredMedia: media.ids[page.featured_media],

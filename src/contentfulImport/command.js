@@ -12,10 +12,22 @@ import linkRecords from './linkRecords';
 import createUploads from './createUploads';
 import publishRecords from './publishRecords';
 
-export default async (contentfulToken, contentfulSpaceId, datoCmsToken, skipContent) => {
-  const client = await appClient(contentfulToken, contentfulSpaceId, datoCmsToken);
+export default async (
+  contentfulToken,
+  contentfulSpaceId,
+  datoCmsToken,
+  skipContent,
+) => {
+  const client = await appClient(
+    contentfulToken,
+    contentfulSpaceId,
+    datoCmsToken,
+  );
   const datoClient = client.dato;
-  const contentfulData = await getContentfulData(client.contentful, skipContent);
+  const contentfulData = await getContentfulData(
+    client.contentful,
+    skipContent,
+  );
 
   await removeAllValidators({ datoClient, contentfulData });
 
@@ -27,7 +39,11 @@ export default async (contentfulToken, contentfulSpaceId, datoCmsToken, skipCont
 
   const itemTypes = await createModels({ datoClient, contentfulData });
 
-  const fieldsMapping = await createFields({ itemTypes, datoClient, contentfulData });
+  const fieldsMapping = await createFields({
+    itemTypes,
+    datoClient,
+    contentfulData,
+  });
 
   if (!skipContent) {
     const { contentfulRecordMap, recordsToPublish } = await createRecords({
@@ -69,6 +85,9 @@ export default async (contentfulToken, contentfulSpaceId, datoCmsToken, skipCont
   }
 
   await addValidationsOnField({
-    itemTypes, fieldsMapping, datoClient, contentfulData,
+    itemTypes,
+    fieldsMapping,
+    datoClient,
+    contentfulData,
   });
 };

@@ -20,8 +20,8 @@ export function progress(label, max) {
   let i = 0;
 
   const tick = async (info, promise) => {
-    const newInfo = info.length > 0
-      ? colors.grey(` — ${truncate(info, 25)}`) : info;
+    const newInfo =
+      info.length > 0 ? colors.grey(` — ${truncate(info, 25)}`) : info;
 
     spinner.text = `${label} (${i}/${max}) ${prog.update(i, max)} ${newInfo}`;
 

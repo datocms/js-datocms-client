@@ -43,8 +43,8 @@ export default class EntitiesRepo {
   upsertEntities(...payloads) {
     const entities = [];
 
-    payloads.forEach((payload) => {
-      payloadEntities(payload).forEach((entityPayload) => {
+    payloads.forEach(payload => {
+      payloadEntities(payload).forEach(entityPayload => {
         const entity = new JsonApiEntity(entityPayload, this);
         entities.push(entity);
         this.entities[entity.type] = this.entities[entity.type] || {};
@@ -58,7 +58,7 @@ export default class EntitiesRepo {
   destroyEntities(type, ids) {
     const entities = [];
 
-    ids.forEach((id) => {
+    ids.forEach(id => {
       if (this.entities[type] && this.entities[type][id]) {
         entities.push(this.entities[type][id]);
         delete this.entities[type][id];

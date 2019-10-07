@@ -23,6 +23,10 @@ export default async function createSchema(dato) {
   );
 
   return {
-    authorId, categoryId, tagId, articleId, pageId,
+    authorId,
+    categoryId,
+    tagId,
+    articleId,
+    pageId,
   };
 }

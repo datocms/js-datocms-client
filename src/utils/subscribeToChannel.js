@@ -4,7 +4,7 @@ const PUSHER_API_KEY = '75e6ef0fe5d39f481626';
 
 let subscribeToChannelPromise;
 
-module.exports = function subscribeToChannel(client, siteId) {
+export default function subscribeToChannel(client, siteId) {
   if (subscribeToChannelPromise) {
     return subscribeToChannelPromise;
   }
@@ -12,7 +12,7 @@ module.exports = function subscribeToChannel(client, siteId) {
   subscribeToChannelPromise = (siteId
     ? Promise.resolve(siteId)
     : client.site.find().then(site => site.id)
-  ).then((realSiteId) => {
+  ).then(realSiteId => {
     return new Promise((resolve, reject) => {
       const pusher = new Pusher(PUSHER_API_KEY, {
         authEndpoint: `${client.rawClient.baseUrl}/pusher/authenticate`,
@@ -44,4 +44,4 @@ module.exports = function subscribeToChannel(client, siteId) {
   });
 
   return subscribeToChannelPromise;
-};
+}

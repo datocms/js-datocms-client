@@ -43,5 +43,10 @@ if (options.dump) {
     '--skipContent': skipContent,
   } = options;
 
-  contentfulImport(contentfulToken, contentfulSpaceId, datoCmsToken, skipContent);
+  contentfulImport(
+    contentfulToken,
+    contentfulSpaceId,
+    datoCmsToken,
+    skipContent,
+  );
 }

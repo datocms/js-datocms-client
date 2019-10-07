@@ -7,7 +7,10 @@ import datoFieldValidatorsFor from './datoFieldValidatorsFor';
 import delay from './delay';
 
 export default async ({
-  itemTypes, fieldsMapping, datoClient, contentfulData,
+  itemTypes,
+  fieldsMapping,
+  datoClient,
+  contentfulData,
 }) => {
   const spinner = ora('').start();
   const { contentTypes } = contentfulData;
@@ -39,9 +42,9 @@ export default async ({
           break;
         } catch (e) {
           if (
-            !e.body
-              || !e.body.data
-              || !e.body.data.some(d => d.id === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
+            !e.body ||
+            !e.body.data ||
+            !e.body.data.some(d => d.id === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
           ) {
             spinner.fail(e);
             process.exit();

@@ -13,14 +13,12 @@ function fileExists(filePath) {
 }
 
 function detectRubyGenerator(dir) {
-  const rubyGenerators = [
-    'middleman',
-    'jekyll',
-    'nanoc',
-  ];
+  const rubyGenerators = ['middleman', 'jekyll', 'nanoc'];
 
   const gemfilePath = path.join(dir, 'Gemfile');
-  if (!fileExists(gemfilePath)) { return undefined; }
+  if (!fileExists(gemfilePath)) {
+    return undefined;
+  }
 
   const gemfile = fs.readFileSync(gemfilePath, 'utf8');
 
@@ -45,7 +43,9 @@ function detectNodeGenerator(dir) {
   ];
 
   const pkgPath = path.join(dir, 'package.json');
-  if (!fileExists(pkgPath)) { return undefined; }
+  if (!fileExists(pkgPath)) {
+    return undefined;
+  }
 
   try {
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
@@ -54,20 +54,20 @@ function detectNodeGenerator(dir) {
     const allDeps = Object.assign(deps, devDeps);
     return nodeGenerators.find(gen => gen in allDeps);
   } catch (err) {
-    if (err instanceof SyntaxError) { return undefined; }
+    if (err instanceof SyntaxError) {
+      return undefined;
+    }
     throw err;
   }
 }
 
 function detectPythonGenerator(dir) {
-  const pythonGenerators = [
-    'mkdocs',
-    'pelican',
-    'cactus',
-  ];
+  const pythonGenerators = ['mkdocs', 'pelican', 'cactus'];
 
   const requirementsPath = path.join(dir, 'requirements.txt');
-  if (!fileExists(requirementsPath)) { return undefined; }
+  if (!fileExists(requirementsPath)) {
+    return undefined;
+  }
 
   const requirements = fs.readFileSync(requirementsPath, 'utf8');
   return pythonGenerators.find(gen => requirements.match(`^${gen}(==)?`));
@@ -89,13 +89,15 @@ function detectHugo(dir) {
     },
   ];
 
-  const isHugo = configs.find((option) => {
+  const isHugo = configs.find(option => {
     const configPath = path.join(dir, option.file);
-    if (!fileExists(configPath)) { return false; }
+    if (!fileExists(configPath)) {
+      return false;
+    }
 
     try {
       const config = option.loader(fs.readFileSync(configPath, 'utf8'));
-      return ('baseurl' in config);
+      return 'baseurl' in config;
     } catch (e) {
       return false;
     }
@@ -105,9 +107,11 @@ function detectHugo(dir) {
 }
 
 export default function detectSsg(dir) {
-  return detectRubyGenerator(dir)
-    || detectNodeGenerator(dir)
-    || detectPythonGenerator(dir)
-    || detectHugo(dir)
-    || 'unknown';
+  return (
+    detectRubyGenerator(dir) ||
+    detectNodeGenerator(dir) ||
+    detectPythonGenerator(dir) ||
+    detectHugo(dir) ||
+    'unknown'
+  );
 }

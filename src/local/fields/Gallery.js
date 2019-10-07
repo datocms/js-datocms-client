@@ -9,5 +9,7 @@ export default function Gallery(...args) {
 Gallery.prototype = Object.create(Array.prototype);
 
 Gallery.prototype.toMap = function toMap(maxDepth = 3, currentDepth = 0) {
-  return this.filter(item => !!item).map(item => item.toMap(maxDepth, currentDepth + 1));
+  return this.filter(item => !!item).map(item =>
+    item.toMap(maxDepth, currentDepth + 1),
+  );
 };

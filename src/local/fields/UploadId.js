@@ -1,10 +1,7 @@
 import buildFileUrl from '../../utils/buildFileUrl';
 
 export default class UploadId {
-  constructor(value, {
-    itemsRepo,
-    imgixHost,
-  }) {
+  constructor(value, { itemsRepo, imgixHost }) {
     this.imgixHost = imgixHost;
     this.itemsRepo = itemsRepo;
     this.upload = itemsRepo.entitiesRepo.findEntity('upload', value);

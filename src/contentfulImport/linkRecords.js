@@ -25,53 +25,65 @@ export default async ({
 
     const itemTypeFields = fieldsMapping[contentTypeApiKey];
 
-    const recordAttributes = Object.entries(entry.fields).reduce((outerAcc, [option, value]) => {
-      const apiKey = toFieldApiKey(option);
-      const field = itemTypeFields.find(itemTypefield => itemTypefield.apiKey === apiKey);
+    const recordAttributes = Object.entries(entry.fields).reduce(
+      (outerAcc, [option, value]) => {
+        const apiKey = toFieldApiKey(option);
+        const field = itemTypeFields.find(
+          itemTypefield => itemTypefield.apiKey === apiKey,
+        );
 
-      if (field.fieldType !== 'link' && field.fieldType !== 'links') {
-        return outerAcc;
-      }
+        if (field.fieldType !== 'link' && field.fieldType !== 'links') {
+          return outerAcc;
+        }
 
-      if (field.localized) {
-        const localizedValue = Object.keys(value)
-          .reduce((innerAcc, locale) => {
-            const innerValue = value[locale];
-            if (field.fieldType === 'link') {
-              return Object.assign(
-                innerAcc, { [locale.slice(0, 2)]: contentfulRecordMap[innerValue.sys.id] },
-              );
-            }
-            return Object.assign(innerAcc, {
-              [locale.slice(0, 2)]: innerValue.filter(link => contentfulRecordMap[link.sys.id])
-                .map(link => contentfulRecordMap[link.sys.id]),
-            });
-          }, {});
-
-        const fallbackValues = contentfulData.locales.reduce((accLocales, locale) => {
-          return Object.assign(
-            accLocales, { [locale.slice(0, 2)]: localizedValue[defaultLocale.slice(0, 2)] },
+        if (field.localized) {
+          const localizedValue = Object.keys(value).reduce(
+            (innerAcc, locale) => {
+              const innerValue = value[locale];
+              if (field.fieldType === 'link') {
+                return Object.assign(innerAcc, {
+                  [locale.slice(0, 2)]: contentfulRecordMap[innerValue.sys.id],
+                });
+              }
+              return Object.assign(innerAcc, {
+                [locale.slice(0, 2)]: innerValue
+                  .filter(link => contentfulRecordMap[link.sys.id])
+                  .map(link => contentfulRecordMap[link.sys.id]),
+              });
+            },
+            {},
           );
-        }, {});
 
-        return Object.assign(
-          outerAcc, { [camelize(apiKey)]: { ...fallbackValues, ...localizedValue } },
-        );
-      }
+          const fallbackValues = contentfulData.locales.reduce(
+            (accLocales, locale) => {
+              return Object.assign(accLocales, {
+                [locale.slice(0, 2)]: localizedValue[defaultLocale.slice(0, 2)],
+              });
+            },
+            {},
+          );
 
-      const innerValue = value[defaultLocale];
+          return Object.assign(outerAcc, {
+            [camelize(apiKey)]: { ...fallbackValues, ...localizedValue },
+          });
+        }
 
-      if (field.fieldType === 'link') {
-        return Object.assign(
-          outerAcc, { [camelize(apiKey)]: contentfulRecordMap[innerValue.sys.id] },
-        );
-      }
+        const innerValue = value[defaultLocale];
 
-      return Object.assign(outerAcc, {
-        [camelize(apiKey)]: innerValue.filter(link => contentfulRecordMap[link.sys.id])
-          .map(link => contentfulRecordMap[link.sys.id]),
-      });
-    }, {});
+        if (field.fieldType === 'link') {
+          return Object.assign(outerAcc, {
+            [camelize(apiKey)]: contentfulRecordMap[innerValue.sys.id],
+          });
+        }
+
+        return Object.assign(outerAcc, {
+          [camelize(apiKey)]: innerValue
+            .filter(link => contentfulRecordMap[link.sys.id])
+            .map(link => contentfulRecordMap[link.sys.id]),
+        });
+      },
+      {},
+    );
 
     try {
       // if no links found, no update needed.

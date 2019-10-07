@@ -14,7 +14,10 @@ export default class Loader {
         { version: this.previewMode ? 'latest' : 'published' },
         { deserializeResponse: false, allPages: true },
       ),
-      this.client.uploads.all({}, { deserializeResponse: false, allPages: true }),
+      this.client.uploads.all(
+        {},
+        { deserializeResponse: false, allPages: true },
+      ),
     ]).then(([site, items, uploads]) => {
       this.siteId = site.data.id;
       this.entitiesRepo.upsertEntities(site, items, uploads);
@@ -26,10 +29,12 @@ export default class Loader {
       await this.load();
     }
 
-    const [watcher, disconnect] = await this.client.subscribeToChannel(this.siteId);
+    const [watcher, disconnect] = await this.client.subscribeToChannel(
+      this.siteId,
+    );
 
     const addEventListener = (eventName, entitiesRepoRefresher) => {
-      watcher.bind(eventName, (data) => {
+      watcher.bind(eventName, data => {
         notifier(entitiesRepoRefresher(data));
       });
     };
@@ -93,7 +98,7 @@ export default class Loader {
     });
 
     addEventListener('item_type:destroy', ({ ids }) => {
-      ids.forEach((id) => {
+      ids.forEach(id => {
         this.entitiesRepo.destroyItemType(id);
       });
     });

@@ -8,18 +8,23 @@ import delay from './delay';
 export default async ({ datoClient, contentfulData }) => {
   let spinner = ora('Fetching existing fields').start();
   const itemTypes = await datoClient.itemTypes.all();
-  const importedItemTypes = itemTypes.filter((itemType) => {
-    return contentfulData.contentTypes.some((contentType) => {
+  const importedItemTypes = itemTypes.filter(itemType => {
+    return contentfulData.contentTypes.some(contentType => {
       return itemType.apiKey === toItemApiKey(contentType.sys.id);
     });
   });
 
-  const importedFieldIds = importedItemTypes.map(itemType => itemType.fields).flatten();
+  const importedFieldIds = importedItemTypes
+    .map(itemType => itemType.fields)
+    .flatten();
 
   spinner.succeed();
 
   spinner = ora('').start();
-  const progress = new Progress(importedFieldIds.length, 'Removing validations from fields');
+  const progress = new Progress(
+    importedFieldIds.length,
+    'Removing validations from fields',
+  );
   spinner.text = progress.tick();
 
   for (const fieldId of importedFieldIds) {
@@ -38,9 +43,9 @@ export default async ({ datoClient, contentfulData }) => {
         break;
       } catch (e) {
         if (
-          !e.body
-            || !e.body.data
-            || !e.body.data.some(d => d.id === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
+          !e.body ||
+          !e.body.data ||
+          !e.body.data.some(d => d.id === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
         ) {
           spinner.fail(e);
           process.exit();

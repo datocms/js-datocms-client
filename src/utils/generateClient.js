@@ -10,17 +10,23 @@ import fetchAllPages from './fetchAllPages';
 import ApiException from '../ApiException';
 import wait from './wait';
 
-const getProps = obj => Object.getOwnPropertyNames(obj)
-  .concat(
-    Object.getPrototypeOf(obj) !== Object.prototype
-        && Object.getOwnPropertyNames(Object.getPrototypeOf(obj)),
-  )
-  .filter(p => p !== 'constructor');
+const getProps = obj =>
+  Object.getOwnPropertyNames(obj)
+    .concat(
+      Object.getPrototypeOf(obj) !== Object.prototype &&
+        Object.getOwnPropertyNames(Object.getPrototypeOf(obj)),
+    )
+    .filter(p => p !== 'constructor');
 
-const toMap = keys => keys.reduce((acc, prop) => Object.assign(acc, { [prop]: true }), {});
+const toMap = keys =>
+  keys.reduce((acc, prop) => Object.assign(acc, { [prop]: true }), {});
 
 export default function generateClient(subdomain, cache, extraMethods = {}) {
-  return function Client(token, extraHeaders = {}, baseUrl = `https://${subdomain}.datocms.com`) {
+  return function Client(
+    token,
+    extraHeaders = {},
+    baseUrl = `https://${subdomain}.datocms.com`,
+  ) {
     let schemaPromise;
 
     const rawClient = new RawClient(token, extraHeaders, baseUrl);
@@ -28,7 +34,12 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
     const extraProps = getProps(extraMethods);
     const rawClientProps = getProps(rawClient);
 
-    Object.assign(cache, { rawClient: true }, toMap(extraProps), toMap(rawClientProps));
+    Object.assign(
+      cache,
+      { rawClient: true },
+      toMap(extraProps),
+      toMap(rawClientProps),
+    );
 
     const client = new Proxy(cache, {
       get(obj1, namespace) {
@@ -59,7 +70,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   .then(schema => jsonref.dereference(schema));
               }
 
-              return schemaPromise.then(async (schema) => {
+              return schemaPromise.then(async schema => {
                 const singularized = decamelize(pluralize.singular(namespace));
                 const sub = schema.properties[singularized];
 
@@ -79,7 +90,9 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                 );
 
                 if (!link) {
-                  throw new TypeError(`${namespace}.${apiCall} is not a valid API method`);
+                  throw new TypeError(
+                    `${namespace}.${apiCall} is not a valid API method`,
+                  );
                 }
 
                 let lastUrlId;
@@ -92,8 +105,8 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                 let body = {};
 
                 if (
-                  link.schema
-                  && (link.method === 'PUT' || link.method === 'POST')
+                  link.schema &&
+                  (link.method === 'PUT' || link.method === 'POST')
                 ) {
                   body = args.shift() || {};
                 }
@@ -108,16 +121,21 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   ? options.deserializeResponse
                   : true;
 
-                const deserialize = async (response) => {
+                const deserialize = async response => {
                   if (response && response.data.type === 'job') {
                     let jobResult;
 
                     do {
                       try {
                         await wait(1000);
-                        jobResult = await client.jobResult.find(response.data.id);
+                        jobResult = await client.jobResult.find(
+                          response.data.id,
+                        );
                       } catch (e) {
-                        if (!(e instanceof ApiException) || e.statusCode !== 404) {
+                        if (
+                          !(e instanceof ApiException) ||
+                          e.statusCode !== 404
+                        ) {
                           throw e;
                         }
                       }
@@ -128,12 +146,20 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                     }
 
                     return deserializeResponse
-                      ? deserializeJsonApi(singularized, link.jobSchema, jobResult.payload)
+                      ? deserializeJsonApi(
+                          singularized,
+                          link.jobSchema,
+                          jobResult.payload,
+                        )
                       : jobResult.payload;
                   }
 
                   return deserializeResponse
-                    ? deserializeJsonApi(singularized, link.targetSchema, response)
+                    ? deserializeJsonApi(
+                        singularized,
+                        link.targetSchema,
+                        response,
+                      )
                     : response;
                 };
 
@@ -145,9 +171,9 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   : true;
 
                 if (
-                  link.schema
-                  && (link.method === 'PUT' || link.method === 'POST')
-                  && serializeRequest
+                  link.schema &&
+                  (link.method === 'PUT' || link.method === 'POST') &&
+                  serializeRequest
                 ) {
                   body = serializeJsonApi(
                     singularized,
@@ -173,7 +199,10 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                     .then(response => deserialize(response));
                 }
 
-                const allPages = Object.prototype.hasOwnProperty.call(options, 'allPages')
+                const allPages = Object.prototype.hasOwnProperty.call(
+                  options,
+                  'allPages',
+                )
                   ? options.allPages
                   : false;
 

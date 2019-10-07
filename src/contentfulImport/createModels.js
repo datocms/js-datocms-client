@@ -6,10 +6,7 @@ export default async ({ datoClient, contentfulData }) => {
   const spinner = ora().start();
   const { contentTypes } = contentfulData;
 
-  const progress = new Progress(
-    contentTypes.length,
-    'Creating models',
-  );
+  const progress = new Progress(contentTypes.length, 'Creating models');
   spinner.text = progress.tick();
 
   const itemTypes = [];
