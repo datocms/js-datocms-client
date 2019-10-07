@@ -1,12 +1,10 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import { docopt } from 'docopt';
 import pkg from '../package.json';
 import dump from './dump/command';
 import check from './check/command';
 import wpImport from './wpImport/command';
 import contentfulImport from './contentfulImport/command';
-
-dotenv.load({ silent: true });
 
 const doc = `
 DatoCMS CLI tool
