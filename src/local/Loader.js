@@ -49,6 +49,10 @@ export default class Loader {
           { version: itemVersion },
           { deserializeResponse: false, allPages: true },
         ),
+        this.client.uploads.all(
+          {},
+          { deserializeResponse: false, allPages: true },
+        ),
       ]);
 
       this.entitiesRepo.upsertEntities(...payloads);
