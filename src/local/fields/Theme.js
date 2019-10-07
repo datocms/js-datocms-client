@@ -1,4 +1,4 @@
-import File from './File';
+import UploadId from './UploadId';
 
 export default class Theme {
   constructor(value, { imgixHost, itemsRepo }) {
@@ -27,7 +27,7 @@ export default class Theme {
     const { imgixHost, itemsRepo } = this;
 
     return this.value.logo
-      && new File(this.value.logo, { itemsRepo, imgixHost });
+      && new UploadId(this.value.logo, { itemsRepo, imgixHost });
   }
 
   toMap() {

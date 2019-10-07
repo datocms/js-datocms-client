@@ -1,4 +1,4 @@
-import File from './fields/File';
+import UploadId from './fields/UploadId';
 import Theme from './fields/Theme';
 import GlobalSeo from './fields/GlobalSeo';
 import faviconTagsBuilder from '../utils/faviconTagsBuilder';
@@ -48,7 +48,7 @@ export default class Site {
   }
 
   get favicon() {
-    return this.readAttribute('favicon', File, false);
+    return this.readAttribute('favicon', UploadId, false);
   }
 
   get faviconMetaTags() {

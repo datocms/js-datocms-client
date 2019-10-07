@@ -1,4 +1,4 @@
-import File from './File';
+import UploadId from './UploadId';
 
 export default class Seo {
   constructor(value, { itemsRepo, imgixHost }) {
@@ -23,7 +23,7 @@ export default class Seo {
     const { imgixHost, itemsRepo } = this;
 
     return this.value.image
-      && new File(this.value.image, { itemsRepo, imgixHost });
+      && new UploadId(this.value.image, { itemsRepo, imgixHost });
   }
 
   toMap() {
