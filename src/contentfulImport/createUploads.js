@@ -4,6 +4,19 @@ import { toItemApiKey, toFieldApiKey } from './toApiKey';
 
 const { camelize } = require('humps');
 
+function uploadData(id) {
+  if (!id) {
+    return null;
+  }
+
+  return {
+    uploadId: id,
+    alt: null,
+    title: null,
+    customData: {},
+  }
+};
+
 export default async ({
   fieldsMapping,
   datoClient,
@@ -11,7 +24,7 @@ export default async ({
   contentfulRecordMap,
 }) => {
   let spinner = ora('').start();
-  const { entries, assets, defaultLocale } = contentfulData;
+  const { entries, assets } = contentfulData;
 
   let progress = new Progress(assets.length, 'Uploading assets');
   spinner.text = progress.tick();
@@ -20,20 +33,30 @@ export default async ({
 
   for (const asset of assets) {
     if (asset.fields && asset.fields.file) {
-      const fileAttributes = asset.fields.file[defaultLocale];
+      const fileAttributes = asset.fields.file[contentfulData.defaultLocale];
       const fileUrl = `https:${fileAttributes.url}`;
-      let datoUpload;
-      let upload;
-
       try {
-        datoUpload = await datoClient.uploadFile(fileUrl);
+        const path = await datoClient.createUploadPath(fileUrl);
+        const defaultFieldMetadata = contentfulData.locales.reduce((acc, locale) => {
+          return Object.assign(acc, {
+            [locale]: {
+                title: asset.fields.title[locale],
+                alt: asset.fields.title[locale],
+                customData: {},
+              }
+            })
+          }, {}
+        );
 
-        upload = await datoClient.uploads.update(datoUpload, {
-          title: fileAttributes.fileName,
-          alt: fileAttributes.fileName,
+        const upload = await datoClient.uploads.create({
+          path,
+          author: null,
+          copyright: null,
+          defaultFieldMetadata,
         });
 
-        contentfulAssetsMap[asset.sys.id] = upload.id;
+        contentfulAssetsMap[asset.sys.id.toString()] = upload.id;
+
         spinner.text = progress.tick();
       } catch (e) {
         if (
@@ -45,6 +68,7 @@ export default async ({
             "You've reached your site's plan storage limit: upgrade to complete the import",
           );
         } else {
+          console.log(e);
           spinner.fail(e);
         }
         process.exit();
@@ -53,9 +77,7 @@ export default async ({
       spinner.text = progress.tick();
     }
   }
-
   spinner.succeed();
-
   spinner = ora('').start();
   progress = new Progress(entries.length, 'Linking assets to records');
   spinner.text = progress.tick();
@@ -66,6 +88,7 @@ export default async ({
     try {
       for (const key of Object.keys(entry.fields)) {
         const entryFieldValue = entry.fields[key];
+
         const contentTypeApiKey = toItemApiKey(entry.sys.contentType.sys.id);
         const apiKey = toFieldApiKey(key);
 
@@ -73,7 +96,7 @@ export default async ({
           f => f.apiKey === apiKey,
         );
 
-        let uploadedFile = null;
+        let fileFieldAttributes = null;
 
         if (field.fieldType === 'file' || field.fieldType === 'gallery') {
           if (field.localized) {
@@ -82,25 +105,24 @@ export default async ({
                 const innerValue = entryFieldValue[locale];
                 if (field.fieldType === 'file') {
                   return Object.assign(innerAcc, {
-                    [locale.slice(0, 2)]: contentfulAssetsMap[
-                      innerValue.sys.id
-                    ],
+                    [locale]: uploadData(
+                      contentfulAssetsMap[innerValue.sys.id]
+                    ),
                   });
                 }
                 return Object.assign(innerAcc, {
-                  [locale.slice(0, 2)]: innerValue.map(
-                    link => contentfulAssetsMap[link.sys.id],
-                  ),
+                  [locale]: innerValue.map(
+                    link => uploadData(contentfulAssetsMap[link.sys.id]),
+                  ).filter(v => !!v),
                 });
               },
               {},
             );
+
             const fallbackValues = contentfulData.locales.reduce(
               (innerAcc, locale) => {
                 return Object.assign(innerAcc, {
-                  [locale.slice(0, 2)]: localizedValue[
-                    defaultLocale.slice(0, 2)
-                  ],
+                  [locale]: localizedValue[contentfulData.defaultLocale],
                 });
               },
               {},
@@ -110,23 +132,23 @@ export default async ({
               [camelize(apiKey)]: { ...fallbackValues, ...localizedValue },
             });
           } else {
-            const innerValue = entryFieldValue[defaultLocale];
+            const innerValue = entryFieldValue[contentfulData.defaultLocale];
 
             switch (field.fieldType) {
               case 'file':
-                uploadedFile = contentfulAssetsMap[innerValue.sys.id];
+                fileFieldAttributes = uploadData(contentfulAssetsMap[innerValue.sys.id])
                 break;
               case 'gallery':
-                uploadedFile = innerValue.map(link => {
-                  return contentfulAssetsMap[link.sys.id];
-                });
+                fileFieldAttributes = innerValue.map(link =>
+                  uploadData(contentfulAssetsMap[link.sys.id])
+                ).filter(v => !!v);
                 break;
               default:
                 break;
             }
 
             recordAttributes = Object.assign(recordAttributes, {
-              [camelize(apiKey)]: uploadedFile,
+              [camelize(apiKey)]: fileFieldAttributes,
             });
           }
         }
@@ -134,6 +156,7 @@ export default async ({
       await datoClient.items.update(datoItemId, recordAttributes);
       spinner.text = progress.tick();
     } catch (e) {
+      console.log(e);
       spinner.fail(e);
       process.exit();
     }

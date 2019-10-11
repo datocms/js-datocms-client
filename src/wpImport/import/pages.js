@@ -10,7 +10,7 @@ export default async function pages(dato, wp, schema, media, authors) {
 
   for (const page of resources) {
     const createAndPublish = async () => {
-      const newItem = await dato.items.create({
+      const itemData = {
         itemType: schema.pageId,
         title: page.title.rendered,
         slug: page.slug,
@@ -24,8 +24,19 @@ export default async function pages(dato, wp, schema, media, authors) {
         ),
         date: page.date,
         author: authors[page.author],
-        featuredMedia: media.ids[page.featured_media],
-      });
+        featuredMedia: null,
+      };
+
+      if (media.ids[page.featured_media]) {
+        itemData.featuredMedia = {
+          uploadId: media.ids[page.featured_media],
+          title: page.title.rendered,
+          alt: page.title.rendered,
+          customData: {},
+        };
+      };
+
+      const newItem = await dato.items.create(itemData);
 
       if (page.status === 'publish' || page.status === 'future') {
         await dato.items.publish(newItem.id);

@@ -21,7 +21,7 @@ export default async function articles(
     const newTags = article.tags.map(id => tags[id]);
 
     const createAndPublish = async () => {
-      const newItem = await dato.items.create({
+      const itemData = {
         itemType: schema.articleId,
         title: article.title.rendered,
         slug: article.slug,
@@ -37,8 +37,19 @@ export default async function articles(
         author: authors[article.author],
         categories: newCategories,
         tags: newTags,
-        featuredMedia: media.ids[article.featured_media],
-      });
+        featuredMedia: null,
+      };
+
+      if (media.ids[article.featured_media]) {
+        itemData.featuredMedia = {
+          uploadId: media.ids[article.featured_media],
+          title: article.title.rendered,
+          alt: article.title.rendered,
+          customData: {},
+        };
+      };
+
+      const newItem = await dato.items.create(itemData);
 
       if (article.status === 'publish' || article.status === 'future') {
         await dato.items.publish(newItem.id);

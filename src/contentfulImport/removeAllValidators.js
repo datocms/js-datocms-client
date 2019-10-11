@@ -16,7 +16,7 @@ export default async ({ datoClient, contentfulData }) => {
 
   const importedFieldIds = importedItemTypes
     .map(itemType => itemType.fields)
-    .flatten();
+    .flat();
 
   spinner.succeed();
 

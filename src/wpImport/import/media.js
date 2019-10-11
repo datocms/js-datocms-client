@@ -14,13 +14,21 @@ export default async function media(dato, wp) {
     const create = async () => {
       const mediaItemUrl = mediaItem.source_url;
       try {
-        const uploadId = await dato.uploadFile(mediaItemUrl);
-        const upload = await dato.uploads.update(uploadId, {
-          title: mediaItem.title.rendered,
-          alt: mediaItem.alt_text,
+        const path = await dato.createUploadPath(mediaItemUrl);
+        const upload = await dato.uploads.create({
+          path,
+          author: null,
+          copyright: null,
+          defaultFieldMetadata: {
+            en: {
+              title: mediaItem.title.rendered,
+              alt: mediaItem.alt_text,
+              customData: {},
+            }
+          }
         });
 
-        ids[mediaItem.id] = uploadId;
+        ids[mediaItem.id] = upload.id;
 
         urls[mediaItemUrl] = upload.url;
 

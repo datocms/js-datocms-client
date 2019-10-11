@@ -11,7 +11,7 @@ export default async ({
   contentfulData,
 }) => {
   const spinner = ora('').start();
-  const { entries, defaultLocale } = contentfulData;
+  const { entries } = contentfulData;
   const progress = new Progress(entries.length, 'Creating records');
 
   const contentfulRecordMap = {};
@@ -33,7 +33,7 @@ export default async ({
       const emptyFieldValues = itemTypeFields.reduce((accFields, field) => {
         if (field.localized) {
           const value = contentfulData.locales
-            .map(locale => locale.slice(0, 2))
+            .map(locale => locale)
             .reduce(
               (accLocales, locale) =>
                 Object.assign(accLocales, { [locale]: null }),
@@ -78,7 +78,7 @@ export default async ({
                   innerValue = JSON.stringify(innerValue, null, 2);
                 }
                 return Object.assign(innerAcc, {
-                  [locale.slice(0, 2)]: innerValue,
+                  [locale]: innerValue,
                 });
               },
               {},
@@ -87,9 +87,7 @@ export default async ({
             const fallbackValues = contentfulData.locales.reduce(
               (accLocales, locale) => {
                 return Object.assign(accLocales, {
-                  [locale.slice(0, 2)]: localizedValue[
-                    defaultLocale.slice(0, 2)
-                  ],
+                  [locale]: localizedValue[contentfulData.defaultLocale],
                 });
               },
               {},
@@ -99,7 +97,7 @@ export default async ({
               [camelize(apiKey)]: { ...fallbackValues, ...localizedValue },
             });
           }
-          let innerValue = value[defaultLocale];
+          let innerValue = value[contentfulData.defaultLocale];
 
           if (field.fieldType === 'lat_lon') {
             innerValue = {

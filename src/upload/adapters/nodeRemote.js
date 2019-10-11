@@ -13,7 +13,7 @@ export default function nodeUrl(client, fileUrl) {
       }
 
       return axios({
-        url: fileUrl,
+        url: encodeURI(fileUrl),
         maxRedirects: 10,
         responseType: 'arraybuffer',
       })

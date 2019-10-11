@@ -11,7 +11,7 @@ export default async ({
   contentfulRecordMap,
 }) => {
   const spinner = ora('').start();
-  const { entries, defaultLocale } = contentfulData;
+  const { entries } = contentfulData;
   const progress = new Progress(entries.length, 'Linking records');
   const recordsToPublish = [];
 
@@ -42,11 +42,11 @@ export default async ({
               const innerValue = value[locale];
               if (field.fieldType === 'link') {
                 return Object.assign(innerAcc, {
-                  [locale.slice(0, 2)]: contentfulRecordMap[innerValue.sys.id],
+                  [locale]: contentfulRecordMap[innerValue.sys.id],
                 });
               }
               return Object.assign(innerAcc, {
-                [locale.slice(0, 2)]: innerValue
+                [locale]: innerValue
                   .filter(link => contentfulRecordMap[link.sys.id])
                   .map(link => contentfulRecordMap[link.sys.id]),
               });
@@ -57,7 +57,7 @@ export default async ({
           const fallbackValues = contentfulData.locales.reduce(
             (accLocales, locale) => {
               return Object.assign(accLocales, {
-                [locale.slice(0, 2)]: localizedValue[defaultLocale.slice(0, 2)],
+                [locale]: localizedValue[contentfulData.defaultLocale],
               });
             },
             {},
@@ -68,7 +68,7 @@ export default async ({
           });
         }
 
-        const innerValue = value[defaultLocale];
+        const innerValue = value[contentfulData.defaultLocale];
 
         if (field.fieldType === 'link') {
           return Object.assign(outerAcc, {
