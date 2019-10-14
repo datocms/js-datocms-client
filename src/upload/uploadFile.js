@@ -1,18 +1,25 @@
-const rawUploadFile = process.browser
-  ? require('./adapters/browser').default
-  : require('./adapters/node').default;
+import createUploadPath from './createUploadPath';
 
-export default function uploadFile(client, source) {
-  return rawUploadFile(client, source)
-    .then(attributes => {
-      return client.uploads.create(attributes);
+export default function uploadFile(
+  client,
+  source,
+  uploadAttributes = {},
+  fieldAttributes = {}
+) {
+  return createUploadPath(client, source)
+    .then(path => {
+      return client.uploads.create({
+        ...uploadAttributes,
+        path,
+      });
     })
     .then(upload => {
       return Promise.resolve({
-        uploadId: upload.id,
         alt: null,
         title: null,
         customData: {},
+        ...fieldAttributes,
+        uploadId: upload.id,
       });
     });
 }
