@@ -15,8 +15,8 @@ describe('Upload file from', async () => {
 
   context('url that responds 200', () => {
     it('uploads file correctly', vcr(async () => {
-      const uploadId = await uploadFile(client, 'https://www.datocms-assets.com/13095/1561723946-happyfoxbymazack-d8u2l0s-2.jpeg');
-      expect(uploadId).to.not.be.null();
+      const uploadData = await uploadFile(client, 'https://www.datocms-assets.com/13095/1561723946-happyfoxbymazack-d8u2l0s-2.jpeg');
+      expect(uploadData).to.not.be.null();
     }));
   });
 
@@ -34,8 +34,15 @@ describe('Upload file from', async () => {
 
   context('url that redirects to image', () => {
     it('follows redirect and uploads file', vcr(async () => {
-      const uploadId = await uploadFile(client, 'https://httpbin.org/redirect-to?url=https%3A%2F%2Fwww.datocms-assets.com%2F13095%2F1561736871-11-rockingwithlights.png');
-      expect(uploadId).to.not.be.null();
+      const uploadData = await uploadFile(client, 'https://httpbin.org/redirect-to?url=https%3A%2F%2Fwww.datocms-assets.com%2F13095%2F1561736871-11-rockingwithlights.png');
+      expect(uploadData).to.not.be.null();
+    }));
+  });
+
+  context('url that contains unescaped characters', () => {
+    it('works', vcr(async () => {
+      const uploadData = await uploadFile(client, 'https://en.wikipedia.org/wiki/Ragù#/media/File:Tagliatelle_al_ragù_(image_modified).jpg');
+      expect(uploadData).to.not.be.null();
     }));
   });
 });

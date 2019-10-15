@@ -12,13 +12,17 @@ export default function nodeUrl(client, fileUrl) {
         reject(err);
       }
 
+      const encodedFileUrl = decodeURIComponent(fileUrl) === fileUrl
+        ? encodeURI(fileUrl)
+        : fileUrl;
+
       return axios({
-        url: encodeURI(fileUrl),
+        url: encodedFileUrl,
         maxRedirects: 10,
         responseType: 'arraybuffer',
       })
         .then(response => {
-          const { pathname } = url.parse(fileUrl);
+          const { pathname } = url.parse(encodedFileUrl);
           const filePath = path.join(dir, path.basename(pathname));
           fs.writeFileSync(filePath, Buffer.from(response.data));
 
@@ -32,7 +36,7 @@ export default function nodeUrl(client, fileUrl) {
           if (error.response) {
             reject(
               new Error(
-                `Invalid status code for ${fileUrl}: ${error.response.status}`,
+                `Invalid status code for ${encodedFileUrl}: ${error.response.status}`,
               ),
             );
           } else {
