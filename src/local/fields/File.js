@@ -71,6 +71,7 @@ export default class File {
       title: this.title,
       alt: this.alt,
       url: this.url(),
+      customData: this.customData,
     };
   }
 }
