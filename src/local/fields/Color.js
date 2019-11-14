@@ -55,6 +55,7 @@ export default class Color {
       green: this.green,
       blue: this.blue,
       rgb: this.rgb,
+      alpha: this.alpha,
       hex: this.hex,
     };
   }

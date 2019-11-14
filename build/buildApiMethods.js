@@ -10,18 +10,26 @@ const methodNames = {
 };
 
 function buildCache(subdomain, dir) {
-  return fetch(`https://${subdomain}.datocms.com/docs/${subdomain}-hyperschema.json`)
+  return fetch(
+    `https://${subdomain}.datocms.com/docs/${subdomain}-hyperschema.json`,
+  )
     .then(res => res.json())
     .then(schema => jsonref.dereference(schema))
-    .then((schema) => {
+    .then(schema => {
       const data = Object.entries(schema.properties).reduce((acc, entry) => {
         const key = entry[0];
         const subschema = entry[1];
-        const methods = subschema.links.reduce((acc2, link) => (
-          Object.assign(acc2, { [methodNames[link.rel] || camelize(link.rel)]: true })
-        ), {});
+        const methods = subschema.links.reduce(
+          (acc2, link) =>
+            Object.assign(acc2, {
+              [methodNames[link.rel] || camelize(link.rel)]: true,
+            }),
+          {},
+        );
         const isCollection = Object.keys(methods).includes('all');
-        const namespace = isCollection ? pluralize(camelize(key)) : camelize(key);
+        const namespace = isCollection
+          ? pluralize(camelize(key))
+          : camelize(key);
 
         if (subschema.links.length > 0) {
           return Object.assign(acc, { [namespace]: methods });
@@ -30,7 +38,14 @@ function buildCache(subdomain, dir) {
         return acc;
       }, {});
 
-      fs.writeFileSync(`src/${dir}/cache.js`, `/* eslint-disable */\nmodule.exports = ${JSON.stringify(data, null, 2)};`);
+      fs.writeFileSync(
+        `src/${dir}/cache.js`,
+        `/* eslint-disable */\nmodule.exports = ${JSON.stringify(
+          data,
+          null,
+          2,
+        )};`,
+      );
     });
 }
 

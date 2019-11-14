@@ -4,7 +4,7 @@ export default function uploadFile(
   client,
   source,
   uploadAttributes = {},
-  fieldAttributes = {}
+  fieldAttributes = {},
 ) {
   return createUploadPath(client, source)
     .then(path => {

@@ -11,7 +11,11 @@ describe('Site API', () => {
     vcr('before', async () => {
       const accountClient = await generateNewAccountClient();
       site = await accountClient.sites.create({ name: 'Blog' });
-      client = new SiteClient(site.readwriteToken, null, 'http://site-api.lvh.me:3001');
+      client = new SiteClient(
+        site.readwriteToken,
+        null,
+        'http://site-api.lvh.me:3001',
+      );
     }),
   );
 
@@ -22,7 +26,9 @@ describe('Site API', () => {
         const fetchedSite = await client.site.find();
         expect(fetchedSite.name).to.equal('Blog');
 
-        const updatedSite = await client.site.update(u({ name: 'New blog' }, site));
+        const updatedSite = await client.site.update(
+          u({ name: 'New blog' }, site),
+        );
         expect(updatedSite.name).to.equal('New blog');
       }),
     );
@@ -163,7 +169,9 @@ describe('Site API', () => {
         const allFields = await client.fields.all(itemType.id);
         expect(allFields).to.have.length(1);
 
-        const updatedField = await client.fields.update(field.id, { label: 'Updated' });
+        const updatedField = await client.fields.update(field.id, {
+          label: 'Updated',
+        });
         expect(updatedField.label).to.equal('Updated');
 
         await client.fields.destroy(field.id);
@@ -182,7 +190,9 @@ describe('Site API', () => {
           role: roles[0].id,
         });
 
-        const foundInvitation = await client.siteInvitations.find(invitation.id);
+        const foundInvitation = await client.siteInvitations.find(
+          invitation.id,
+        );
         expect(foundInvitation.id).to.equal(invitation.id);
 
         const allInvitations = await client.siteInvitations.all();
@@ -197,7 +207,9 @@ describe('Site API', () => {
     it(
       'create',
       vcr(async () => {
-        const uploadRequest = await client.uploadRequest.create({ filename: 'test.svg' });
+        const uploadRequest = await client.uploadRequest.create({
+          filename: 'test.svg',
+        });
         expect(uploadRequest.id).to.not.be.undefined();
       }),
     );
@@ -234,9 +246,7 @@ describe('Site API', () => {
           itemType: itemType.id,
         });
 
-        await client.items.batchDestroy(
-          { filter: { ids: item.id } },
-        );
+        await client.items.batchDestroy({ filter: { ids: item.id } });
 
         const allItems = await client.items.all();
         expect(allItems).to.have.length(0);
@@ -273,16 +283,12 @@ describe('Site API', () => {
           itemType: itemType.id,
         });
 
-        await client.items.batchPublish(
-          { 'filter[ids]': item.id },
-        );
+        await client.items.batchPublish({ 'filter[ids]': item.id });
 
         const item1 = await client.items.find(item.id);
         expect(item1.meta.status).to.equal('published');
 
-        await client.items.batchUnpublish(
-          { filter: { ids: item.id } },
-        );
+        await client.items.batchUnpublish({ filter: { ids: item.id } });
 
         const item2 = await client.items.find(item.id);
         expect(item2.meta.status).to.equal('draft');
@@ -327,7 +333,9 @@ describe('Site API', () => {
         const item = await client.items.create({
           title: 'My first blog post',
           itemType: itemType.id,
-          attachment: await client.uploadFile('test/fixtures/newTextFileHttps.txt'),
+          attachment: await client.uploadFile(
+            'test/fixtures/newTextFileHttps.txt',
+          ),
         });
         expect(item.title).to.equal('My first blog post');
         expect(item.itemType).to.not.be.undefined();
@@ -340,10 +348,15 @@ describe('Site API', () => {
         expect(allItems).to.have.length(1);
         expect(allItems[0].itemType).to.not.be.undefined();
 
-        const updatedItem = await client.items.update(item.id, u({ title: 'Updated' }, item));
+        const updatedItem = await client.items.update(
+          item.id,
+          u({ title: 'Updated' }, item),
+        );
         expect(updatedItem.title).to.equal('Updated');
 
-        const updatedItem2 = await client.items.update(item.id, { title: 'Updated 2' });
+        const updatedItem2 = await client.items.update(item.id, {
+          title: 'Updated 2',
+        });
         expect(updatedItem2.title).to.equal('Updated 2');
 
         await client.items.destroy(item.id);
@@ -396,6 +409,61 @@ describe('Site API', () => {
         await client.items.destroy(item.id);
       }),
     );
+
+    // it(
+    //   'Returns the correct file field attributes',
+    //   vcr(async () => {
+    //     const itemType = await client.itemTypes.create({
+    //       name: 'Logo',
+    //       apiKey: 'logo',
+    //       singleton: true,
+    //       modularBlock: false,
+    //       sortable: false,
+    //       tree: false,
+    //       draftModeActive: false,
+    //       orderingDirection: null,
+    //       orderingField: null,
+    //       allLocalesRequired: true,
+    //       titleField: null,
+    //     });
+    //
+    //     await client.fields.create(itemType.id, {
+    //       label: 'Logo',
+    //       fieldType: 'file',
+    //       localized: false,
+    //       apiKey: 'logo',
+    //       validators: {
+    //         required: {},
+    //       },
+    //     });
+    //
+    //     const item = await client.items.create({
+    //       itemType: itemType.id,
+    //       logo: await client.uploadFile(
+    //         'test/fixtures/dato-logo.jpg',
+    //         {
+    //           copyright: '2019',
+    //           defaultFieldMetadata: {
+    //             en: {
+    //               title: 'Logo',
+    //               alt: null,
+    //               customData: {},
+    //             },
+    //           },
+    //         },
+    //         {
+    //           alt: 'First logo',
+    //         },
+    //       ),
+    //     });
+    //     console.log(item);
+    //
+    //     expect(item.itemType).to.equal(itemType.id);
+    //     expect(item.logo.alt).to.equal('First logo');
+    //     expect(item.logo.copyright).to.equal('2019');
+    //     expect(item.logo.title).to.equal('Logo');
+    //   }),
+    // );
   });
 
   describe('plugins', () => {
@@ -406,7 +474,9 @@ describe('Site API', () => {
           packageName: 'datocms-plugin-tag-editor',
         });
 
-        await client.plugins.update(plugin.id, { parameters: { developmentMode: true } });
+        await client.plugins.update(plugin.id, {
+          parameters: { developmentMode: true },
+        });
 
         await client.plugins.destroy(plugin.id);
       }),

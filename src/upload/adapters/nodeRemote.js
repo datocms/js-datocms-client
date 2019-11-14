@@ -3,6 +3,7 @@ import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 import url from 'url';
+import decode from '../../utils/decode';
 import local from './nodeLocal';
 
 export default function nodeUrl(client, fileUrl) {
@@ -12,9 +13,7 @@ export default function nodeUrl(client, fileUrl) {
         reject(err);
       }
 
-      const encodedFileUrl = decodeURIComponent(fileUrl) === fileUrl
-        ? encodeURI(fileUrl)
-        : fileUrl;
+      const encodedFileUrl = decode(fileUrl);
 
       return axios({
         url: encodedFileUrl,
@@ -22,7 +21,14 @@ export default function nodeUrl(client, fileUrl) {
         responseType: 'arraybuffer',
       })
         .then(response => {
-          const { pathname } = url.parse(encodedFileUrl);
+          /* eslint-disable no-underscore-dangle */
+          const redirectedUrl =
+            response.request._redirectable._redirectCount > 0
+              ? response.request._redirectable._currentUrl
+              : response.config.url;
+          /* eslint-enable no-underscore-dangle */
+
+          const { pathname } = url.parse(decode(redirectedUrl));
           const filePath = path.join(dir, path.basename(pathname));
           fs.writeFileSync(filePath, Buffer.from(response.data));
 
