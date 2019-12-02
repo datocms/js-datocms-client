@@ -21,38 +21,54 @@ class VideoAttributes {
     return this.upload.duration;
   }
 
-  get gifUrl() {
-    return `https://image.mux.com/${this.upload.muxPlaybackId}/animated.gif`;
-  }
-
-  get hlsUrl() {
+  get streamingUrl() {
     return `https://stream.mux.com/${this.upload.muxPlaybackId}.m3u8`;
   }
 
   thumbnailUrl(format = 'jpg') {
+    if (format === 'gif') {
+      return `https://image.mux.com/${this.upload.muxPlaybackId}/animated.gif`;
+    }
+
     return `https://image.mux.com/${this.upload.muxPlaybackId}/thumbnail.${format}`;
   }
 
-  get mp4LowResUrl() {
-    if (this.upload.muxMp4HighestRes) {
+  mp4Url(options) {
+    if (!this.upload.muxMp4HighestRes) {
+      return null;
+    }
+
+    if (options && options.exactRes) {
+      if (options.exactRes === 'low') {
+        return `https://stream.mux.com/${this.upload.muxPlaybackId}/low.mp4`;
+      }
+
+      if (options.exactRes === 'medium') {
+        return ['medium', 'high'].includes(this.upload.muxMp4HighestRes)
+          ? `https://stream.mux.com/${this.upload.muxPlaybackId}/medium.mp4`
+          : null;
+      }
+
+      if (this.upload.muxMp4HighestRes === 'high') {
+        return `https://stream.mux.com/${this.upload.muxPlaybackId}/high.mp4`;
+      }
+
+      return null;
+    }
+
+    if (options && options.res === 'low') {
       return `https://stream.mux.com/${this.upload.muxPlaybackId}/low.mp4`;
     }
 
-    return null;
-  }
+    if (options && options.res === 'medium') {
+      if (['low', 'medium'].includes(this.upload.muxMp4HighestRes)) {
+        return `https://stream.mux.com/${this.upload.muxPlaybackId}/${this.upload.muxMp4HighestRes}.mp4`;
+      }
 
-  get mp4MediumResUrl() {
-    if (['medium', 'high'].includes(this.upload.muxMp4HighestRes)) {
       return `https://stream.mux.com/${this.upload.muxPlaybackId}/medium.mp4`;
     }
-    return null;
-  }
 
-  get mp4HighResUrl() {
-    if (this.upload.muxMp4HighestRes === 'high') {
-      return `https://stream.mux.com/${this.upload.muxPlaybackId}/high.mp4`;
-    }
-    return null;
+    return `https://stream.mux.com/${this.upload.muxPlaybackId}/${this.upload.muxMp4HighestRes}.mp4`;
   }
 
   toMap() {
@@ -60,12 +76,9 @@ class VideoAttributes {
       muxPlaybackId: this.muxPlaybackId,
       framerate: this.framerate,
       duration: this.duration,
-      gifUrl: this.gifUrl,
-      hlsUrl: this.hlsUrl,
+      streamingUrl: this.streamingUrl,
       thumbnailUrl: this.thumbnailUrl(),
-      mp4LowResUrl: this.mp4LowResUrl,
-      mp4MediumResUrl: this.mp4MediumResUrl,
-      mp4HighResUrl: this.mp4HighResUrl,
+      mp4Url: this.mp4Url(),
     }
   }
 }
