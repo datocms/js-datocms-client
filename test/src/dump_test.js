@@ -231,9 +231,9 @@ describe('CLI tool', () => {
         red: 0,
         green: 255,
         blue: 195,
-        rgb: 'rgba(0, 255, 195, 0.00392156862745098)',
-        alpha: 0.00392156862745098,
-        hex: '#00ffc301',
+        rgb: 'rgb(0, 255, 195)',
+        alpha: 1,
+        hex: '#00ffc3',
       });
       expect(articleFile.data.image.blurhash).to.eq(
         'LlOgNVxuD%t7IUfQofay00ayt7WB',
@@ -241,7 +241,7 @@ describe('CLI tool', () => {
       expect(articleFile.data.image.url).to.not.be.null();
       // expect(articleFile.data.image.video).to.be.null();
       expect(articleFile.data.video.video).to.have.any.keys(
-        'mp4LowResUrl',
+        'mp4Url',
         'muxPlaybackId',
       );
       expect(articleFile.data.file.format).to.eq('txt');

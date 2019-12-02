@@ -1,6 +1,6 @@
 [
   {
-    "scope": "http://account-api.lvh.me:3001",
+    "scope": "https://account-api.datocms.com:443",
     "method": "GET",
     "path": "/docs/account-api-hyperschema.json",
     "body": "",
@@ -1653,9 +1653,6 @@
                     },
                     "access_tokens": {
                       "type": "integer"
-                    },
-                    "mux_encoding_seconds": {
-                      "type": "integer"
                     }
                   },
                   "example": {
@@ -1664,8 +1661,7 @@
                     "item_types": 0,
                     "roles": 0,
                     "deployment_environments": 0,
-                    "access_tokens": 0,
-                    "mux_encoding_seconds": 0
+                    "access_tokens": 0
                   }
                 }
               }
@@ -1885,22 +1881,6 @@
                   "description": "The number of requests made to both our Content Management and Content Delivery APIs",
                   "example": 100000
                 },
-                "mux_streaming_seconds": {
-                  "type": [
-                    "null",
-                    "integer"
-                  ],
-                  "description": "The number of streaming seconds delivered by Mux.com",
-                  "example": 3600
-                },
-                "mux_encoding_seconds": {
-                  "type": [
-                    "null",
-                    "integer"
-                  ],
-                  "description": "The number of available encoding seconds to Mux.com",
-                  "example": 3600
-                },
                 "access_tokens": {
                   "type": [
                     "null",
@@ -1938,19 +1918,14 @@
                   "description": "Whether collaboration features are enabled or not",
                   "example": true
                 },
+                "advanced_media_area": {
+                  "type": "boolean",
+                  "description": "Whether built-in image editor is enabled or not",
+                  "example": true
+                },
                 "sso": {
                   "type": "boolean",
                   "description": "Whether Single Sign-On feature is enabled or not",
-                  "example": true
-                },
-                "advanced_media_area": {
-                  "type": "boolean",
-                  "description": "Whether built-in image editor and smart-tagging is enabled or not",
-                  "example": true
-                },
-                "video": {
-                  "type": "boolean",
-                  "description": "Whether video streaming with Mux.com is enabled or not",
                   "example": true
                 },
                 "history_retention_months": {
@@ -2071,22 +2046,6 @@
                           "type": "integer"
                         }
                       }
-                    },
-                    "mux_encoding_seconds": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "amount_per_packet",
-                        "price"
-                      ],
-                      "properties": {
-                        "amount_per_packet": {
-                          "type": "integer"
-                        },
-                        "price": {
-                          "type": "integer"
-                        }
-                      }
                     }
                   },
                   "example": {
@@ -2112,10 +2071,6 @@
                     },
                     "access_tokens": {
                       "amount_per_packet": 1,
-                      "price": 10
-                    },
-                    "mux_encoding_seconds": {
-                      "amount_per_packet": 1000,
                       "price": 10
                     }
                   }
@@ -2156,22 +2111,6 @@
                           "type": "integer"
                         }
                       }
-                    },
-                    "mux_streaming_seconds": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "amount_per_packet",
-                        "price"
-                      ],
-                      "properties": {
-                        "amount_per_packet": {
-                          "type": "integer"
-                        },
-                        "price": {
-                          "type": "integer"
-                        }
-                      }
                     }
                   },
                   "example": {
@@ -2181,10 +2120,6 @@
                     },
                     "traffic_bytes": {
                       "amount_per_packet": 161061273600,
-                      "price": 29
-                    },
-                    "mux_streaming_seconds": {
-                      "amount_per_packet": 250000,
                       "price": 29
                     }
                   }
@@ -2806,9 +2741,6 @@
                     },
                     "access_tokens": {
                       "type": "integer"
-                    },
-                    "mux_encoding_seconds": {
-                      "type": "integer"
                     }
                   },
                   "example": {
@@ -2817,8 +2749,7 @@
                     "item_types": 0,
                     "roles": 0,
                     "deployment_environments": 0,
-                    "access_tokens": 0,
-                    "mux_encoding_seconds": 0
+                    "access_tokens": 0
                   }
                 }
               }
@@ -3069,9 +3000,6 @@
                   "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
                 },
                 "advanced_media_area_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "video": {
                   "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
                 }
               }
@@ -3362,10 +3290,18 @@
       }
     },
     "rawHeaders": [
+      "Server",
+      "Cowboy",
+      "Date",
+      "Mon, 02 Dec 2019 11:26:39 GMT",
+      "Connection",
+      "close",
       "Last-Modified",
-      "Mon, 18 Nov 2019 12:09:28 GMT",
+      "Thu, 21 Nov 2019 16:16:48 GMT",
       "Content-Type",
       "application/json",
+      "X-Queue-Time",
+      "3ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -3378,10 +3314,10 @@
       "1728000",
       "Access-Control-Allow-Origin",
       "*",
-      "Connection",
-      "close",
       "Content-Length",
-      "102979"
+      "100533",
+      "Via",
+      "1.1 vegur"
     ]
   },
   {
@@ -3392,7 +3328,7 @@
       "data": {
         "type": "account",
         "attributes": {
-          "email": "7h5l36@example.com",
+          "email": "2f7gzf@example.com",
           "company": "DatoCMS",
           "password": "STRONG_pass123!"
         }
@@ -3400,9 +3336,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b080084abd25d0003",
-      "7c8f6d4fe24010c7bfcbbef01501cb431512e3910aba8555ef68ebe9c5906559e8e076db74a7f260f8ee0ee48cd14b6e93c9fe33f39bf9cfbcb1b944c97a6f0ce6acc7f4364c67d70aee20e4f18e7bb71076eb946cf255be19076171f8451477c4640d4f5beef3155f8be8054534a04863aaf962c7291e2bb11bb447bbfee66ed55f737b5a1f43142885dd9729fe9e9d253f1fa3f361385cba87557399cd86d63b4fc4a4b026be51acc6705b68dac869e720b79428b59148d2a550b8c3c652a9bcb278905f8ef0bc4ed7fb9cf081ede9d5185865aab926eecffff11a938825cc2ad447379d4930543f4b3ba6e5ffd01b991546d7559e11ba80d2e1d4ca8c26d8ca981a33f25b82c042da2d4db892980762426d4599bfc2e13cb0cb697321a7550904e458c80ad35ea381241b7ff9debfce974eab52e3c538f1fda77ed21683d0bfb90a82a4eddf8f47131eb4467ebb1fff3a01e72a5d5e7c3a833bfa4985f04a2b2ea4717abf7fdebf030000ffff",
-      "03009e4fb41210020000"
+      "1f8b0800f0f4e45d0003",
+      "7c8f5f4fc23014c5bf4b1f7c42fe2d0c25213a81980ec7186c41308674a56317bb6e593b6010bebb8568889ad8977b72efaff79c7b442ba208ea1c11ac5007b1d28ec3670a2ed83838e0c608ecfbaa6e36f126ddbff4ecec5c1d7f6e38bd1d2c4a6ce20dde39fe87727cac9cbe1de86a3a9bb939ea5bc5c8a7ade1c1dabb1b6b8745bd8aeba145451207a15117773e0f6f67de206cf1254ee6eec083dd3d71c66edc28c71eaa2055664c27924c4a48856ee48c13a5a58c2193e7c484d2b410ea2c7f1cd16898edfa75c33776d2af8240505eac98e6defec72b8828954358287671630901aee7cda8bd3e448f6c4f928cb32a4d138d46904bb51424d11b44c1790571f2aba1c18c88526fe81395f69ca9fe96e5e916cee781582f9b11591639682055192954dca9d59496b52fbef3d7f941329a33d5758dc574321d2f02db30cd96eb8e8ca7d741306b0eadb637b13dfb06a42c58debd3a83bcf811aa60ab2346844b763abd9f3e010000ffff",
+      "03006be9d0f910020000"
     ],
     "rawHeaders": [
       "Content-Type",
@@ -3414,15 +3350,15 @@
       "X-RateLimit-Limit",
       "30",
       "X-RateLimit-Remaining",
-      "29",
+      "28",
       "ETag",
-      "W/\"10705f82c0b5235013278be39b433724\"",
+      "W/\"f643c7f17253982f3a7cf7f199a6d3a1\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "deb0d87f-c225-46a2-80b5-6dd1e22da3d7",
+      "34ee12db-9ee8-4688-ad2b-30f4d94c73cd",
       "X-Runtime",
-      "0.245426",
+      "0.245977",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -3442,7 +3378,7 @@
     ]
   },
   {
-    "scope": "http://account-api.lvh.me:3001",
+    "scope": "https://account-api.datocms.com:443",
     "method": "GET",
     "path": "/docs/account-api-hyperschema.json",
     "body": "",
@@ -5095,9 +5031,6 @@
                     },
                     "access_tokens": {
                       "type": "integer"
-                    },
-                    "mux_encoding_seconds": {
-                      "type": "integer"
                     }
                   },
                   "example": {
@@ -5106,8 +5039,7 @@
                     "item_types": 0,
                     "roles": 0,
                     "deployment_environments": 0,
-                    "access_tokens": 0,
-                    "mux_encoding_seconds": 0
+                    "access_tokens": 0
                   }
                 }
               }
@@ -5327,22 +5259,6 @@
                   "description": "The number of requests made to both our Content Management and Content Delivery APIs",
                   "example": 100000
                 },
-                "mux_streaming_seconds": {
-                  "type": [
-                    "null",
-                    "integer"
-                  ],
-                  "description": "The number of streaming seconds delivered by Mux.com",
-                  "example": 3600
-                },
-                "mux_encoding_seconds": {
-                  "type": [
-                    "null",
-                    "integer"
-                  ],
-                  "description": "The number of available encoding seconds to Mux.com",
-                  "example": 3600
-                },
                 "access_tokens": {
                   "type": [
                     "null",
@@ -5380,19 +5296,14 @@
                   "description": "Whether collaboration features are enabled or not",
                   "example": true
                 },
+                "advanced_media_area": {
+                  "type": "boolean",
+                  "description": "Whether built-in image editor is enabled or not",
+                  "example": true
+                },
                 "sso": {
                   "type": "boolean",
                   "description": "Whether Single Sign-On feature is enabled or not",
-                  "example": true
-                },
-                "advanced_media_area": {
-                  "type": "boolean",
-                  "description": "Whether built-in image editor and smart-tagging is enabled or not",
-                  "example": true
-                },
-                "video": {
-                  "type": "boolean",
-                  "description": "Whether video streaming with Mux.com is enabled or not",
                   "example": true
                 },
                 "history_retention_months": {
@@ -5513,22 +5424,6 @@
                           "type": "integer"
                         }
                       }
-                    },
-                    "mux_encoding_seconds": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "amount_per_packet",
-                        "price"
-                      ],
-                      "properties": {
-                        "amount_per_packet": {
-                          "type": "integer"
-                        },
-                        "price": {
-                          "type": "integer"
-                        }
-                      }
                     }
                   },
                   "example": {
@@ -5554,10 +5449,6 @@
                     },
                     "access_tokens": {
                       "amount_per_packet": 1,
-                      "price": 10
-                    },
-                    "mux_encoding_seconds": {
-                      "amount_per_packet": 1000,
                       "price": 10
                     }
                   }
@@ -5598,22 +5489,6 @@
                           "type": "integer"
                         }
                       }
-                    },
-                    "mux_streaming_seconds": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "amount_per_packet",
-                        "price"
-                      ],
-                      "properties": {
-                        "amount_per_packet": {
-                          "type": "integer"
-                        },
-                        "price": {
-                          "type": "integer"
-                        }
-                      }
                     }
                   },
                   "example": {
@@ -5623,10 +5498,6 @@
                     },
                     "traffic_bytes": {
                       "amount_per_packet": 161061273600,
-                      "price": 29
-                    },
-                    "mux_streaming_seconds": {
-                      "amount_per_packet": 250000,
                       "price": 29
                     }
                   }
@@ -6248,9 +6119,6 @@
                     },
                     "access_tokens": {
                       "type": "integer"
-                    },
-                    "mux_encoding_seconds": {
-                      "type": "integer"
                     }
                   },
                   "example": {
@@ -6259,8 +6127,7 @@
                     "item_types": 0,
                     "roles": 0,
                     "deployment_environments": 0,
-                    "access_tokens": 0,
-                    "mux_encoding_seconds": 0
+                    "access_tokens": 0
                   }
                 }
               }
@@ -6511,9 +6378,6 @@
                   "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
                 },
                 "advanced_media_area_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "video": {
                   "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
                 }
               }
@@ -6804,10 +6668,18 @@
       }
     },
     "rawHeaders": [
+      "Server",
+      "Cowboy",
+      "Date",
+      "Mon, 02 Dec 2019 11:26:40 GMT",
+      "Connection",
+      "close",
       "Last-Modified",
-      "Mon, 18 Nov 2019 12:09:28 GMT",
+      "Thu, 21 Nov 2019 16:16:48 GMT",
       "Content-Type",
       "application/json",
+      "X-Queue-Time",
+      "5ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -6820,10 +6692,10 @@
       "1728000",
       "Access-Control-Allow-Origin",
       "*",
-      "Connection",
-      "close",
       "Content-Length",
-      "102979"
+      "100533",
+      "Via",
+      "1.1 vegur"
     ]
   },
   {
@@ -6840,9 +6712,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b080084abd25d0003",
-      "7c525d6f9b3014fd2f3c2708930085b776ca5ad2265955b22a7d41d71f244ec146d8944295ff3e3b5bdab49b064296ef39f75c737cde1c0a1a9ce4cde1d4491c144dbcd01939baaf99d92aae99d981d60dc7ad66ca12055416bb2ae5d6605456c0859388b62c470e179a3502ca5cb5f88438d830c75160c825289ddb8139d981d8b21cb4c17d0fc56384c6e82243d364e22793d00dc2e0c93408791cfa5b1c08614ae55a3e332bcbfaf90e5f13bee2f3743da468c9e7b16b8a7eba97af77dfe6835d97c3a25bf28ec3431a2eb2195a6533958a7bdbb44b4dfda94fc3749f768bec591bdc7cbbf5225b878bc1f0874dbbcc36d3dbe1f275b5bfec52e1b9cb9b97c7fafba3dc28f8a1b3e1fa36c3377324377799afafee2bdcca7cc2fb9fab7d3073ceecf8ea850bb4e2c2355648522997c8cab049c34033fa1f53fcc89a6268b46bccd5bc5b11d3c803a03ef57d16052c0e2f18200cd3282a5881ffb44851f6ef1d4081d082f853ecc5c42b624a3066171e2b10010fd97b6540347fb1077292024ac50e56a604cda5503b5e1fb370e4307bdb8a34bcb6982d7fce548c227496a973eee1303a69d425fca3f7a3ef885b7eab60cbfe668ebd4fefd7249f4dcd8dddb5f90fcc4baefba3a66e40a882351fb2367206909d38af9e86a1203e3b9a09a66c85364ae6f9050000ffff",
-      "0300f21ccb3e52030000"
+      "1f8b0800f1f4e45d0003",
+      "74525b73a23014fe2f3c0b4322f737adce8a5be8eca8b3d3be3087103514824342113bfef74ddcb5daed2e3c6472becb81ef9c77a3000946f46eb0c2880ce48f7ddf181972385075154c527503295b9677920a4de4506b6c5a353b85154d0d8c1b11efaa6a64302e69cba1ca44975f1123574c3374dcb1a2572064a65b66640f7c4733908a816d149a089b365e2314612f7290e5d8ee8b12f0e6d2f6b73d104285c864f34ab5311d96fbfc1b614f6c196f4e314ad932b45411c765737c7c589ef4999e92713af40c56b197ace7383d4d44cc7f68d13e663d7b19622f2ee33e59bfca641dcb64b6dca8d34bca672f9dcdbb743671be9f26c7a772d2c7dcb6dea6e828e576fa582c502acc15e465fdf0fc53a61b73be48cb84880ec2d582c4601b77817c4dc382a266dc526134a41616696ac5272d05498bffc732f6021d8ba2157dabc6f311c6d80f6db740b94749e0da39a518e320f77d843ce4847f240daf860fc5d60584c2a07009a501f61c0aae17f8050ac176f25ccf960291ec4d7f90116da112f4ac6d2a90ace162cf0e977db870a89eb8202d3b684c973fef55881d7cb757f7dcf37974f53854f00fed4d77c135bf13b0a35f99a6fde9fd7b9befba662aee83fa8f9c554c0e174fd902175bdade6cf5d229a0e9f97df5da0c79be7d3357abd9745c2a27f5fc020000ffff",
+      "03002632abd656030000"
     ],
     "rawHeaders": [
       "Content-Type",
@@ -6856,13 +6728,13 @@
       "X-RateLimit-Remaining",
       "27",
       "ETag",
-      "W/\"aaf1e0accb876159b8286b1e51740fe6\"",
+      "W/\"ad930e5f672f4e99131f35faf4ead0f3\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "7131f858-be5f-4187-8eb3-4165f37cc835",
+      "9b532164-f0a0-4d47-89c3-c47f792f7e6f",
       "X-Runtime",
-      "0.175012",
+      "0.086945",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
