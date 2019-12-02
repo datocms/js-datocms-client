@@ -154,21 +154,7 @@ export default class File {
   }
 
   get colors() {
-    return this.upload.colors.map(hex => {
-      const hashlessHex = hex.charAt(0) === '#' ? hex.slice(1) : hex;
-      const twoDigitHexR = hashlessHex.slice(0, 2);
-      const twoDigitHexG = hashlessHex.slice(2, 4);
-      const twoDigitHexB = hashlessHex.slice(4, 6);
-      const twoDigitHexA = hashlessHex.slice(6, 8) || 'ff';
-      const hexToDecimal = h => parseInt(h, 16);
-      const rgba = {
-        red: hexToDecimal(twoDigitHexR),
-        green: hexToDecimal(twoDigitHexG),
-        blue: hexToDecimal(twoDigitHexB),
-        alpha: +(hexToDecimal(twoDigitHexA) / 255).toFixed(2),
-      };
-      return new Color(rgba);
-    });
+    return this.upload.colors.map(color => new Color(color));
   }
 
   get blurhash() {
