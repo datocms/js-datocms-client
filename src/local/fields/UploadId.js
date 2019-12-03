@@ -27,18 +27,6 @@ export default class UploadId {
     return this.upload.height;
   }
 
-  get author() {
-    return this.upload.author;
-  }
-
-  get notes() {
-    return this.upload.notes;
-  }
-
-  get copyright() {
-    return this.upload.copyright;
-  }
-
   url(params = {}) {
     return buildFileUrl(this.upload, this.itemsRepo.entitiesRepo, params);
   }
@@ -49,8 +37,6 @@ export default class UploadId {
       size: this.size,
       width: this.width,
       height: this.height,
-      title: this.title,
-      alt: this.alt,
       url: this.url(),
     };
   }
