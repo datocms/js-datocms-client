@@ -1,3 +1,7 @@
+## 3.0.9
+
+* Added new attributes to uploads
+
 ## 2.0.3 - 2.0.4
 
 * Fix in how we build SEO tags
