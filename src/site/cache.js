@@ -79,7 +79,8 @@ module.exports = {
     "find": true,
     "destroy": true,
     "batchDestroy": true,
-    "update": true
+    "update": true,
+    "batchAddTags": true
   },
   "uploadRequest": {
     "create": true
@@ -124,6 +125,13 @@ module.exports = {
     "find": true,
     "destroy": true
   },
+  "uploadFilters": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
+    "destroy": true
+  },
   "siteInvitations": {
     "create": true,
     "update": true,
@@ -146,8 +154,15 @@ module.exports = {
     "update": true,
     "destroy": true
   },
-  "ssoSetting": {
+  "ssoSettings": {
     "find": true,
     "update": true
+  },
+  "uploadTags": {
+    "all": true,
+    "create": true
+  },
+  "uploadSmartTags": {
+    "all": true
   }
 };
