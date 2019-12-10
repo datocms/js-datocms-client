@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
-import toml from 'toml-js';
+import TOML from '@iarna/toml';
 
 function fileExists(filePath) {
   try {
@@ -77,7 +77,7 @@ function detectHugo(dir) {
   const configs = [
     {
       file: 'config.toml',
-      loader: content => toml.parse(content),
+      loader: content => TOML.parse(content),
     },
     {
       file: 'config.yaml',

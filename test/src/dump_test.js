@@ -5,7 +5,7 @@ import rimraf from 'rimraf';
 import tmp from 'tmp';
 import fs from 'fs';
 import yaml from 'js-yaml';
-import toml from 'toml';
+import TOML from '@iarna/toml';
 import parser from 'parser-front-matter';
 
 import dump from '../../src/dump/dump';
@@ -16,6 +16,38 @@ import ItemsRepo from '../../src/local/ItemsRepo';
 import uploadImage from '../../src/upload/uploadImage';
 
 describe('CLI tool', () => {
+  it(
+    'dump with toml',
+    vcr(async () => {
+      const accountClient = await generateNewAccountClient();
+
+      const site = await accountClient.sites.create({
+        name: 'Integration new test site',
+      });
+
+      const client = new SiteClient(
+        site.readwriteToken,
+        {},
+        'http://site-api.lvh.me:3001',
+      );
+
+      const dir = tmp.dirSync();
+      const dirName = dir.name;
+
+      const configFile = path.resolve('test/fixtures/toml.config.js');
+      const loader = new Loader(client, false);
+      await loader.load();
+      await dump(configFile, new ItemsRepo(loader.entitiesRepo), true, dirName);
+
+      const tomlFile = TOML.parse(
+        fs.readFileSync(path.join(dirName, 'foobar.toml'), 'utf8'),
+      );
+      expect(tomlFile.section[0].key).to.eq('value1');
+      expect(tomlFile.section[1].key).to.eq('value2');
+      expect(tomlFile.section[2].key).to.eq('value3');
+    }),
+  );
+
   it(
     'dump',
     vcr(async () => {
@@ -199,7 +231,7 @@ describe('CLI tool', () => {
       expect(yamlFile.name).to.eq('Integration new test site');
       expect(yamlFile.locales).to.eql(['en', 'it']);
 
-      const tomlFile = toml.parse(
+      const tomlFile = TOML.parse(
         fs.readFileSync(path.join(dirName, 'foobar.toml'), 'utf8'),
       );
       expect(tomlFile.siteName).to.eq('Integration new test site');

@@ -1,5 +1,5 @@
 import yaml from 'js-yaml';
-import toml from 'toml-js';
+import TOML from '@iarna/toml';
 import traverse from 'traverse';
 
 export default function serializeData(format, data) {
@@ -17,7 +17,7 @@ export default function serializeData(format, data) {
       return yaml.safeDump(safeData, { lineWidth: -1 }).trim();
 
     case 'toml':
-      return toml.dump(safeData).trim();
+      return TOML.stringify(safeData).trim();
 
     case 'json':
       return JSON.stringify(safeData, null, 2).trim();
