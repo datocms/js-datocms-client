@@ -1,4 +1,4 @@
-import createTitleSlugField from './fields/slug';
+import createStringField from './fields/string';
 
 export default async function tag(dato) {
   const itemType = await dato.itemTypes.create({
@@ -6,7 +6,9 @@ export default async function tag(dato) {
     name: 'Tag',
   });
 
-  await createTitleSlugField(itemType, dato, 'name');
+  for (const apiKey of ['name', 'slug']) {
+    await createStringField(itemType, dato, apiKey);
+  }
 
   return itemType.id;
 }

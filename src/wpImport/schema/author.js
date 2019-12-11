@@ -1,4 +1,3 @@
-import createTitleSlugField from './fields/slug';
 import createTextField from './fields/text';
 import createStringField from './fields/string';
 
@@ -8,9 +7,9 @@ export default async function author(dato) {
     name: 'Author',
   });
 
-  await createTitleSlugField(itemType, dato, 'name');
-
   const authorsFields = [
+    'name',
+    'slug',
     'username',
     'first_name',
     'last_name',
