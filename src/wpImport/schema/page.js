@@ -1,4 +1,4 @@
-import createTitleSlugField from './fields/slug';
+import createStringField from './fields/string';
 import createTextField from './fields/text';
 
 export default async function page(dato, authorId) {
@@ -8,7 +8,9 @@ export default async function page(dato, authorId) {
     name: 'Page',
   });
 
-  await createTitleSlugField(itemType, dato, 'title');
+  for (const apiKey of ['title', 'slug']) {
+    await createStringField(itemType, dato, apiKey);
+  }
 
   for (const apiKey of ['excerpt', 'content']) {
     await createTextField(itemType, dato, apiKey);

@@ -1,4 +1,4 @@
-import createTitleSlugField from './fields/slug';
+import createStringField from './fields/string';
 import createTextField from './fields/text';
 
 export default async function category(dato) {
@@ -8,7 +8,10 @@ export default async function category(dato) {
     tree: true,
   });
 
-  await createTitleSlugField(itemType, dato, 'name');
+  for (const apiKey of ['name', 'slug']) {
+    await createStringField(itemType, dato, apiKey);
+  }
+
   await createTextField(itemType, dato, 'description');
 
   return itemType.id;
