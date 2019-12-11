@@ -243,8 +243,6 @@ describe('CLI tool', () => {
         ),
       );
 
-      console.log(articleFile.data.video);
-
       expect(articleFile.data.itemType).to.eq('article');
       expect(articleFile.data.updatedAt).to.not.be.null();
       expect(articleFile.data.createdAt).to.not.be.null();

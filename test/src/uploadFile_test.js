@@ -86,7 +86,7 @@ describe('Upload file from', async () => {
       vcr(async () => {
         const uploadData = await uploadFile(
           client,
-          'https://upload.wikimedia.org/wikipedia/commons/4/4d/Tagliatelle_al_ragù_(image_modified).jpg',
+          'https://www.ilcaminettodisaliceterme.it/wp-content/uploads/2019/01/menù-estivo.png',
         );
         expect(uploadData).to.not.be.null();
       }),
