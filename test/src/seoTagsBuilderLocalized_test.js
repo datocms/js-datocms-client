@@ -2,10 +2,7 @@
 
 import { camelizeKeys } from 'humps';
 import EntitiesRepo from '../../src/local/EntitiesRepo';
-import Item from '../../src/local/Item';
 import { builders } from '../../src/utils/seoTagsBuilder';
-import ItemsRepo from '../../src/local/ItemsRepo';
-import i18n from '../../src/utils/i18n';
 
 describe('seoTagsBuilder', () => {
   let itemTitle;
@@ -14,7 +11,6 @@ describe('seoTagsBuilder', () => {
   let item;
   let noIndex;
   let entitiesRepo;
-  let itemsRepo;
   let itemImage;
   let locales;
 
@@ -25,7 +21,6 @@ describe('seoTagsBuilder', () => {
     noIndex = memo(() => null);
     itemImage = memo(() => null);
     locales = memo(() => ['en', 'it']);
-    i18n.locale = 'en';
 
     entitiesRepo = memo(() => {
       const payload = camelizeKeys({
@@ -174,7 +169,6 @@ describe('seoTagsBuilder', () => {
       return new EntitiesRepo(payload);
     });
 
-    itemsRepo = memo(() => new ItemsRepo(entitiesRepo()));
     item = memo(() => null);
   });
 
@@ -183,7 +177,7 @@ describe('seoTagsBuilder', () => {
     let titleValue;
 
     beforeEach(() => {
-      item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+      item = memo(() => entitiesRepo().findEntity('item', '24038'));
       globalSeo = memo(() => camelizeKeys({
         en: {
           title_suffix: ' - Suffix!',
