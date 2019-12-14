@@ -207,6 +207,7 @@ export const builders = {
             i18n,
           ),
         )
+        .map(image => image ? image.uploadId : null)
         .filter(id => !!id)
         .map(id => entitiesRepo.findEntity('upload', id))
         .find(
