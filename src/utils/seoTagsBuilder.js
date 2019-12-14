@@ -20,16 +20,20 @@ function seoAttributeWithFallback(
   const seoField =
     itemEntity && itemEntity.itemType.fields.find(f => f.fieldType === 'seo');
 
-  let itemSeoValue = null;
-  if (seoField) {
-    itemSeoValue = itemEntity[camelize(seoField.apiKey)];
-
-    if ( attribute === 'image' && itemSeoValue && itemSeoValue.image ) {
-      itemSeoValue = itemSeoValue.image.upload ? itemSeoValue.image.upload.id : null;
-    } else {
-      itemSeoValue = itemSeoValue ? itemSeoValue[attribute] : null;
-    }
-  }
+  const itemSeoValue =
+    seoField &&
+    localizedRead(
+      itemEntity,
+      camelize(seoField.apiKey),
+      seoField.localized,
+      i18n,
+    ) &&
+    localizedRead(
+      itemEntity,
+      camelize(seoField.apiKey),
+      seoField.localized,
+      i18n,
+    )[attribute];
 
   const multiLocaleSite = site.locales.length > 1;
 
@@ -50,7 +54,13 @@ export const builders = {
 
     const title = seoAttributeWithFallback(
       'title',
-      titleField && itemEntity[camelize(titleField.apiKey)],
+      titleField &&
+        localizedRead(
+          itemEntity,
+          camelize(titleField.apiKey),
+          titleField.localized,
+          i18n,
+        ),
       itemEntity,
       entitiesRepo,
       i18n,
@@ -189,8 +199,14 @@ export const builders = {
       itemEntity &&
       itemEntity.itemType.fields
         .filter(f => f.fieldType === 'file')
-        .map(field => itemEntity[camelize(field.apiKey)])
-        .map(image => image && image.upload ? image.upload.id : null)
+        .map(field =>
+          localizedRead(
+            itemEntity,
+            camelize(field.apiKey),
+            field.localized,
+            i18n,
+          ),
+        )
         .filter(id => !!id)
         .map(id => entitiesRepo.findEntity('upload', id))
         .find(
@@ -202,11 +218,11 @@ export const builders = {
             image.height >= 200,
         );
 
-    const fallbackImageId = itemImage && itemImage.id;
+    const itemImageId = itemImage && itemImage.id;
 
     const imageId = seoAttributeWithFallback(
       'image',
-      fallbackImageId,
+      itemImageId,
       itemEntity,
       entitiesRepo,
       i18n,

@@ -2,9 +2,7 @@
 
 import { camelizeKeys } from 'humps';
 import EntitiesRepo from '../../src/local/EntitiesRepo';
-import Item from '../../src/local/Item';
 import { builders } from '../../src/utils/seoTagsBuilder';
-import ItemsRepo from '../../src/local/ItemsRepo';
 
 describe('seoTagsBuilder', () => {
   let itemTitle;
@@ -13,7 +11,6 @@ describe('seoTagsBuilder', () => {
   let item;
   let noIndex;
   let entitiesRepo;
-  let itemsRepo;
   let itemImage;
   let locales;
 
@@ -269,7 +266,6 @@ describe('seoTagsBuilder', () => {
       return new EntitiesRepo(payload);
     });
 
-    itemsRepo = memo(() => new ItemsRepo(entitiesRepo()));
     item = memo(() => null);
   });
 
@@ -291,7 +287,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -331,7 +327,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -387,7 +383,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -431,7 +427,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -477,7 +473,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -517,7 +513,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
@@ -606,7 +602,7 @@ describe('seoTagsBuilder', () => {
 
     context('with item', () => {
       beforeEach(() => {
-        item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+        item = memo(() => entitiesRepo().findEntity('item', '24038'));
       });
 
       it('returns iso 8601 datetime', () => {
@@ -668,7 +664,7 @@ describe('seoTagsBuilder', () => {
 
     context('with item', () => {
       beforeEach(() => {
-        item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+        item = memo(() => entitiesRepo().findEntity('item', '24038'));
       });
 
       it('returns article og:type', () => {
@@ -722,7 +718,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('with no image', () => {
@@ -748,9 +744,7 @@ describe('seoTagsBuilder', () => {
 
         context('with image', () => {
           beforeEach(() => {
-            itemImage = memo( () => {
-              return { uploadId: '100002' }
-            });
+            itemImage = memo(() => '100002');
           });
 
           context('no SEO', () => {
@@ -794,7 +788,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('with no image', () => {
@@ -821,9 +815,7 @@ describe('seoTagsBuilder', () => {
 
         context('with image', () => {
           beforeEach(() => {
-            itemImage = memo( () => {
-              return { uploadId: '100002' }
-            });
+            itemImage = memo(() => '100002');
           });
 
           context('no SEO', () => {
@@ -871,7 +863,7 @@ describe('seoTagsBuilder', () => {
 
       context('with item', () => {
         beforeEach(() => {
-          item = memo(() => new Item(entitiesRepo().findEntity('item', '24038'), itemsRepo()));
+          item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('with no image', () => {
@@ -898,9 +890,7 @@ describe('seoTagsBuilder', () => {
 
         context('with image', () => {
           beforeEach(() => {
-            itemImage = memo( () => {
-              return { uploadId: '100002' }
-            });
+            itemImage = memo(() => '100002');
           });
 
           context('no SEO', () => {
