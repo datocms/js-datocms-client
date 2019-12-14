@@ -744,7 +744,9 @@ describe('seoTagsBuilder', () => {
 
         context('with image', () => {
           beforeEach(() => {
-            itemImage = memo(() => '100002');
+            itemImage = memo(() => {
+              return { uploadId: '100002' }
+            });
           });
 
           context('no SEO', () => {
@@ -815,7 +817,9 @@ describe('seoTagsBuilder', () => {
 
         context('with image', () => {
           beforeEach(() => {
-            itemImage = memo(() => '100002');
+            itemImage = memo(() => {
+              return { uploadId: '100002' }
+            });
           });
 
           context('no SEO', () => {
@@ -890,7 +894,9 @@ describe('seoTagsBuilder', () => {
 
         context('with image', () => {
           beforeEach(() => {
-            itemImage = memo(() => '100002');
+            itemImage = memo(() => {
+              return { uploadId: '100002' }
+            });
           });
 
           context('no SEO', () => {
