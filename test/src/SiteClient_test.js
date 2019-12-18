@@ -1,7 +1,7 @@
 /* global generateNewAccountClient:true */
 
 import u from 'updeep';
-import { SiteClient } from '../../src/index';
+import { SiteClient, buildModularBlock } from '../../src/index';
 
 describe('Site API', () => {
   let site;
@@ -410,60 +410,44 @@ describe('Site API', () => {
       }),
     );
 
-    // it(
-    //   'Returns the correct file field attributes',
-    //   vcr(async () => {
-    //     const itemType = await client.itemTypes.create({
-    //       name: 'Logo',
-    //       apiKey: 'logo',
-    //       singleton: true,
-    //       modularBlock: false,
-    //       sortable: false,
-    //       tree: false,
-    //       draftModeActive: false,
-    //       orderingDirection: null,
-    //       orderingField: null,
-    //       allLocalesRequired: true,
-    //       titleField: null,
-    //     });
-    //
-    //     await client.fields.create(itemType.id, {
-    //       label: 'Logo',
-    //       fieldType: 'file',
-    //       localized: false,
-    //       apiKey: 'logo',
-    //       validators: {
-    //         required: {},
-    //       },
-    //     });
-    //
-    //     const item = await client.items.create({
-    //       itemType: itemType.id,
-    //       logo: await client.uploadFile(
-    //         'test/fixtures/dato-logo.jpg',
-    //         {
-    //           copyright: '2019',
-    //           defaultFieldMetadata: {
-    //             en: {
-    //               title: 'Logo',
-    //               alt: null,
-    //               customData: {},
-    //             },
-    //           },
-    //         },
-    //         {
-    //           alt: 'First logo',
-    //         },
-    //       ),
-    //     });
-    //     console.log(item);
-    //
-    //     expect(item.itemType).to.equal(itemType.id);
-    //     expect(item.logo.alt).to.equal('First logo');
-    //     expect(item.logo.copyright).to.equal('2019');
-    //     expect(item.logo.title).to.equal('Logo');
-    //   }),
-    // );
+    it(
+      'modular blocks',
+      vcr(async () => {
+        const articleItemType = await client.itemTypes.create({
+          name: 'Article',
+          apiKey: 'article',
+        });
+
+        const contentItemType = await client.itemTypes.create({
+          name: 'Content',
+          apiKey: 'content',
+          modularBlock: true,
+        });
+
+        await client.fields.create(contentItemType.id, {
+          label: 'Text',
+          fieldType: 'text',
+          apiKey: 'text',
+        });
+
+        await client.fields.create(articleItemType.id, {
+          label: 'Content',
+          fieldType: 'rich_text',
+          apiKey: 'content',
+          validators: { richTextBlocks: { itemTypes: [contentItemType.id] } },
+        });
+
+        const item = await client.items.create({
+          itemType: articleItemType.id,
+          content: [
+            buildModularBlock({ itemType: contentItemType.id, text: 'Foo' }),
+            buildModularBlock({ itemType: contentItemType.id, text: 'Bar' }),
+          ]
+        });
+
+        expect(item.content.length).to.equal(2);
+      }),
+    );
   });
 
   describe('plugins', () => {

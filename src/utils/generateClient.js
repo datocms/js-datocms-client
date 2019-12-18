@@ -9,6 +9,9 @@ import fetchAllPages from './fetchAllPages';
 import ApiException from '../ApiException';
 import wait from './wait';
 
+
+const identityRegexp = /\{\(.*?definitions%2F(.*?)%2Fdefinitions%2Fidentity\)}/g;
+
 const getProps = obj =>
   Object.getOwnPropertyNames(obj)
     .concat(
@@ -19,6 +22,31 @@ const getProps = obj =>
 
 const toMap = keys =>
   keys.reduce((acc, prop) => Object.assign(acc, { [prop]: true }), {});
+
+const findLinkFor = (schema, namespace, apiCall) => {
+  const singularized = decamelize(pluralize.singular(namespace));
+  const sub = schema.properties[singularized];
+
+  if (!sub) {
+    throw new TypeError(`${namespace} is not a valid namespace`);
+  }
+  const methodNames = {
+    instances: 'all',
+    self: 'find',
+  };
+
+  const link = sub.links.find(
+    l => (methodNames[l.rel] || camelize(l.rel)) === apiCall,
+  );
+
+  if (!link) {
+    throw new TypeError(
+      `${namespace}.${apiCall} is not a valid API method`,
+    );
+  }
+
+  return link;
+}
 
 export default function generateClient(subdomain, cache, extraMethods = {}) {
   return function Client(
@@ -73,28 +101,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
 
               return schemaPromise.then(async schema => {
                 const singularized = decamelize(pluralize.singular(namespace));
-                const sub = schema.properties[singularized];
-
-                if (!sub) {
-                  throw new TypeError(`${namespace} is not a valid namespace`);
-                }
-
-                const methodNames = {
-                  instances: 'all',
-                  self: 'find',
-                };
-
-                const identityRegexp = /\{\(.*?definitions%2F(.*?)%2Fdefinitions%2Fidentity\)}/g;
-
-                const link = sub.links.find(
-                  l => (methodNames[l.rel] || camelize(l.rel)) === apiCall,
-                );
-
-                if (!link) {
-                  throw new TypeError(
-                    `${namespace}.${apiCall} is not a valid API method`,
-                  );
-                }
+                const link = findLinkFor(schema, singularized, apiCall);
 
                 let lastUrlId;
 

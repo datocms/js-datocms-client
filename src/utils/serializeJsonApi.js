@@ -109,7 +109,7 @@ function serializedRelationships(type, unserializedBody, schema) {
   );
 }
 
-function serializedAttributes(type, unserializedBody = {}, schema) {
+export function serializedAttributes(type, unserializedBody = {}, schema) {
   const attrs =
     type === 'item'
       ? diff(Object.keys(decamelizeKeys(unserializedBody)), [
