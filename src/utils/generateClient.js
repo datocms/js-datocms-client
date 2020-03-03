@@ -9,7 +9,6 @@ import fetchAllPages from './fetchAllPages';
 import ApiException from '../ApiException';
 import wait from './wait';
 
-
 const identityRegexp = /\{\(.*?definitions%2F(.*?)%2Fdefinitions%2Fidentity\)}/g;
 
 const getProps = obj =>
@@ -40,13 +39,11 @@ const findLinkFor = (schema, namespace, apiCall) => {
   );
 
   if (!link) {
-    throw new TypeError(
-      `${namespace}.${apiCall} is not a valid API method`,
-    );
+    throw new TypeError(`${namespace}.${apiCall} is not a valid API method`);
   }
 
   return link;
-}
+};
 
 export default function generateClient(subdomain, cache, extraMethods = {}) {
   return function Client(

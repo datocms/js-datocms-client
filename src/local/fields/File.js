@@ -79,7 +79,7 @@ class VideoAttributes {
       streamingUrl: this.streamingUrl,
       thumbnailUrl: this.thumbnailUrl(),
       mp4Url: this.mp4Url(),
-    }
+    };
   }
 }
 

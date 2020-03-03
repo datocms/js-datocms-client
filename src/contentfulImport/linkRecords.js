@@ -95,7 +95,7 @@ export default async ({
       }
       spinner.text = progress.tick();
     } catch (e) {
-      spinner.fail(e);
+      spinner.fail(typeof e === 'object' ? e.message : e);
       process.exit();
     }
 

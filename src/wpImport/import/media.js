@@ -24,8 +24,8 @@ export default async function media(dato, wp) {
               title: mediaItem.title.rendered,
               alt: mediaItem.alt_text,
               customData: {},
-            }
-          }
+            },
+          },
         });
 
         ids[mediaItem.id] = upload.id;

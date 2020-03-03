@@ -47,7 +47,7 @@ export default async function articles(
           alt: article.title.rendered,
           customData: {},
         };
-      };
+      }
 
       const newItem = await dato.items.create(itemData);
 

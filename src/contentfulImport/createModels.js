@@ -30,7 +30,7 @@ export default async ({ datoClient, contentfulData }) => {
       spinner.text = progress.tick();
       itemTypes.push(itemType);
     } catch (e) {
-      spinner.fail(e);
+      spinner.fail(typeof e === 'object' ? e.message : e);
       process.exit();
     }
   }

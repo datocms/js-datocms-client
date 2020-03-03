@@ -5,4 +5,3 @@ const rawUploadFile = process.browser
 export default function createUploadPath(client, source) {
   return rawUploadFile(client, source);
 }
-

@@ -29,7 +29,7 @@ export default async ({ datoClient, contentfulData }) => {
         spinner.text = progress.tick();
         await datoClient.itemTypes.destroy(itemType.id);
       } catch (e) {
-        spinner.fail(e);
+        spinner.fail(typeof e === 'object' ? e.message : e);
         process.exit();
       }
     }

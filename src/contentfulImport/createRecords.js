@@ -140,7 +140,7 @@ export default async ({
             "You've reached your site's plan record limit: upgrade to complete the import",
           );
         } else {
-          spinner.fail(e);
+          spinner.fail(typeof e === 'object' ? e.message : e);
         }
         process.exit();
       }

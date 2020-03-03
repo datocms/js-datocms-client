@@ -28,7 +28,12 @@ const builders = {
 
     if (!site.favicon) return undefined;
 
-    return [[70, 70], [150, 150], [310, 310], [310, 150]].map(([w, h]) =>
+    return [
+      [70, 70],
+      [150, 150],
+      [310, 310],
+      [310, 150],
+    ].map(([w, h]) =>
       metaTag(
         `msapplication-square${w}x${h}`,
         url(site.favicon, entitiesRepo, { w, h }),

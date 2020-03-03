@@ -10,25 +10,29 @@ export default async function categories(dato, wp, itemTypeId) {
   const tick = progress('Creating categories', resources.length + 1);
 
   for (const category of resources) {
-    mapping[category.id] = (await tick(
-      category.name,
+    mapping[category.id] = (
+      await tick(
+        category.name,
+        dato.items.create({
+          itemType: itemTypeId,
+          name: category.name,
+          slug: category.slug,
+          description: category.description,
+        }),
+      )
+    ).id;
+  }
+  mapping[1] = (
+    await tick(
+      'Uncategorized',
       dato.items.create({
         itemType: itemTypeId,
-        name: category.name,
-        slug: category.slug,
-        description: category.description,
+        name: 'Uncategorized',
+        slug: 'uncategorized',
+        description: 'Uncategorized',
       }),
-    )).id;
-  }
-  mapping[1] = (await tick(
-    'Uncategorized',
-    dato.items.create({
-      itemType: itemTypeId,
-      name: 'Uncategorized',
-      slug: 'uncategorized',
-      description: 'Uncategorized',
-    }),
-  )).id;
+    )
+  ).id;
 
   const childCategories = resources.filter(c => c.parent);
 

@@ -11,7 +11,7 @@ export default async ({ recordIds, datoClient }) => {
       await datoClient.items.publish(recordId);
       spinner.text = progress.tick();
     } catch (e) {
-      spinner.fail(e);
+      spinner.fail(typeof e === 'object' ? e.message : e);
       process.exit();
     }
   }

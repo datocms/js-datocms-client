@@ -34,7 +34,7 @@ export default async function pages(dato, wp, schema, media, authors) {
           alt: page.title.rendered,
           customData: {},
         };
-      };
+      }
 
       const newItem = await dato.items.create(itemData);
 

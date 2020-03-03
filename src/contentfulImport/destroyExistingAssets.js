@@ -24,7 +24,7 @@ export default async ({ datoClient }) => {
         await datoClient.uploads.destroy(upload.id);
         spinner.text = progress.tick();
       } catch (e) {
-        spinner.fail(e);
+        spinner.fail(typeof e === 'object' ? e.message : e);
         process.exit();
       }
     }

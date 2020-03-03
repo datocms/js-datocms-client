@@ -11,7 +11,7 @@ export default async (contentfulToken, contentfulSpaceId, datoCmsToken) => {
     contentful = await contentfulClient.getSpace(contentfulSpaceId);
     spinner.succeed();
   } catch (e) {
-    spinner.fail(e);
+    spinner.fail(typeof e === 'object' ? e.message : e);
     process.exit();
   }
   return { dato, contentful };

@@ -14,8 +14,8 @@ function uploadData(id) {
     alt: null,
     title: null,
     customData: {},
-  }
-};
+  };
+}
 
 export default async ({
   fieldsMapping,
@@ -37,15 +37,17 @@ export default async ({
       const fileUrl = `https:${fileAttributes.url}`;
       try {
         const path = await datoClient.createUploadPath(fileUrl);
-        const defaultFieldMetadata = contentfulData.locales.reduce((acc, locale) => {
-          return Object.assign(acc, {
-            [locale]: {
+        const defaultFieldMetadata = contentfulData.locales.reduce(
+          (acc, locale) => {
+            return Object.assign(acc, {
+              [locale]: {
                 title: asset.fields.title[locale],
                 alt: asset.fields.title[locale],
                 customData: {},
-              }
-            })
-          }, {}
+              },
+            });
+          },
+          {},
         );
 
         const upload = await datoClient.uploads.create({
@@ -68,8 +70,7 @@ export default async ({
             "You've reached your site's plan storage limit: upgrade to complete the import",
           );
         } else {
-          console.log(e);
-          spinner.fail(e);
+          spinner.fail(typeof e === 'object' ? e.message : e);
         }
         process.exit();
       }
@@ -106,14 +107,14 @@ export default async ({
                 if (field.fieldType === 'file') {
                   return Object.assign(innerAcc, {
                     [locale]: uploadData(
-                      contentfulAssetsMap[innerValue.sys.id]
+                      contentfulAssetsMap[innerValue.sys.id],
                     ),
                   });
                 }
                 return Object.assign(innerAcc, {
-                  [locale]: innerValue.map(
-                    link => uploadData(contentfulAssetsMap[link.sys.id]),
-                  ).filter(v => !!v),
+                  [locale]: innerValue
+                    .map(link => uploadData(contentfulAssetsMap[link.sys.id]))
+                    .filter(v => !!v),
                 });
               },
               {},
@@ -136,12 +137,14 @@ export default async ({
 
             switch (field.fieldType) {
               case 'file':
-                fileFieldAttributes = uploadData(contentfulAssetsMap[innerValue.sys.id])
+                fileFieldAttributes = uploadData(
+                  contentfulAssetsMap[innerValue.sys.id],
+                );
                 break;
               case 'gallery':
-                fileFieldAttributes = innerValue.map(link =>
-                  uploadData(contentfulAssetsMap[link.sys.id])
-                ).filter(v => !!v);
+                fileFieldAttributes = innerValue
+                  .map(link => uploadData(contentfulAssetsMap[link.sys.id]))
+                  .filter(v => !!v);
                 break;
               default:
                 break;
@@ -156,8 +159,7 @@ export default async ({
       await datoClient.items.update(datoItemId, recordAttributes);
       spinner.text = progress.tick();
     } catch (e) {
-      console.log(e);
-      spinner.fail(e);
+      spinner.fail(typeof e === 'object' ? e.message : e);
       process.exit();
     }
   }

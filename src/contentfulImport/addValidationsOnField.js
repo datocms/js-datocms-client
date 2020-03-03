@@ -46,7 +46,7 @@ export default async ({
             !e.body.data ||
             !e.body.data.some(d => d.id === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
           ) {
-            spinner.fail(e);
+            spinner.fail(typeof e === 'object' ? e.message : e);
             process.exit();
           } else {
             await delay(1000);

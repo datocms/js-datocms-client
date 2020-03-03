@@ -207,7 +207,7 @@ export const builders = {
             i18n,
           ),
         )
-        .map(image => image ? image.uploadId : null)
+        .map(image => (image ? image.uploadId : null))
         .filter(id => !!id)
         .map(id => entitiesRepo.findEntity('upload', id))
         .find(
@@ -231,7 +231,11 @@ export const builders = {
 
     if (imageId) {
       const upload = entitiesRepo.findEntity('upload', imageId);
-      const url = buildFileUrl(upload, entitiesRepo, { w: '1000', fit: 'max', fm: 'jpg' });
+      const url = buildFileUrl(upload, entitiesRepo, {
+        w: '1000',
+        fit: 'max',
+        fm: 'jpg',
+      });
 
       return [ogTag('og:image', url), cardTag('twitter:image', url)];
     }
