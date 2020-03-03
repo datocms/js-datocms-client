@@ -154,7 +154,7 @@ module.exports = {
     "update": true,
     "destroy": true
   },
-  "ssoSettings": {
+  "ssoSetting": {
     "find": true,
     "update": true
   },
