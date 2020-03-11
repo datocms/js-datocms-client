@@ -66,10 +66,6 @@ export default class Loader {
       this.entitiesRepo.upsertEntities(...payloads);
     });
 
-    addEventListener('upload:destroy', ({ ids }) => {
-      this.entitiesRepo.destroyEntities('upload', ids);
-    });
-
     addEventListener('item_type:upsert', async ({ ids }) => {
       for (const id of ids) {
         const payloads = await Promise.all([
