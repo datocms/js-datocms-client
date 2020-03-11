@@ -33,62 +33,6 @@ export default class Loader {
     });
   }
 
-  async watchSchema(notifier) {
-    if (!this.siteId) {
-      await this.loadSchema();
-    }
-
-    const [watcher, disconnect] = await this.client.subscribeToChannel(
-      this.siteId,
-    );
-
-    const addEventListener = (eventName, entitiesRepoRefresher) => {
-      watcher.bind(eventName, data => {
-        notifier(entitiesRepoRefresher(data));
-      });
-    };
-
-    const itemVersion = this.previewMode ? 'latest' : 'published';
-
-    addEventListener('site:upsert', async () => {
-      const payloads = await Promise.all([
-        this.client.get('/site', { include: 'item_types,item_types.fields' }),
-        this.client.items.all(
-          { version: itemVersion },
-          { deserializeResponse: false, allPages: true },
-        ),
-        this.client.uploads.all(
-          {},
-          { deserializeResponse: false, allPages: true },
-        ),
-      ]);
-
-      this.entitiesRepo.upsertEntities(...payloads);
-    });
-
-    addEventListener('item_type:upsert', async ({ ids }) => {
-      for (const id of ids) {
-        const payloads = await Promise.all([
-          this.client.itemTypes.find(id, {}, { deserializeResponse: false }),
-          this.client.items.all(
-            { 'filter[type]': id, version: itemVersion },
-            { deserializeResponse: false, allPages: true },
-          ),
-        ]);
-
-        this.entitiesRepo.upsertEntities(...payloads);
-      }
-    });
-
-    addEventListener('item_type:destroy', ({ ids }) => {
-      ids.forEach(id => {
-        this.entitiesRepo.destroyItemType(id);
-      });
-    });
-
-    return disconnect;
-  }
-
   async watch(notifier) {
     if (!this.siteId) {
       await this.load();
