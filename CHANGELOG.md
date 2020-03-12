@@ -1,3 +1,8 @@
+## 3.0.16
+
+* Added `loadSchema` on `Loader` to improve `gatsby-source-datocms`
+* Fix bug in fallback value for localized fields for `gatsby-source-datocms` compatibility
+
 ## 3.0.9
 
 * Added new attributes to uploads
