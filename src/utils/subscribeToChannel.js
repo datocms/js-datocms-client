@@ -2,9 +2,13 @@ import Pusher from 'pusher-js';
 
 const PUSHER_API_KEY = '75e6ef0fe5d39f481626';
 
-let subscribeToChannelPromise;
+let subscribeToSiteChannelPromise;
 
 export default function subscribeToChannel(client, siteId) {
+  let subscribeToChannelPromise = subscribeToSiteChannelPromise
+    ? subscribeToSiteChannelPromise[siteId]
+    : null;
+
   if (subscribeToChannelPromise) {
     return subscribeToChannelPromise;
   }
