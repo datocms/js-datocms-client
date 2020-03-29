@@ -90,16 +90,18 @@ Options:
       '--contentfulToken': contentfulToken,
       '--contentfulSpaceId': contentfulSpaceId,
       '--datoCmsToken': datoCmsToken,
-      '--datoCmsEnvironment': datoCmsEnvironment,
       '--skipContent': skipContent,
+      '--includeOnly': includeOnly,
+      '<contentType>': contentType,
     } = options;
 
-    return contentfulImport(
+    contentfulImport(
       contentfulToken,
       contentfulSpaceId,
       datoCmsToken,
-      datoCmsEnvironment,
       skipContent,
+      includeOnly,
+      contentType,
     );
   }
 
