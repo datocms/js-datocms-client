@@ -1,6 +1,6 @@
 import ora from 'ora';
 
-export default async (client, skipContent) => {
+export default async (client, skipContent, includeOnly, contentType) => {
   const spinner = ora('Downloading Contentful data structure').start();
   const environments = await client.getEnvironments();
   const environment = environments.items.find(e => e.name === 'master');
@@ -8,7 +8,9 @@ export default async (client, skipContent) => {
   const defaultLocale = rawLocales.items.find(locale => locale.default).code;
   const locales = rawLocales.items.map(locale => locale.code);
   const rawContentTypes = await environment.getContentTypes();
-  const contentTypes = rawContentTypes.items;
+  const includeTypes = new Set(includeOnly? contentType : null);
+  const contentTypes = includeOnly ?
+    rawContentTypes.items.filter(type => includeTypes.has(type.sys.id)) : rawContentTypes.items;
 
   let entries;
   let assets;
@@ -17,7 +19,8 @@ export default async (client, skipContent) => {
     const rawEntries = await environment.getEntries();
     const rawAssets = await environment.getAssets();
 
-    entries = rawEntries.items;
+    entries = includeOnly ?
+      rawEntries.items.filter(entry => includeTypes.has(entry.sys.contentType.sys.id)) : rawEntries.items;
     assets = rawAssets.items;
   }
 

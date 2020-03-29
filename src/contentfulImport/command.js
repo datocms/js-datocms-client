@@ -17,6 +17,8 @@ export default async (
   contentfulSpaceId,
   datoCmsToken,
   skipContent,
+  includeOnly,
+  contentType,
 ) => {
   const client = await appClient(
     contentfulToken,
@@ -27,6 +29,8 @@ export default async (
   const contentfulData = await getContentfulData(
     client.contentful,
     skipContent,
+    includeOnly,
+    contentType,
   );
 
   await removeAllValidators({ datoClient, contentfulData });
