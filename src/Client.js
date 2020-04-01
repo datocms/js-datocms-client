@@ -70,8 +70,6 @@ export default class Client {
 
     // console.log('---->', url, fullOptions);
 
-    // console.time(`fetch ${url}`);
-
     return fetch(url, fullOptions).then(res => {
       if (res.status === 429) {
         const waitTime = res.headers.get('X-RateLimit-Reset') || '10';
@@ -84,7 +82,6 @@ export default class Client {
       return (res.status !== 204 ? res.json() : Promise.resolve(null))
         .then(body => {
           if (res.status >= 200 && res.status < 300) {
-            // console.timeEnd(`fetch ${url}`);
             // console.log('<----', JSON.stringify(body));
             return Promise.resolve(body);
           }

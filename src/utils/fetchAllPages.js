@@ -15,8 +15,6 @@ export default async function fetchAllPages(client, endpoint, params) {
 
   const totalCount = baseResponse.meta.total_count;
 
-  console.time(`fetchAllPages ${endpoint}`);
-
   const promises = [];
 
   for (
@@ -38,22 +36,13 @@ export default async function fetchAllPages(client, endpoint, params) {
 
   const data = await Promise.all(promises);
 
-  // console.log(`number of requests`, data.length);
-
-  console.timeEnd(`fetchAllPages ${endpoint}`);
-
   const result = data.reduce(
     (response, results) => {
-      // console.log(`count of results`, results.data.length);
       response.data = response.data.concat(results.data);
       return response;
     },
     { ...baseResponse },
   );
-
-  // console.log({
-  //   result,
-  // });
 
   return result;
 }
