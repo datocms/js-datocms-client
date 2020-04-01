@@ -275,7 +275,7 @@ describe('CLI tool', () => {
         'muxPlaybackId',
       );
       expect(articleFile.data.file.format).to.eq('txt');
-      expect(articleFile.data.file.size).to.eq(163);
+      expect(articleFile.data.file.size).to.eq(118);
       expect(articleFile.data.file.url).to.not.be.null();
 
       expect(articleFile.content).to.eq('First post');
