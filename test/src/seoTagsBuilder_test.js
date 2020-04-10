@@ -132,7 +132,7 @@ describe('seoTagsBuilder', () => {
               localized: false,
               validators: {},
               position: 1,
-              appeareance: {
+              appearance: {
                 editor: 'file',
                 parameters: {},
               },
@@ -159,7 +159,7 @@ describe('seoTagsBuilder', () => {
                 required: {},
               },
               position: 2,
-              appeareance: {
+              appearance: {
                 parameters: { heading: false },
               },
             },
@@ -183,7 +183,8 @@ describe('seoTagsBuilder', () => {
               localized: false,
               validators: {},
               position: 3,
-              appeareance: {
+              appearance: {
+                editor: 'single_line',
                 parameters: { heading: false },
               },
             },
@@ -207,7 +208,7 @@ describe('seoTagsBuilder', () => {
               localized: false,
               validators: {},
               position: 4,
-              appeareance: {
+              appearance: {
                 editor: 'seo',
                 parameters: {},
               },
@@ -270,8 +271,8 @@ describe('seoTagsBuilder', () => {
   });
 
   describe('title()', () => {
-    let result; let
-      titleValue;
+    let result;
+    let titleValue;
 
     beforeEach(() => {
       result = memo(() => builders.title(item(), entitiesRepo()));
@@ -298,9 +299,11 @@ describe('seoTagsBuilder', () => {
 
         context('with SEO', () => {
           beforeEach(() => {
-            seo = memo(() => camelizeKeys({
-              title: 'SEO title',
-            }));
+            seo = memo(() =>
+              camelizeKeys({
+                title: 'SEO title',
+              }),
+            );
           });
 
           it('returns seo title', () => {
@@ -312,11 +315,13 @@ describe('seoTagsBuilder', () => {
 
     context('with fallback seo', () => {
       beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          fallback_seo: {
-            title: 'Default title',
-          },
-        }));
+        globalSeo = memo(() =>
+          camelizeKeys({
+            fallback_seo: {
+              title: 'Default title',
+            },
+          }),
+        );
       });
 
       context('with no item', () => {
@@ -338,9 +343,11 @@ describe('seoTagsBuilder', () => {
 
         context('with SEO', () => {
           beforeEach(() => {
-            seo = memo(() => camelizeKeys({
-              title: 'SEO title',
-            }));
+            seo = memo(() =>
+              camelizeKeys({
+                title: 'SEO title',
+              }),
+            );
           });
 
           it('returns seo title', () => {
@@ -349,9 +356,11 @@ describe('seoTagsBuilder', () => {
 
           context('with title suffix', () => {
             beforeEach(() => {
-              globalSeo = memo(() => camelizeKeys({
-                title_suffix: ' - Suffix!',
-              }));
+              globalSeo = memo(() =>
+                camelizeKeys({
+                  title_suffix: ' - Suffix!',
+                }),
+              );
             });
 
             it('returns seo title with suffix', () => {
@@ -364,8 +373,10 @@ describe('seoTagsBuilder', () => {
   });
 
   describe('description()', () => {
-    let result; let descriptionValue; let ogValue; let
-      cardValue;
+    let result;
+    let descriptionValue;
+    let ogValue;
+    let cardValue;
 
     beforeEach(() => {
       result = memo(() => builders.description(item(), entitiesRepo()));
@@ -394,9 +405,11 @@ describe('seoTagsBuilder', () => {
 
         context('with SEO', () => {
           beforeEach(() => {
-            seo = memo(() => camelizeKeys({
-              description: 'SEO description',
-            }));
+            seo = memo(() =>
+              camelizeKeys({
+                description: 'SEO description',
+              }),
+            );
           });
 
           it('returns seo description', () => {
@@ -410,11 +423,13 @@ describe('seoTagsBuilder', () => {
 
     context('with fallback seo', () => {
       beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          fallback_seo: {
-            description: 'Default description',
-          },
-        }));
+        globalSeo = memo(() =>
+          camelizeKeys({
+            fallback_seo: {
+              description: 'Default description',
+            },
+          }),
+        );
       });
 
       context('with no item', () => {
@@ -440,9 +455,11 @@ describe('seoTagsBuilder', () => {
 
         context('with SEO', () => {
           beforeEach(() => {
-            seo = memo(() => camelizeKeys({
-              description: 'SEO description',
-            }));
+            seo = memo(() =>
+              camelizeKeys({
+                description: 'SEO description',
+              }),
+            );
           });
 
           it('returns seo description', () => {
@@ -456,8 +473,8 @@ describe('seoTagsBuilder', () => {
   });
 
   describe('twitterCard()', () => {
-    let result; let
-      twitterCardValue;
+    let result;
+    let twitterCardValue;
 
     beforeEach(() => {
       result = memo(() => builders.twitterCard(item(), entitiesRepo()));
@@ -484,9 +501,11 @@ describe('seoTagsBuilder', () => {
 
         context('with SEO', () => {
           beforeEach(() => {
-            seo = memo(() => camelizeKeys({
-              twitterCard: 'summary_large_image',
-            }));
+            seo = memo(() =>
+              camelizeKeys({
+                twitterCard: 'summary_large_image',
+              }),
+            );
           });
 
           it('returns seo twitterCard', () => {
@@ -498,11 +517,13 @@ describe('seoTagsBuilder', () => {
 
     context('with fallback seo', () => {
       beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          fallback_seo: {
-            twitterCard: 'summary_large_image',
-          },
-        }));
+        globalSeo = memo(() =>
+          camelizeKeys({
+            fallback_seo: {
+              twitterCard: 'summary_large_image',
+            },
+          }),
+        );
       });
 
       context('with no item', () => {
@@ -524,9 +545,11 @@ describe('seoTagsBuilder', () => {
 
         context('with SEO', () => {
           beforeEach(() => {
-            seo = memo(() => camelizeKeys({
-              twitterCard: 'foobar',
-            }));
+            seo = memo(() =>
+              camelizeKeys({
+                twitterCard: 'foobar',
+              }),
+            );
           });
 
           it('returns seo twitterCard', () => {
@@ -576,9 +599,11 @@ describe('seoTagsBuilder', () => {
 
     context('with twitter account set', () => {
       beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          twitter_account: '@steffoz',
-        }));
+        globalSeo = memo(() =>
+          camelizeKeys({
+            twitter_account: '@steffoz',
+          }),
+        );
       });
 
       it('returns robots meta tag', () => {
@@ -626,13 +651,17 @@ describe('seoTagsBuilder', () => {
 
     context('with FB page set', () => {
       beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          facebook_page_url: 'http://facebook.com/mark.smith',
-        }));
+        globalSeo = memo(() =>
+          camelizeKeys({
+            facebook_page_url: 'http://facebook.com/mark.smith',
+          }),
+        );
       });
 
       it('returns robots meta tag', () => {
-        expect(result().attributes.content).to.eq('http://facebook.com/mark.smith');
+        expect(result().attributes.content).to.eq(
+          'http://facebook.com/mark.smith',
+        );
       });
     });
   });
@@ -688,9 +717,11 @@ describe('seoTagsBuilder', () => {
 
     context('with site name set', () => {
       beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          site_name: 'My site',
-        }));
+        globalSeo = memo(() =>
+          camelizeKeys({
+            site_name: 'My site',
+          }),
+        );
       });
 
       it('returns og:site_name tag', () => {
@@ -700,8 +731,9 @@ describe('seoTagsBuilder', () => {
   });
 
   describe('image()', () => {
-    let result; let ogValue; let
-      cardValue;
+    let result;
+    let ogValue;
+    let cardValue;
 
     beforeEach(() => {
       ogValue = memo(() => result()[0].attributes.content);
@@ -730,9 +762,11 @@ describe('seoTagsBuilder', () => {
 
           context('with SEO', () => {
             beforeEach(() => {
-              seo = memo(() => camelizeKeys({
-                image: '100000',
-              }));
+              seo = memo(() =>
+                camelizeKeys({
+                  image: '100000',
+                }),
+              );
             });
 
             it('returns seo image', () => {
@@ -745,7 +779,7 @@ describe('seoTagsBuilder', () => {
         context('with image', () => {
           beforeEach(() => {
             itemImage = memo(() => {
-              return { uploadId: '100002' }
+              return { uploadId: '100002' };
             });
           });
 
@@ -758,9 +792,11 @@ describe('seoTagsBuilder', () => {
 
           context('with SEO', () => {
             beforeEach(() => {
-              seo = memo(() => camelizeKeys({
-                image: '100000',
-              }));
+              seo = memo(() =>
+                camelizeKeys({
+                  image: '100000',
+                }),
+              );
             });
 
             it('returns SEO image', () => {
@@ -774,11 +810,13 @@ describe('seoTagsBuilder', () => {
 
     context('with fallback seo', () => {
       beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          fallback_seo: {
-            image: '100001',
-          },
-        }));
+        globalSeo = memo(() =>
+          camelizeKeys({
+            fallback_seo: {
+              image: '100001',
+            },
+          }),
+        );
       });
 
       context('with no item', () => {
@@ -803,9 +841,11 @@ describe('seoTagsBuilder', () => {
 
           context('with SEO', () => {
             beforeEach(() => {
-              seo = memo(() => camelizeKeys({
-                image: '100000',
-              }));
+              seo = memo(() =>
+                camelizeKeys({
+                  image: '100000',
+                }),
+              );
             });
 
             it('returns seo image', () => {
@@ -818,7 +858,7 @@ describe('seoTagsBuilder', () => {
         context('with image', () => {
           beforeEach(() => {
             itemImage = memo(() => {
-              return { uploadId: '100002' }
+              return { uploadId: '100002' };
             });
           });
 
@@ -831,9 +871,11 @@ describe('seoTagsBuilder', () => {
 
           context('with SEO', () => {
             beforeEach(() => {
-              seo = memo(() => camelizeKeys({
-                image: '100000',
-              }));
+              seo = memo(() =>
+                camelizeKeys({
+                  image: '100000',
+                }),
+              );
             });
 
             it('returns SEO image', () => {
@@ -847,15 +889,19 @@ describe('seoTagsBuilder', () => {
 
     context('with translated fallback seo', () => {
       beforeEach(() => {
-        globalSeo = memo(() => camelizeKeys({
-          en: {
-            fallbackSeo: {
-              image: '100001',
+        globalSeo = memo(() =>
+          camelizeKeys({
+            en: {
+              fallbackSeo: {
+                image: '100001',
+              },
             },
-          },
-        }));
+          }),
+        );
         locales = memo(() => ['en', 'it']);
-        result = memo(() => builders.image(item(), entitiesRepo(), { locale: 'en' }));
+        result = memo(() =>
+          builders.image(item(), entitiesRepo(), { locale: 'en' }),
+        );
       });
 
       context('with no item', () => {
@@ -880,9 +926,11 @@ describe('seoTagsBuilder', () => {
 
           context('with SEO', () => {
             beforeEach(() => {
-              seo = memo(() => camelizeKeys({
-                image: '100000',
-              }));
+              seo = memo(() =>
+                camelizeKeys({
+                  image: '100000',
+                }),
+              );
             });
 
             it('returns seo image', () => {
@@ -895,7 +943,7 @@ describe('seoTagsBuilder', () => {
         context('with image', () => {
           beforeEach(() => {
             itemImage = memo(() => {
-              return { uploadId: '100002' }
+              return { uploadId: '100002' };
             });
           });
 
@@ -908,9 +956,11 @@ describe('seoTagsBuilder', () => {
 
           context('with SEO', () => {
             beforeEach(() => {
-              seo = memo(() => camelizeKeys({
-                image: '100000',
-              }));
+              seo = memo(() =>
+                camelizeKeys({
+                  image: '100000',
+                }),
+              );
             });
 
             it('returns SEO image', () => {

@@ -2,11 +2,11 @@
 
 With this module, you can easily create, edit and destroy any object within a DatoCMS site:
 
-* Item types
-* Fields
-* Items
-* Menu items
-* Users
+- Item types
+- Fields
+- Items
+- Menu items
+- Users
 
 # Installation
 
@@ -29,47 +29,39 @@ import { SiteClient } from 'datocms-client';
     name: 'Article',
     singleton: false,
     sortable: false,
-    apiKey: 'article'
+    apiKey: 'article',
   });
 
   // add a Title field to the Article item type
-  await client.fields.create(
-    articleType.id,
-    {
-      apiKey: 'title',
-      fieldType: 'string',
-      appeareance: { type: 'title' },
-      label: 'Title',
-      localized: false,
-      position: 99,
-      hint: '',
-      validators: { required: {} },
-    }
-  );
+  await client.fields.create(articleType.id, {
+    label: 'Title',
+    apiKey: 'title',
+    fieldType: 'string',
+    appearance: {
+      editor: 'single_line',
+      parameters: { heading: true },
+    },
+    hint: 'This is a title',
+    validators: { required: {} },
+  });
 
   // add an Image field to the Article item type
-  await client.fields.create(
-    articleType.id,
-    {
-      apiKey: 'image',
-      fieldType: 'image',
-      appeareance: null,
-      label: 'Image',
-      localized: false,
-      position: 99,
-      hint: '',
-      validators: { required: {} },
-    }
-  );
+  await client.fields.create(articleType.id, {
+    label: 'Image',
+    apiKey: 'image',
+    fieldType: 'image',
+    hint: 'Choose the cover image for your article',
+    validators: { required: {} },
+  });
 
   // create a new Article
   await client.items.create({
     itemType: articleType.id,
     title: 'My first article!',
-    image: (await client.uploadImage('http://i.giphy.com/NXOF5rlaSXdAc.gif'))
+    image: await client.uploadImage('http://i.giphy.com/NXOF5rlaSXdAc.gif'),
   });
 
-  // fetch and edit an existing Article
+  // fetch by ID and edit an existing Article
   const article = await client.items.find('1234');
   await client.items.update('1234', { ...article, title: 'New title' });
 
@@ -116,4 +108,3 @@ client.users.all();
 client.users.find(userId);
 client.users.destroy(userId);
 ```
-

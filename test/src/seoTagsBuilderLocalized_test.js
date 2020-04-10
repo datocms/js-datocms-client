@@ -125,7 +125,8 @@ describe('seoTagsBuilder', () => {
                 required: {},
               },
               position: 2,
-              appeareance: {
+              appearance: {
+                editor: 'single_line',
                 parameters: { heading: false },
               },
             },
@@ -149,7 +150,7 @@ describe('seoTagsBuilder', () => {
               localized: true,
               validators: {},
               position: 4,
-              appeareance: {
+              appearance: {
                 editor: 'seo',
                 parameters: {},
               },
@@ -178,17 +179,23 @@ describe('seoTagsBuilder', () => {
 
     beforeEach(() => {
       item = memo(() => entitiesRepo().findEntity('item', '24038'));
-      globalSeo = memo(() => camelizeKeys({
-        en: {
-          title_suffix: ' - Suffix!',
-        },
-      }));
-      seo = memo(() => camelizeKeys({
-        en: {
-          title: 'SEO title',
-        },
-      }));
-      result = memo(() => builders.title(item(), entitiesRepo(), { locale: 'en' }));
+      globalSeo = memo(() =>
+        camelizeKeys({
+          en: {
+            title_suffix: ' - Suffix!',
+          },
+        }),
+      );
+      seo = memo(() =>
+        camelizeKeys({
+          en: {
+            title: 'SEO title',
+          },
+        }),
+      );
+      result = memo(() =>
+        builders.title(item(), entitiesRepo(), { locale: 'en' }),
+      );
       titleValue = memo(() => result()[0].content);
     });
 

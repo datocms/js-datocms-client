@@ -42,6 +42,7 @@ describe('CLI tool', () => {
       const tomlFile = TOML.parse(
         fs.readFileSync(path.join(dirName, 'foobar.toml'), 'utf8'),
       );
+
       expect(tomlFile.section[0].key).to.eq('value1');
       expect(tomlFile.section[1].key).to.eq('value2');
       expect(tomlFile.section[2].key).to.eq('value3');
