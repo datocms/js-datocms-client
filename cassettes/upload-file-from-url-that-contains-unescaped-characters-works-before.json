@@ -723,12 +723,6 @@
                           "internal_subdomain": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/internal_subdomain"
                           },
-                          "domain": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/domain"
-                          },
-                          "notes": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/notes"
-                          },
                           "template": {
                             "description": "Site template",
                             "type": [
@@ -796,9 +790,6 @@
                           },
                           "internal_subdomain": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/internal_subdomain"
-                          },
-                          "notes": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/notes"
                           }
                         }
                       }
@@ -1037,7 +1028,6 @@
                 "name",
                 "domain",
                 "internal_domain",
-                "notes",
                 "last_data_change_at",
                 "access_token",
                 "created_at",
@@ -1067,14 +1057,6 @@
                   "type": "string",
                   "description": "Internal site subdomain",
                   "example": "clueless-star-1231"
-                },
-                "notes": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Optional notes regarding the site",
-                  "example": "Foo bar"
                 },
                 "last_data_change_at": {
                   "description": "Specifies the last time when a change of data occurred",
@@ -1534,6 +1516,11 @@
                           "ignore_content": {
                             "type": "boolean",
                             "description": "Skip compatibility checks on content (number of records and uploads)",
+                            "example": true
+                          },
+                          "is_duplicate": {
+                            "type": "boolean",
+                            "description": "Specify is site is a duplicate of another site",
                             "example": true
                           }
                         }
@@ -3395,15 +3382,15 @@
       "Server",
       "Cowboy",
       "Date",
-      "Wed, 11 Dec 2019 13:59:38 GMT",
+      "Fri, 10 Apr 2020 12:10:43 GMT",
       "Connection",
       "close",
       "Last-Modified",
-      "Tue, 10 Dec 2019 16:07:04 GMT",
+      "Fri, 10 Apr 2020 11:53:24 GMT",
       "Content-Type",
       "application/json",
       "X-Queue-Time",
-      "-1ms",
+      "3ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -3417,10 +3404,11 @@
       "Access-Control-Allow-Origin",
       "*",
       "Content-Length",
-      "104079",
+      "103611",
       "Via",
       "1.1 vegur"
-    ]
+    ],
+    "responseIsBinary": false
   },
   {
     "scope": "http://account-api.lvh.me:3001",
@@ -3430,7 +3418,7 @@
       "data": {
         "type": "account",
         "attributes": {
-          "email": "46mybg@example.com",
+          "email": "y8tcih@example.com",
           "company": "DatoCMS",
           "password": "STRONG_pass123!"
         }
@@ -3438,7 +3426,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b08004bf6f05d00037c8f6d6bc2301485ff4b3eec93f3a56a4141b65a9d448d9d5a1536468935ead536ad4d5adb8aff7da96cc8365820e470f3dc73eebda00d9514b52f0836a88d5836dcaf072e5830c48b1cd726306c955551c387201d9bc3b078498e53026778cbb08e0ff84ceca3243656f76541eca93eb18f3ac98fb1d5c3f9283752eb609c31af969366d36fa527d19af47709d3ea5d3d321b8fcb0dab35774e354bf219770e274d335a535442320b999a48302120e0aa10318f4a25c51e42514c4c5d3788b92ce48f256a75ada6dd1dbeb1ab3a2504dcf5e20d53dcfbff780951292358c792ddd2984fc153ff0dddcfd6bb6796523ff458d90d7c856e2112d2e1d4570e3cf6bc12f2e8af820243ca33e5d0a33230c95cb585519040b11ef09da36da91347a08040863496fb76a52295ac7cf1edbfc94f82b911939d664feff74c63698d4877b09a8fb5d7d5988c97783630fbf67c5a7f0021621675eec9206e79d49590a811b7d413ec7afdb87e020000ffff030036b003a910020000"
+      "1f8b08004462905e0003",
+      "7c8f514fe3301084ff8b1feea9b410b8a85709dd95560d3638554a908ea253b5b82ed92871a2789334adfadf7111270448f8c5a3f1e79dd93d5b03011bed19aed988e94e244f81c2390a7ebfe367218a5f7d677a3c2db6b713511eef307db890d8e2b2e33e4f792bd331c9694432beba9771e4cb78ec87d3a80e77bcbdd98dbb793a6eb939edb7d7a71e2426d54db258e1f07a17dcfdc5931016e93a578bc64e5430df62139c47cfacc7a82bb56b64b5b5581867543a0372d22658da636350aaa80d1de58725ce7c7fe8bd4ff88f1ddce931342aabd7da718fdfe33d0644153ed5a45fd3740e98b9f76e480a933f7a0b7999e9be2a72876eb0b2b43290bb09a6ceb21ecbe093e1c0124ce7264c818a89bc73dfcaaa68f0b81e9ae795b781555da1030a2aa1a6643418909383377ef435f9b7d5aad274193ccc45e82d851457cbd9c52c96424e6f82d9f9cf5b1e2d652c7ea0b5b5ae2edf93d1bee681226c5cc50d64561f0eff0e2f000000ffff",
+      "0300b34eccd010020000"
     ],
     "rawHeaders": [
       "Content-Type",
@@ -3447,18 +3437,18 @@
       "Accept-Encoding",
       "Content-Encoding",
       "gzip",
-      "X-Ratelimit-Limit",
-      "30",
-      "X-Ratelimit-Remaining",
-      "29",
-      "Etag",
-      "W/\"c062481653a9317ccc0f6bfb43c9a91b\"",
+      "X-RateLimit-Limit",
+      "60",
+      "X-RateLimit-Remaining",
+      "59",
+      "ETag",
+      "W/\"45396322b88fd46ca4591c38e0275fa4\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "774bf752-5f0c-4410-b6f1-edb1345e78e8",
+      "5ab97d55-9318-4fdf-9001-9c4e0fd9a5bb",
       "X-Runtime",
-      "0.420629",
+      "0.236484",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -3471,15 +3461,12 @@
       "1728000",
       "Access-Control-Allow-Origin",
       "*",
-      "Server",
-      "WEBrick/1.4.2 (Ruby/2.5.1/2018-03-29)",
-      "Date",
-      "Wed, 11 Dec 2019 13:59:39 GMT",
-      "Content-Length",
-      "385",
       "Connection",
-      "close"
-    ]
+      "close",
+      "Transfer-Encoding",
+      "chunked"
+    ],
+    "responseIsBinary": false
   },
   {
     "scope": "https://account-api.datocms.com:443",
@@ -4205,12 +4192,6 @@
                           "internal_subdomain": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/internal_subdomain"
                           },
-                          "domain": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/domain"
-                          },
-                          "notes": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/notes"
-                          },
                           "template": {
                             "description": "Site template",
                             "type": [
@@ -4278,9 +4259,6 @@
                           },
                           "internal_subdomain": {
                             "$ref": "#/definitions/site/definitions/attributes/properties/internal_subdomain"
-                          },
-                          "notes": {
-                            "$ref": "#/definitions/site/definitions/attributes/properties/notes"
                           }
                         }
                       }
@@ -4519,7 +4497,6 @@
                 "name",
                 "domain",
                 "internal_domain",
-                "notes",
                 "last_data_change_at",
                 "access_token",
                 "created_at",
@@ -4549,14 +4526,6 @@
                   "type": "string",
                   "description": "Internal site subdomain",
                   "example": "clueless-star-1231"
-                },
-                "notes": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Optional notes regarding the site",
-                  "example": "Foo bar"
                 },
                 "last_data_change_at": {
                   "description": "Specifies the last time when a change of data occurred",
@@ -5016,6 +4985,11 @@
                           "ignore_content": {
                             "type": "boolean",
                             "description": "Skip compatibility checks on content (number of records and uploads)",
+                            "example": true
+                          },
+                          "is_duplicate": {
+                            "type": "boolean",
+                            "description": "Specify is site is a duplicate of another site",
                             "example": true
                           }
                         }
@@ -6877,15 +6851,15 @@
       "Server",
       "Cowboy",
       "Date",
-      "Wed, 11 Dec 2019 13:59:40 GMT",
+      "Fri, 10 Apr 2020 12:10:44 GMT",
       "Connection",
       "close",
       "Last-Modified",
-      "Tue, 10 Dec 2019 16:07:04 GMT",
+      "Fri, 10 Apr 2020 11:53:24 GMT",
       "Content-Type",
       "application/json",
       "X-Queue-Time",
-      "3ms",
+      "1ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -6899,10 +6873,11 @@
       "Access-Control-Allow-Origin",
       "*",
       "Content-Length",
-      "104079",
+      "103611",
       "Via",
       "1.1 vegur"
-    ]
+    ],
+    "responseIsBinary": false
   },
   {
     "scope": "http://account-api.lvh.me:3001",
@@ -6918,7 +6893,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b08004cf6f05d000374525b939a3014fe2f795686848be29bdd76db68c1d91167b7fbc21c206a14822541c41dfffb26b6ae6e9dc2304cce7739f09df386725080466f88e768847040b0877a48753ba68f922ba64fa054cdd346316988024a837d29aa95c6f2aa042ed0483445d1435c28560b2812d9a41704a59ad9f75d1f6b7a015225a66592ad41ac58024a33888d833e267d8c63ec8cbc60e4da96170c5fb54054e7b67fec21cb989489aab6cc18b36eb24ebf677cc6277471a438e293c0d2454237d5e1e7c3e468deb3981ea279cb614efd300ebb30a6928a27235a53def2d78efa7443db30de2a8de9e77111c64f7e146ffde8ebb88936633c3d8e0fb3cdb8a5c2b648f2db96e5cbafbdf7eccfdac1e303d9ee07f6220a9fa6cfb31fd2c9a687e3fce51bc9a98d6e02b94fc382bce4c2d261545929adac2a353fab192896ff3f16d72526164dcbdb5a8fe7238c81e30d83811bf841868729f61cf003d7f59738b7c930fb2ba944d17d28520fa7cb3c7072871000db05e21127b0c1d562bc34b3659029be371f84464b28243b199b0214af845cf3dd791fce1c66262eb39aef0c66ca9ff68a60c71edcecd52df774ea5d3c7605dc6bf15577c60dbf91b062f7ccbefde9fe779b6fba263aee9dfe8f94175c75674f5583904b565f6dcdd269a06ac56df5d2cc21985ccdf56a568d50da495fef000000ffff03004b7bdc6356030000"
+      "1f8b08004562905e0003",
+      "7452d1929a3014fd179e950941a3f8e66aebc416ad2b3cecbe3021891ac4c492b01476fcf726ce6e75db2d3c30b9f79c73c9b9e7d563c4106ff2ea09e64d3c180ec1c0eb79a63d737bd4c2707b22c65422af0dd70e28c9c9f51e4ab5b73da64e44486f22ebb2ec79421a5e495266bacedf3b5e6e917d1846d0c24ba24de64666f440e49e67c4b8b100823e18f4039004701280c960e88770f8ec6653cab5ce8c3a72a7c5dbe5215f50b1164b9c7638588965e4db22c485faf57db6ececb78dbbb459cd1a41b618c5c9135ccfb1c672e348072c1af1dc62840bdcc4c5d4c4f38d899387344e36163b45ab795ac71d1e7ceba6edba983658025f7d5d44e869d199c72fd9ec8527db6dc38f84256bf813543f36c714bf14db912ed299f2ee3cf8d7009fb09390bebdbfa227ed5375b2785a716238fbbf13701c39272c8c3595ddc81f33181d8f72c6239e9341c0428e1865391d8268148579f04651b26c6f0c10ee0238de85601c925d8828cd7334b21c127184dc3a39a146bcb81ff2263b526a7e7132253142497d10e76b04ae18ee96ac6925ceaee7ca1fa384eca0bb28dd632f97debbc6b9249f7001b831af08c7a835d9f3cfb0fd8fefdf21be9b9c59cbcff62eb9288569afaaa62252ef7875137651b60dd5c8fbeadbb800a131bc89db78aa5a1aab649fdf000000ffff",
+      "0300a15f4f774d030000"
     ],
     "rawHeaders": [
       "Content-Type",
@@ -6927,18 +6904,18 @@
       "Accept-Encoding",
       "Content-Encoding",
       "gzip",
-      "X-Ratelimit-Limit",
-      "30",
-      "X-Ratelimit-Remaining",
-      "28",
-      "Etag",
-      "W/\"9f92bf492b02bfc8e90dd587ef0faa04\"",
+      "X-RateLimit-Limit",
+      "60",
+      "X-RateLimit-Remaining",
+      "59",
+      "ETag",
+      "W/\"7cf880c9493e7293216b094cb85e5ffb\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "96b723e2-2c99-4e5b-b741-4c473762a256",
+      "62c7557c-02e3-4c88-80c9-f1485d50fb5c",
       "X-Runtime",
-      "0.251246",
+      "0.075407",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -6951,14 +6928,11 @@
       "1728000",
       "Access-Control-Allow-Origin",
       "*",
-      "Server",
-      "WEBrick/1.4.2 (Ruby/2.5.1/2018-03-29)",
-      "Date",
-      "Wed, 11 Dec 2019 13:59:40 GMT",
-      "Content-Length",
-      "517",
       "Connection",
-      "close"
-    ]
+      "close",
+      "Transfer-Encoding",
+      "chunked"
+    ],
+    "responseIsBinary": false
   }
 ]

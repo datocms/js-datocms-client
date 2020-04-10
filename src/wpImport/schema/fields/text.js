@@ -4,7 +4,7 @@ export default async function text(itemType, dato, apiKey) {
   return dato.fields.create(itemType.id, {
     apiKey,
     label: titleize(apiKey),
-    appeareance: {
+    appearance: {
       editor: 'wysiwyg',
       parameters: {
         toolbar: [

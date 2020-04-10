@@ -11,6 +11,7 @@ describe('Site API', () => {
     vcr('before', async () => {
       const accountClient = await generateNewAccountClient();
       site = await accountClient.sites.create({ name: 'Blog' });
+
       client = new SiteClient(
         site.readwriteToken,
         null,
@@ -101,12 +102,11 @@ describe('Site API', () => {
         });
 
         await client.itemTypes.update(other.id, u({ name: 'Other 2' }, other));
-
         await client.itemTypes.destroy(other.id);
 
         const itemType = await client.itemTypes.create({
           name: 'Article',
-          apiKey: 'item_type',
+          apiKey: 'article',
           singleton: true,
           sortable: false,
           modularBlock: false,
@@ -117,6 +117,7 @@ describe('Site API', () => {
           allLocalesRequired: true,
           titleField: null,
         });
+
         expect(itemType.name).to.equal('Article');
 
         const foundItemType = await client.itemTypes.find(itemType.id);
@@ -125,11 +126,19 @@ describe('Site API', () => {
         const allItemTypes = await client.itemTypes.all();
         expect(allItemTypes).to.have.length(1);
 
+        const field = await client.fields.create(itemType.id, {
+          label: 'Title',
+          apiKey: 'title',
+          fieldType: 'string',
+        });
+
         const updatedItemType = await client.itemTypes.update(
           itemType.id,
-          u({ name: 'UpdatedArticle' }, itemType),
+          u({ name: 'UpdatedArticle', titleField: field.id }, itemType),
         );
+
         expect(updatedItemType.name).to.equal('UpdatedArticle');
+        expect(updatedItemType.titleField).to.equal(field.id);
 
         await client.itemTypes.destroy(itemType.id);
       }),
@@ -442,7 +451,7 @@ describe('Site API', () => {
           content: [
             buildModularBlock({ itemType: contentItemType.id, text: 'Foo' }),
             buildModularBlock({ itemType: contentItemType.id, text: 'Bar' }),
-          ]
+          ],
         });
 
         expect(item.content.length).to.equal(2);

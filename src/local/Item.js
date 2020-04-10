@@ -103,10 +103,9 @@ export default class Item {
   }
 
   get titleField() {
-    return this.fields.find(
-      field =>
-        field.fieldType === 'string' && field.appeareance.type === 'title',
-    );
+    const titleFieldId =
+      this.itemType.titleField && this.itemType.titleField.id;
+    return this.fields.find(field => field.id === titleFieldId);
   }
 
   get attributes() {
