@@ -1,6 +1,6 @@
 [
   {
-    "scope": "https://account-api.datocms.com:443",
+    "scope": "http://account-api.lvh.me:3001",
     "method": "GET",
     "path": "/docs/account-api-hyperschema.json",
     "body": "",
@@ -42,8 +42,11 @@
         "site_invitation": {
           "$ref": "#/definitions/site_invitation"
         },
-        "subscription_compatibility": {
-          "$ref": "#/definitions/subscription_compatibility"
+        "subscription_limit": {
+          "$ref": "#/definitions/subscription_limit"
+        },
+        "subscription_feature": {
+          "$ref": "#/definitions/subscription_feature"
         },
         "job": {
           "$ref": "#/definitions/job"
@@ -401,6 +404,37 @@
                     "items": {
                       "$ref": "#/definitions/account"
                     }
+                  }
+                }
+              }
+            },
+            {
+              "method": "DELETE",
+              "rel": "destroy",
+              "title": "Delete a account",
+              "description": "",
+              "href": "/account",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/job"
+                  }
+                }
+              },
+              "jobSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/account"
                   }
                 }
               }
@@ -827,6 +861,18 @@
                     "$ref": "#/definitions/job"
                   }
                 }
+              },
+              "jobSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
               }
             },
             {
@@ -973,6 +1019,18 @@
                     "$ref": "#/definitions/job"
                   }
                 }
+              },
+              "jobSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
               }
             }
           ],
@@ -1104,7 +1162,6 @@
               "required": [
                 "active_subscription",
                 "active_plan",
-                "usage",
                 "transfer",
                 "owner"
               ],
@@ -1131,18 +1188,6 @@
                   "properties": {
                     "data": {
                       "$ref": "#/definitions/plan/definitions/data"
-                    }
-                  }
-                },
-                "usage": {
-                  "type": "object",
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "$ref": "#/definitions/subscription_compatibility/definitions/data"
                     }
                   }
                 },
@@ -1653,13 +1698,19 @@
                     "roles": {
                       "type": "integer"
                     },
-                    "deployment_environments": {
+                    "build_triggers": {
                       "type": "integer"
                     },
                     "access_tokens": {
                       "type": "integer"
                     },
                     "mux_encoding_seconds": {
+                      "type": "integer"
+                    },
+                    "items": {
+                      "type": "integer"
+                    },
+                    "uploadable_bytes": {
                       "type": "integer"
                     }
                   },
@@ -1668,9 +1719,11 @@
                     "locales": 1,
                     "item_types": 0,
                     "roles": 0,
-                    "deployment_environments": 0,
+                    "build_triggers": 0,
                     "access_tokens": 0,
-                    "mux_encoding_seconds": 0
+                    "mux_encoding_seconds": 0,
+                    "items": 0,
+                    "uploadable_bytes": 0
                   }
                 }
               }
@@ -1748,10 +1801,33 @@
           }
         },
         "plan": {
-          "links": [],
+          "links": [
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Retrieve enabled plans for account",
+              "description": "",
+              "href": "/plans",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/plan"
+                    }
+                  }
+                }
+              }
+            }
+          ],
           "$schema": "http://json-schema.org/draft-04/hyper-schema",
           "title": "Plan",
-          "description": "A field represents a plan",
+          "description": "Stores the information regarding the current plan for the project.",
           "type": "object",
           "required": [
             "type",
@@ -1832,12 +1908,12 @@
                   "description": "Number of indexable pages",
                   "example": 1000
                 },
-                "deployment_environments": {
+                "build_triggers": {
                   "type": [
                     "null",
                     "integer"
                   ],
-                  "description": "Number of deployment environments",
+                  "description": "Number of build triggers",
                   "example": 4
                 },
                 "plugins": {
@@ -1958,18 +2034,13 @@
                   "description": "Whether video streaming with Mux.com is enabled or not",
                   "example": true
                 },
-                "history_retention_months": {
+                "history_retention_days": {
                   "type": [
                     "integer",
                     "null"
                   ],
-                  "description": "Months of version history retention",
-                  "example": 3
-                },
-                "version_history": {
-                  "type": "boolean",
-                  "description": "Whether version history can be enabled or not",
-                  "example": true
+                  "description": "Days of version history retention",
+                  "example": 30
                 },
                 "otp": {
                   "type": "boolean",
@@ -2045,7 +2116,7 @@
                         }
                       }
                     },
-                    "deployment_environments": {
+                    "build_triggers": {
                       "type": "object",
                       "additionalProperties": false,
                       "required": [
@@ -2111,7 +2182,7 @@
                       "amount_per_packet": 1,
                       "price": 10
                     },
-                    "deployment_environments": {
+                    "build_triggers": {
                       "amount_per_packet": 1,
                       "price": 10
                     },
@@ -2802,41 +2873,7 @@
                   "$ref": "#/definitions/subscription/definitions/attributes/properties/recurrence"
                 },
                 "extra_packets": {
-                  "type": "object",
-                  "description": "Extra packets",
-                  "additionalProperties": false,
-                  "properties": {
-                    "users": {
-                      "type": "integer"
-                    },
-                    "locales": {
-                      "type": "integer"
-                    },
-                    "item_types": {
-                      "type": "integer"
-                    },
-                    "roles": {
-                      "type": "integer"
-                    },
-                    "deployment_environments": {
-                      "type": "integer"
-                    },
-                    "access_tokens": {
-                      "type": "integer"
-                    },
-                    "mux_encoding_seconds": {
-                      "type": "integer"
-                    }
-                  },
-                  "example": {
-                    "users": 1,
-                    "locales": 1,
-                    "item_types": 0,
-                    "roles": 0,
-                    "deployment_environments": 0,
-                    "access_tokens": 0,
-                    "mux_encoding_seconds": 0
-                  }
+                  "$ref": "#/definitions/subscription/definitions/attributes/properties/extra_packets"
                 }
               }
             },
@@ -2941,15 +2978,39 @@
             }
           ]
         },
-        "subscription_compatibility": {
-          "links": [],
+        "subscription_limit": {
+          "links": [
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Get all the subscription limits",
+              "description": "",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/subscription-limits",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/subscription_limit"
+                    }
+                  }
+                }
+              }
+            }
+          ],
           "$schema": "http://json-schema.org/draft-04/hyper-schema",
-          "title": "Subscription compatibility",
+          "title": "Subscription limit",
           "description": "",
           "type": "object",
           "required": [
             "type",
-            "id"
+            "id",
+            "attributes"
           ],
           "additionalProperties": false,
           "definitions": {
@@ -2958,173 +3019,173 @@
               "description": "JSON API data",
               "required": [
                 "type",
-                "id"
+                "id",
+                "attributes"
               ],
               "additionalProperties": false,
               "properties": {
                 "type": {
-                  "$ref": "#/definitions/subscription_compatibility/properties/type"
+                  "$ref": "#/definitions/subscription_limit/properties/type"
                 },
                 "id": {
-                  "$ref": "#/definitions/subscription_compatibility/properties/id"
+                  "$ref": "#/definitions/subscription_limit/properties/id"
                 }
               }
             },
             "identity": {
-              "$ref": "#/definitions/subscription_compatibility/properties/id"
+              "$ref": "#/definitions/subscription_limit/properties/id"
             },
             "type": {
               "description": "JSON API type field",
               "type": [
                 "string"
               ],
-              "pattern": "^subscription_compatibility$",
-              "example": "subscription_compatibility"
+              "pattern": "^subscription_limit$",
+              "example": "subscription_limit"
             },
             "id": {
-              "description": "ID of subscription compatibility",
+              "description": "ID of limit",
               "type": "string",
-              "example": "4235"
-            },
-            "analysis": {
-              "type": "object",
-              "description": "Analysis",
-              "properties": {
-                "current_usage": {
-                  "type": [
-                    "boolean",
-                    "integer"
-                  ]
-                },
-                "plan_limit": {
-                  "type": [
-                    "boolean",
-                    "integer"
-                  ]
-                },
-                "compatible": {
-                  "type": "boolean"
-                },
-                "compatible_with_extra_charges": {
-                  "type": "boolean"
-                }
-              }
+              "example": "locales"
             },
             "attributes": {
               "description": "JSON API attributes",
               "type": "object",
               "required": [
-                "limits",
-                "compatible",
-                "compatible_with_extra_charges",
-                "incompatible_limits",
-                "users_analysis",
-                "roles_analysis",
-                "item_types_analysis",
-                "locales_analysis",
-                "indexable_pages_analysis",
-                "version_history_analysis",
-                "items_analysis",
-                "uploadable_bytes_analysis",
-                "custom_domain_analysis",
-                "otp_analysis"
+                "usage",
+                "limit"
               ],
               "additionalProperties": false,
               "properties": {
-                "limits": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                "usage": {
+                  "type": "integer",
+                  "description": "Current usage",
+                  "example": 2
                 },
-                "incompatible_limits": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "compatible": {
-                  "type": "boolean"
-                },
-                "compatible_with_extra_charges": {
-                  "type": "boolean"
-                },
-                "users_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "roles_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "item_types_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "locales_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "indexable_pages_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "version_history_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "items_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "uploadable_bytes_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "custom_domain_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "otp_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "sso_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "item_locking_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "advanced_media_area_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "video": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                }
-              }
-            },
-            "relationships": {
-              "description": "JSON API links",
-              "type": "object",
-              "required": [
-                "plan"
-              ],
-              "additionalProperties": false,
-              "properties": {
-                "plan": {
-                  "type": "object",
-                  "required": [
-                    "data"
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
                   ],
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "$ref": "#/definitions/plan/definitions/data"
-                    }
-                  }
+                  "description": "The actual limit",
+                  "example": 10
                 }
               }
             }
           },
           "properties": {
             "type": {
-              "$ref": "#/definitions/subscription_compatibility/definitions/type"
+              "$ref": "#/definitions/subscription_limit/definitions/type"
             },
             "id": {
-              "$ref": "#/definitions/subscription_compatibility/definitions/id"
+              "$ref": "#/definitions/subscription_limit/definitions/id"
             },
             "attributes": {
-              "$ref": "#/definitions/subscription_compatibility/definitions/attributes"
+              "$ref": "#/definitions/subscription_limit/definitions/attributes"
+            }
+          }
+        },
+        "subscription_feature": {
+          "links": [
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Get all the subscription features",
+              "description": "",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/subscription-features",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/subscription_feature"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Subscription feature",
+          "description": "",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "type": "object",
+              "description": "JSON API data",
+              "required": [
+                "type",
+                "id",
+                "attributes"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/subscription_feature/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/subscription_feature/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/subscription_feature/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^subscription_feature$",
+              "example": "subscription_feature"
+            },
+            "id": {
+              "description": "ID of feature",
+              "type": "string",
+              "example": "locales"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "in_use",
+                "enabled"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "in_use": {
+                  "type": "boolean",
+                  "description": "Whether the project is currently using the feature",
+                  "example": true
+                },
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Whether the feature is available on the current project",
+                  "example": true
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/subscription_feature/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/subscription_feature/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/subscription_feature/definitions/attributes"
             }
           }
         },
@@ -3379,18 +3440,10 @@
       }
     },
     "rawHeaders": [
-      "Server",
-      "Cowboy",
-      "Date",
-      "Fri, 10 Apr 2020 12:10:43 GMT",
-      "Connection",
-      "close",
       "Last-Modified",
-      "Fri, 10 Apr 2020 11:53:24 GMT",
+      "Fri, 24 Apr 2020 15:04:49 GMT",
       "Content-Type",
       "application/json",
-      "X-Queue-Time",
-      "3ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -3403,10 +3456,10 @@
       "1728000",
       "Access-Control-Allow-Origin",
       "*",
+      "Connection",
+      "close",
       "Content-Length",
-      "103611",
-      "Via",
-      "1.1 vegur"
+      "104299"
     ],
     "responseIsBinary": false
   },
@@ -3418,7 +3471,7 @@
       "data": {
         "type": "account",
         "attributes": {
-          "email": "y8tcih@example.com",
+          "email": "u8h3vu@example.com",
           "company": "DatoCMS",
           "password": "STRONG_pass123!"
         }
@@ -3426,9 +3479,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b08004462905e0003",
-      "7c8f514fe3301084ff8b1feea9b410b8a85709dd95560d3638554a908ea253b5b82ed92871a2789334adfadf7111270448f8c5a3f1e79dd93d5b03011bed19aed988e94e244f81c2390a7ebfe367218a5f7d677a3c2db6b713511eef307db890d8e2b2e33e4f792bd331c9694432beba9771e4cb78ec87d3a80e77bcbdd98dbb793a6eb939edb7d7a71e2426d54db258e1f07a17dcfdc5931016e93a578bc64e5430df62139c47cfacc7a82bb56b64b5b5581867543a0372d22658da636350aaa80d1de58725ce7c7fe8bd4ff88f1ddce931342aabd7da718fdfe33d0644153ed5a45fd3740e98b9f76e480a933f7a0b7999e9be2a72876eb0b2b43290bb09a6ceb21ecbe093e1c0124ce7264c818a89bc73dfcaaa68f0b81e9ae795b781555da1030a2aa1a6643418909383377ef435f9b7d5aad274193ccc45e82d851457cbd9c52c96424e6f82d9f9cf5b1e2d652c7ea0b5b5ae2edf93d1bee681226c5cc50d64561f0eff0e2f000000ffff",
-      "0300b34eccd010020000"
+      "1f8b0800ff03a35e0003",
+      "7c8f6d4fc2301485ff4b3ff80941a66e40621410b583311d1bf125869452e42edd4bd65b6023fc778bd11835b15f7a72faf49e737764c19091ce8ec082748828ddd5fc96830f2e8d2ada1c83dbae1bd3a271b61df5ddfc70fbe1c01a4f36f05c529bc674e3c55df4ae1fd08b83c80bb9edc503dbab22ed875135acbaa51f7737343da90f13f5580d51b57ac767d99bb0bce5e0318110a5d50bd5220e5ad40a1cba2e1cde253582652e4c232594822c354621244323d50a727568cc38cf748a07f9638966bb699f7f4ff8c2f6e6d408a45cea8530dccbff788d30c402e61ac5479a481848f3ae5babd3b5be125b96e452d4799618740985c259ca123321d552d68864bf0c03e62c2dcd846b8659df9b986f7991ade1b01ea46f336bc966ba00036498338dab4ea38146363ef9cedfe44b257821f0a2e73bae35ba1b39f678d20fa6a7374ff7cf8368fa10d1c01d51e7f60894d2a2b8f84e06f591c738c2da545c32a9c47effba7f070000ffff",
+      "03004a4588ba10020000"
     ],
     "rawHeaders": [
       "Content-Type",
@@ -3442,13 +3495,13 @@
       "X-RateLimit-Remaining",
       "59",
       "ETag",
-      "W/\"45396322b88fd46ca4591c38e0275fa4\"",
+      "W/\"e22d12d8ab0bfeadf25f4ab982a39b02\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "5ab97d55-9318-4fdf-9001-9c4e0fd9a5bb",
+      "e814fc1d-3dcf-41b2-8b2c-d031fe259f98",
       "X-Runtime",
-      "0.236484",
+      "0.230814",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -3469,7 +3522,7 @@
     "responseIsBinary": false
   },
   {
-    "scope": "https://account-api.datocms.com:443",
+    "scope": "http://account-api.lvh.me:3001",
     "method": "GET",
     "path": "/docs/account-api-hyperschema.json",
     "body": "",
@@ -3511,8 +3564,11 @@
         "site_invitation": {
           "$ref": "#/definitions/site_invitation"
         },
-        "subscription_compatibility": {
-          "$ref": "#/definitions/subscription_compatibility"
+        "subscription_limit": {
+          "$ref": "#/definitions/subscription_limit"
+        },
+        "subscription_feature": {
+          "$ref": "#/definitions/subscription_feature"
         },
         "job": {
           "$ref": "#/definitions/job"
@@ -3870,6 +3926,37 @@
                     "items": {
                       "$ref": "#/definitions/account"
                     }
+                  }
+                }
+              }
+            },
+            {
+              "method": "DELETE",
+              "rel": "destroy",
+              "title": "Delete a account",
+              "description": "",
+              "href": "/account",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/job"
+                  }
+                }
+              },
+              "jobSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/account"
                   }
                 }
               }
@@ -4296,6 +4383,18 @@
                     "$ref": "#/definitions/job"
                   }
                 }
+              },
+              "jobSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
               }
             },
             {
@@ -4442,6 +4541,18 @@
                     "$ref": "#/definitions/job"
                   }
                 }
+              },
+              "jobSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/site"
+                  }
+                }
               }
             }
           ],
@@ -4573,7 +4684,6 @@
               "required": [
                 "active_subscription",
                 "active_plan",
-                "usage",
                 "transfer",
                 "owner"
               ],
@@ -4600,18 +4710,6 @@
                   "properties": {
                     "data": {
                       "$ref": "#/definitions/plan/definitions/data"
-                    }
-                  }
-                },
-                "usage": {
-                  "type": "object",
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "$ref": "#/definitions/subscription_compatibility/definitions/data"
                     }
                   }
                 },
@@ -5122,13 +5220,19 @@
                     "roles": {
                       "type": "integer"
                     },
-                    "deployment_environments": {
+                    "build_triggers": {
                       "type": "integer"
                     },
                     "access_tokens": {
                       "type": "integer"
                     },
                     "mux_encoding_seconds": {
+                      "type": "integer"
+                    },
+                    "items": {
+                      "type": "integer"
+                    },
+                    "uploadable_bytes": {
                       "type": "integer"
                     }
                   },
@@ -5137,9 +5241,11 @@
                     "locales": 1,
                     "item_types": 0,
                     "roles": 0,
-                    "deployment_environments": 0,
+                    "build_triggers": 0,
                     "access_tokens": 0,
-                    "mux_encoding_seconds": 0
+                    "mux_encoding_seconds": 0,
+                    "items": 0,
+                    "uploadable_bytes": 0
                   }
                 }
               }
@@ -5217,10 +5323,33 @@
           }
         },
         "plan": {
-          "links": [],
+          "links": [
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Retrieve enabled plans for account",
+              "description": "",
+              "href": "/plans",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/plan"
+                    }
+                  }
+                }
+              }
+            }
+          ],
           "$schema": "http://json-schema.org/draft-04/hyper-schema",
           "title": "Plan",
-          "description": "A field represents a plan",
+          "description": "Stores the information regarding the current plan for the project.",
           "type": "object",
           "required": [
             "type",
@@ -5301,12 +5430,12 @@
                   "description": "Number of indexable pages",
                   "example": 1000
                 },
-                "deployment_environments": {
+                "build_triggers": {
                   "type": [
                     "null",
                     "integer"
                   ],
-                  "description": "Number of deployment environments",
+                  "description": "Number of build triggers",
                   "example": 4
                 },
                 "plugins": {
@@ -5427,18 +5556,13 @@
                   "description": "Whether video streaming with Mux.com is enabled or not",
                   "example": true
                 },
-                "history_retention_months": {
+                "history_retention_days": {
                   "type": [
                     "integer",
                     "null"
                   ],
-                  "description": "Months of version history retention",
-                  "example": 3
-                },
-                "version_history": {
-                  "type": "boolean",
-                  "description": "Whether version history can be enabled or not",
-                  "example": true
+                  "description": "Days of version history retention",
+                  "example": 30
                 },
                 "otp": {
                   "type": "boolean",
@@ -5514,7 +5638,7 @@
                         }
                       }
                     },
-                    "deployment_environments": {
+                    "build_triggers": {
                       "type": "object",
                       "additionalProperties": false,
                       "required": [
@@ -5580,7 +5704,7 @@
                       "amount_per_packet": 1,
                       "price": 10
                     },
-                    "deployment_environments": {
+                    "build_triggers": {
                       "amount_per_packet": 1,
                       "price": 10
                     },
@@ -6271,41 +6395,7 @@
                   "$ref": "#/definitions/subscription/definitions/attributes/properties/recurrence"
                 },
                 "extra_packets": {
-                  "type": "object",
-                  "description": "Extra packets",
-                  "additionalProperties": false,
-                  "properties": {
-                    "users": {
-                      "type": "integer"
-                    },
-                    "locales": {
-                      "type": "integer"
-                    },
-                    "item_types": {
-                      "type": "integer"
-                    },
-                    "roles": {
-                      "type": "integer"
-                    },
-                    "deployment_environments": {
-                      "type": "integer"
-                    },
-                    "access_tokens": {
-                      "type": "integer"
-                    },
-                    "mux_encoding_seconds": {
-                      "type": "integer"
-                    }
-                  },
-                  "example": {
-                    "users": 1,
-                    "locales": 1,
-                    "item_types": 0,
-                    "roles": 0,
-                    "deployment_environments": 0,
-                    "access_tokens": 0,
-                    "mux_encoding_seconds": 0
-                  }
+                  "$ref": "#/definitions/subscription/definitions/attributes/properties/extra_packets"
                 }
               }
             },
@@ -6410,15 +6500,39 @@
             }
           ]
         },
-        "subscription_compatibility": {
-          "links": [],
+        "subscription_limit": {
+          "links": [
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Get all the subscription limits",
+              "description": "",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/subscription-limits",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/subscription_limit"
+                    }
+                  }
+                }
+              }
+            }
+          ],
           "$schema": "http://json-schema.org/draft-04/hyper-schema",
-          "title": "Subscription compatibility",
+          "title": "Subscription limit",
           "description": "",
           "type": "object",
           "required": [
             "type",
-            "id"
+            "id",
+            "attributes"
           ],
           "additionalProperties": false,
           "definitions": {
@@ -6427,173 +6541,173 @@
               "description": "JSON API data",
               "required": [
                 "type",
-                "id"
+                "id",
+                "attributes"
               ],
               "additionalProperties": false,
               "properties": {
                 "type": {
-                  "$ref": "#/definitions/subscription_compatibility/properties/type"
+                  "$ref": "#/definitions/subscription_limit/properties/type"
                 },
                 "id": {
-                  "$ref": "#/definitions/subscription_compatibility/properties/id"
+                  "$ref": "#/definitions/subscription_limit/properties/id"
                 }
               }
             },
             "identity": {
-              "$ref": "#/definitions/subscription_compatibility/properties/id"
+              "$ref": "#/definitions/subscription_limit/properties/id"
             },
             "type": {
               "description": "JSON API type field",
               "type": [
                 "string"
               ],
-              "pattern": "^subscription_compatibility$",
-              "example": "subscription_compatibility"
+              "pattern": "^subscription_limit$",
+              "example": "subscription_limit"
             },
             "id": {
-              "description": "ID of subscription compatibility",
+              "description": "ID of limit",
               "type": "string",
-              "example": "4235"
-            },
-            "analysis": {
-              "type": "object",
-              "description": "Analysis",
-              "properties": {
-                "current_usage": {
-                  "type": [
-                    "boolean",
-                    "integer"
-                  ]
-                },
-                "plan_limit": {
-                  "type": [
-                    "boolean",
-                    "integer"
-                  ]
-                },
-                "compatible": {
-                  "type": "boolean"
-                },
-                "compatible_with_extra_charges": {
-                  "type": "boolean"
-                }
-              }
+              "example": "locales"
             },
             "attributes": {
               "description": "JSON API attributes",
               "type": "object",
               "required": [
-                "limits",
-                "compatible",
-                "compatible_with_extra_charges",
-                "incompatible_limits",
-                "users_analysis",
-                "roles_analysis",
-                "item_types_analysis",
-                "locales_analysis",
-                "indexable_pages_analysis",
-                "version_history_analysis",
-                "items_analysis",
-                "uploadable_bytes_analysis",
-                "custom_domain_analysis",
-                "otp_analysis"
+                "usage",
+                "limit"
               ],
               "additionalProperties": false,
               "properties": {
-                "limits": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                "usage": {
+                  "type": "integer",
+                  "description": "Current usage",
+                  "example": 2
                 },
-                "incompatible_limits": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "compatible": {
-                  "type": "boolean"
-                },
-                "compatible_with_extra_charges": {
-                  "type": "boolean"
-                },
-                "users_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "roles_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "item_types_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "locales_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "indexable_pages_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "version_history_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "items_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "uploadable_bytes_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "custom_domain_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "otp_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "sso_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "item_locking_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "advanced_media_area_analysis": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                },
-                "video": {
-                  "$ref": "#/definitions/subscription_compatibility/definitions/analysis"
-                }
-              }
-            },
-            "relationships": {
-              "description": "JSON API links",
-              "type": "object",
-              "required": [
-                "plan"
-              ],
-              "additionalProperties": false,
-              "properties": {
-                "plan": {
-                  "type": "object",
-                  "required": [
-                    "data"
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
                   ],
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "$ref": "#/definitions/plan/definitions/data"
-                    }
-                  }
+                  "description": "The actual limit",
+                  "example": 10
                 }
               }
             }
           },
           "properties": {
             "type": {
-              "$ref": "#/definitions/subscription_compatibility/definitions/type"
+              "$ref": "#/definitions/subscription_limit/definitions/type"
             },
             "id": {
-              "$ref": "#/definitions/subscription_compatibility/definitions/id"
+              "$ref": "#/definitions/subscription_limit/definitions/id"
             },
             "attributes": {
-              "$ref": "#/definitions/subscription_compatibility/definitions/attributes"
+              "$ref": "#/definitions/subscription_limit/definitions/attributes"
+            }
+          }
+        },
+        "subscription_feature": {
+          "links": [
+            {
+              "method": "GET",
+              "rel": "instances",
+              "title": "Get all the subscription features",
+              "description": "",
+              "href": "/sites/{(%2Fschemata%2Ffield%23%2Fdefinitions%2Fsite%2Fdefinitions%2Fidentity)}/subscription-features",
+              "targetSchema": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/subscription_feature"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "$schema": "http://json-schema.org/draft-04/hyper-schema",
+          "title": "Subscription feature",
+          "description": "",
+          "type": "object",
+          "required": [
+            "type",
+            "id",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "data": {
+              "type": "object",
+              "description": "JSON API data",
+              "required": [
+                "type",
+                "id",
+                "attributes"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/subscription_feature/properties/type"
+                },
+                "id": {
+                  "$ref": "#/definitions/subscription_feature/properties/id"
+                }
+              }
+            },
+            "identity": {
+              "$ref": "#/definitions/subscription_feature/properties/id"
+            },
+            "type": {
+              "description": "JSON API type field",
+              "type": [
+                "string"
+              ],
+              "pattern": "^subscription_feature$",
+              "example": "subscription_feature"
+            },
+            "id": {
+              "description": "ID of feature",
+              "type": "string",
+              "example": "locales"
+            },
+            "attributes": {
+              "description": "JSON API attributes",
+              "type": "object",
+              "required": [
+                "in_use",
+                "enabled"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "in_use": {
+                  "type": "boolean",
+                  "description": "Whether the project is currently using the feature",
+                  "example": true
+                },
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Whether the feature is available on the current project",
+                  "example": true
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": {
+              "$ref": "#/definitions/subscription_feature/definitions/type"
+            },
+            "id": {
+              "$ref": "#/definitions/subscription_feature/definitions/id"
+            },
+            "attributes": {
+              "$ref": "#/definitions/subscription_feature/definitions/attributes"
             }
           }
         },
@@ -6848,18 +6962,10 @@
       }
     },
     "rawHeaders": [
-      "Server",
-      "Cowboy",
-      "Date",
-      "Fri, 10 Apr 2020 12:10:44 GMT",
-      "Connection",
-      "close",
       "Last-Modified",
-      "Fri, 10 Apr 2020 11:53:24 GMT",
+      "Fri, 24 Apr 2020 15:04:49 GMT",
       "Content-Type",
       "application/json",
-      "X-Queue-Time",
-      "1ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -6872,10 +6978,10 @@
       "1728000",
       "Access-Control-Allow-Origin",
       "*",
+      "Connection",
+      "close",
       "Content-Length",
-      "103611",
-      "Via",
-      "1.1 vegur"
+      "104299"
     ],
     "responseIsBinary": false
   },
@@ -6893,9 +6999,9 @@
     },
     "status": 201,
     "response": [
-      "1f8b08004562905e0003",
-      "7452d1929a3014fd179e950941a3f8e66aebc416ad2b3cecbe3021891ac4c492b01476fcf726ce6e75db2d3c30b9f79c73c9b9e7d563c4106ff2ea09e64d3c180ec1c0eb79a63d737bd4c2707b22c65422af0dd70e28c9c9f51e4ab5b73da64e44486f22ebb2ec79421a5e495266bacedf3b5e6e917d1846d0c24ba24de64666f440e49e67c4b8b100823e18f4039004701280c960e88770f8ec6653cab5ce8c3a72a7c5dbe5215f50b1164b9c7638588965e4db22c485faf57db6ececb78dbbb459cd1a41b618c5c9135ccfb1c672e348072c1af1dc62840bdcc4c5d4c4f38d899387344e36163b45ab795ac71d1e7ceba6edba983658025f7d5d44e869d199c72fd9ec8527db6dc38f84256bf813543f36c714bf14db912ed299f2ee3cf8d7009fb09390bebdbfa227ed5375b2785a716238fbbf13701c39272c8c3595ddc81f33181d8f72c6239e9341c0428e1865391d8268148579f04651b26c6f0c10ee0238de85601c925d8828cd7334b21c127184dc3a39a146bcb81ff2263b526a7e7132253142497d10e76b04ae18ee96ac6925ceaee7ca1fa384eca0bb28dd632f97debbc6b9249f7001b831af08c7a835d9f3cfb0fd8fefdf21be9b9c59cbcff62eb9288569afaaa62252ef7875137651b60dd5c8fbeadbb800a131bc89db78aa5a1aab649fdf000000ffff",
-      "0300a15f4f774d030000"
+      "1f8b08000004a35e0003",
+      "7c525d6f9b3014fd2f7e4e11e6c304deb2b44ac946aab489a6f50519638209d82936e3a3ca7f9f1db54ba64d4396d0bdf79c73ed7bcf3bc8b1c2207a072c071170903ff7c00ca8f144752899a23ac24ab52ceb149506c871636a5f6a71d0b55c34987110f1aeae678071455b8eeb5476d96705641a79075d076a788da54a4dcb9494981f688a95696b3bf69deddd39de0efa910323175976805e4d6f42a894a912476ab4e8b82eb315614f6c1defa7186ed83ab474d2892b317c5bae27fd1f37d5dedb2c7b865f6294ec8e838e65ccb78654c6ac67af638ce22aee936aa192fbad4aaae77db22328a91e5032fde892fbc3f0755a8c4fd5a28fb96d0583bd7da0157d9cb68fe2bbfbec96d336789bf3cd6a5836abf218a46e376cdae55b28c0cd0cfe1e8085f386714bbf5f90465a44341a4f5a8a15cdff330978998486e57dab37721d062a6c9867c8c960868ac0c39e39c5dcf71d8f641f14c1ebf137230c29ca43681392d92ec29e9fcd0bcf815e5010cd33eba49828f6d35c084405ae253d1b991a2b26b82cd9e962810b869a254bd2b293a999f49f560a3dd7bfb1d22df67c9e7d6a9c6afc0fae6f5f99178461a8167359d0f60a37a6d305d1f3dbec87080c21bab9803692e8b8d24afafb050000ffff",
+      "0300646d8fedf7020000"
     ],
     "rawHeaders": [
       "Content-Type",
@@ -6909,13 +7015,13 @@
       "X-RateLimit-Remaining",
       "59",
       "ETag",
-      "W/\"7cf880c9493e7293216b094cb85e5ffb\"",
+      "W/\"d8eed38550b6c24debbf455faa3f3c0e\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "62c7557c-02e3-4c88-80c9-f1485d50fb5c",
+      "51edb249-c175-4232-b4ae-a114a7ad90c1",
       "X-Runtime",
-      "0.075407",
+      "0.115234",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",

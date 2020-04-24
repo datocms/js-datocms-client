@@ -11194,14 +11194,28 @@
   },
   {
     "scope": "http://site-api.lvh.me:3001",
-    "method": "GET",
-    "path": "/site",
-    "body": "",
-    "status": 200,
+    "method": "POST",
+    "path": "/build-triggers",
+    "body": {
+      "data": {
+        "type": "build_trigger",
+        "attributes": {
+          "name": "Foo",
+          "adapter": "custom",
+          "indexing_enabled": false,
+          "frontend_url": null,
+          "autotrigger_on_scheduled_publications": false,
+          "adapter_settings": {
+            "trigger_url": "https://www.google.com"
+          }
+        }
+      }
+    },
+    "status": 201,
     "response": [
-      "1f8b0800cb03a35e0003",
-      "6c534d6fdb300cfd2f3abb59227fe4e396622dd061a70ed80e452130b6226b9144579297a641fefba8b64e5b23be918feff189a48fac81086c7564ba612bc6abb22a58c6e2a19314061d254510a3d79b3eca900a1dd8845d1b54a9b295293c320a91ad5c6f4c469a7e276a34e813e225492fa619db989e4ae70b52345d4b5d7959664c79291d5b95c5296346ab368e989c2f072a2ff9452e2f964486ba966ecc9e9767f2acba489e2d13b9f3da823f8c7be7d540af8a8becc5e2446c6d957e162d864893d9eff7139a2ad6365c41083286498d9666d5a005ed86216917a57760c490a646a8aef2225f4ca0b1da0d22ef6c833598b48207468d1f2901218ab43e51b7e0941410076d85a88c1416ba20a0d322e22e9965ebbb17f875b86eebdddae6f7ed8fa7a9bad96fffe4bfa1e0b7f9fda1f9bbf7fcfb9aba29831bf216e479a95bf8a76b3cdb7728b46be4335b6dc10449b8477a916b44efcd5014b5952fe8d2bddcf41e3bf9ed27ba8644329aef53afbd147c0b67093a371b6805bda3974c4fa9c840d4e842abbbd7e3a31dbfa1c7af873b5bce8af2e37087b2b49b3e481f3e080f8f940b01c5a5bc95ae17af2e4640ca89243e063c9a2fb9773f259fce3ff94955ec947d02ab3198c436bd368da09f4da9b137fafe030000ffff",
-      "0300c02fa362ac030000"
+      "1f8b0800cd03a35e0003",
+      "6c505d6e83300cbe4b9e19a06e742d07d835a29018889ac62876c4aa8abbcf0cba4a53df9cef2f9f7d57ceb051ed5d79a75a75aa3f4eaa507c9b405e5df6c1694e7e1820096c58e62e33d06a88e6ba8abe1057ca998945d42a9b89f1fa843401b38fc3af67cfd23905918ecc13b55535cf7339200e014a2bd6a5d87f26369cc5a7729431313889ed134686e8b68c9843285430c47af348c01440a4daf083f6d1c1b754781df8c742345d10a8ed4d2028d40cdd8878d18c178862720738bf3b539f3f5d7db4fdb1699a837acafeedb4a154ca7dd15e69ddac7a9550399802dede12500e4cebe132e3e3501835d9115c96627aca5df0d6b0c7487bcb65597e000000ffff",
+      "0300339c5db3c3010000"
     ],
     "rawHeaders": [
       "X-Api-Version",
@@ -11210,8 +11224,6 @@
       "master",
       "Content-Type",
       "application/json; charset=utf-8",
-      "X-bullet-console-text",
-      "[\"user: stefanoverna\\nAVOID eager loading detected\\n  Role => [:item_type_permissions, :build_trigger_permissions]\\n  Remove from your finder: :includes => [:item_type_permissions, :build_trigger_permissions]\\nCall stack\\n  /Users/stefanoverna/dato/api/lib/middleware/catch_json_parse_errors.rb:24:in `call'\\n  /Users/stefanoverna/dato/api/lib/middleware/maintenance_mode.rb:36:in `call'\\n  /Users/stefanoverna/dato/api/lib/middleware/expose_queue_time.rb:19:in `call'\\n  /Users/stefanoverna/dato/api/lib/middleware/fast_cors.rb:31:in `call'\\n\\n\"]",
       "Vary",
       "Accept-Encoding",
       "Content-Encoding",
@@ -11221,13 +11233,13 @@
       "X-RateLimit-Remaining",
       "59",
       "ETag",
-      "W/\"dfca7e72c26fd2b230f929cecb00b2b7\"",
+      "W/\"90d9a4bb75e84e9eeda102959472ae7b\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "856470b3-89b7-48a6-b95e-1420e98f8aae",
+      "14332ddf-5279-4b38-a1ec-d01cce6f4695",
       "X-Runtime",
-      "0.117794",
+      "0.065705",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -11249,47 +11261,26 @@
   },
   {
     "scope": "http://site-api.lvh.me:3001",
-    "method": "PUT",
-    "path": "/site",
-    "body": {
-      "data": {
-        "id": "26564",
-        "type": "site",
-        "attributes": {
-          "name": "New blog"
-        },
-        "relationships": {}
-      }
-    },
-    "status": 200,
-    "response": [
-      "1f8b0800cb03a35e0003",
-      "6c535b6fd33014fe2bc8cf69499dcbdabc15312410e26120909826eb34711353db27b31dbaaeea7fe7782cdd16356f3edfe55c73640d0460d591a986558c974599b38485432fe9e95590f482109cda0c41fa48b46022f64deedf6d34b691ddc9183a327a22abeca07542be6e276ad4e822e224d92fd3846df440d4ab25b9eabea3ccbc2812d63a292dab8afc9430adda2e4c949caf46292ff8452dcf572486ba9676aabe2acee2457951bc584571ef94017798e6ceca515ee617d5cbe589d4cab4ea4174e8034d67bfdfcf69b2581b3f03ef65f0f31a0dcdaa4103ca8e4352364867418b31cce24867599e2de7d01865479367b5c61a745cc32da3c47714001f445ca1a83bb0ad1410b3f394a7b3349ff1fcc7a2a8785ae5d99c16fb9b1c5ac4564b61a0f7027a2502ee620b6cfdf911be1f3e74f56e6db29beecb7dda5eefb7bfb29f90f34fd9cda1f9b377fce33a3a68dc50c55e9e57bd85bfaac673531685b28d7c60d516b497843ba43e6d2306a7475250463ea28d97743d38ece5fbaf681b324968eaf7837252f02d9c2de8108da7c50c96fa4b4f91a42128b4be53fdd359d2e6ffa3c7b727bd582df2e2e5a4475adcd8e0a5f32f82db3b8a798fe252dc483b88a72a26408c89683e051cea37b1e77a0a9e5ebdaa27b2d82979059653309a6d06a51b41bf61db4e6ba3ef1f000000ffff",
-      "030083439613c6030000"
-    ],
+    "method": "POST",
+    "path": "/build-triggers/8048/trigger",
+    "body": {},
+    "status": 204,
+    "response": "",
     "rawHeaders": [
       "X-Api-Version",
       "3",
       "X-Environment",
       "master",
-      "Content-Type",
-      "application/json; charset=utf-8",
-      "Vary",
-      "Accept-Encoding",
-      "Content-Encoding",
-      "gzip",
       "X-RateLimit-Limit",
       "60",
       "X-RateLimit-Remaining",
       "58",
-      "ETag",
-      "W/\"5f4cc4beb70504e424d41cda831ca0d3\"",
       "Cache-Control",
-      "max-age=0, private, must-revalidate",
+      "no-cache",
       "X-Request-Id",
-      "3da50e45-fecf-4e07-9cda-03a0f739d8bb",
+      "74072ed3-1ff9-4b94-bfd0-fb82a75d6860",
       "X-Runtime",
-      "0.460034",
+      "0.025079",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -11303,9 +11294,7 @@
       "Access-Control-Allow-Origin",
       "*",
       "Connection",
-      "close",
-      "Transfer-Encoding",
-      "chunked"
+      "close"
     ],
     "responseIsBinary": false
   }

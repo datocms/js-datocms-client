@@ -35,11 +35,11 @@ describe('Site API', () => {
     );
   });
 
-  describe('deploy event', () => {
+  describe('build events', () => {
     it(
       'find, all',
       vcr(async () => {
-        const events = await client.deployEvents.all();
+        const events = await client.buildEvents.all();
         expect(events).to.have.length(0);
       }),
     );
@@ -73,21 +73,21 @@ describe('Site API', () => {
     );
   });
 
-  describe('deployment environment', () => {
+  describe('build triggers', () => {
     it(
       'create, trigger',
       vcr(async () => {
-        const env = await client.deploymentEnvironments.create({
+        const trigger = await client.buildTriggers.create({
           accessPolicy: null,
-          deployAdapter: 'custom',
-          buildOnScheduledPublications: false,
-          deploySettings: { triggerUrl: 'https://www.google.com' },
+          adapter: 'custom',
+          autotriggerOnScheduledPublications: false,
+          adapterSettings: { triggerUrl: 'https://www.google.com' },
           frontendUrl: null,
           name: 'Foo',
-          spiderEnabled: false,
+          indexingEnabled: false,
         });
 
-        await client.deploymentEnvironments.trigger(env.id);
+        await client.buildTriggers.trigger(trigger.id);
       }),
     );
   });

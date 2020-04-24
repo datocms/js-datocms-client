@@ -3,6 +3,7 @@ import omit from 'object.omit';
 import { decamelizeKeys, camelize } from './keyFormatter';
 import findInfoForProperty from './findInfoForProperty';
 import jsonSchemaRelationships from './jsonSchemaRelationships';
+import jsonSchemaType from './jsonSchemaType';
 import {
   jsonSchemaPropertyRequired,
   jsonSchemaValueRequired,
@@ -164,33 +165,28 @@ export function serializedAttributes(type, unserializedBody = {}, schema) {
   }, {});
 }
 
-export default function serializeJsonApi(...args) {
-  if (args.length === 4 || args.length === 3) {
-    const [type, unserializedBody, link, itemId] = args;
-    const data = {};
+export default function serializeJsonApi(unserializedBody, link, itemId) {
+  const data = {};
 
-    data.type = type;
-
-    if (itemId || unserializedBody.id) {
-      data.id = itemId || unserializedBody.id;
-    }
-
-    const bodyWithoutMeta = hasKey(unserializedBody, 'meta')
-      ? omit(unserializedBody, ['meta'])
-      : unserializedBody;
-
-    data.attributes = serializedAttributes(type, bodyWithoutMeta, link.schema);
-
-    if (jsonSchemaRelationships(link.schema).length > 0) {
-      data.relationships = serializedRelationships(
-        type,
-        bodyWithoutMeta,
-        link.schema,
-      );
-    }
-
-    return { data };
+  if (itemId || unserializedBody.id) {
+    data.id = itemId || unserializedBody.id;
   }
 
-  throw new Error('Invalid arguments');
+  const bodyWithoutMeta = hasKey(unserializedBody, 'meta')
+    ? omit(unserializedBody, ['meta'])
+    : unserializedBody;
+
+  const type = jsonSchemaType(link.schema);
+  data.type = type;
+  data.attributes = serializedAttributes(type, bodyWithoutMeta, link.schema);
+
+  if (jsonSchemaRelationships(link.schema).length > 0) {
+    data.relationships = serializedRelationships(
+      type,
+      bodyWithoutMeta,
+      link.schema,
+    );
+  }
+
+  return { data };
 }

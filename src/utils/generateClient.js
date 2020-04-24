@@ -181,7 +181,6 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   serializeRequest
                 ) {
                   body = serializeJsonApi(
-                    singularized,
                     body,
                     link,
                     link.method === 'PUT' && lastUrlId,
