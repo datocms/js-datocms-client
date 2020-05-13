@@ -59,7 +59,7 @@ export default class Client {
     return `${this.baseUrl}${path}${query}`;
   }
 
-  request(url, options = {}) {
+  request(url, options = {}, retryCount = 1) {
     const fullHeaders = {
       ...this.defaultHeaders(),
       ...this.extraHeaders,
@@ -72,10 +72,10 @@ export default class Client {
 
     return fetch(url, fullOptions).then(res => {
       if (res.status === 429) {
-        const waitTime = res.headers.get('X-RateLimit-Reset') || '10';
-        console.log(`Rate limit exceeded, waiting ${waitTime} seconds...`);
-        return wait(parseInt(waitTime, 10) * 1000).then(() => {
-          return this.request(url, options);
+        const waitTime = parseInt(res.headers.get('X-RateLimit-Reset') || '10', 10);
+        console.log(`Rate limit exceeded, waiting ${waitTime * retryCount} seconds...`);
+        return wait(waitTime * retryCount * 1000).then(() => {
+          return this.request(url, options, retryCount + 1);
         });
       }
 
@@ -96,8 +96,9 @@ export default class Client {
               e => e.attributes.code === 'BATCH_DATA_VALIDATION_IN_PROGRESS',
             )
           ) {
-            return wait(1000).then(() => {
-              return this.request(url, options);
+            console.log(`Data validation in progress, waiting ${retryCount} seconds...`);
+            return wait(retryCount * 1000).then(() => {
+              return this.request(url, options, retryCount + 1);
             });
           }
           throw error;

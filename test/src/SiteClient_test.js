@@ -132,6 +132,8 @@ describe('Site API', () => {
           fieldType: 'string',
         });
 
+        expect(field.label).to.equal('Title');
+
         const updatedItemType = await client.itemTypes.update(
           itemType.id,
           u({ name: 'UpdatedArticle', titleField: field.id }, itemType),
