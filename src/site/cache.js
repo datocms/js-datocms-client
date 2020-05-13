@@ -38,7 +38,14 @@ module.exports = {
   "jobResult": {
     "find": true
   },
-  "deployEvents": {
+  "subscriptionLimits": {
+    "all": true,
+    "find": true
+  },
+  "subscriptionFeatures": {
+    "all": true
+  },
+  "buildEvents": {
     "all": true,
     "find": true
   },
@@ -72,6 +79,10 @@ module.exports = {
     "batchUnpublish": true,
     "publish": true,
     "unpublish": true
+  },
+  "itemVersions": {
+    "restore": true,
+    "all": true
   },
   "uploads": {
     "create": true,
@@ -110,7 +121,7 @@ module.exports = {
     "all": true,
     "resendWebhook": true
   },
-  "deploymentEnvironments": {
+  "buildTriggers": {
     "all": true,
     "find": true,
     "create": true,
@@ -154,9 +165,12 @@ module.exports = {
     "update": true,
     "destroy": true
   },
-  "ssoSetting": {
+  "ssoSettings": {
     "find": true,
     "update": true
+  },
+  "publicInfo": {
+    "find": true
   },
   "uploadTags": {
     "all": true,
