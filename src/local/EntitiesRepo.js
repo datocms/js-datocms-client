@@ -40,8 +40,10 @@ export default class EntitiesRepo {
     };
   }
 
-  empty() {
-    this.entities = {};
+  destroyAllEntities() {
+    Object.entries(this.entities).forEach(([type, typeEntities]) => {
+      this.destroyEntities(type, Object.keys(typeEntities));
+    });
   }
 
   upsertEntities(...payloads) {

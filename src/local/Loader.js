@@ -31,7 +31,7 @@ export default class Loader {
     ]).then(([site, items, uploads]) => {
       this.siteId = site.data.id;
 
-      this.entitiesRepo.empty();
+      this.entitiesRepo.destroyAllEntities();
       this.entitiesRepo.upsertEntities(site, items, uploads);
     });
   }
@@ -68,7 +68,7 @@ export default class Loader {
         ),
       ]);
 
-      this.entitiesRepo.empty();
+      this.entitiesRepo.destroyAllEntities();
       this.entitiesRepo.upsertEntities(...payloads);
     });
 
