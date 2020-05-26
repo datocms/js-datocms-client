@@ -41,8 +41,11 @@ export default class EntitiesRepo {
   }
 
   destroyAllEntities() {
-    Object.entries(this.entities).forEach(([type, typeEntities]) => {
-      this.destroyEntities(type, Object.keys(typeEntities));
+    // Order is important here! See ie. gatsby-source-datocms `destroyEntityNode` function!
+    ['item', 'field', 'item_type', 'upload', 'site'].forEach(type => {
+      if (this.entities[type]) {
+        this.destroyEntities(type, Object.keys(this.entities[type]));
+      }
     });
   }
 
