@@ -40,6 +40,10 @@ export default class EntitiesRepo {
     };
   }
 
+  empty() {
+    this.entities = {};
+  }
+
   upsertEntities(...payloads) {
     const entities = [];
 

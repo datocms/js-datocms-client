@@ -10,9 +10,9 @@ const doc = `
 DatoCMS CLI tool
 
 Usage:
-  dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--config=<file>]
-  dato wp-import --token=<datoApiToken> --wpUrl=<url> --wpUser=<user> --wpPassword=<password>
-  dato contentful-import --datoCmsToken=<apiToken> --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--skipContent]
+  dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--environment=<environment>] [--config=<file>]
+  dato wp-import --token=<datoApiToken> [--environment=<datoEnvironment>] --wpUrl=<url> --wpUser=<user> --wpPassword=<password>
+  dato contentful-import --datoCmsToken=<apiToken> [--datoCmsEnvironment=<datoEnvironment>] --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--skipContent]
   dato check
   dato -h | --help
   dato --version
@@ -27,17 +27,19 @@ if (options.dump) {
 } else if (options['wp-import']) {
   const {
     '--token': token,
+    '--environment': environment,
     '--wpUrl': wpUrl,
     '--wpUser': wpUser,
     '--wpPassword': wpPassword,
   } = options;
 
-  wpImport(token, wpUrl, wpUser, wpPassword);
+  wpImport(token, environment, wpUrl, wpUser, wpPassword);
 } else if (options['contentful-import']) {
   const {
     '--contentfulToken': contentfulToken,
     '--contentfulSpaceId': contentfulSpaceId,
     '--datoCmsToken': datoCmsToken,
+    '--datoCmsEnvironment': datoCmsEnvironment,
     '--skipContent': skipContent,
   } = options;
 
@@ -45,6 +47,7 @@ if (options.dump) {
     contentfulToken,
     contentfulSpaceId,
     datoCmsToken,
+    datoCmsEnvironment,
     skipContent,
   );
 }

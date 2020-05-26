@@ -2,10 +2,10 @@ import { createClient } from 'contentful-management';
 import ora from 'ora';
 import SiteClient from '../site/SiteClient';
 
-export default async (contentfulToken, contentfulSpaceId, datoCmsToken) => {
+export default async (contentfulToken, contentfulSpaceId, datoCmsToken, datoCmsEnvironment) => {
   const spinner = ora('Configuring DatoCMS/Contentful clients').start();
   const contentfulClient = createClient({ accessToken: contentfulToken });
-  const dato = new SiteClient(datoCmsToken);
+  const dato = new SiteClient(datoCmsToken, { environment: datoCmsEnvironment });
   let contentful;
   try {
     contentful = await contentfulClient.getSpace(contentfulSpaceId);

@@ -16,12 +16,14 @@ export default async (
   contentfulToken,
   contentfulSpaceId,
   datoCmsToken,
+  datoCmsEnvironment,
   skipContent,
 ) => {
   const client = await appClient(
     contentfulToken,
     contentfulSpaceId,
     datoCmsToken,
+    datoCmsEnvironment,
   );
   const datoClient = client.dato;
   const contentfulData = await getContentfulData(

@@ -53,7 +53,14 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
   ) {
     let schemaPromise;
 
-    const rawClient = new RawClient(token, extraHeaders, baseUrl);
+    const headers = { ...extraHeaders };
+
+    if (extraHeaders.environment) {
+      headers['X-Environment'] = extraHeaders.environment;
+      delete headers.environment;
+    }
+
+    const rawClient = new RawClient(token, headers, baseUrl);
 
     const extraProps = getProps(extraMethods);
     const rawClientProps = getProps(rawClient);

@@ -1,8 +1,9 @@
 import EntitiesRepo from './EntitiesRepo';
 
 export default class Loader {
-  constructor(client, previewMode = false) {
+  constructor(client, previewMode = false, environment = undefined) {
     this.client = client;
+    this.environment = environment;
     this.previewMode = previewMode;
     this.entitiesRepo = new EntitiesRepo();
   }
@@ -29,6 +30,8 @@ export default class Loader {
       ),
     ]).then(([site, items, uploads]) => {
       this.siteId = site.data.id;
+
+      this.entitiesRepo.empty();
       this.entitiesRepo.upsertEntities(site, items, uploads);
     });
   }
@@ -40,6 +43,7 @@ export default class Loader {
 
     const [watcher, disconnect] = await this.client.subscribeToChannel(
       this.siteId,
+      this.environment,
     );
 
     const addEventListener = (eventName, entitiesRepoRefresher) => {
@@ -64,6 +68,7 @@ export default class Loader {
         ),
       ]);
 
+      this.entitiesRepo.empty();
       this.entitiesRepo.upsertEntities(...payloads);
     });
 
