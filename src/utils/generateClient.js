@@ -55,7 +55,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
 
     const headers = { ...extraHeaders };
 
-    if (extraHeaders.environment) {
+    if (extraHeaders && extraHeaders.environment) {
       headers['X-Environment'] = extraHeaders.environment;
       delete headers.environment;
     }
