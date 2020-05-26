@@ -1,13 +1,47 @@
 /* eslint-disable */
 module.exports = {
-  "session": {
-    "create": true
+  "roles": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
+    "destroy": true
   },
   "users": {
     "update": true,
     "all": true,
     "find": true,
     "destroy": true
+  },
+  "ssoUsers": {
+    "all": true,
+    "copyUsers": true,
+    "destroy": true
+  },
+  "menuItems": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
+    "destroy": true
+  },
+  "itemTypes": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
+    "duplicate": true,
+    "destroy": true
+  },
+  "fields": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
+    "destroy": true
+  },
+  "session": {
+    "create": true
   },
   "accessTokens": {
     "create": true,
@@ -18,17 +52,6 @@ module.exports = {
     "destroy": true
   },
   "plugins": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
-  },
-  "site": {
-    "find": true,
-    "update": true
-  },
-  "menuItems": {
     "create": true,
     "update": true,
     "all": true,
@@ -48,21 +71,6 @@ module.exports = {
   "buildEvents": {
     "all": true,
     "find": true
-  },
-  "itemTypes": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "duplicate": true,
-    "destroy": true
-  },
-  "fields": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
   },
   "items": {
     "validateExisting": true,
@@ -103,12 +111,17 @@ module.exports = {
   "searchResults": {
     "all": true
   },
-  "roles": {
-    "create": true,
-    "update": true,
+  "environments": {
+    "fork": true,
+    "promote": true,
     "all": true,
     "find": true,
     "destroy": true
+  },
+  "maintenanceMode": {
+    "find": true,
+    "activate": true,
+    "deactivate": true
   },
   "webhooks": {
     "create": true,
@@ -155,11 +168,6 @@ module.exports = {
     "update": true,
     "destroy": true
   },
-  "ssoUsers": {
-    "all": true,
-    "syncSsoUsers": true,
-    "destroy": true
-  },
   "ssoGroups": {
     "all": true,
     "update": true,
@@ -167,6 +175,7 @@ module.exports = {
   },
   "ssoSettings": {
     "find": true,
+    "generateToken": true,
     "update": true
   },
   "publicInfo": {
@@ -178,5 +187,9 @@ module.exports = {
   },
   "uploadSmartTags": {
     "all": true
+  },
+  "site": {
+    "find": true,
+    "update": true
   }
 };
