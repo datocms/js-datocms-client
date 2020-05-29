@@ -20,4 +20,6 @@ export { default as localizedRead } from './utils/localizedRead';
 export { default as buildFileUrl } from './utils/buildFileUrl';
 export { default as buildModularBlock } from './utils/buildModularBlock';
 
+export { default as ApiException } from './ApiException';
+
 export { default as i18n } from './utils/i18n';
