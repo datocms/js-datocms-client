@@ -32,6 +32,12 @@ const attributeProperties = (schema, attribute) => {
 const hasKey = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
 
 function serializedRelationships(type, unserializedBody, schema) {
+  const relationships = jsonSchemaRelationships(schema);
+
+  if (relationships.length === 0) {
+    return null;
+  }
+
   return jsonSchemaRelationships(schema).reduce(
     (acc, { relationship, collection, types }) => {
       const camelizedRelationship = camelize(relationship);
@@ -122,6 +128,10 @@ export function serializedAttributes(type, unserializedBody = {}, schema) {
         ])
       : findAttributes(schema);
 
+  if (attrs.length === 0) {
+    return null;
+  }
+
   return attrs.reduce((acc, attr) => {
     const camelizedAttr = camelize(attr);
 
@@ -177,15 +187,22 @@ export default function serializeJsonApi(unserializedBody, link, itemId) {
     : unserializedBody;
 
   const type = jsonSchemaType(link.schema);
-  data.type = type;
-  data.attributes = serializedAttributes(type, bodyWithoutMeta, link.schema);
 
-  if (jsonSchemaRelationships(link.schema).length > 0) {
-    data.relationships = serializedRelationships(
-      type,
-      bodyWithoutMeta,
-      link.schema,
-    );
+  data.type = type;
+
+  const attributes = serializedAttributes(type, bodyWithoutMeta, link.schema);
+  const relationships = serializedRelationships(
+    type,
+    bodyWithoutMeta,
+    link.schema,
+  );
+
+  if (attributes) {
+    data.attributes = attributes;
+  }
+
+  if (relationships) {
+    data.relationships = relationships;
   }
 
   return { data };

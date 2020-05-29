@@ -477,4 +477,29 @@ describe('Site API', () => {
       }),
     );
   });
+
+  describe('environments', () => {
+    it(
+      'all, find, fork, promote, destroy',
+      vcr(async () => {
+        const primaryEnvironment = await client.environments.find('master');
+
+        const forkedEnvironment = await client.environments.fork(
+          primaryEnvironment.id,
+          {
+            id: 'sandbox-test',
+          },
+        );
+
+        await client.environments.promote(forkedEnvironment.id);
+
+        await client.environments.promote(primaryEnvironment.id);
+
+        await client.environments.destroy(forkedEnvironment.id);
+
+        const environments = await client.environments.all();
+        expect(environments.length).to.equal(1);
+      }),
+    );
+  });
 });
