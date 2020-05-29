@@ -164,7 +164,10 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                       jobResult.attributes.status >= 300
                     ) {
                       throw new ApiException(
-                        jobResult,
+                        {
+                          status: jobResult.attributes.status,
+                          statusText: jobResult.attributes.statusText,
+                        },
                         jobResult.attributes.payload,
                       );
                     }
