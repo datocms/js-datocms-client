@@ -16,12 +16,27 @@ export default async function runPendingMigrations({
   inPlace,
   token: tokenByArg,
 }) {
+  const migrationsDir = path.resolve(relativeMigrationsDir);
+
+  if (!fs.existsSync(migrationsDir)) {
+    process.stderr.write(
+      `Error: ${relativeMigrationsDir} is not a directory!\n`,
+    );
+    process.exit(1);
+  }
+
+  const allMigrations = fs
+    .readdirSync(migrationsDir)
+    .filter(file => file.match(MIGRATION_FILE_REGEXP));
+
   const token =
     tokenByArg || process.env.DATO_API_TOKEN || (await requireToken());
 
   const globalClient = new SiteClient(token, {});
 
-  const primaryEnv = (await globalClient.environments.all()).find(env => env.meta.primary);
+  const primaryEnv = (await globalClient.environments.all()).find(
+    env => env.meta.primary,
+  );
 
   const sourceEnv = sourceEnvId
     ? await globalClient.environments.find(sourceEnvId)
@@ -29,13 +44,19 @@ export default async function runPendingMigrations({
 
   const environmentId = inPlace
     ? sourceEnv.id
-    : destinationEnvId || `${sourceEnv.id}-with-migrations`;
+    : destinationEnvId || `${sourceEnv.id}-post-migrations`;
 
   if (inPlace) {
     if (primaryEnv.id === environmentId) {
-      process.stdout.write('Running migrations on primary environment is not allowed!\n');
+      process.stderr.write(
+        'Running migrations on primary environment is not allowed!\n',
+      );
       process.exit(1);
     }
+
+    process.stdout.write(
+      `Migrations will be run in sandbox env \`${environmentId}\`\n`,
+    );
   } else {
     const forkSpinner = ora(
       `Creating a fork of \`${sourceEnv.id}\` called \`${environmentId}\`...`,
@@ -62,11 +83,7 @@ export default async function runPendingMigrations({
     )
   ).map(m => m.name);
 
-  const migrationsDir = path.resolve(relativeMigrationsDir);
-
-  const migrationsToRun = fs
-    .readdirSync(migrationsDir)
-    .filter(file => file.match(MIGRATION_FILE_REGEXP))
+  const migrationsToRun = allMigrations
     .filter(file => !alreadyRunMigrations.includes(file))
     .sort();
 

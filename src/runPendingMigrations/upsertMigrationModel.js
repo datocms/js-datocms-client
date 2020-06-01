@@ -1,3 +1,4 @@
+import ora from 'ora';
 import ApiException from '../ApiException';
 
 async function createMigrationModel(client, migrationModelApiKey) {
@@ -23,17 +24,20 @@ export default async function upsertMigrationModel(
   migrationModelApiKey,
 ) {
   try {
-    const migrationItemType = await client.itemTypes.find(migrationModelApiKey);
-    console.log(`Found migration model!`);
-
-    return migrationItemType;
+    return await client.itemTypes.find(migrationModelApiKey);
   } catch (e) {
     if (e instanceof ApiException && e.statusCode === 404) {
-      console.log(`Migration model doesn't exists, creating it!`);
+      const creationSpinner = ora(
+        `Creating \`${migrationModelApiKey}\` model...\n`,
+      ).start();
+
       const migrationItemType = await createMigrationModel(
         client,
         migrationModelApiKey,
       );
+
+      creationSpinner.succeed();
+
       return migrationItemType;
     }
 
