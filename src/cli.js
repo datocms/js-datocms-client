@@ -7,6 +7,7 @@ import wpImport from './wpImport/command';
 import contentfulImport from './contentfulImport/command';
 import toggleMaintenanceMode from './toggleMaintenanceMode/command';
 import createMigrationScript from './createMigrationScript/command';
+import runPendingMigrations from './runPendingMigrations/command';
 
 const doc = `
 DatoCMS CLI tool
@@ -14,7 +15,7 @@ DatoCMS CLI tool
 Usage:
   dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--environment=<environment>] [--config=<file>]
   dato new migration <name> [--migrationsDir=<directory>]
-  dato migrate [--source=<sourceEnvironment>] [--destination=<destinationEnvironment>] [--inPlace] [--migrationsDir=<directory>] [--token=<apiToken>]
+  dato migrate [--source=<environment>] [--destination=<environment>] [--inPlace] [--migrationModel=<apiKey>] [--migrationsDir=<directory>] [--token=<apiToken>]
   dato maintenance (on|off) [--force] [--token=<apiToken>]
   dato wp-import --token=<datoApiToken> [--environment=<datoEnvironment>] --wpUrl=<url> --wpUser=<user> --wpPassword=<password>
   dato contentful-import --datoCmsToken=<apiToken> [--datoCmsEnvironment=<datoEnvironment>] --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--skipContent]
@@ -23,7 +24,8 @@ Usage:
   dato --version
 
 Options:
-  --migrationsDir=<directory>   The directory containing migration scripts [default: ./migrations]
+  --migrationsDir=<directory>   Directory containing the migration scripts [default: ./migrations]
+  --migrationModel=<apiKey>     API key of the migration model [default: schema_migration]
 `;
 
 (() => {
@@ -43,8 +45,32 @@ Options:
   }
 
   if (options.new && options.migration) {
-    const { '<name>': name, '--migrationsDir': relativeMigrationsDir } = options;
+    const {
+      '<name>': name,
+      '--migrationsDir': relativeMigrationsDir,
+    } = options;
+
     return createMigrationScript({ name, relativeMigrationsDir });
+  }
+
+  if (options.migrate) {
+    const {
+      '--source': sourceEnvId,
+      '--destination': destinationEnvId,
+      '--migrationModel': migrationModelApiKey,
+      '--migrationsDir': relativeMigrationsDir,
+      '--inPlace': inPlace,
+      '--token': token,
+    } = options;
+
+    return runPendingMigrations({
+      sourceEnvId,
+      destinationEnvId,
+      inPlace,
+      migrationModelApiKey,
+      relativeMigrationsDir,
+      token,
+    });
   }
 
   if (options['wp-import']) {
