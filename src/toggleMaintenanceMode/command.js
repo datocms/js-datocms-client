@@ -10,7 +10,7 @@ export default async function toggleMaintenanceMode({ activate, token: tokenByAr
 
   if (activate) {
     if (active) {
-      process.stdout.write('Maintenance mode is already active!');
+      process.stdout.write('Maintenance mode is already active!\n');
       return;
     }
 

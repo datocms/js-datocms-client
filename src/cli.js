@@ -6,20 +6,24 @@ import check from './check/command';
 import wpImport from './wpImport/command';
 import contentfulImport from './contentfulImport/command';
 import toggleMaintenanceMode from './toggleMaintenanceMode/command';
+import createMigrationScript from './createMigrationScript/command';
 
 const doc = `
 DatoCMS CLI tool
 
 Usage:
   dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--environment=<environment>] [--config=<file>]
-  dato new migration
-  dato migrate [--source=<sourceEnvironment>] [--destination=<destinationEnvironment>] [--inPlace] [--migrations=<directory>] [--token=<apiToken>]
+  dato new migration <name> [--migrationsDir=<directory>]
+  dato migrate [--source=<sourceEnvironment>] [--destination=<destinationEnvironment>] [--inPlace] [--migrationsDir=<directory>] [--token=<apiToken>]
   dato maintenance (on|off) [--force] [--token=<apiToken>]
   dato wp-import --token=<datoApiToken> [--environment=<datoEnvironment>] --wpUrl=<url> --wpUser=<user> --wpPassword=<password>
   dato contentful-import --datoCmsToken=<apiToken> [--datoCmsEnvironment=<datoEnvironment>] --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--skipContent]
   dato check
   dato -h | --help
   dato --version
+
+Options:
+  --migrationsDir=<directory>   The directory containing migration scripts [default: ./migrations]
 `;
 
 (() => {
@@ -36,6 +40,11 @@ Usage:
   if (options.maintenance) {
     const { on, '--token': token, '--force': force } = options;
     return toggleMaintenanceMode({ activate: on, token, force });
+  }
+
+  if (options.new && options.migration) {
+    const { '<name>': name, '--migrationsDir': relativeMigrationsDir } = options;
+    return createMigrationScript({ name, relativeMigrationsDir });
   }
 
   if (options['wp-import']) {
