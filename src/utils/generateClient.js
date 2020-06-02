@@ -53,7 +53,14 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
   ) {
     let schemaPromise;
 
-    const rawClient = new RawClient(token, extraHeaders, baseUrl);
+    const headers = { ...extraHeaders };
+
+    if (extraHeaders && extraHeaders.environment) {
+      headers['X-Environment'] = extraHeaders.environment;
+      delete headers.environment;
+    }
+
+    const rawClient = new RawClient(token, headers, baseUrl);
 
     const extraProps = getProps(extraMethods);
     const rawClientProps = getProps(rawClient);
@@ -129,13 +136,19 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                 const deserialize = async response => {
                   if (response && response.data.type === 'job') {
                     let jobResult;
+                    let retryCount = 0;
 
                     do {
                       try {
-                        await wait(1000);
-                        jobResult = await client.jobResult.find(
-                          response.data.id,
-                        );
+                        retryCount += 1;
+                        await wait(retryCount * 1000);
+                        jobResult = (
+                          await client.jobResult.find(
+                            response.data.id,
+                            {},
+                            { deserializeResponse: false },
+                          )
+                        ).data;
                       } catch (e) {
                         if (
                           !(e instanceof ApiException) ||
@@ -146,17 +159,26 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                       }
                     } while (!jobResult);
 
-                    if (jobResult.status < 200 || jobResult.status >= 300) {
-                      throw new ApiException(jobResult, jobResult.payload);
+                    if (
+                      jobResult.attributes.status < 200 ||
+                      jobResult.attributes.status >= 300
+                    ) {
+                      throw new ApiException(
+                        {
+                          status: jobResult.attributes.status,
+                          statusText: jobResult.attributes.statusText,
+                        },
+                        jobResult.attributes.payload,
+                      );
                     }
 
                     return deserializeResponse
                       ? deserializeJsonApi(
                           singularized,
                           link.jobSchema,
-                          jobResult.payload,
+                          jobResult.attributes.payload,
                         )
-                      : jobResult.payload;
+                      : jobResult.attributes.payload;
                   }
 
                   return deserializeResponse
@@ -181,7 +203,6 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   serializeRequest
                 ) {
                   body = serializeJsonApi(
-                    singularized,
                     body,
                     link,
                     link.method === 'PUT' && lastUrlId,

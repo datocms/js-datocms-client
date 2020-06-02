@@ -2,18 +2,18 @@ import Pusher from 'pusher-js';
 
 const PUSHER_API_KEY = '75e6ef0fe5d39f481626';
 
-let subscribeToSiteChannelPromise;
+const channels = {};
 
-export default function subscribeToChannel(client, siteId) {
-  let subscribeToChannelPromise = subscribeToSiteChannelPromise
-    ? subscribeToSiteChannelPromise[siteId]
-    : null;
+export default function subscribeToChannel(client, siteId, environment) {
+  const cacheKey = `${siteId}--${environment || 'primary'}`;
 
-  if (subscribeToChannelPromise) {
-    return subscribeToChannelPromise;
+  const cachedPromise = channels[cacheKey];
+
+  if (cachedPromise) {
+    return cachedPromise;
   }
 
-  subscribeToChannelPromise = (siteId
+  const promise = (siteId
     ? Promise.resolve(siteId)
     : client.site.find().then(site => site.id)
   ).then(realSiteId => {
@@ -29,7 +29,11 @@ export default function subscribeToChannel(client, siteId) {
         },
       });
 
-      const channel = pusher.subscribe(`private-site-${realSiteId}`);
+      const channelName = environment
+        ? `private-site-${realSiteId}-environment-${environment}`
+        : `private-site-${realSiteId}`;
+
+      const channel = pusher.subscribe(channelName);
 
       channel.bind('pusher:subscription_error', () => {
         reject(new Error('Could not subscribe to real-time events!'));
@@ -39,7 +43,7 @@ export default function subscribeToChannel(client, siteId) {
         resolve([
           channel,
           () => {
-            subscribeToChannelPromise = null;
+            channels[cacheKey] = null;
             return pusher.disconnect();
           },
         ]);
@@ -47,5 +51,7 @@ export default function subscribeToChannel(client, siteId) {
     });
   });
 
-  return subscribeToChannelPromise;
+  channels[cacheKey] = promise;
+
+  return promise;
 }

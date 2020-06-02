@@ -1,3 +1,7 @@
+## 3.0.19
+
+* Support for the new `appearance` attribute (which deprecates the old `appeareance`)
+
 ## 3.0.16
 
 * Added `loadSchema` on `Loader` to improve `gatsby-source-datocms`

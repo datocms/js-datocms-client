@@ -11,6 +11,7 @@ describe('Site API', () => {
     vcr('before', async () => {
       const accountClient = await generateNewAccountClient();
       site = await accountClient.sites.create({ name: 'Blog' });
+
       client = new SiteClient(
         site.readwriteToken,
         null,
@@ -34,11 +35,11 @@ describe('Site API', () => {
     );
   });
 
-  describe('deploy event', () => {
+  describe('build events', () => {
     it(
       'find, all',
       vcr(async () => {
-        const events = await client.deployEvents.all();
+        const events = await client.buildEvents.all();
         expect(events).to.have.length(0);
       }),
     );
@@ -72,21 +73,21 @@ describe('Site API', () => {
     );
   });
 
-  describe('deployment environment', () => {
+  describe('build triggers', () => {
     it(
       'create, trigger',
       vcr(async () => {
-        const env = await client.deploymentEnvironments.create({
+        const trigger = await client.buildTriggers.create({
           accessPolicy: null,
-          deployAdapter: 'custom',
-          buildOnScheduledPublications: false,
-          deploySettings: { triggerUrl: 'https://www.google.com' },
+          adapter: 'custom',
+          autotriggerOnScheduledPublications: false,
+          adapterSettings: { triggerUrl: 'https://www.google.com' },
           frontendUrl: null,
           name: 'Foo',
-          spiderEnabled: false,
+          indexingEnabled: false,
         });
 
-        await client.deploymentEnvironments.trigger(env.id);
+        await client.buildTriggers.trigger(trigger.id);
       }),
     );
   });
@@ -101,12 +102,11 @@ describe('Site API', () => {
         });
 
         await client.itemTypes.update(other.id, u({ name: 'Other 2' }, other));
-
         await client.itemTypes.destroy(other.id);
 
         const itemType = await client.itemTypes.create({
           name: 'Article',
-          apiKey: 'item_type',
+          apiKey: 'article',
           singleton: true,
           sortable: false,
           modularBlock: false,
@@ -117,6 +117,7 @@ describe('Site API', () => {
           allLocalesRequired: true,
           titleField: null,
         });
+
         expect(itemType.name).to.equal('Article');
 
         const foundItemType = await client.itemTypes.find(itemType.id);
@@ -125,11 +126,21 @@ describe('Site API', () => {
         const allItemTypes = await client.itemTypes.all();
         expect(allItemTypes).to.have.length(1);
 
+        const field = await client.fields.create(itemType.id, {
+          label: 'Title',
+          apiKey: 'title',
+          fieldType: 'string',
+        });
+
+        expect(field.label).to.equal('Title');
+
         const updatedItemType = await client.itemTypes.update(
           itemType.id,
-          u({ name: 'UpdatedArticle' }, itemType),
+          u({ name: 'UpdatedArticle', titleField: field.id }, itemType),
         );
+
         expect(updatedItemType.name).to.equal('UpdatedArticle');
+        expect(updatedItemType.titleField).to.equal(field.id);
 
         await client.itemTypes.destroy(itemType.id);
       }),
@@ -442,7 +453,7 @@ describe('Site API', () => {
           content: [
             buildModularBlock({ itemType: contentItemType.id, text: 'Foo' }),
             buildModularBlock({ itemType: contentItemType.id, text: 'Bar' }),
-          ]
+          ],
         });
 
         expect(item.content.length).to.equal(2);
@@ -463,6 +474,31 @@ describe('Site API', () => {
         });
 
         await client.plugins.destroy(plugin.id);
+      }),
+    );
+  });
+
+  describe('environments', () => {
+    it(
+      'all, find, fork, promote, destroy',
+      vcr(async () => {
+        const primaryEnvironment = await client.environments.find('master');
+
+        const forkedEnvironment = await client.environments.fork(
+          primaryEnvironment.id,
+          {
+            id: 'sandbox-test',
+          },
+        );
+
+        await client.environments.promote(forkedEnvironment.id);
+
+        await client.environments.promote(primaryEnvironment.id);
+
+        await client.environments.destroy(forkedEnvironment.id);
+
+        const environments = await client.environments.all();
+        expect(environments.length).to.equal(1);
       }),
     );
   });

@@ -40,6 +40,15 @@ export default class EntitiesRepo {
     };
   }
 
+  destroyAllEntities() {
+    // Order is important here! See ie. gatsby-source-datocms `destroyEntityNode` function!
+    ['item', 'field', 'item_type', 'upload', 'site'].forEach(type => {
+      if (this.entities[type]) {
+        this.destroyEntities(type, Object.keys(this.entities[type]));
+      }
+    });
+  }
+
   upsertEntities(...payloads) {
     const entities = [];
 

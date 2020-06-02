@@ -42,6 +42,7 @@ describe('CLI tool', () => {
       const tomlFile = TOML.parse(
         fs.readFileSync(path.join(dirName, 'foobar.toml'), 'utf8'),
       );
+
       expect(tomlFile.section[0].key).to.eq('value1');
       expect(tomlFile.section[1].key).to.eq('value2');
       expect(tomlFile.section[2].key).to.eq('value3');
@@ -275,7 +276,7 @@ describe('CLI tool', () => {
         'muxPlaybackId',
       );
       expect(articleFile.data.file.format).to.eq('txt');
-      expect(articleFile.data.file.size).to.eq(163);
+      expect(articleFile.data.file.size).to.eq(118);
       expect(articleFile.data.file.url).to.not.be.null();
 
       expect(articleFile.content).to.eq('First post');

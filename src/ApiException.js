@@ -26,3 +26,10 @@ export default function ApiException(response, body) {
 ApiException.prototype = Object.create(Error.prototype);
 ApiException.prototype.name = 'ApiException';
 ApiException.prototype.constructor = ApiException;
+ApiException.prototype.errorWithCode = function errorWithCode(code) {
+  if (!this.body || !(this.body.data instanceof Array)) {
+    return null;
+  }
+
+  return this.body.data.find(error => error.attributes.code === code);
+};

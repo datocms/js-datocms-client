@@ -71,7 +71,7 @@ export default async ({ itemTypes, datoClient, contentfulData }) => {
         contentfulField.id === contentType.displayField &&
         contentfulField.type === 'Symbol'
       ) {
-        fieldAttributes.appeareance = {
+        fieldAttributes.appearance = {
           editor: 'single_line',
           parameters: { heading: true },
           addons: [],

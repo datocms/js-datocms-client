@@ -11,6 +11,7 @@ import ItemsRepo from '../local/ItemsRepo';
 
 export default async function(options) {
   const configFile = path.resolve(options['--config'] || 'dato.config.js');
+  const environment = options['--environment'];
   const tokenOption = options['--token'] || process.env.DATO_API_TOKEN;
   const watch = options['--watch'];
   const quiet = options['--quiet'];
@@ -26,16 +27,22 @@ export default async function(options) {
   }
 
   try {
+    const headers = {
+      'X-Reason': 'dump',
+      'X-SSG': detectSsg(process.cwd()),
+    };
+
+    if (environment) {
+      headers['X-Environment'] = environment;
+    }
+
     const client = new SiteClient(
       token,
-      {
-        'X-Reason': 'dump',
-        'X-SSG': detectSsg(process.cwd()),
-      },
+      headers,
       'https://site-api.datocms.com',
     );
 
-    const loader = new Loader(client, previewMode);
+    const loader = new Loader(client, previewMode, environment);
 
     process.stdout.write('Fetching content from DatoCMS');
     await loader.load();

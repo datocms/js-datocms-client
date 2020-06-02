@@ -1,31 +1,48 @@
-function times(n) {
-  /* eslint-disable prefer-spread */
-  return Array.apply(null, { length: n }).map(Number.call, Number);
-  /* eslint-enable prefer-spread */
-}
+import Bottleneck from 'bottleneck';
 
-export default function fetchAllPages(client, endpoint, params) {
-  const itemsPerPage = 100;
+const MAX_CONCURRENT = 10;
+const ITEMS_PER_PAGE = 500;
 
-  return client
-    .get(endpoint, { ...params, 'page[limit]': itemsPerPage })
-    .then(baseResponse => {
-      const pages = Math.ceil(baseResponse.meta.total_count / itemsPerPage);
+export default async function fetchAllPages(client, endpoint, params) {
+  const limiter = new Bottleneck({
+    maxConcurrent: MAX_CONCURRENT,
+  });
 
-      return times(pages - 1)
-        .reduce((chain, extraPage) => {
-          return chain.then(result => {
-            return client
-              .get(endpoint, {
-                ...params,
-                'page[offset]': itemsPerPage * (extraPage + 1),
-                'page[limit]': itemsPerPage,
-              })
-              .then(response => result.concat(response.data));
-          });
-        }, Promise.resolve(baseResponse.data))
-        .then(data => {
-          return { ...baseResponse, data };
+  const baseResponse = await client.get(endpoint, {
+    ...params,
+    'page[limit]': ITEMS_PER_PAGE,
+  });
+
+  const totalCount = baseResponse.meta.total_count;
+
+  const promises = [];
+
+  for (
+    let index = ITEMS_PER_PAGE;
+    index < totalCount;
+    index += ITEMS_PER_PAGE
+  ) {
+    promises.push(
+      limiter.schedule(async () => {
+        const response = await client.get(endpoint, {
+          ...params,
+          'page[offset]': index,
+          'page[limit]': ITEMS_PER_PAGE,
         });
-    });
+        return response;
+      }),
+    );
+  }
+
+  const data = await Promise.all(promises);
+
+  const result = data.reduce(
+    (response, results) => {
+      response.data = response.data.concat(results.data);
+      return response;
+    },
+    { ...baseResponse },
+  );
+
+  return result;
 }

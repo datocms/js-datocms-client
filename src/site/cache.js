@@ -1,7 +1,11 @@
 /* eslint-disable */
 module.exports = {
-  "session": {
-    "create": true
+  "roles": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
+    "destroy": true
   },
   "users": {
     "update": true,
@@ -9,24 +13,10 @@ module.exports = {
     "find": true,
     "destroy": true
   },
-  "accessTokens": {
-    "create": true,
-    "update": true,
+  "ssoUsers": {
     "all": true,
-    "find": true,
-    "regenerateToken": true,
+    "copyUsers": true,
     "destroy": true
-  },
-  "plugins": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
-  },
-  "site": {
-    "find": true,
-    "update": true
   },
   "menuItems": {
     "create": true,
@@ -34,13 +24,6 @@ module.exports = {
     "all": true,
     "find": true,
     "destroy": true
-  },
-  "jobResult": {
-    "find": true
-  },
-  "deployEvents": {
-    "all": true,
-    "find": true
   },
   "itemTypes": {
     "create": true,
@@ -57,6 +40,38 @@ module.exports = {
     "find": true,
     "destroy": true
   },
+  "session": {
+    "create": true
+  },
+  "accessTokens": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
+    "regenerateToken": true,
+    "destroy": true
+  },
+  "plugins": {
+    "create": true,
+    "update": true,
+    "all": true,
+    "find": true,
+    "destroy": true
+  },
+  "jobResult": {
+    "find": true
+  },
+  "subscriptionLimits": {
+    "all": true,
+    "find": true
+  },
+  "subscriptionFeatures": {
+    "all": true
+  },
+  "buildEvents": {
+    "all": true,
+    "find": true
+  },
   "items": {
     "validateExisting": true,
     "validateNew": true,
@@ -72,6 +87,10 @@ module.exports = {
     "batchUnpublish": true,
     "publish": true,
     "unpublish": true
+  },
+  "itemVersions": {
+    "restore": true,
+    "all": true
   },
   "uploads": {
     "create": true,
@@ -92,12 +111,17 @@ module.exports = {
   "searchResults": {
     "all": true
   },
-  "roles": {
-    "create": true,
-    "update": true,
+  "environments": {
+    "fork": true,
+    "promote": true,
     "all": true,
     "find": true,
     "destroy": true
+  },
+  "maintenanceMode": {
+    "find": true,
+    "activate": true,
+    "deactivate": true
   },
   "webhooks": {
     "create": true,
@@ -110,7 +134,7 @@ module.exports = {
     "all": true,
     "resendWebhook": true
   },
-  "deploymentEnvironments": {
+  "buildTriggers": {
     "all": true,
     "find": true,
     "create": true,
@@ -144,19 +168,18 @@ module.exports = {
     "update": true,
     "destroy": true
   },
-  "ssoUsers": {
-    "all": true,
-    "syncSsoUsers": true,
-    "destroy": true
-  },
   "ssoGroups": {
     "all": true,
     "update": true,
     "destroy": true
   },
-  "ssoSetting": {
+  "ssoSettings": {
     "find": true,
+    "generateToken": true,
     "update": true
+  },
+  "publicInfo": {
+    "find": true
   },
   "uploadTags": {
     "all": true,
@@ -164,5 +187,9 @@ module.exports = {
   },
   "uploadSmartTags": {
     "all": true
+  },
+  "site": {
+    "find": true,
+    "update": true
   }
 };

@@ -6,6 +6,7 @@ module.exports = {
   "account": {
     "create": true,
     "update": true,
+    "destroy": true,
     "find": true,
     "resetPassword": true,
     "activate2fa": true
@@ -23,6 +24,9 @@ module.exports = {
     "simulate": true,
     "validate": true
   },
+  "plans": {
+    "all": true
+  },
   "jobResult": {
     "find": true
   },
@@ -37,5 +41,11 @@ module.exports = {
   },
   "siteInvitation": {
     "redeem": true
+  },
+  "subscriptionLimits": {
+    "all": true
+  },
+  "subscriptionFeatures": {
+    "all": true
   }
 };
