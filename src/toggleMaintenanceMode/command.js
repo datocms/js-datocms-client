@@ -1,9 +1,8 @@
 import SiteClient from '../site/SiteClient';
-import requireToken from '../dump/requireToken';
 import ApiException from '../ApiException';
 
 export default async function toggleMaintenanceMode({ activate, token: tokenByArg, force }) {
-  const token = tokenByArg || process.env.DATO_API_TOKEN || (await requireToken());
+  const token = tokenByArg || process.env.DATO_MANAGEMENT_API_TOKEN;
   const client = new SiteClient(token, {});
 
   const { active } = await client.maintenanceMode.find();
