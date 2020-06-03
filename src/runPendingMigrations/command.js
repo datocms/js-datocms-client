@@ -63,8 +63,9 @@ export default async function runPendingMigrations({
     const existingEnvironment = allEnvironments.find(env => env.id === environmentId);
 
     if (existingEnvironment) {
+      forkSpinner.fail();
       process.stderr.write(
-        `Error: ${environmentId} already exists! If you want to run the migrations inside this existing environment you can add the --inPlace flag.\n`,
+        `\nError: ${environmentId} already exists! If you want to run the migrations inside this existing environment you can add the --inPlace flag.\n`,
       );
       process.exit(1);
     }
