@@ -12,6 +12,7 @@ export default class Loader {
     return this.client
       .get('/site', { include: 'item_types,item_types.fields' })
       .then(site => {
+        this.entitiesRepo.destroyAllEntities();
         this.siteId = site.data.id;
         this.entitiesRepo.upsertEntities(site);
       });

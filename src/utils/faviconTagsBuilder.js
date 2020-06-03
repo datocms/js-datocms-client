@@ -48,6 +48,8 @@ const builders = {
 
     const upload = entitiesRepo.findEntity('upload', site.favicon);
 
+    if (!upload) return undefined;
+
     return [16, 32, 96, 192].map(size =>
       tag('link', {
         rel: 'icon',
