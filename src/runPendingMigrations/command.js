@@ -3,7 +3,6 @@ import fs from 'fs';
 import ora from 'ora';
 
 import SiteClient from '../site/SiteClient';
-import requireToken from '../dump/requireToken';
 import upsertMigrationModel from './upsertMigrationModel';
 
 const MIGRATION_FILE_REGEXP = /^[0-9]+.*\.js$/;
@@ -29,14 +28,13 @@ export default async function runPendingMigrations({
     .readdirSync(migrationsDir)
     .filter(file => file.match(MIGRATION_FILE_REGEXP));
 
-  const token =
-    tokenByArg || process.env.DATO_API_TOKEN || (await requireToken());
+  const token = tokenByArg || process.env.DATO_MANAGEMENT_API_TOKEN;
 
   const globalClient = new SiteClient(token, {});
 
-  const primaryEnv = (await globalClient.environments.all()).find(
-    env => env.meta.primary,
-  );
+  const allEnvironments = await globalClient.environments.all();
+
+  const primaryEnv = allEnvironments.find(env => env.meta.primary);
 
   const sourceEnv = sourceEnvId
     ? await globalClient.environments.find(sourceEnvId)
@@ -61,6 +59,15 @@ export default async function runPendingMigrations({
     const forkSpinner = ora(
       `Creating a fork of \`${sourceEnv.id}\` called \`${environmentId}\`...`,
     ).start();
+
+    const existingEnvironment = allEnvironments.find(env => env.id === environmentId);
+
+    if (existingEnvironment) {
+      process.stderr.write(
+        `Error: ${environmentId} already exists! If you want to run the migrations inside this existing environment you can add the --inPlace flag.\n`,
+      );
+      process.exit(1);
+    }
 
     await globalClient.environments.fork(sourceEnv.id, {
       id: environmentId,
