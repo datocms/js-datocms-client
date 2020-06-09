@@ -12,15 +12,14 @@ import linkRecords from './linkRecords';
 import createUploads from './createUploads';
 import publishRecords from './publishRecords';
 
-export default async (
+export default async ({
   contentfulToken,
   contentfulSpaceId,
   datoCmsToken,
   datoCmsEnvironment,
   skipContent,
-  includeOnly,
   contentType,
-) => {
+}) => {
   const client = await appClient(
     contentfulToken,
     contentfulSpaceId,
@@ -28,12 +27,11 @@ export default async (
     datoCmsEnvironment,
   );
   const datoClient = client.dato;
-  const contentfulData = await getContentfulData(
-    client.contentful,
+  const contentfulData = await getContentfulData({
+    client: client.contentful,
     skipContent,
-    includeOnly,
     contentType,
-  );
+  });
 
   await removeAllValidators({ datoClient, contentfulData });
 

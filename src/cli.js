@@ -18,7 +18,7 @@ Usage:
   dato migrate [--source=<environment>] [--destination=<environment>] [--inPlace] [--migrationModel=<apiKey>] [--migrationsDir=<directory>] [--token=<apiToken>]
   dato maintenance (on|off) [--force] [--token=<apiToken>]
   dato wp-import --token=<datoApiToken> [--environment=<datoEnvironment>] --wpUrl=<url> --wpUser=<user> --wpPassword=<password>
-  dato contentful-import --datoCmsToken=<apiToken> --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--skipContent] [(--includeOnly <contentType>...)]
+  dato contentful-import --datoCmsToken=<apiToken> --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--datoCmsEnvironment=<datoEnvironment>] [--skipContent] [(--includeOnly <contentType>...)]
   dato check
   dato -h | --help
   dato --version
@@ -90,19 +90,20 @@ Options:
       '--contentfulToken': contentfulToken,
       '--contentfulSpaceId': contentfulSpaceId,
       '--datoCmsToken': datoCmsToken,
+      '--datoCmsEnvironment': datoCmsEnvironment,
       '--skipContent': skipContent,
       '--includeOnly': includeOnly,
       '<contentType>': contentType,
     } = options;
 
-    contentfulImport(
+    return contentfulImport({
       contentfulToken,
       contentfulSpaceId,
       datoCmsToken,
+      datoCmsEnvironment,
       skipContent,
-      includeOnly,
-      contentType,
-    );
+      contentType: includeOnly ? contentType : false,
+    });
   }
 
   return false;
