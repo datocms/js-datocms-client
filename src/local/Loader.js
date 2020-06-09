@@ -18,6 +18,15 @@ export default class Loader {
       });
   }
 
+  loadSchemaWithinEnvironment() {
+    return this.client
+      .get('/site', { include: 'item_types,item_types.fields' })
+      .then(site => {
+        this.siteId = site.data.id;
+        this.entitiesRepo.upsertEntities(site);
+      });
+  }
+
   load() {
     return Promise.all([
       this.client.get('/site', { include: 'item_types,item_types.fields' }),
