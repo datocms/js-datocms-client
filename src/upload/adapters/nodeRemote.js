@@ -23,6 +23,7 @@ export default function nodeUrl(client, fileUrl) {
         .then(response => {
           /* eslint-disable no-underscore-dangle */
           const redirectedUrl =
+            response.request._redirectable &&
             response.request._redirectable._redirectCount > 0
               ? response.request._redirectable._currentUrl
               : response.config.url;
