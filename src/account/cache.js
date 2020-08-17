@@ -19,12 +19,40 @@ module.exports = {
     "destroy": true,
     "duplicate": true
   },
-  "subscription": {
+  "siteSubscription": {
     "create": true,
     "simulate": true,
     "validate": true
   },
-  "plans": {
+  "accountSubscription": {
+    "create": true,
+    "simulate": true,
+    "validate": true
+  },
+  "sitePlans": {
+    "all": true
+  },
+  "accountPlans": {
+    "all": true
+  },
+  "perSitePricingBillingProfiles": {
+    "all": true,
+    "find": true,
+    "updateCreditCard": true,
+    "updateInfo": true
+  },
+  "perAccountPricingBillingProfile": {
+    "find": true,
+    "updateCreditCard": true,
+    "updateInfo": true
+  },
+  "invoice": {
+    "perAccountPricingBillingProfileInstances": true,
+    "perSitePricingBillingProfileInstances": true,
+    "perAccountPricingBillingProfileCollectUnpaid": true,
+    "perSitePricingBillingProfileCollectUnpaid": true
+  },
+  "resourceUsages": {
     "all": true
   },
   "jobResult": {
