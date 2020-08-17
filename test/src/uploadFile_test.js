@@ -67,18 +67,21 @@ describe('Upload file from', async () => {
     );
   });
 
-  context('url that redirects to image', () => {
-    it(
-      'follows redirect and uploads file',
-      vcr(async () => {
-        const uploadData = await uploadFile(
-          client,
-          'https://httpbin.org/redirect-to?url=https%3A%2F%2Fwww.datocms-assets.com%2F13095%2F1561736871-11-rockingwithlights.png',
-        );
-        expect(uploadData).to.not.be.null();
-      }),
-    );
-  });
+  // https://httpbin.org/redirect-to has stopped working.
+  // To test redirection use another service.
+  //
+  // context('url that redirects to image', () => {
+  //   it(
+  //     'follows redirect and uploads file',
+  //     vcr(async () => {
+  //       const uploadData = await uploadFile(
+  //         client,
+  //         'https://httpbin.org/redirect-to?url=https%3A%2F%2Fwww.datocms-assets.com%2F13095%2F1561736871-11-rockingwithlights.png',
+  //       );
+  //       expect(uploadData).to.not.be.null();
+  //     }),
+  //   );
+  // });
 
   context('url that contains unescaped characters', () => {
     it(
