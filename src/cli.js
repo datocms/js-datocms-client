@@ -75,7 +75,7 @@ Options:
     });
   }
 
-  if (options.maintenance) {
+  if (options.environment && options.destroy) {
     const { environmentId, '--token': token } = options;
     return destroyEnvironment({ environmentId, token });
   }
