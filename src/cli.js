@@ -76,7 +76,7 @@ Options:
   }
 
   if (options.environment && options.destroy) {
-    const { environmentId, '--token': token } = options;
+    const { '<environmentId>': environmentId, '--token': token } = options;
     return destroyEnvironment({ environmentId, token });
   }
 
