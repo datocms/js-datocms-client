@@ -52,18 +52,16 @@ module.exports = async (client) => {
 }
 `.trim();
 
-const getTemplate = templatePath =>
-  new Promise(resolve => {
-    console.log(templatePath);
-    if (!templatePath) return resolve(defaultTemplate);
-    if (fs.existsSync(templatePath)) {
-      return resolve(fs.readFileSync(templatePath, 'utf8'));
-    }
+const getTemplate = templatePath => {
+  if (!templatePath) return defaultTemplate;
+  if (fs.existsSync(templatePath)) {
+    return fs.readFileSync(templatePath, 'utf8');
+  }
 
-    return process.stderr.write(
-      `Could not load template with path ${templatePath}`,
-    );
-  });
+  return process.stderr.write(
+    `Could not load template with path ${templatePath}`,
+  );
+};
 
 export default async function toggleMaintenanceMode({
   name,
@@ -71,7 +69,7 @@ export default async function toggleMaintenanceMode({
   relativeMigrationTemplatePath,
 }) {
   const migrationsDir = path.resolve(relativeMigrationsDir);
-  const template = await getTemplate(relativeMigrationTemplatePath);
+  const template = getTemplate(relativeMigrationTemplatePath);
 
   await mkdirp(migrationsDir);
 
