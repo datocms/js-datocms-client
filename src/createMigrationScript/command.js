@@ -7,6 +7,8 @@ import fs from 'fs';
 const mkdirp = denodeify(baseMkdirp);
 
 const template = `
+'use strict';
+
 module.exports = async (client) => {
   // DatoCMS migration script
 
