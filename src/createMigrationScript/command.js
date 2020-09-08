@@ -6,7 +6,7 @@ import fs from 'fs';
 
 const mkdirp = denodeify(baseMkdirp);
 
-const template = `
+const defaultTemplate = `
 'use strict';
 
 module.exports = async (client) => {
@@ -52,11 +52,27 @@ module.exports = async (client) => {
 }
 `.trim();
 
+const getTemplate = templatePath =>
+  new Promise(resolve => {
+    console.log(templatePath);
+    if (!templatePath) return resolve(defaultTemplate);
+    if (fs.existsSync(templatePath)) {
+      return resolve(fs.readFileSync(templatePath, 'utf8'));
+    }
+
+    return process.stderr.write(
+      `Could not load template with path ${templatePath}`,
+    );
+  });
+
 export default async function toggleMaintenanceMode({
   name,
   relativeMigrationsDir,
+  relativeMigrationTemplatePath,
 }) {
   const migrationsDir = path.resolve(relativeMigrationsDir);
+  const template = await getTemplate(relativeMigrationTemplatePath);
+
   await mkdirp(migrationsDir);
 
   const timestamp = Math.floor(Date.now() / 1000);
