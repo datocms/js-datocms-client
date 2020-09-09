@@ -482,7 +482,7 @@ describe('Site API', () => {
     it(
       'all, find, fork, promote, destroy',
       vcr(async () => {
-        const primaryEnvironment = await client.environments.find('master');
+        const primaryEnvironment = await client.environments.find('main');
 
         const forkedEnvironment = await client.environments.fork(
           primaryEnvironment.id,

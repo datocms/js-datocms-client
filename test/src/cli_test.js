@@ -5,7 +5,6 @@ import path from 'path';
 import glob from 'glob';
 import runCli from '../../src/cli';
 import { SiteClient } from '../../src/index';
-import { expect } from 'chai';
 
 describe('CLI tool', () => {
   it('dato new migration', async () => {
@@ -35,6 +34,7 @@ describe('CLI tool', () => {
         name: 'Integration new test site',
       });
 
+      const oldCwd = process.cwd();
       process.chdir(path.resolve('test/fixtures/cli/scenario1'));
 
       await runCli(
@@ -51,6 +51,8 @@ describe('CLI tool', () => {
 
       const model = await client.itemTypes.find('article');
       expect(model.apiKey).to.eq('article');
+
+      process.chdir(oldCwd);
     }),
   );
 
