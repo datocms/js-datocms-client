@@ -49,7 +49,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
   return function Client(
     token,
     extraHeaders = {},
-    baseUrl = `https://${subdomain}.datocms.com`,
+    baseUrl,
   ) {
     let schemaPromise;
 
@@ -60,7 +60,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
       delete headers.environment;
     }
 
-    const rawClient = new RawClient(token, headers, baseUrl);
+    const rawClient = new RawClient(token, headers, baseUrl || `https://${subdomain}.datocms.com`);
 
     const extraProps = getProps(extraMethods);
     const rawClientProps = getProps(rawClient);

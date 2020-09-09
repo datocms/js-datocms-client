@@ -1,9 +1,9 @@
 import SiteClient from '../site/SiteClient';
 import ApiException from '../ApiException';
 
-export default async function toggleMaintenanceMode({ activate, token: tokenByArg, force }) {
+export default async function toggleMaintenanceMode({ activate, token: tokenByArg, force, cmaBaseUrl }) {
   const token = tokenByArg || process.env.DATO_MANAGEMENT_API_TOKEN;
-  const client = new SiteClient(token, {});
+  const client = new SiteClient(token, {}, cmaBaseUrl);
 
   const { active } = await client.maintenanceMode.find();
 

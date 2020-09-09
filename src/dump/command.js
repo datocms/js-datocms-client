@@ -16,6 +16,7 @@ export default async function(options) {
   const watch = options['--watch'];
   const quiet = options['--quiet'];
   const previewMode = options['--preview'];
+  const cmaBaseUrl = options['--cmaBaseUrl'];
 
   const token = tokenOption || (await requireToken());
 
@@ -39,7 +40,7 @@ export default async function(options) {
     const client = new SiteClient(
       token,
       headers,
-      'https://site-api.datocms.com',
+      cmaBaseUrl,
     );
 
     const loader = new Loader(client, previewMode, environment);

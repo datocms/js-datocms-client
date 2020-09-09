@@ -15,7 +15,7 @@ import Loader from '../../src/local/Loader';
 import ItemsRepo from '../../src/local/ItemsRepo';
 import uploadImage from '../../src/upload/uploadImage';
 
-describe('CLI tool', () => {
+describe('dump', () => {
   it(
     'dump with toml',
     vcr(async () => {

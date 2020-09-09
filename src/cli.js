@@ -14,13 +14,13 @@ const doc = `
 DatoCMS CLI tool
 
 Usage:
-  dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--environment=<environment>] [--config=<file>]
+  dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--environment=<environment>] [--config=<file>] [--cmaBaseUrl=<url>]
   dato new migration <name> [--migrationsDir=<directory>]
-  dato migrate [--source=<environment>] [--destination=<environment>] [--inPlace] [--migrationModel=<apiKey>] [--migrationsDir=<directory>] [--token=<apiToken>]
-  dato environment destroy <environmentId> [--token=<apiToken>]
-  dato maintenance (on|off) [--force] [--token=<apiToken>]
-  dato wp-import --token=<datoApiToken> [--environment=<datoEnvironment>] --wpUrl=<url> --wpUser=<user> --wpPassword=<password>
-  dato contentful-import --datoCmsToken=<apiToken> --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--datoCmsEnvironment=<datoEnvironment>] [--skipContent] [(--includeOnly <contentType>...)]
+  dato migrate [--source=<environment>] [--destination=<environment>] [--inPlace] [--migrationModel=<apiKey>] [--migrationsDir=<directory>] [--token=<apiToken>] [--cmaBaseUrl=<url>]
+  dato environment destroy <environmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
+  dato maintenance (on|off) [--force] [--token=<apiToken>] [--cmaBaseUrl=<url>]
+  dato wp-import --token=<datoApiToken> [--environment=<datoEnvironment>] --wpUrl=<url> --wpUser=<user> --wpPassword=<password> [--datoCmaBaseUrl=<url>]
+  dato contentful-import --datoCmsToken=<apiToken> --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--datoCmsEnvironment=<datoEnvironment>] [--skipContent] [--datoCmaBaseUrl=<url>] [(--includeOnly <contentType>...)]
   dato check
   dato -h | --help
   dato --version
@@ -28,10 +28,11 @@ Usage:
 Options:
   --migrationsDir=<directory>   Directory containing the migration scripts [default: ./migrations]
   --migrationModel=<apiKey>     API key of the migration model [default: schema_migration]
+  --cmaBaseUrl=<url>           DatoCMS CMA base URL [default: https://site-api.datocms.com/]
 `;
 
-(() => {
-  const options = docopt(doc, { version: pkg.version });
+module.exports = argv => {
+  const options = docopt(doc, { argv, version: pkg.version });
 
   if (options.dump) {
     return dump(options);
@@ -42,8 +43,13 @@ Options:
   }
 
   if (options.maintenance) {
-    const { on, '--token': token, '--force': force } = options;
-    return toggleMaintenanceMode({ activate: on, token, force });
+    const {
+      on,
+      '--token': token,
+      '--force': force,
+      '--cmaBaseUrl': cmaBaseUrl,
+    } = options;
+    return toggleMaintenanceMode({ activate: on, token, force, cmaBaseUrl });
   }
 
   if (options.new && options.migration) {
@@ -63,6 +69,7 @@ Options:
       '--migrationsDir': relativeMigrationsDir,
       '--inPlace': inPlace,
       '--token': token,
+      '--cmaBaseUrl': cmaBaseUrl,
     } = options;
 
     return runPendingMigrations({
@@ -72,12 +79,17 @@ Options:
       migrationModelApiKey,
       relativeMigrationsDir,
       token,
+      cmaBaseUrl,
     });
   }
 
   if (options.environment && options.destroy) {
-    const { '<environmentId>': environmentId, '--token': token } = options;
-    return destroyEnvironment({ environmentId, token });
+    const {
+      '<environmentId>': environmentId,
+      '--token': token,
+      '--cmaBaseUrl': cmaBaseUrl,
+    } = options;
+    return destroyEnvironment({ environmentId, token, cmaBaseUrl });
   }
 
   if (options['wp-import']) {
@@ -87,9 +99,10 @@ Options:
       '--wpUrl': wpUrl,
       '--wpUser': wpUser,
       '--wpPassword': wpPassword,
+      '--datoCmaBaseUrl': cmaBaseUrl,
     } = options;
 
-    return wpImport(token, environment, wpUrl, wpUser, wpPassword);
+    return wpImport(token, environment, wpUrl, wpUser, wpPassword, cmaBaseUrl);
   }
 
   if (options['contentful-import']) {
@@ -100,12 +113,14 @@ Options:
       '--datoCmsEnvironment': datoCmsEnvironment,
       '--skipContent': skipContent,
       '--includeOnly': includeOnly,
+      '--datoCmaBaseUrl': datoCmsCmaBaseUrl,
       '<contentType>': contentType,
     } = options;
 
     return contentfulImport({
       contentfulToken,
       contentfulSpaceId,
+      datoCmsCmaBaseUrl,
       datoCmsToken,
       datoCmsEnvironment,
       skipContent,
@@ -114,4 +129,4 @@ Options:
   }
 
   return false;
-})();
+};

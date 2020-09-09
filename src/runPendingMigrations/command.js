@@ -13,6 +13,7 @@ export default async function runPendingMigrations({
   migrationModelApiKey,
   relativeMigrationsDir,
   inPlace,
+  cmaBaseUrl,
   token: tokenByArg,
 }) {
   const migrationsDir = path.resolve(relativeMigrationsDir);
@@ -30,7 +31,7 @@ export default async function runPendingMigrations({
 
   const token = tokenByArg || process.env.DATO_MANAGEMENT_API_TOKEN;
 
-  const globalClient = new SiteClient(token, {});
+  const globalClient = new SiteClient(token, {}, cmaBaseUrl);
 
   const allEnvironments = await globalClient.environments.all();
 
@@ -60,7 +61,9 @@ export default async function runPendingMigrations({
       `Creating a fork of \`${sourceEnv.id}\` called \`${environmentId}\`...`,
     ).start();
 
-    const existingEnvironment = allEnvironments.find(env => env.id === environmentId);
+    const existingEnvironment = allEnvironments.find(
+      env => env.id === environmentId,
+    );
 
     if (existingEnvironment) {
       forkSpinner.fail();
@@ -77,7 +80,11 @@ export default async function runPendingMigrations({
     forkSpinner.succeed();
   }
 
-  const client = new SiteClient(token, { environment: environmentId });
+  const client = new SiteClient(
+    token,
+    { environment: environmentId },
+    cmaBaseUrl,
+  );
 
   const migrationModel = await upsertMigrationModel(
     client,

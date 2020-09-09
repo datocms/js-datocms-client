@@ -12,8 +12,8 @@ import importTags from './import/tags';
 import importArticles from './import/articles';
 import importPages from './import/pages';
 
-export default async function command(token, environment, wpUrl, wpUser, wpPassword) {
-  const dato = new SiteClient(token, { environment });
+export default async function command(token, environment, wpUrl, wpUser, wpPassword, cmaBaseUrl) {
+  const dato = new SiteClient(token, { environment }, cmaBaseUrl);
 
   const wp = await WPAPI.discover(wpUrl);
   await wp.auth({ username: wpUser, password: wpPassword });
