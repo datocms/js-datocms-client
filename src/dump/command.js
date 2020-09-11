@@ -37,11 +37,7 @@ export default async function(options) {
       headers['X-Environment'] = environment;
     }
 
-    const client = new SiteClient(
-      token,
-      headers,
-      cmaBaseUrl,
-    );
+    const client = new SiteClient(token, headers, cmaBaseUrl);
 
     const loader = new Loader(client, previewMode, environment);
 

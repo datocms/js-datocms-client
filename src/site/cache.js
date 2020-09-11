@@ -1,204 +1,204 @@
 /* eslint-disable */
 module.exports = {
-  "roles": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
+  roles: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    destroy: true,
   },
-  "users": {
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
+  users: {
+    update: true,
+    all: true,
+    find: true,
+    destroy: true,
   },
-  "ssoUsers": {
-    "all": true,
-    "find": true,
-    "copyUsers": true,
-    "destroy": true
+  ssoUsers: {
+    all: true,
+    find: true,
+    copyUsers: true,
+    destroy: true,
   },
-  "menuItems": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
+  menuItems: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    destroy: true,
   },
-  "itemTypes": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "duplicate": true,
-    "destroy": true
+  itemTypes: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    duplicate: true,
+    destroy: true,
   },
-  "fields": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
+  fields: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    destroy: true,
   },
-  "session": {
-    "create": true
+  session: {
+    create: true,
   },
-  "accessTokens": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "regenerateToken": true,
-    "destroy": true
+  accessTokens: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    regenerateToken: true,
+    destroy: true,
   },
-  "plugins": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
+  plugins: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    destroy: true,
   },
-  "jobResult": {
-    "find": true
+  jobResult: {
+    find: true,
   },
-  "subscriptionLimits": {
-    "all": true,
-    "find": true
+  subscriptionLimits: {
+    all: true,
+    find: true,
   },
-  "subscriptionFeatures": {
-    "all": true
+  subscriptionFeatures: {
+    all: true,
   },
-  "buildEvents": {
-    "all": true,
-    "find": true
+  buildEvents: {
+    all: true,
+    find: true,
   },
-  "items": {
-    "all": true,
-    "validateExisting": true,
-    "validateNew": true,
-    "create": true,
-    "duplicate": true,
-    "update": true,
-    "references": true,
-    "find": true,
-    "destroy": true,
-    "batchDestroy": true,
-    "batchPublish": true,
-    "batchUnpublish": true,
-    "publish": true,
-    "unpublish": true
+  items: {
+    all: true,
+    validateExisting: true,
+    validateNew: true,
+    create: true,
+    duplicate: true,
+    update: true,
+    references: true,
+    find: true,
+    destroy: true,
+    batchDestroy: true,
+    batchPublish: true,
+    batchUnpublish: true,
+    publish: true,
+    unpublish: true,
   },
-  "itemVersions": {
-    "restore": true,
-    "all": true
+  itemVersions: {
+    restore: true,
+    all: true,
   },
-  "uploads": {
-    "create": true,
-    "all": true,
-    "find": true,
-    "destroy": true,
-    "batchDestroy": true,
-    "update": true,
-    "batchAddTags": true,
-    "references": true
+  uploads: {
+    create: true,
+    all: true,
+    find: true,
+    destroy: true,
+    batchDestroy: true,
+    update: true,
+    batchAddTags: true,
+    references: true,
   },
-  "uploadRequest": {
-    "create": true
+  uploadRequest: {
+    create: true,
   },
-  "scheduledPublication": {
-    "create": true,
-    "destroy": true
+  scheduledPublication: {
+    create: true,
+    destroy: true,
   },
-  "searchResults": {
-    "all": true
+  searchResults: {
+    all: true,
   },
-  "environments": {
-    "fork": true,
-    "promote": true,
-    "all": true,
-    "find": true,
-    "destroy": true
+  environments: {
+    fork: true,
+    promote: true,
+    all: true,
+    find: true,
+    destroy: true,
   },
-  "maintenanceMode": {
-    "find": true,
-    "activate": true,
-    "deactivate": true
+  maintenanceMode: {
+    find: true,
+    activate: true,
+    deactivate: true,
   },
-  "webhooks": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
+  webhooks: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    destroy: true,
   },
-  "webhookCalls": {
-    "all": true,
-    "resendWebhook": true
+  webhookCalls: {
+    all: true,
+    resendWebhook: true,
   },
-  "buildTriggers": {
-    "all": true,
-    "find": true,
-    "create": true,
-    "update": true,
-    "trigger": true,
-    "destroy": true
+  buildTriggers: {
+    all: true,
+    find: true,
+    create: true,
+    update: true,
+    trigger: true,
+    destroy: true,
   },
-  "itemTypeFilters": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
+  itemTypeFilters: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    destroy: true,
   },
-  "uploadFilters": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
+  uploadFilters: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    destroy: true,
   },
-  "siteInvitations": {
-    "create": true,
-    "update": true,
-    "all": true,
-    "find": true,
-    "destroy": true
+  siteInvitations: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    destroy: true,
   },
-  "editingSessions": {
-    "all": true,
-    "update": true,
-    "destroy": true
+  editingSessions: {
+    all: true,
+    update: true,
+    destroy: true,
   },
-  "ssoGroups": {
-    "all": true,
-    "copyRoles": true,
-    "update": true,
-    "destroy": true
+  ssoGroups: {
+    all: true,
+    copyRoles: true,
+    update: true,
+    destroy: true,
   },
-  "ssoSettings": {
-    "find": true,
-    "generateToken": true,
-    "update": true
+  ssoSettings: {
+    find: true,
+    generateToken: true,
+    update: true,
   },
-  "publicInfo": {
-    "find": true
+  publicInfo: {
+    find: true,
   },
-  "dailyUsages": {
-    "all": true
+  dailyUsages: {
+    all: true,
   },
-  "usageCounter": {
-    "find": true
+  usageCounter: {
+    find: true,
   },
-  "uploadTags": {
-    "all": true,
-    "create": true
+  uploadTags: {
+    all: true,
+    create: true,
   },
-  "uploadSmartTags": {
-    "all": true
+  uploadSmartTags: {
+    all: true,
   },
-  "site": {
-    "find": true,
-    "update": true
-  }
+  site: {
+    find: true,
+    update: true,
+  },
 };

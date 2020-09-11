@@ -68,12 +68,15 @@ export default class Client {
 
     const fullOptions = { ...options, headers: fullHeaders };
 
-    // console.log('---->', url, fullOptions);
-
     return fetch(url, fullOptions).then(res => {
       if (res.status === 429) {
-        const waitTime = parseInt(res.headers.get('X-RateLimit-Reset') || '10', 10);
-        console.log(`Rate limit exceeded, waiting ${waitTime * retryCount} seconds...`);
+        const waitTime = parseInt(
+          res.headers.get('X-RateLimit-Reset') || '10',
+          10,
+        );
+        console.log(
+          `Rate limit exceeded, waiting ${waitTime * retryCount} seconds...`,
+        );
         return wait(waitTime * retryCount * 1000).then(() => {
           return this.request(url, options, retryCount + 1);
         });
@@ -82,7 +85,6 @@ export default class Client {
       return (res.status !== 204 ? res.json() : Promise.resolve(null))
         .then(body => {
           if (res.status >= 200 && res.status < 300) {
-            // console.log('<----', JSON.stringify(body));
             return Promise.resolve(body);
           }
           return Promise.reject(new ApiException(res, body));
@@ -96,7 +98,9 @@ export default class Client {
               e => e.attributes.code === 'BATCH_DATA_VALIDATION_IN_PROGRESS',
             )
           ) {
-            console.log(`Data validation in progress, waiting ${retryCount} seconds...`);
+            console.log(
+              `Data validation in progress, waiting ${retryCount} seconds...`,
+            );
             return wait(retryCount * 1000).then(() => {
               return this.request(url, options, retryCount + 1);
             });

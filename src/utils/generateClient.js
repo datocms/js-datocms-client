@@ -46,11 +46,7 @@ const findLinkFor = (schema, namespace, apiCall) => {
 };
 
 export default function generateClient(subdomain, cache, extraMethods = {}) {
-  return function Client(
-    token,
-    extraHeaders = {},
-    baseUrl,
-  ) {
+  return function Client(token, extraHeaders = {}, baseUrl) {
     let schemaPromise;
 
     const headers = { ...extraHeaders };
@@ -60,7 +56,11 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
       delete headers.environment;
     }
 
-    const rawClient = new RawClient(token, headers, baseUrl || `https://${subdomain}.datocms.com`);
+    const rawClient = new RawClient(
+      token,
+      headers,
+      baseUrl || `https://${subdomain}.datocms.com`,
+    );
 
     const extraProps = getProps(extraMethods);
     const rawClientProps = getProps(rawClient);
