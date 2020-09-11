@@ -8,7 +8,7 @@ import contentfulImport from './contentfulImport/command';
 import toggleMaintenanceMode from './toggleMaintenanceMode/command';
 import createMigrationScript from './createMigrationScript/command';
 import runPendingMigrations from './runPendingMigrations/command';
-import destroyEnvironment from './destroyEnvironment/command';
+import destroyEnvironment from './environment/destroy/command';
 
 const doc = `
 DatoCMS CLI tool
