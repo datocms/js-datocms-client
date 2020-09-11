@@ -15,14 +15,16 @@ global.expect = expect;
 global.memo = function memo(fn) {
   let value;
 
-  return function () {
+  return function() {
     value = value || fn();
     return value;
   };
 };
 
 function slugify(text) {
-  return text.toString().toLowerCase()
+  return text
+    .toString()
+    .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^\w-]+/g, '')
     .replace(/--+/g, '-')
@@ -31,7 +33,9 @@ function slugify(text) {
 }
 
 global.generateNewAccountClient = async () => {
-  const randomString = Math.random().toString(36).substring(7);
+  const randomString = Math.random()
+    .toString(36)
+    .substring(7);
 
   const anonymousClient = new AccountClient(
     null,
@@ -52,25 +56,30 @@ global.generateNewAccountClient = async () => {
   return new AccountClient(account.id, {}, process.env.ACCOUNT_API_BASE_URL);
 };
 
-global.vcr = function (...args) {
+global.vcr = function(...args) {
   const suffix = args.length > 1 ? ` ${args.shift()}` : '';
   const action = args[0];
 
-  return function () {
+  return function() {
     let cassetteName = (this.currentTest || this.test).fullTitle();
-    if (suffix) { cassetteName += suffix; }
+    if (suffix) {
+      cassetteName += suffix;
+    }
 
     return vcr(
       slugify(cassetteName),
       {
-        afterLoad: (nocks) => {
-          nocks.forEach((nock) => {
+        afterLoad: nocks => {
+          nocks.forEach(nock => {
             if (
-              nock.interceptors[0].path === '/account'
-              && nock.interceptors[0].method === 'POST'
+              nock.interceptors[0].path === '/account' &&
+              nock.interceptors[0].method === 'POST'
             ) {
               /* eslint-disable no-param-reassign */
-              nock.transformRequestBodyFunction = function (body, aRecordedBody) {
+              nock.transformRequestBodyFunction = function(
+                body,
+                aRecordedBody,
+              ) {
                 return aRecordedBody;
               };
             }

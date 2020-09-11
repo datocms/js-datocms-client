@@ -5,8 +5,9 @@ import path from 'path';
 import glob from 'glob';
 import runCli from '../../src/cli';
 import { SiteClient } from '../../src/index';
+import captureStream from '../support/captureStream';
 
-describe('CLI tool', () => {
+describe.only('CLI tool', () => {
   it('dato new migration', async () => {
     const dir = tmp.dirSync();
     const dirName = dir.name;
@@ -119,4 +120,28 @@ describe('CLI tool', () => {
       expect(newEnvs.length).to.eq(1);
     }),
   );
+
+  describe('inspect console output', () => {
+    let hook;
+    before(() => {
+      hook = captureStream(process.stdout);
+    });
+    after(() => hook.detach());
+
+    it(
+      'dato environment get-primary',
+      vcr(async () => {
+        const accountClient = await generateNewAccountClient();
+        const site = await accountClient.sites.create({
+          name: 'Integration new test site',
+        });
+
+        await runCli(
+          `environment get-primary --token=${site.readwriteToken} --cmaBaseUrl=http://site-api.lvh.me:3001`,
+        );
+
+        expect(hook.getCaptured().trim()).to.eq('main');
+      }),
+    );
+  });
 });

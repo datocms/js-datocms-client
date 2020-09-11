@@ -7,14 +7,15 @@ export default async function command({
   token: tokenByArg,
   cmaBaseUrl,
 }) {
-  const spinner = ora(`Destroying environment \`${environmentId}\`...`).start();
+  const spinner = ora(
+    `Destroying environment \`${environmentId}\`...\n`,
+  ).start();
   const token = tokenByArg || process.env.DATO_MANAGEMENT_API_TOKEN;
   const client = new SiteClient(token, {}, cmaBaseUrl);
 
   try {
     await client.environments.destroy(environmentId);
-    process.stdout.write(`Destroyed environment: \`${environmentId}\`\n`);
-    spinner.succeed();
+    spinner.succeed(`Destroyed environment: \`${environmentId}\``);
   } catch (error) {
     spinner.fail();
     if (error instanceof ApiException) {
