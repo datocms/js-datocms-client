@@ -121,6 +121,41 @@ describe.only('CLI tool', () => {
     }),
   );
 
+  it.only(
+    'dato environment promote foobar',
+    vcr(async () => {
+      const accountClient = await generateNewAccountClient();
+
+      const site = await accountClient.sites.create({
+        name: 'Integration new test site',
+      });
+
+      const client = new SiteClient(
+        site.readwriteToken,
+        {},
+        'http://site-api.lvh.me:3001',
+      );
+
+      const newSandboxName = 'my-sandbox-env';
+
+      await client.environments.fork('main', {
+        id: newSandboxName,
+      });
+
+      const envs = await client.environments.all();
+      expect(envs.length).to.eq(2);
+
+      await runCli(
+        `environment promote ${newSandboxName} --token=${site.readwriteToken} --cmaBaseUrl=http://site-api.lvh.me:3001`,
+      );
+
+      const newEnvs = await client.environments.all();
+      const primaryEnv = newEnvs.find(({ meta: { primary } }) => primary);
+
+      expect(primaryEnv.id).to.eq(newSandboxName);
+    }),
+  );
+
   describe('inspect console output', () => {
     let hook;
     before(() => {

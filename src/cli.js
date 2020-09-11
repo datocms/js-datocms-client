@@ -9,6 +9,7 @@ import toggleMaintenanceMode from './toggleMaintenanceMode/command';
 import createMigrationScript from './createMigrationScript/command';
 import runPendingMigrations from './runPendingMigrations/command';
 import getPrimaryEnvironment from './environment/getPrimary/command';
+import promoteEnvironment from './environment/promote/command';
 import destroyEnvironment from './environment/destroy/command';
 
 const doc = `
@@ -19,6 +20,7 @@ Usage:
   dato new migration <name> [--migrationsDir=<directory>]
   dato migrate [--source=<environment>] [--destination=<environment>] [--inPlace] [--migrationModel=<apiKey>] [--migrationsDir=<directory>] [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment get-primary [--token=<apiToken>] [--cmaBaseUrl=<url>]
+  dato environment promote <environmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment destroy <environmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato maintenance (on|off) [--force] [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato wp-import --token=<datoApiToken> [--environment=<datoEnvironment>] --wpUrl=<url> --wpUser=<user> --wpPassword=<password> [--datoCmaBaseUrl=<url>]
@@ -89,6 +91,15 @@ module.exports = argv => {
     if (options['get-primary']) {
       const { '--token': token, '--cmaBaseUrl': cmaBaseUrl } = options;
       return getPrimaryEnvironment({ token, cmaBaseUrl });
+    }
+
+    if (options.promote) {
+      const {
+        '<environmentId>': environmentId,
+        '--token': token,
+        '--cmaBaseUrl': cmaBaseUrl,
+      } = options;
+      return promoteEnvironment({ environmentId, token, cmaBaseUrl });
     }
 
     if (options.destroy) {
