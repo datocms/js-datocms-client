@@ -7,7 +7,7 @@ import runCli from '../../src/cli';
 import { SiteClient } from '../../src/index';
 import captureStream from '../support/captureStream';
 
-describe.only('CLI tool', () => {
+describe('CLI tool', () => {
   it('dato new migration', async () => {
     const dir = tmp.dirSync();
     const dirName = dir.name;
@@ -121,7 +121,7 @@ describe.only('CLI tool', () => {
     }),
   );
 
-  it.only(
+  it(
     'dato environment promote foobar',
     vcr(async () => {
       const accountClient = await generateNewAccountClient();
