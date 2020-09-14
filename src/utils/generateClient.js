@@ -94,8 +94,6 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
           get(obj2, apiCall) {
             return function call(...args) {
               if (!schemaPromise) {
-                // FOR DEV
-                // `http://${subdomain}.lvh.me:3001/docs/${subdomain}-hyperschema.json`,
                 schemaPromise = fetch(
                   `https://${subdomain}.datocms.com/docs/${subdomain}-hyperschema.json`,
                 )

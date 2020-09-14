@@ -30,24 +30,26 @@ function slugify(text) {
     .replace(/-+$/, '');
 }
 
-
 global.generateNewAccountClient = async () => {
   const randomString = Math.random().toString(36).substring(7);
 
   const anonymousClient = new AccountClient(
     null,
     {},
-    'http://account-api.lvh.me:3001',
+    process.env.ACCOUNT_API_BASE_URL,
   );
 
+  // @delete-this-at-midnight-utc.tk accounts are deleted
+  // everyday at 00:00:00UTC
+
   const account = await anonymousClient.account.create({
-    email: `${randomString}@example.com`,
+    email: `${randomString}@delete-this-at-midnight-utc.tk`,
     password: 'STRONG_pass123!',
     name: 'Test',
     company: 'DatoCMS',
   });
 
-  return new AccountClient(account.id, {}, 'http://account-api.lvh.me:3001');
+  return new AccountClient(account.id, {}, process.env.ACCOUNT_API_BASE_URL);
 };
 
 global.vcr = function (...args) {

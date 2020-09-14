@@ -14,7 +14,7 @@ describe('Upload file from', async () => {
       client = new SiteClient(
         site.readwriteToken,
         null,
-        'http://site-api.lvh.me:3001',
+        process.env.SITE_API_BASE_URL,
       );
     }),
   );

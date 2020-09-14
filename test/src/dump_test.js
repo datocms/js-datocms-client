@@ -28,7 +28,7 @@ describe('dump', () => {
       const client = new SiteClient(
         site.readwriteToken,
         {},
-        'http://site-api.lvh.me:3001',
+        process.env.SITE_API_BASE_URL,
       );
 
       const dir = tmp.dirSync();
@@ -61,7 +61,7 @@ describe('dump', () => {
       const client = new SiteClient(
         site.readwriteToken,
         {},
-        'http://site-api.lvh.me:3001',
+        process.env.SITE_API_BASE_URL,
       );
 
       const newSite = await client.site.find();

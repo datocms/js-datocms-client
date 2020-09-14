@@ -10,7 +10,8 @@
   },
   "scripts": {
     "prettier": "prettier --write \"src/**/*.js\"",
-    "test": "eslint ./ && npm run mocha",
+    "dev:test": "eslint ./ && ACCOUNT_API_BASE_URL='http://account-api.lvh.me:3001' SITE_API_BASE_URL=process.env.SITE_API_BASE_URL npm run mocha",
+    "test": "eslint ./ && ACCOUNT_API_BASE_URL='https://account-api.datocms.com' SITE_API_BASE_URL='https://site-api.datocms.com' npm run mocha",
     "mocha": "mocha ./test/**/*_test.js --require \"@babel/register\" --require \"./test/support/common\" --timeout 30000",
     "prepublish": "rimraf lib dist && mkdir lib dist && node build/buildApiMethods.js && node build/transformPackageJson.js && npm run lib && npm run dist",
     "dist": "cross-env NODE_ENV=production webpack --progress --mode production",

@@ -4,16 +4,11 @@
 
 API client and CLI tool for [DatoCMS](https://www.datocms.com). Take a look at the full [API documentation](https://www.datocms.com/docs/content-management-api) for examples.
 
-## How to integrate DatoCMS with your static website
-
-Please head over our documentation to learn everything you need:
-
-* [Hugo](https://www.datocms.com/docs/static-generators/hugo)
-* [Metalsmith](https://www.datocms.com/docs/static-generators/metalsmith)
-
 ## Development
 
 After checking out the repo, run `yarn install` to install dependencies. Then, run `yarn test` to run the tests.
+
+Test suite's HTTP interactions are recorded/replayed from the `./cassettes` directory to get fast, deterministic and accurate tests. Simply delete every file within the directory to record new HTTP requests/responses.
 
 ## Contributing
 

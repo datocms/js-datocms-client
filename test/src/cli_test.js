@@ -38,7 +38,7 @@ describe('CLI tool', () => {
       process.chdir(path.resolve('test/fixtures/cli/scenario1'));
 
       await runCli(
-        `migrate --destination=foobar --token=${site.readwriteToken} --cmaBaseUrl=http://site-api.lvh.me:3001`,
+        `migrate --destination=foobar --token=${site.readwriteToken} --cmaBaseUrl=${process.env.SITE_API_BASE_URL}`,
       );
 
       const client = new SiteClient(
@@ -46,7 +46,7 @@ describe('CLI tool', () => {
         {
           environment: 'foobar',
         },
-        'http://site-api.lvh.me:3001',
+        process.env.SITE_API_BASE_URL,
       );
 
       const model = await client.itemTypes.find('article');
@@ -66,20 +66,20 @@ describe('CLI tool', () => {
       });
 
       await runCli(
-        `maintenance on --token=${site.readwriteToken} --cmaBaseUrl=http://site-api.lvh.me:3001`,
+        `maintenance on --token=${site.readwriteToken} --cmaBaseUrl=${process.env.SITE_API_BASE_URL}`,
       );
 
       const client = new SiteClient(
         site.readwriteToken,
         {},
-        'http://site-api.lvh.me:3001',
+        process.env.SITE_API_BASE_URL,
       );
 
       const { active } = await client.maintenanceMode.find();
       expect(active).to.eq(true);
 
       await runCli(
-        `maintenance off --token=${site.readwriteToken} --cmaBaseUrl=http://site-api.lvh.me:3001`,
+        `maintenance off --token=${site.readwriteToken} --cmaBaseUrl=${process.env.SITE_API_BASE_URL}`,
       );
 
       const { active: newActive } = await client.maintenanceMode.find();
@@ -99,7 +99,7 @@ describe('CLI tool', () => {
       const client = new SiteClient(
         site.readwriteToken,
         {},
-        'http://site-api.lvh.me:3001',
+        process.env.SITE_API_BASE_URL,
       );
 
       await client.environments.fork('main', {
@@ -111,7 +111,7 @@ describe('CLI tool', () => {
       expect(envs.length).to.eq(2);
 
       await runCli(
-        `environment destroy my-sandbox-env --token=${site.readwriteToken} --cmaBaseUrl=http://site-api.lvh.me:3001`,
+        `environment destroy my-sandbox-env --token=${site.readwriteToken} --cmaBaseUrl=${process.env.SITE_API_BASE_URL}`,
       );
 
       const newEnvs = await client.environments.all();
