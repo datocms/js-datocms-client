@@ -63,5 +63,7 @@ export default async function toggleMaintenanceMode({
 
   fs.writeFileSync(migrationAbsolutePath, template, 'utf8');
 
-  process.stdout.write(`Created ${path.join(relativeMigrationsDir, migrationFile)}\n`);
+  process.stdout.write(
+    `Created ${path.join(relativeMigrationsDir, migrationFile)}\n`,
+  );
 }

@@ -7,8 +7,5 @@ export default function jsonSchemaType(schema) {
     return null;
   }
 
-  return typeProperty.pattern.replace(
-    new RegExp(/(^\^|\$$)/, 'g'),
-    '',
-  );
+  return typeProperty.pattern.replace(new RegExp(/(^\^|\$$)/, 'g'), '');
 }

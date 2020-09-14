@@ -7,7 +7,6 @@ const allPages = async (label, requestPromise, tick = null, page = 1) => {
     ? tick('', requestPromise)
     : spin(label, requestPromise));
 
-  // return response;
   if (!response._paging || response._paging.totalPages <= page) {
     return response;
   }
