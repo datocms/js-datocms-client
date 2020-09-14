@@ -133,7 +133,7 @@ describe('CLI tool', () => {
       const client = new SiteClient(
         site.readwriteToken,
         {},
-        'http://site-api.lvh.me:3001',
+        process.env.SITE_API_BASE_URL,
       );
 
       const newSandboxName = 'my-sandbox-env';
@@ -146,7 +146,7 @@ describe('CLI tool', () => {
       expect(envs.length).to.eq(2);
 
       await runCli(
-        `environment promote ${newSandboxName} --token=${site.readwriteToken} --cmaBaseUrl=http://site-api.lvh.me:3001`,
+        `environment promote ${newSandboxName} --token=${site.readwriteToken} --cmaBaseUrl=${process.env.SITE_API_BASE_URL}`,
       );
 
       const newEnvs = await client.environments.all();
@@ -172,7 +172,7 @@ describe('CLI tool', () => {
         });
 
         await runCli(
-          `environment get-primary --token=${site.readwriteToken} --cmaBaseUrl=http://site-api.lvh.me:3001`,
+          `environment get-primary --token=${site.readwriteToken} --cmaBaseUrl=${process.env.SITE_API_BASE_URL}`,
         );
 
         expect(hook.getCaptured().trim()).to.eq('main');
