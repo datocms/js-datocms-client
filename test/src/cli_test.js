@@ -164,7 +164,7 @@ describe('CLI tool', () => {
     after(() => hook.detach());
 
     it(
-      'dato environment get-primary',
+      'returns the name of the primary environment',
       vcr(async () => {
         const accountClient = await generateNewAccountClient();
         const site = await accountClient.sites.create({
