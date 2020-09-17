@@ -50,10 +50,13 @@ function afterTest(cassettePath) {
 
   if (cassettes.length) {
     return mkdirp(path.dirname(cassettePath)).then(() => {
-      const sanitizedCassettes = cassettes.map((cassette) => {
+      const sanitizedCassettes = cassettes.map(cassette => {
         return Object.assign(cassette, { response: cassette.response });
       });
-      return writeFile(cassettePath, JSON.stringify(sanitizedCassettes, null, 2));
+      return writeFile(
+        cassettePath,
+        JSON.stringify(sanitizedCassettes, null, 2),
+      );
     });
   }
 
@@ -64,7 +67,7 @@ function isPromise(object) {
   return object && typeof object.then === 'function';
 }
 
-module.exports = function (cassette, options, testFn) {
+module.exports = function(cassette, options, testFn) {
   const cassettePath = path.resolve(path.join('cassettes', `${cassette}.json`));
 
   beforeTest(cassettePath, options);
@@ -72,17 +75,20 @@ module.exports = function (cassette, options, testFn) {
   const testRun = testFn();
 
   if (isPromise(testRun)) {
-    return testRun.then((res) => {
-      return afterTest(cassettePath, options).then(() => {
-        return res;
-      });
-    }, (err) => {
-      if (options.writeOnFailure) {
-        return afterTest(cassettePath, options);
-      }
+    return testRun.then(
+      res => {
+        return afterTest(cassettePath, options).then(() => {
+          return res;
+        });
+      },
+      err => {
+        if (options.writeOnFailure) {
+          return afterTest(cassettePath, options);
+        }
 
-      return Promise.reject(err);
-    });
+        return Promise.reject(err);
+      },
+    );
   }
 
   return Promise.resolve(testRun);

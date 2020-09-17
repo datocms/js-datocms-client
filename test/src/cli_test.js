@@ -5,6 +5,7 @@ import path from 'path';
 import glob from 'glob';
 import runCli from '../../src/cli';
 import { SiteClient } from '../../src/index';
+import captureStream from '../support/captureStream';
 
 describe('CLI tool', () => {
   it('dato new migration', async () => {
@@ -119,4 +120,63 @@ describe('CLI tool', () => {
       expect(newEnvs.length).to.eq(1);
     }),
   );
+
+  it(
+    'dato environment promote foobar',
+    vcr(async () => {
+      const accountClient = await generateNewAccountClient();
+
+      const site = await accountClient.sites.create({
+        name: 'Integration new test site',
+      });
+
+      const client = new SiteClient(
+        site.readwriteToken,
+        {},
+        process.env.SITE_API_BASE_URL,
+      );
+
+      const newSandboxName = 'my-sandbox-env';
+
+      await client.environments.fork('main', {
+        id: newSandboxName,
+      });
+
+      const envs = await client.environments.all();
+      expect(envs.length).to.eq(2);
+
+      await runCli(
+        `environment promote ${newSandboxName} --token=${site.readwriteToken} --cmaBaseUrl=${process.env.SITE_API_BASE_URL}`,
+      );
+
+      const newEnvs = await client.environments.all();
+      const primaryEnv = newEnvs.find(({ meta: { primary } }) => primary);
+
+      expect(primaryEnv.id).to.eq(newSandboxName);
+    }),
+  );
+
+  describe('environment get-primary', () => {
+    let hook;
+    before(() => {
+      hook = captureStream(process.stdout);
+    });
+    after(() => hook.detach());
+
+    it(
+      'returns the name of the primary environment',
+      vcr(async () => {
+        const accountClient = await generateNewAccountClient();
+        const site = await accountClient.sites.create({
+          name: 'Integration new test site',
+        });
+
+        await runCli(
+          `environment get-primary --token=${site.readwriteToken} --cmaBaseUrl=${process.env.SITE_API_BASE_URL}`,
+        );
+
+        expect(hook.getCaptured().trim()).to.eq('main');
+      }),
+    );
+  });
 });
