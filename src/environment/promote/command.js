@@ -17,7 +17,6 @@ export default async function command({
   try {
     await client.environments.promote(environmentId);
     spinner.succeed(`\`${environmentId}\` is now the primary environment`);
-    process.exit(0);
   } catch (error) {
     spinner.fail();
     if (error instanceof ApiException) {

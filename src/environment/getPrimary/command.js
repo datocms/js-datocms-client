@@ -8,7 +8,6 @@ export default async function command({ token: tokenByArg, cmaBaseUrl }) {
     const allEnvs = await client.environments.all();
     const primaryEnv = allEnvs.find(({ meta: { primary } }) => primary);
     process.stdout.write(primaryEnv.id);
-    process.exit(0);
   } catch (error) {
     process.stderr.write(error.message);
     process.exit(1);
