@@ -156,7 +156,7 @@ describe('CLI tool', () => {
     }),
   );
 
-  describe('inspect console output', () => {
+  describe('environment get-primary', () => {
     let hook;
     before(() => {
       hook = captureStream(process.stdout);
