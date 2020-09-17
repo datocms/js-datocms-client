@@ -6,7 +6,9 @@ import fs from 'fs';
 
 const mkdirp = denodeify(baseMkdirp);
 
-const template = `
+const defaultTemplate = `
+'use strict';
+
 module.exports = async (client) => {
   // DatoCMS migration script
 
@@ -50,11 +52,25 @@ module.exports = async (client) => {
 }
 `.trim();
 
+const getTemplate = templatePath => {
+  if (!templatePath) return defaultTemplate;
+  if (fs.existsSync(templatePath)) {
+    return fs.readFileSync(templatePath, 'utf8');
+  }
+
+  return process.stderr.write(
+    `Could not load template with path ${templatePath}`,
+  );
+};
+
 export default async function toggleMaintenanceMode({
   name,
   relativeMigrationsDir,
+  relativeMigrationTemplatePath,
 }) {
   const migrationsDir = path.resolve(relativeMigrationsDir);
+  const template = getTemplate(relativeMigrationTemplatePath);
+
   await mkdirp(migrationsDir);
 
   const timestamp = Math.floor(Date.now() / 1000);

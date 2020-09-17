@@ -41,6 +41,13 @@ module.exports = {
     find: true,
     destroy: true,
   },
+  fieldsets: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    destroy: true,
+  },
   session: {
     create: true,
   },
@@ -179,6 +186,10 @@ module.exports = {
   ssoSettings: {
     find: true,
     generateToken: true,
+    update: true,
+  },
+  whiteLabelSettings: {
+    find: true,
     update: true,
   },
   publicInfo: {

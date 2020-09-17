@@ -17,7 +17,7 @@ DatoCMS CLI tool
 
 Usage:
   dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--environment=<environment>] [--config=<file>] [--cmaBaseUrl=<url>]
-  dato new migration <name> [--migrationsDir=<directory>]
+  dato new migration <name> [--migrationsDir=<directory>] [--migrationTemplate=<migrationTemplateFile>]
   dato migrate [--source=<environment>] [--destination=<environment>] [--inPlace] [--migrationModel=<apiKey>] [--migrationsDir=<directory>] [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment get-primary [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment promote <environmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
@@ -60,9 +60,14 @@ module.exports = argv => {
     const {
       '<name>': name,
       '--migrationsDir': relativeMigrationsDir,
+      '--migrationTemplate': relativeMigrationTemplatePath = null,
     } = options;
 
-    return createMigrationScript({ name, relativeMigrationsDir });
+    return createMigrationScript({
+      name,
+      relativeMigrationsDir,
+      relativeMigrationTemplatePath,
+    });
   }
 
   if (options.migrate) {

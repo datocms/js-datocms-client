@@ -22,7 +22,7 @@ export default async function runPendingMigrations({
     process.stderr.write(
       `Error: ${relativeMigrationsDir} is not a directory!\n`,
     );
-    process.exit(1);
+    throw new Error('Command failed');
   }
 
   const allMigrations = fs
@@ -50,7 +50,7 @@ export default async function runPendingMigrations({
       process.stderr.write(
         'Running migrations on primary environment is not allowed!\n',
       );
-      process.exit(1);
+      throw new Error('Command failed');
     }
 
     process.stdout.write(
@@ -70,7 +70,7 @@ export default async function runPendingMigrations({
       process.stderr.write(
         `\nError: ${environmentId} already exists! If you want to run the migrations inside this existing environment you can add the --inPlace flag.\n`,
       );
-      process.exit(1);
+      throw new Error('Command failed');
     }
 
     await globalClient.environments.fork(sourceEnv.id, {
