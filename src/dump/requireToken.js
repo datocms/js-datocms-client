@@ -4,8 +4,8 @@ import denodeify from 'denodeify';
 
 const fsAppendFile = denodeify(fs.appendFile);
 
-export default function() {
-  return new Promise((resolve, reject) => {
+export default async function() {
+  const token = await new Promise((resolve, reject) => {
     process.stdout.write(
       'Site token is not specified! Please paste your DatoCMS site read-only API token.\n',
     );
@@ -16,31 +16,26 @@ export default function() {
     });
 
     rl.on('SIGINT', () => {
-      process.exit(1);
+      reject(new Error('Received SIGINT'));
     });
 
     rl.on('SIGCONT', () => {
       rl.prompt();
     });
 
-    rl.question('> ', token => {
+    rl.question('> ', input => {
       rl.close();
 
-      if (token) {
-        resolve(token);
+      if (input) {
+        resolve(input);
         return;
       }
 
-      reject();
+      reject(new Error('Missing token'));
     });
-  })
-    .then(token => {
-      return fsAppendFile('.env', `DATO_API_TOKEN=${token}`)
-        .then(() => process.stdout.write('\nToken added to .env file.\n\n'))
-        .then(() => token);
-    })
-    .catch(() => {
-      process.stderr.write('\nMissing token.\n');
-      process.exit(1);
-    });
+  });
+
+  await fsAppendFile('.env', `DATO_API_TOKEN=${token}`);
+
+  process.stdout.write('\nToken added to .env file.\n\n');
 }

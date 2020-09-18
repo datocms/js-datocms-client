@@ -1,6 +1,5 @@
 import ora from 'ora';
 import SiteClient from '../../site/SiteClient';
-import ApiException from '../../ApiException';
 
 export default async function command({
   environmentId,
@@ -19,11 +18,6 @@ export default async function command({
     spinner.succeed(`\`${environmentId}\` is now the primary environment`);
   } catch (error) {
     spinner.fail();
-    if (error instanceof ApiException) {
-      process.stderr.write(
-        `Unable to promote: ${environmentId}\n${error.message}`,
-      );
-      process.exit(1);
-    }
+    throw error;
   }
 }

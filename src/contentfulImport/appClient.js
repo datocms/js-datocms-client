@@ -10,19 +10,22 @@ export default async (
   datoCmsCmaBaseUrl,
 ) => {
   const spinner = ora('Configuring DatoCMS/Contentful clients').start();
-  const contentfulClient = createClient({ accessToken: contentfulToken });
-  const dato = new SiteClient(
-    datoCmsToken,
-    { environment: datoCmsEnvironment },
-    datoCmsCmaBaseUrl,
-  );
-  let contentful;
+
   try {
-    contentful = await contentfulClient.getSpace(contentfulSpaceId);
+    const contentfulClient = createClient({ accessToken: contentfulToken });
+
+    const dato = new SiteClient(
+      datoCmsToken,
+      { environment: datoCmsEnvironment },
+      datoCmsCmaBaseUrl,
+    );
+
+    const contentful = await contentfulClient.getSpace(contentfulSpaceId);
     spinner.succeed();
+
+    return { dato, contentful };
   } catch (e) {
-    spinner.fail(typeof e === 'object' ? e.message : e);
-    process.exit();
+    spinner.fail();
+    throw e;
   }
-  return { dato, contentful };
 };

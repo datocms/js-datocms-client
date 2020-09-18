@@ -23,52 +23,46 @@ export default async function(options) {
   try {
     fs.accessSync(configFile);
   } catch (e) {
-    process.stderr.write(`Missing config file ${configFile}\n`);
-    process.exit(1);
+    throw new Error(`Missing config file ${configFile}\n`);
   }
 
-  try {
-    const headers = {
-      'X-Reason': 'dump',
-      'X-SSG': detectSsg(process.cwd()),
-    };
+  const headers = {
+    'X-Reason': 'dump',
+    'X-SSG': detectSsg(process.cwd()),
+  };
 
-    if (environment) {
-      headers['X-Environment'] = environment;
-    }
+  if (environment) {
+    headers['X-Environment'] = environment;
+  }
 
-    const client = new SiteClient(token, headers, cmaBaseUrl);
+  const client = new SiteClient(token, headers, cmaBaseUrl);
 
-    const loader = new Loader(client, previewMode, environment);
+  const loader = new Loader(client, previewMode, environment);
 
-    process.stdout.write('Fetching content from DatoCMS');
-    await loader.load();
-    process.stdout.write('Done');
+  process.stdout.write('Fetching content from DatoCMS');
+  await loader.load();
+  process.stdout.write('Done');
 
-    await dump(configFile, new ItemsRepo(loader.entitiesRepo), quiet);
+  await dump(configFile, new ItemsRepo(loader.entitiesRepo), quiet);
 
-    if (watch) {
-      const unwatch = loader.watch(async promise => {
-        const watchSpinner = ora(
-          'Detected change in content, loading new data',
-        ).start();
-        await promise;
-        watchSpinner.succeed();
-        return dump(configFile, new ItemsRepo(loader.entitiesRepo), quiet);
-      });
+  if (watch) {
+    const unwatch = loader.watch(async promise => {
+      const watchSpinner = ora(
+        'Detected change in content, loading new data',
+      ).start();
+      await promise;
+      watchSpinner.succeed();
+      return dump(configFile, new ItemsRepo(loader.entitiesRepo), quiet);
+    });
 
-      process.on('SIGINT', () => {
-        unwatch();
-        process.exit();
-      });
+    process.on('SIGINT', () => {
+      unwatch();
+      process.exit();
+    });
 
-      chokidar.watch(configFile).on('change', () => {
-        process.stdout.write('Detected change to config file!');
-        return dump(configFile, loader.itemsRepo, quiet);
-      });
-    }
-  } catch (e) {
-    process.stderr.write(e.message);
-    process.exit(1);
+    chokidar.watch(configFile).on('change', () => {
+      process.stdout.write('Detected change to config file!');
+      return dump(configFile, loader.itemsRepo, quiet);
+    });
   }
 }

@@ -3,18 +3,18 @@ import Progress from './progress';
 
 export default async ({ recordIds, datoClient }) => {
   const spinner = ora('').start();
-  const progress = new Progress(recordIds.length, 'Publishing records');
+  try {
+    const progress = new Progress(recordIds.length, 'Publishing records');
 
-  spinner.text = progress.tick();
-  for (const recordId of recordIds) {
-    try {
+    spinner.text = progress.tick();
+    for (const recordId of recordIds) {
       await datoClient.items.publish(recordId);
       spinner.text = progress.tick();
-    } catch (e) {
-      spinner.fail(typeof e === 'object' ? e.message : e);
-      process.exit();
     }
-  }
 
-  spinner.succeed();
+    spinner.succeed();
+  } catch (e) {
+    spinner.fail();
+    throw e;
+  }
 };

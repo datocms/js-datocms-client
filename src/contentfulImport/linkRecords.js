@@ -11,96 +11,97 @@ export default async ({
   contentfulRecordMap,
 }) => {
   const spinner = ora('').start();
-  const { entries } = contentfulData;
-  const progress = new Progress(entries.length, 'Linking records');
-  const recordsToPublish = [];
 
-  spinner.text = progress.tick();
+  try {
+    const { entries } = contentfulData;
+    const progress = new Progress(entries.length, 'Linking records');
+    const recordsToPublish = [];
 
-  for (const entry of entries) {
-    const { contentType } = entry.sys;
-    const contentTypeApiKey = toItemApiKey(contentType.sys.id);
+    spinner.text = progress.tick();
 
-    const datoItemId = contentfulRecordMap[entry.sys.id];
+    for (const entry of entries) {
+      const { contentType } = entry.sys;
+      const contentTypeApiKey = toItemApiKey(contentType.sys.id);
 
-    const itemTypeFields = fieldsMapping[contentTypeApiKey];
+      const datoItemId = contentfulRecordMap[entry.sys.id];
 
-    const recordAttributes = Object.entries(entry.fields).reduce(
-      (outerAcc, [option, value]) => {
-        const apiKey = toFieldApiKey(option);
-        const field = itemTypeFields.find(
-          itemTypefield => itemTypefield.apiKey === apiKey,
-        );
+      const itemTypeFields = fieldsMapping[contentTypeApiKey];
 
-        if (field.fieldType !== 'link' && field.fieldType !== 'links') {
-          return outerAcc;
-        }
+      const recordAttributes = Object.entries(entry.fields).reduce(
+        (outerAcc, [option, value]) => {
+          const apiKey = toFieldApiKey(option);
+          const field = itemTypeFields.find(
+            itemTypefield => itemTypefield.apiKey === apiKey,
+          );
 
-        if (field.localized) {
-          const localizedValue = Object.keys(value).reduce(
-            (innerAcc, locale) => {
-              const innerValue = value[locale];
-              if (field.fieldType === 'link') {
+          if (field.fieldType !== 'link' && field.fieldType !== 'links') {
+            return outerAcc;
+          }
+
+          if (field.localized) {
+            const localizedValue = Object.keys(value).reduce(
+              (innerAcc, locale) => {
+                const innerValue = value[locale];
+                if (field.fieldType === 'link') {
+                  return Object.assign(innerAcc, {
+                    [locale]: contentfulRecordMap[innerValue.sys.id],
+                  });
+                }
                 return Object.assign(innerAcc, {
-                  [locale]: contentfulRecordMap[innerValue.sys.id],
+                  [locale]: innerValue
+                    .filter(link => contentfulRecordMap[link.sys.id])
+                    .map(link => contentfulRecordMap[link.sys.id]),
                 });
-              }
-              return Object.assign(innerAcc, {
-                [locale]: innerValue
-                  .filter(link => contentfulRecordMap[link.sys.id])
-                  .map(link => contentfulRecordMap[link.sys.id]),
-              });
-            },
-            {},
-          );
+              },
+              {},
+            );
 
-          const fallbackValues = contentfulData.locales.reduce(
-            (accLocales, locale) => {
-              return Object.assign(accLocales, {
-                [locale]: localizedValue[contentfulData.defaultLocale],
-              });
-            },
-            {},
-          );
+            const fallbackValues = contentfulData.locales.reduce(
+              (accLocales, locale) => {
+                return Object.assign(accLocales, {
+                  [locale]: localizedValue[contentfulData.defaultLocale],
+                });
+              },
+              {},
+            );
+
+            return Object.assign(outerAcc, {
+              [camelize(apiKey)]: { ...fallbackValues, ...localizedValue },
+            });
+          }
+
+          const innerValue = value[contentfulData.defaultLocale];
+
+          if (field.fieldType === 'link') {
+            return Object.assign(outerAcc, {
+              [camelize(apiKey)]: contentfulRecordMap[innerValue.sys.id],
+            });
+          }
 
           return Object.assign(outerAcc, {
-            [camelize(apiKey)]: { ...fallbackValues, ...localizedValue },
+            [camelize(apiKey)]: innerValue
+              .filter(link => contentfulRecordMap[link.sys.id])
+              .map(link => contentfulRecordMap[link.sys.id]),
           });
-        }
+        },
+        {},
+      );
 
-        const innerValue = value[contentfulData.defaultLocale];
-
-        if (field.fieldType === 'link') {
-          return Object.assign(outerAcc, {
-            [camelize(apiKey)]: contentfulRecordMap[innerValue.sys.id],
-          });
-        }
-
-        return Object.assign(outerAcc, {
-          [camelize(apiKey)]: innerValue
-            .filter(link => contentfulRecordMap[link.sys.id])
-            .map(link => contentfulRecordMap[link.sys.id]),
-        });
-      },
-      {},
-    );
-
-    try {
       // if no links found, no update needed.
       if (Object.entries(recordAttributes).length > 0) {
         await datoClient.items.update(datoItemId, recordAttributes);
+
         if (entry.sys.publishedVersion) {
           recordsToPublish.push(datoItemId);
         }
       }
-      spinner.text = progress.tick();
-    } catch (e) {
-      spinner.fail(typeof e === 'object' ? e.message : e);
-      process.exit();
-    }
 
-    spinner.text = progress.tick();
+      spinner.text = progress.tick();
+    }
+    spinner.succeed();
+    return recordsToPublish;
+  } catch (e) {
+    spinner.fail();
+    throw e;
   }
-  spinner.succeed();
-  return recordsToPublish;
 };

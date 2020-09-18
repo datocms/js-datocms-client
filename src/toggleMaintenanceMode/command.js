@@ -27,13 +27,9 @@ export default async function toggleMaintenanceMode({
         const error = e.errorWithCode('ACTIVE_EDITING_SESSIONS');
 
         if (error) {
-          process.stderr.write(
-            'Cannot activate maintenance mode as some users are currently editing records!\n',
+          throw new Error(
+            'Cannot activate maintenance mode as some users are currently editing records!\nTo proceed anyway, please use the --force flag',
           );
-          process.stderr.write(
-            'To proceed anyway, please use the --force flag\n',
-          );
-          process.exit(1);
         }
       }
 

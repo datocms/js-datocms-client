@@ -4,7 +4,6 @@ import ora from 'ora';
 import Progress from './progress';
 import { toItemApiKey, toFieldApiKey } from './toApiKey';
 import datoFieldValidatorsFor from './datoFieldValidatorsFor';
-import delay from './delay';
 
 export default async ({
   itemTypes,
@@ -13,21 +12,22 @@ export default async ({
   contentfulData,
 }) => {
   const spinner = ora('').start();
-  const { contentTypes } = contentfulData;
-  const fieldsSize = contentTypes
-    .map(contentType => contentType.fields.length)
-    .reduce((acc, length) => acc + length, 0);
 
-  const progress = new Progress(fieldsSize, 'Adding validations on fields');
-  spinner.text = progress.tick();
+  try {
+    const { contentTypes } = contentfulData;
+    const fieldsSize = contentTypes
+      .map(contentType => contentType.fields.length)
+      .reduce((acc, length) => acc + length, 0);
 
-  for (const contentType of contentTypes) {
-    const contentTypeApiKey = toItemApiKey(contentType.sys.id);
+    const progress = new Progress(fieldsSize, 'Adding validations on fields');
+    spinner.text = progress.tick();
 
-    const itemTypeFields = fieldsMapping[contentTypeApiKey];
+    for (const contentType of contentTypes) {
+      const contentTypeApiKey = toItemApiKey(contentType.sys.id);
 
-    for (const field of contentType.fields) {
-      while (true) {
+      const itemTypeFields = fieldsMapping[contentTypeApiKey];
+
+      for (const field of contentType.fields) {
         const fieldApiKey = toFieldApiKey(field.id);
         const datoField = itemTypeFields.find(f => f.apiKey === fieldApiKey);
         if (!datoField) {
@@ -35,26 +35,14 @@ export default async ({
         }
 
         const validators = await datoFieldValidatorsFor({ field, itemTypes });
-
-        try {
-          await datoClient.fields.update(datoField.id, { validators });
-          spinner.text = progress.tick();
-          break;
-        } catch (e) {
-          if (
-            !e.body ||
-            !e.body.data ||
-            !e.body.data.some(d => d.id === 'BATCH_DATA_VALIDATION_IN_PROGRESS')
-          ) {
-            spinner.fail(typeof e === 'object' ? e.message : e);
-            process.exit();
-          } else {
-            await delay(1000);
-          }
-        }
+        await datoClient.fields.update(datoField.id, { validators });
+        spinner.text = progress.tick();
       }
     }
-  }
 
-  spinner.succeed();
+    spinner.succeed();
+  } catch (e) {
+    spinner.fail();
+    throw e;
+  }
 };

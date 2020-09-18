@@ -19,10 +19,7 @@ export default async function runPendingMigrations({
   const migrationsDir = path.resolve(relativeMigrationsDir);
 
   if (!fs.existsSync(migrationsDir)) {
-    process.stderr.write(
-      `Error: ${relativeMigrationsDir} is not a directory!\n`,
-    );
-    throw new Error('Command failed');
+    throw new Error(`Error: ${relativeMigrationsDir} is not a directory!\n`);
   }
 
   const allMigrations = fs
@@ -47,10 +44,9 @@ export default async function runPendingMigrations({
 
   if (inPlace) {
     if (primaryEnv.id === environmentId) {
-      process.stderr.write(
-        'Running migrations on primary environment is not allowed!\n',
+      throw new Error(
+        'Running migrations on primary environment is not allowed!',
       );
-      throw new Error('Command failed');
     }
 
     process.stdout.write(
@@ -67,10 +63,9 @@ export default async function runPendingMigrations({
 
     if (existingEnvironment) {
       forkSpinner.fail();
-      process.stderr.write(
-        `\nError: ${environmentId} already exists! If you want to run the migrations inside this existing environment you can add the --inPlace flag.\n`,
+      throw new Error(
+        `Environment ${environmentId} already exists! If you want to run the migrations inside this existing environment you can add the --inPlace flag.`,
       );
-      throw new Error('Command failed');
     }
 
     await globalClient.environments.fork(sourceEnv.id, {

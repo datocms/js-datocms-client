@@ -4,9 +4,8 @@ export default function() {
   const token = process.env.DATO_API_TOKEN;
 
   if (token) {
-    process.exit();
-    return;
+    return undefined;
   }
 
-  requireToken().then(() => process.exit());
+  return requireToken();
 }

@@ -24,18 +24,20 @@ export default async ({
   contentfulRecordMap,
 }) => {
   let spinner = ora('').start();
-  const { entries, assets } = contentfulData;
 
-  let progress = new Progress(assets.length, 'Uploading assets');
-  spinner.text = progress.tick();
+  try {
+    const { entries, assets } = contentfulData;
 
-  const contentfulAssetsMap = {};
+    let progress = new Progress(assets.length, 'Uploading assets');
+    spinner.text = progress.tick();
 
-  for (const asset of assets) {
-    if (asset.fields && asset.fields.file) {
-      const fileAttributes = asset.fields.file[contentfulData.defaultLocale];
-      const fileUrl = `https:${fileAttributes.url}`;
-      try {
+    const contentfulAssetsMap = {};
+
+    for (const asset of assets) {
+      if (asset.fields && asset.fields.file) {
+        const fileAttributes = asset.fields.file[contentfulData.defaultLocale];
+        const fileUrl = `https:${fileAttributes.url}`;
+
         const path = await datoClient.createUploadPath(fileUrl);
         const defaultFieldMetadata = contentfulData.locales.reduce(
           (acc, locale) => {
@@ -60,33 +62,19 @@ export default async ({
         contentfulAssetsMap[asset.sys.id.toString()] = upload.id;
 
         spinner.text = progress.tick();
-      } catch (e) {
-        if (
-          e.body &&
-          e.body.data &&
-          e.body.data.some(d => d.id === 'FILE_STORAGE_QUOTA_EXCEEDED')
-        ) {
-          spinner.fail(
-            "You've reached your site's plan storage limit: upgrade to complete the import",
-          );
-        } else {
-          spinner.fail(typeof e === 'object' ? e.message : e);
-        }
-        process.exit();
+      } else {
+        spinner.text = progress.tick();
       }
-    } else {
-      spinner.text = progress.tick();
     }
-  }
-  spinner.succeed();
-  spinner = ora('').start();
-  progress = new Progress(entries.length, 'Linking assets to records');
-  spinner.text = progress.tick();
+    spinner.succeed();
+    spinner = ora('').start();
+    progress = new Progress(entries.length, 'Linking assets to records');
+    spinner.text = progress.tick();
 
-  for (const entry of entries) {
-    const datoItemId = contentfulRecordMap[entry.sys.id];
-    let recordAttributes = {};
-    try {
+    for (const entry of entries) {
+      const datoItemId = contentfulRecordMap[entry.sys.id];
+      let recordAttributes = {};
+
       for (const key of Object.keys(entry.fields)) {
         const entryFieldValue = entry.fields[key];
 
@@ -156,13 +144,18 @@ export default async ({
           }
         }
       }
-      await datoClient.items.update(datoItemId, recordAttributes);
-      spinner.text = progress.tick();
-    } catch (e) {
-      spinner.fail(typeof e === 'object' ? e.message : e);
-      process.exit();
-    }
-  }
 
-  spinner.succeed();
+      // if no file/gallery is found, no update needed.
+      if (Object.entries(recordAttributes).length > 0) {
+        await datoClient.items.update(datoItemId, recordAttributes);
+      }
+
+      spinner.text = progress.tick();
+    }
+
+    spinner.succeed();
+  } catch (e) {
+    spinner.fail();
+    throw e;
+  }
 };

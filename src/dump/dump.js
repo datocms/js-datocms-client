@@ -1,6 +1,5 @@
 import { resolve, relative } from 'path';
 import denodeify from 'denodeify';
-import PrettyError from 'pretty-error';
 import nodeRimraf from 'rimraf';
 import ora from 'ora';
 import createPost from './createPost';
@@ -73,7 +72,7 @@ function start(path, config) {
   };
 }
 
-export default function dump(
+export default async function dump(
   configFile,
   itemsRepo,
   quiet = false,
@@ -90,20 +89,17 @@ export default function dump(
   const startOperation = start(destinationPath, config.bind(config, itemsRepo));
 
   const spinner = ora('Writing content').start();
+  try {
+    const operations = await startOperation();
+    spinner.succeed();
 
-  return startOperation()
-    .then(operations => {
-      spinner.succeed();
-      if (!quiet) {
-        process.stdout.write('\n');
-        operations.forEach(operation =>
-          process.stdout.write(`* ${operation}\n`),
-        );
-        process.stdout.write('\n');
-      }
-    })
-    .catch(e => {
-      spinner.fail();
-      process.stderr.write(new PrettyError().render(e));
-    });
+    if (!quiet) {
+      process.stdout.write('\n');
+      operations.forEach(operation => process.stdout.write(`* ${operation}\n`));
+      process.stdout.write('\n');
+    }
+  } catch (e) {
+    spinner.fail();
+    throw e;
+  }
 }

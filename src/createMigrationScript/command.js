@@ -54,13 +54,12 @@ module.exports = async (client) => {
 
 const getTemplate = templatePath => {
   if (!templatePath) return defaultTemplate;
-  if (fs.existsSync(templatePath)) {
-    return fs.readFileSync(templatePath, 'utf8');
+
+  if (!fs.existsSync(templatePath)) {
+    throw new Error(`Could not load template with path ${templatePath}`);
   }
 
-  return process.stderr.write(
-    `Could not load template with path ${templatePath}`,
-  );
+  return fs.readFileSync(templatePath, 'utf8');
 };
 
 export default async function toggleMaintenanceMode({

@@ -59,14 +59,23 @@ export default class Client {
     return `${this.baseUrl}${path}${query}`;
   }
 
-  request(url, options = {}, retryCount = 1) {
+  request(url, options = {}, retryCount = 1, preCallStack = null) {
     const fullHeaders = {
       ...this.defaultHeaders(),
       ...this.extraHeaders,
       ...options.headers,
     };
 
+    Object.keys(fullHeaders).forEach(
+      key => fullHeaders[key] == null && delete fullHeaders[key],
+    );
+
     const fullOptions = { ...options, headers: fullHeaders };
+
+    if (!preCallStack) {
+      // eslint-disable-next-line no-param-reassign
+      preCallStack = new Error().stack;
+    }
 
     return fetch(url, fullOptions).then(res => {
       if (res.status === 429) {
@@ -78,7 +87,7 @@ export default class Client {
           `Rate limit exceeded, waiting ${waitTime * retryCount} seconds...`,
         );
         return wait(waitTime * retryCount * 1000).then(() => {
-          return this.request(url, options, retryCount + 1);
+          return this.request(url, options, retryCount + 1, preCallStack);
         });
       }
 
@@ -87,7 +96,13 @@ export default class Client {
           if (res.status >= 200 && res.status < 300) {
             return Promise.resolve(body);
           }
-          return Promise.reject(new ApiException(res, body));
+          return Promise.reject(
+            new ApiException(res, body, {
+              url,
+              options: fullOptions,
+              preCallStack,
+            }),
+          );
         })
         .catch(error => {
           if (
@@ -102,7 +117,7 @@ export default class Client {
               `Data validation in progress, waiting ${retryCount} seconds...`,
             );
             return wait(retryCount * 1000).then(() => {
-              return this.request(url, options, retryCount + 1);
+              return this.request(url, options, retryCount + 1, preCallStack);
             });
           }
           throw error;
