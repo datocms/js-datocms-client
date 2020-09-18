@@ -36,6 +36,6 @@ export default async ({ datoClient, contentfulData }) => {
     return itemTypes;
   } catch (e) {
     spinner.fail();
-    process.exit();
+    throw e;
   }
 };
