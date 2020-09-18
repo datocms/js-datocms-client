@@ -1,4 +1,5 @@
 import ora from 'ora';
+import promiseLimit from 'promise-limit';
 import Progress from './progress';
 import { toItemApiKey, toFieldApiKey } from './toApiKey';
 
@@ -20,6 +21,9 @@ export default async ({
     const recordsToPublish = [];
 
     spinner.text = progress.tick();
+
+    const limit = promiseLimit(5);
+    const jobs = [];
 
     for (const entry of entries) {
       const { contentType } = entry.sys;
@@ -125,19 +129,25 @@ export default async ({
           emptyFieldValues,
         );
 
-        const record = await datoClient.items.create({
-          ...recordAttributes,
-          itemType: itemType.id.toString(),
-        });
+        jobs.push(
+          limit(async () => {
+            const record = await datoClient.items.create({
+              ...recordAttributes,
+              itemType: itemType.id.toString(),
+            });
 
-        if (entry.sys.publishedVersion) {
-          recordsToPublish.push(record.id);
-        }
+            if (entry.sys.publishedVersion) {
+              recordsToPublish.push(record.id);
+            }
 
-        spinner.text = progress.tick();
-        contentfulRecordMap[entry.sys.id] = record.id;
+            spinner.text = progress.tick();
+            contentfulRecordMap[entry.sys.id] = record.id;
+          }),
+        );
       }
     }
+
+    await Promise.all(jobs);
 
     spinner.succeed();
 
