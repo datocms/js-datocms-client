@@ -1,4 +1,4 @@
-#!/usr/bin/env node --async-stack-traces
+#!/usr/bin/env node
 
 const PrettyError = require('pretty-error');
 const colors = require('colors');
