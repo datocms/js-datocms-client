@@ -1,7 +1,8 @@
+import { expect } from 'chai';
 /* global generateNewAccountClient:true */
 
 import u from 'updeep';
-import { SiteClient, buildModularBlock } from '../../src/index';
+import { SiteClient, buildModularBlock, ApiException } from '../../src/index';
 
 describe('Site API', () => {
   let site;
@@ -371,6 +372,56 @@ describe('Site API', () => {
         expect(updatedItem2.title).to.equal('Updated 2');
 
         await client.items.destroy(item.id);
+      }),
+    );
+
+    it(
+      'optimistic locking',
+      vcr(async () => {
+        const itemType = await client.itemTypes.create({
+          name: 'Article',
+          apiKey: 'item_type',
+          singleton: true,
+          modularBlock: false,
+          sortable: false,
+          tree: false,
+          draftModeActive: false,
+          orderingDirection: null,
+          orderingField: null,
+          allLocalesRequired: true,
+          titleField: null,
+        });
+
+        await client.fields.create(itemType.id, {
+          label: 'Title',
+          fieldType: 'string',
+          localized: false,
+          apiKey: 'title',
+          validators: { required: {} },
+        });
+
+        const item = await client.items.create({
+          title: 'My first blog post',
+          itemType: itemType.id,
+        });
+
+        const updatedItem = await client.items.update(item.id, {
+          title: 'Updated title',
+        });
+
+        expect(item.meta.currentVersion).not.to.equal(
+          updatedItem.meta.currentVersion,
+        );
+
+        return expect(
+          client.items.update(item.id, {
+            title: 'Stale update title',
+            meta: { currentVersion: item.meta.currentVersion },
+          }),
+        ).to.be.rejectedWith(
+          ApiException,
+          '422 STALE_ITEM_VERSION (details: {})',
+        );
       }),
     );
 

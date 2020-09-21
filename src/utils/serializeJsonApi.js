@@ -19,6 +19,26 @@ const findAttributes = schema => {
   return [];
 };
 
+const findMetas = schema => {
+  const info = findInfoForProperty('meta', schema);
+
+  if (info && info.properties) {
+    return Object.keys(info.properties);
+  }
+
+  return [];
+};
+
+const metaProperties = (schema, meta) => {
+  const info = findInfoForProperty('meta', schema);
+
+  if (info && info.properties) {
+    return info.properties[meta];
+  }
+
+  return null;
+};
+
 const attributeProperties = (schema, attribute) => {
   const info = findInfoForProperty('attributes', schema);
 
@@ -175,6 +195,56 @@ export function serializedAttributes(type, unserializedBody = {}, schema) {
   }, {});
 }
 
+export function serializedMeta(unserializedMeta = {}, schema) {
+  const metas = findMetas(schema);
+
+  if (metas.length === 0) {
+    return null;
+  }
+
+  return metas.reduce((acc, attr) => {
+    const camelizedAttr = camelize(attr);
+
+    const properties = metaProperties(schema, attr);
+
+    const decamelizeKeysIfRequired = obj =>
+      !properties || !properties.keepOriginalCaseOnKeys
+        ? decamelizeKeys(obj)
+        : obj;
+
+    if (
+      attr !== camelizedAttr &&
+      hasKey(unserializedMeta, attr) &&
+      hasKey(unserializedMeta, camelizedAttr)
+    ) {
+      throw new Error(
+        `Meta ${camelizedAttr} is expressed both in camel-case and snake-case`,
+      );
+    }
+
+    if (attr !== camelizedAttr && hasKey(unserializedMeta, attr)) {
+      console.warn(
+        `Warning: Meta ${attr} should be expressed in camel-case syntax (${camelizedAttr})`,
+      );
+      return Object.assign(acc, {
+        [attr]: decamelizeKeysIfRequired(unserializedMeta[attr]),
+      });
+    }
+
+    if (hasKey(unserializedMeta, camelizedAttr)) {
+      return Object.assign(acc, {
+        [attr]: decamelizeKeysIfRequired(unserializedMeta[camelizedAttr]),
+      });
+    }
+
+    if (jsonSchemaPropertyRequired('attributes', schema).includes(attr)) {
+      throw new Error(`Required meta: ${camelizedAttr}`);
+    }
+
+    return acc;
+  }, {});
+}
+
 export default function serializeJsonApi(unserializedBody, link, itemId) {
   const data = {};
 
@@ -196,6 +266,8 @@ export default function serializeJsonApi(unserializedBody, link, itemId) {
     bodyWithoutMeta,
     link.schema,
   );
+  const meta =
+    unserializedBody.meta && serializedMeta(unserializedBody.meta, link.schema);
 
   if (attributes) {
     data.attributes = attributes;
@@ -203,6 +275,10 @@ export default function serializeJsonApi(unserializedBody, link, itemId) {
 
   if (relationships) {
     data.relationships = relationships;
+  }
+
+  if (meta) {
+    data.meta = meta;
   }
 
   return { data };
