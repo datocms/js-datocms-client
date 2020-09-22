@@ -17,31 +17,36 @@ export default class Client {
     this.extraHeaders = extraHeaders;
   }
 
-  get(url, params = {}, options = {}) {
-    return this.request(this.buildUrl(url, params), options);
+  get(...args) {
+    return this.request(this.buildGetRequest(...args));
   }
 
-  put(url, body, params = {}, options = {}) {
-    return this.request(this.buildUrl(url, params), {
-      method: 'PUT',
-      body: JSON.stringify(body, undefinedToNull),
-      ...options,
-    });
+  buildGetRequest(url, params = {}, options = {}) {
+    return this.buildFetchRequest('GET', url, params, undefined, options);
   }
 
-  post(url, body, params = {}, options = {}) {
-    return this.request(this.buildUrl(url, params), {
-      method: 'POST',
-      body: JSON.stringify(body, undefinedToNull),
-      ...options,
-    });
+  delete(...args) {
+    return this.request(this.buildDeleteRequest(...args));
   }
 
-  delete(url, params = {}, options = {}) {
-    return this.request(this.buildUrl(url, params), {
-      method: 'DELETE',
-      ...options,
-    });
+  buildDeleteRequest(url, params = {}, options = {}) {
+    return this.buildFetchRequest('DELETE', url, params, undefined, options);
+  }
+
+  put(...args) {
+    return this.request(this.buildPutRequest(...args));
+  }
+
+  buildPutRequest(url, body, params = {}, options = {}) {
+    return this.buildFetchRequest('PUT', url, params, body, options);
+  }
+
+  post(...args) {
+    return this.request(this.buildPostRequest(...args));
+  }
+
+  buildPostRequest(url, body, params = {}, options = {}) {
+    return this.buildFetchRequest('POST', url, params, body, options);
   }
 
   defaultHeaders() {
@@ -59,25 +64,29 @@ export default class Client {
     return `${this.baseUrl}${path}${query}`;
   }
 
-  request(url, options = {}, retryCount = 1, preCallStack = null) {
-    const fullHeaders = {
+  buildFetchRequest(method, url, params, body, extraOptions) {
+    const options = {
+      method,
+      body: body && JSON.stringify(body, undefinedToNull),
+      ...(extraOptions || {}),
+    };
+
+    const headers = {
       ...this.defaultHeaders(),
       ...this.extraHeaders,
       ...options.headers,
     };
 
-    Object.keys(fullHeaders).forEach(
-      key => fullHeaders[key] == null && delete fullHeaders[key],
-    );
+    Object.keys(headers).forEach(key => !headers[key] && delete headers[key]);
 
-    const fullOptions = { ...options, headers: fullHeaders };
+    return {
+      url: this.buildUrl(url, params),
+      options: { options, ...headers },
+    };
+  }
 
-    if (!preCallStack) {
-      // eslint-disable-next-line no-param-reassign
-      preCallStack = new Error().stack;
-    }
-
-    return fetch(url, fullOptions).then(res => {
+  request(fetchRequest, preCallStack = new Error().stack, retryCount = 1) {
+    return fetch(fetchRequest.url, fetchRequest.options).then(res => {
       if (res.status === 429) {
         const waitTime = parseInt(
           res.headers.get('X-RateLimit-Reset') || '10',
@@ -87,7 +96,7 @@ export default class Client {
           `Rate limit exceeded, waiting ${waitTime * retryCount} seconds...`,
         );
         return wait(waitTime * retryCount * 1000).then(() => {
-          return this.request(url, options, retryCount + 1, preCallStack);
+          return this.request(fetchRequest, preCallStack, retryCount + 1);
         });
       }
 
@@ -98,8 +107,7 @@ export default class Client {
           }
           return Promise.reject(
             new ApiException(res, body, {
-              url,
-              options: fullOptions,
+              ...fetchRequest,
               preCallStack,
             }),
           );
@@ -117,7 +125,7 @@ export default class Client {
               `Data validation in progress, waiting ${retryCount} seconds...`,
             );
             return wait(retryCount * 1000).then(() => {
-              return this.request(url, options, retryCount + 1, preCallStack);
+              return this.request(fetchRequest, preCallStack, retryCount + 1);
             });
           }
           throw error;

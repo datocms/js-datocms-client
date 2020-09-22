@@ -74,6 +74,8 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
 
     const client = new Proxy(cache, {
       get(obj1, namespace) {
+        const preCallStack = new Error().stack;
+
         if (namespace === 'rawClient') {
           return rawClient;
         }
@@ -131,7 +133,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   ? options.deserializeResponse
                   : true;
 
-                const deserialize = async response => {
+                const deserialize = async (fetchRequest, response) => {
                   if (response && response.data.type === 'job') {
                     let jobResult;
                     let retryCount = 0;
@@ -167,6 +169,10 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                           statusText: jobResult.attributes.statusText,
                         },
                         jobResult.attributes.payload,
+                        {
+                          ...fetchRequest,
+                          preCallStack,
+                        },
                       );
                     }
 
@@ -208,19 +214,36 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                 }
 
                 if (link.method === 'POST') {
+                  const fetchRequest = rawClient.buildPostRequest(
+                    url,
+                    body,
+                    queryString,
+                  );
+
                   return rawClient
-                    .post(`${url}`, body, queryString)
-                    .then(response => deserialize(response));
+                    .request(fetchRequest, preCallStack)
+                    .then(response => deserialize(fetchRequest, response));
                 }
                 if (link.method === 'PUT') {
+                  const fetchRequest = rawClient.buildPutRequest(
+                    url,
+                    body,
+                    queryString,
+                  );
+
                   return rawClient
-                    .put(`${url}`, body, queryString)
-                    .then(response => deserialize(response));
+                    .request(fetchRequest, preCallStack)
+                    .then(response => deserialize(fetchRequest, response));
                 }
                 if (link.method === 'DELETE') {
+                  const fetchRequest = rawClient.buildDeleteRequest(
+                    url,
+                    queryString,
+                  );
+
                   return rawClient
-                    .delete(url, queryString)
-                    .then(response => deserialize(response));
+                    .request(fetchRequest, preCallStack)
+                    .then(response => deserialize(fetchRequest, response));
                 }
 
                 const allPages = Object.prototype.hasOwnProperty.call(
@@ -230,11 +253,19 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   ? options.allPages
                   : false;
 
-                const request = allPages
-                  ? fetchAllPages(rawClient, url, queryString)
-                  : rawClient.get(url, queryString);
+                if (allPages) {
+                  const request = fetchAllPages(rawClient, url, queryString);
+                  return request.then(response => deserialize(null, response));
+                }
 
-                return request.then(response => deserialize(response));
+                const fetchRequest = rawClient.buildGetRequest(
+                  url,
+                  queryString,
+                );
+
+                return rawClient
+                  .request(fetchRequest, preCallStack)
+                  .then(response => deserialize(fetchRequest, response));
               });
             };
           },
