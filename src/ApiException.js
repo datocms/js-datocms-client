@@ -18,7 +18,7 @@ export default function ApiException(
   }
 
   this.body = body;
-  this.headers = response.headers.raw();
+  this.headers = response.headers ? response.headers.raw() : {};
   this.statusCode = response.status;
   this.statusText = response.statusText;
   this.requestUrl = url;

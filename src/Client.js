@@ -12,7 +12,7 @@ function queryString(query) {
 
 export default class Client {
   constructor(token, extraHeaders, baseUrl) {
-    this.baseUrl = baseUrl;
+    this.baseUrl = baseUrl.replace(/\/$/, '');
     this.token = token;
     this.extraHeaders = extraHeaders;
   }
@@ -67,9 +67,12 @@ export default class Client {
   buildFetchRequest(method, url, params, body, extraOptions) {
     const options = {
       method,
-      body: body && JSON.stringify(body, undefinedToNull),
       ...(extraOptions || {}),
     };
+
+    if (body) {
+      options.body = JSON.stringify(body, undefinedToNull);
+    }
 
     const headers = {
       ...this.defaultHeaders(),
@@ -81,7 +84,7 @@ export default class Client {
 
     return {
       url: this.buildUrl(url, params),
-      options: { options, ...headers },
+      options: { ...options, headers },
     };
   }
 

@@ -7,6 +7,7 @@ import serializeJsonApi from './serializeJsonApi';
 import RawClient from '../Client';
 import fetchAllPages from './fetchAllPages';
 import ApiException from '../ApiException';
+import InvalidApiRequestException from '../InvalidApiRequestException';
 import wait from './wait';
 
 const identityRegexp = /\{\(.*?definitions%2F(.*?)%2Fdefinitions%2Fidentity\)}/g;
@@ -206,11 +207,18 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   (link.method === 'PUT' || link.method === 'POST') &&
                   serializeRequest
                 ) {
-                  body = serializeJsonApi(
-                    body,
-                    link,
-                    link.method === 'PUT' && lastUrlId,
-                  );
+                  try {
+                    body = serializeJsonApi(
+                      body,
+                      link,
+                      link.method === 'PUT' && lastUrlId,
+                    );
+                  } catch (e) {
+                    throw new InvalidApiRequestException(
+                      e.message,
+                      preCallStack,
+                    );
+                  }
                 }
 
                 if (link.method === 'POST') {
