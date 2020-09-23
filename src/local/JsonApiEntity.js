@@ -1,47 +1,71 @@
-import { camelizeKeys } from '../utils/keyFormatter';
+/* eslint-disable no-underscore-dangle */
+import { decamelize, camelizeKeys } from '../utils/keyFormatter';
 
 export default class JsonApiEntity {
   constructor(payload, repo) {
-    this.payload = camelizeKeys(payload);
-    this.repo = repo;
+    const cachedCamelizedAttributes = {};
+    let cachedCamelizedMeta = null;
 
-    Object.entries(this.payload.attributes || {}).forEach(([name, value]) => {
-      Object.defineProperty(this, name, {
-        enumerable: true,
-        value,
-      });
-    });
+    return new Proxy(
+      {},
+      {
+        get: function get(target, prop, receiver) {
+          if (prop === 'id') {
+            return payload.id;
+          }
 
-    Object.entries(this.payload.relationships || {}).forEach(
-      ([name, value]) => {
-        Object.defineProperty(this, name, {
-          enumerable: true,
-          get() {
-            const linkage = value.data;
+          if (prop === 'type') {
+            return payload.type;
+          }
+
+          if (prop === 'payload') {
+            return payload;
+          }
+
+          if (prop === 'meta') {
+            if (cachedCamelizedMeta) {
+              return cachedCamelizedMeta;
+            }
+
+            cachedCamelizedMeta = camelizeKeys(payload.meta || {});
+
+            return cachedCamelizedMeta;
+          }
+
+          const decamelizedProp = decamelize(prop);
+
+          if (payload.attributes && decamelizedProp in payload.attributes) {
+            if (cachedCamelizedAttributes[prop]) {
+              return cachedCamelizedAttributes[prop];
+            }
+
+            cachedCamelizedAttributes[prop] = camelizeKeys(
+              payload.attributes[decamelizedProp],
+            );
+
+            return cachedCamelizedAttributes[prop];
+          }
+
+          if (
+            payload.relationships &&
+            decamelizedProp in payload.relationships
+          ) {
+            const linkage = payload.relationships[decamelizedProp].data;
 
             if (Array.isArray(linkage)) {
               return linkage.map(item => repo.findEntity(item.type, item.id));
             }
+
             if (linkage) {
               return repo.findEntity(linkage.type, linkage.id);
             }
 
             return null;
-          },
-        });
+          }
+
+          return Reflect.get(target, prop, receiver);
+        },
       },
     );
-  }
-
-  get id() {
-    return this.payload.id;
-  }
-
-  get type() {
-    return this.payload.type;
-  }
-
-  get meta() {
-    return this.payload.meta || {};
   }
 }
