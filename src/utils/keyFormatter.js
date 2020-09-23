@@ -1,5 +1,6 @@
 import {
   camelize as humpsCamelize,
+  decamelize as humpsDecamelize,
   camelizeKeys as humpsCamelizeKeys,
   decamelizeKeys as humpsDecamelizeKeys,
 } from 'humps';
@@ -10,6 +11,18 @@ export function camelize(str) {
   }
 
   return humpsCamelize(str);
+}
+
+export function decamelize(str) {
+  if (str === 'require2fa') {
+    return 'require_2fa';
+  }
+
+  if (/-/.test(str)) {
+    return str;
+  }
+
+  return humpsDecamelize(str);
 }
 
 export function camelizeKeys(payload) {

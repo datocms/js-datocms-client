@@ -1,6 +1,13 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
+import {
+  camelize,
+  camelizeKeys,
+  decamelize,
+  decamelizeKeys,
+} from './utils/keyFormatter';
+
 export { default as AccountClient } from './account/AccountClient';
 export { default as SiteClient } from './site/SiteClient';
 
@@ -23,3 +30,5 @@ export { default as buildModularBlock } from './utils/buildModularBlock';
 export { default as ApiException } from './ApiException';
 
 export { default as i18n } from './utils/i18n';
+
+export { camelize, camelizeKeys, decamelize, decamelizeKeys };

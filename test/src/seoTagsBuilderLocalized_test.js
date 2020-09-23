@@ -1,6 +1,5 @@
 /* global memo:true */
 
-import { camelizeKeys } from 'humps';
 import EntitiesRepo from '../../src/local/EntitiesRepo';
 import { builders } from '../../src/utils/seoTagsBuilder';
 
@@ -23,7 +22,7 @@ describe('seoTagsBuilder', () => {
     locales = memo(() => ['en', 'it']);
 
     entitiesRepo = memo(() => {
-      const payload = camelizeKeys({
+      const payload = {
         data: [
           {
             id: '24038',
@@ -165,7 +164,7 @@ describe('seoTagsBuilder', () => {
             },
           },
         ],
-      });
+      };
 
       return new EntitiesRepo(payload);
     });
@@ -179,20 +178,16 @@ describe('seoTagsBuilder', () => {
 
     beforeEach(() => {
       item = memo(() => entitiesRepo().findEntity('item', '24038'));
-      globalSeo = memo(() =>
-        camelizeKeys({
-          en: {
-            title_suffix: ' - Suffix!',
-          },
-        }),
-      );
-      seo = memo(() =>
-        camelizeKeys({
-          en: {
-            title: 'SEO title',
-          },
-        }),
-      );
+      globalSeo = memo(() => ({
+        en: {
+          title_suffix: ' - Suffix!',
+        },
+      }));
+      seo = memo(() => ({
+        en: {
+          title: 'SEO title',
+        },
+      }));
       result = memo(() =>
         builders.title(item(), entitiesRepo(), { locale: 'en' }),
       );
