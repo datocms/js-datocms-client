@@ -172,8 +172,35 @@ export default class File {
     );
   }
 
-  url(params = {}) {
-    return buildFileUrl(this.upload, this.itemsRepo.entitiesRepo, params);
+  get focalPoint() {
+    return (
+      this.value.focalPoint ||
+      this.upload.defaultFieldMetadata[i18n.locale].focalPoint
+    );
+  }
+
+  url(query = {}) {
+    const queryWithFocalPoint = { ...query };
+
+    if (
+      this.focalPoint &&
+      query.fit === 'crop' &&
+      (query.h || query.height) &&
+      (query.w || query.width) &&
+      (!query.crop || query.crop === 'focalpoint') &&
+      !query['fp-x'] &&
+      !query['fp-y']
+    ) {
+      queryWithFocalPoint.crop = 'focalpoint';
+      queryWithFocalPoint['fp-x'] = this.focalPoint.x;
+      queryWithFocalPoint['fp-y'] = this.focalPoint.y;
+    }
+
+    return buildFileUrl(
+      this.upload,
+      this.itemsRepo.entitiesRepo,
+      queryWithFocalPoint,
+    );
   }
 
   toMap() {
@@ -186,6 +213,7 @@ export default class File {
       alt: this.alt,
       url: this.url(),
       customData: this.customData,
+      focalPoint: this.focalPoint,
       copyright: this.copyright,
       tags: this.tags,
       smartTags: this.smartTags,

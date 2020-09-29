@@ -177,11 +177,13 @@ describe('dump', () => {
             title: 'Default title',
             alt: 'Default alt',
             customData: {},
+            focalPoint: { x: 0.1, y: 0.1 },
           },
           it: {
             title: null,
             alt: 'Alt default',
             customData: {},
+            focalPoint: { x: 0.9, y: 0.9 },
           },
         },
         tags: ['fresh'],
@@ -258,6 +260,9 @@ describe('dump', () => {
       expect(articleFile.data.image.copyright).to.eq('2019');
       expect(articleFile.data.image.tags[0]).to.eq('fresh');
       expect(articleFile.data.image.smartTags).to.not.be.null();
+      expect(articleFile.data.croppedUrl).to.include(
+        'fit=crop&w=40&h=40&crop=focalpoint&fp-x=0.1&fp-y=0.1',
+      );
       expect(articleFile.data.image.colors[0]).to.deep.equal({
         red: 0,
         green: 255,
@@ -265,6 +270,10 @@ describe('dump', () => {
         rgb: 'rgb(0, 255, 195)',
         alpha: 1,
         hex: '#00ffc3',
+      });
+      expect(articleFile.data.image.focalPoint).to.deep.equal({
+        x: 0.1,
+        y: 0.1,
       });
       expect(articleFile.data.image.blurhash).to.eq(
         'LlOgNVxuD%t7IUfQofay00ayt7WB',
