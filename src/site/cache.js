@@ -65,6 +65,7 @@ module.exports = {
     all: true,
     find: true,
     destroy: true,
+    fields: true,
   },
   jobResult: {
     find: true,
