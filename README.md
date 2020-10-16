@@ -6,7 +6,7 @@ API client and CLI tool for [DatoCMS](https://www.datocms.com). Take a look at t
 
 ## Development
 
-After checking out the repo, run `yarn install` to install dependencies. Then, run `yarn test` to run the tests.
+After checking out the repo, run `npm install` to install dependencies. Then, run `npm run test` to run the tests.
 
 Test suite's HTTP interactions are recorded/replayed from the `./cassettes` directory to get fast, deterministic and accurate tests. Simply delete every file within the directory to record new HTTP requests/responses.
 
