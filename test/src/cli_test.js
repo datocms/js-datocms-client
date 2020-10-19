@@ -235,4 +235,12 @@ describe('CLI tool', () => {
       );
     });
   });
+
+  describe('dato check', () => {
+    it('presence of token', async () => {
+      const checkFunc = () => runCli(`check`) instanceof Promise;
+
+      expect(checkFunc()).to.eq(true);
+    });
+  });
 });

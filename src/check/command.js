@@ -1,6 +1,6 @@
 import requireToken from '../dump/requireToken';
 
-export default function() {
+export default async function() {
   const token = process.env.DATO_API_TOKEN;
 
   if (token) {
