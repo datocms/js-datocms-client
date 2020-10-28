@@ -58,10 +58,10 @@ export default function nodeUrl(client, fileUrl, options) {
               onStreamEnd = _resolve;
             });
             const totalLength = response.headers['content-length'];
-            data = [];
+            let body = [];
             let progressLength = 0;
             response.data.on('data', chunk => {
-              data.push(chunk);
+              body.push(chunk);
               progressLength += chunk.length;
               options.onProgress({
                 type: 'download',
@@ -70,11 +70,14 @@ export default function nodeUrl(client, fileUrl, options) {
                 },
               });
             });
-            response.data.on('end', onStreamEnd);
+            response.data.on('end', () => {
+              data = Buffer.concat(body);
+              onStreamEnd();
+            });
             response.data.on('error', reject);
             await streamPromise;
           } else {
-            data = response.data;
+            data = Buffer.from(response.data);
           }
 
           /* eslint-disable no-underscore-dangle */
@@ -87,7 +90,7 @@ export default function nodeUrl(client, fileUrl, options) {
 
           const { pathname } = url.parse(decode(redirectedUrl));
           const filePath = path.join(dir, path.basename(pathname));
-          fs.writeFileSync(filePath, Buffer.from(data));
+          fs.writeFileSync(filePath, data);
 
           const { promise: uploadPromise, cancel: cancelUpload } = local(
             client,

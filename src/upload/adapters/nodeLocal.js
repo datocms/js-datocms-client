@@ -12,6 +12,7 @@ function uploadToS3(url, filePath, { onProgress }) {
       'content-type': mime.lookup(filePath),
     },
     data: fs.readFileSync(filePath),
+    responseType: onProgress ? 'stream' : undefined,
     maxContentLength: 1000000000,
     cancelToken: cancelTokenSource.token,
     onUploadProgress: !onProgress
