@@ -5,14 +5,35 @@ import mime from 'mime-types';
 
 function uploadToS3(url, filePath, { onProgress }) {
   const cancelTokenSource = axios.CancelToken.source();
+
   const promise = axios({
     url,
     method: 'put',
     headers: {
       'content-type': mime.lookup(filePath),
     },
-    data: fs.readFileSync(filePath),
-    responseType: onProgress ? 'stream' : undefined,
+    data: onProgress
+      ? fs.createReadStream(filePath)
+      : fs.readFileSync(filePath),
+    transformRequest: onProgress
+      ? [
+          (data, headers) => {
+            const totalLength = fs.statSync(filePath).size;
+            headers['Content-Length'] = totalLength;
+            let progressLength = 0;
+            data.on('data', chunk => {
+              progressLength += chunk.length;
+              onProgress({
+                type: 'upload',
+                payload: {
+                  percent: Math.round((progressLength * 100) / totalLength),
+                },
+              });
+            });
+            return data;
+          },
+        ]
+      : undefined,
     maxContentLength: 1000000000,
     cancelToken: cancelTokenSource.token,
     onUploadProgress: !onProgress
