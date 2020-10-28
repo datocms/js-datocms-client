@@ -95,4 +95,79 @@ describe('Upload file from', async () => {
       }),
     );
   });
+
+  context('remote upload cancellation', () => {
+    it(
+      'can be cancelled',
+      vcr(async () => {
+        let noProgress = true;
+        const promise = uploadFile(
+          client,
+          'https://www.datocms-assets.com/13095/1561723946-happyfoxbymazack-d8u2l0s-2.jpeg',
+          {},
+          {},
+          {
+            onProgress: () => {
+              noProgress = false;
+            },
+          },
+        );
+        promise.cancel();
+        await expect(promise).to.be.rejectedWith('aborted');
+        expect(noProgress).to.be.true();
+      }),
+    );
+
+    it(
+      'can be cancelled during download',
+      vcr(async () => {
+        let noUpload = true;
+        let cancel = () => {};
+        const promise = uploadFile(
+          client,
+          'https://www.datocms-assets.com/13095/1561723946-happyfoxbymazack-d8u2l0s-2.jpeg',
+          {},
+          {},
+          {
+            onProgress: ({ type, payload }) => {
+              noUpload = type !== 'upload';
+              if (type === 'download' && payload.percent > 2) {
+                cancel();
+              }
+            },
+          },
+        );
+        cancel = promise.cancel;
+        await expect(promise).to.be.rejectedWith('aborted');
+        expect(noUpload).to.be.true();
+      }),
+    );
+
+    it(
+      'can be cancelled during upload',
+      vcr(async () => {
+        let noUpload = true;
+        let cancel = () => {};
+        const promise = uploadFile(
+          client,
+          'https://www.datocms-assets.com/13095/1561723946-happyfoxbymazack-d8u2l0s-2.jpeg',
+          {},
+          {},
+          {
+            onProgress: ({ type, payload }) => {
+              if (type === 'upload') {
+                noUpload = payload.percent < 5;
+                if (payload.percent > 5) {
+                  cancel();
+                }
+              }
+            },
+          },
+        );
+        cancel = promise.cancel;
+        await expect(promise).to.be.rejectedWith('aborted');
+        expect(noUpload).to.be.true();
+      }),
+    );
+  });
 });
