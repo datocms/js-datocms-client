@@ -39,15 +39,6 @@ export default function nodeUrl(client, fileUrl, options) {
         maxRedirects: 10,
         responseType: options.onProgress ? 'stream' : 'arraybuffer',
         cancelToken: cancelTokenSource.token,
-        onDownloadProgress: !options.onProgress
-          ? undefined
-          : event => {
-              const percent = Math.round((event.loaded * 100) / event.total);
-              options.onProgress({
-                type: 'download',
-                payload: { percent },
-              });
-            },
       })
         .then(async response => {
           let data;
@@ -74,9 +65,7 @@ export default function nodeUrl(client, fileUrl, options) {
             response.data.on('end', () => {
               onStreamEnd(Buffer.concat(body));
             });
-            response.data.on('error', error => {
-              reject(error);
-            });
+            response.data.on('error', reject);
             data = await streamPromise;
           } else {
             data = Buffer.from(response.data);
@@ -99,12 +88,21 @@ export default function nodeUrl(client, fileUrl, options) {
             filePath,
             options,
           );
-          cancel = cancelUpload;
-          return uploadPromise.then(result => {
-            fs.unlinkSync(filePath);
-            cleanupCallback();
-            resolve(result);
-          });
+          cancel = () => {
+            cancelUpload();
+          };
+          return uploadPromise.then(
+            result => {
+              fs.unlinkSync(filePath);
+              cleanupCallback();
+              resolve(result);
+            },
+            error => {
+              fs.unlinkSync(filePath);
+              cleanupCallback();
+              throw error;
+            },
+          );
         })
         .catch(error => {
           if (error.response) {
