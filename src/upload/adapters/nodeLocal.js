@@ -4,24 +4,24 @@ import fs from 'fs';
 import mime from 'mime-types';
 
 function uploadToS3(url, filePath, { onProgress }) {
+  const totalLength = fs.statSync(filePath).size;
   const cancelTokenSource = axios.CancelToken.source();
 
   const promise = axios({
     url,
     method: 'put',
     headers: {
-      'content-type': mime.lookup(filePath),
+      'Content-Type': mime.lookup(filePath),
+      'Content-Length': totalLength,
     },
     data: onProgress
       ? fs.createReadStream(filePath)
       : fs.readFileSync(filePath),
     transformRequest: onProgress
       ? [
-          (data, headers) => {
-            const totalLength = fs.statSync(filePath).size;
-            headers['Content-Length'] = totalLength;
+          data => {
             let progressLength = 0;
-            data.on('data', chunk => {
+            const listener = chunk => {
               progressLength += chunk.length;
               onProgress({
                 type: 'upload',
@@ -29,21 +29,19 @@ function uploadToS3(url, filePath, { onProgress }) {
                   percent: Math.round((progressLength * 100) / totalLength),
                 },
               });
-            });
+            };
+            data.on('data', listener);
             return data;
           },
         ]
       : undefined,
     maxContentLength: 1000000000,
     cancelToken: cancelTokenSource.token,
-    onUploadProgress: !onProgress
-      ? undefined
-      : event => {
-          const percent = Math.round((event.loaded * 100) / event.total);
-          onProgress({ type: 'upload', payload: { percent } });
-        },
   });
-  return { promise, cancel: cancelTokenSource.cancel };
+  return {
+    promise,
+    cancel: () => cancelTokenSource.cancel('aborted'),
+  };
 }
 
 export default function nodeLocal(client, filePath, options) {
@@ -80,7 +78,7 @@ export default function nodeLocal(client, filePath, options) {
   return {
     promise,
     cancel: () => {
-      cancel();
+      return cancel();
     },
   };
 }

@@ -33,6 +33,7 @@ export default function nodeUrl(client, fileUrl, options) {
       if (isCancelled) {
         return cancel();
       }
+
       return axios({
         url: encodedFileUrl,
         maxRedirects: 10,
@@ -58,7 +59,7 @@ export default function nodeUrl(client, fileUrl, options) {
               onStreamEnd = _resolve;
             });
             const totalLength = response.headers['content-length'];
-            let body = [];
+            const body = [];
             let progressLength = 0;
             response.data.on('data', chunk => {
               body.push(chunk);
@@ -71,11 +72,12 @@ export default function nodeUrl(client, fileUrl, options) {
               });
             });
             response.data.on('end', () => {
-              data = Buffer.concat(body);
-              onStreamEnd();
+              onStreamEnd(Buffer.concat(body));
             });
-            response.data.on('error', reject);
-            await streamPromise;
+            response.data.on('error', error => {
+              reject(error);
+            });
+            data = await streamPromise;
           } else {
             data = Buffer.from(response.data);
           }

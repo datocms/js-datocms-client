@@ -154,14 +154,16 @@ describe('Upload file from', async () => {
           {},
           {},
           {
+            /* eslint-disable consistent-return */
             onProgress: ({ type, payload }) => {
               if (type === 'upload') {
-                noUpload = payload.percent < 5;
                 if (payload.percent > 5) {
-                  cancel();
+                  return cancel();
                 }
+                noUpload = payload.percent <= 5;
               }
             },
+            /* eslint-enable consistent-return */
           },
         );
         cancel = promise.cancel;
