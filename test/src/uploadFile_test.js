@@ -172,4 +172,25 @@ describe('Upload file from', async () => {
       }),
     );
   });
+
+  context('renaming file', () => {
+    it(
+      'works',
+      vcr(async () => {
+        const uploadData = await uploadFile(
+          client,
+          'https://www.datocms-assets.com/13095/1561723946-happyfoxbymazack-d8u2l0s-2.jpeg',
+          {},
+          {},
+          { filename: 'test.jpeg' },
+        );
+
+        const upload = await client.uploads.find(uploadData.uploadId);
+
+        expect(upload.basename).to.equal('test');
+        expect(upload.filename).to.equal('test.jpeg');
+        expect(upload.url).to.match(/-test.jpeg$/);
+      }),
+    );
+  });
 });

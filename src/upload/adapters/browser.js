@@ -39,14 +39,14 @@ function uploadToS3(file, url, { onProgress }) {
   return { promise, cancel };
 }
 
-export default function browser(client, file, { onProgress }) {
+export default function browser(client, file, { onProgress, filename }) {
   let isCancelled = false;
   let cancel = () => {
     isCancelled = true;
   };
 
   const promise = client.uploadRequest
-    .create({ filename: file.name })
+    .create({ filename: filename || file.name })
     .then(({ id, url }) => {
       if (isCancelled) {
         return Promise.reject(new Error('upload aborted'));

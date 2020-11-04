@@ -50,7 +50,7 @@ export default function nodeLocal(client, filePath, options) {
     isCancelled = true;
   };
   const promise = client.uploadRequest
-    .create({ filename: path.basename(filePath) })
+    .create({ filename: options.filename || path.basename(filePath) })
     .then(({ id, url }) => {
       if (isCancelled) {
         return Promise.reject(new Error('upload aborted'));
