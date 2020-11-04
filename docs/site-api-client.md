@@ -67,6 +67,74 @@ import { SiteClient } from 'datocms-client';
 
   // destroy an existing article
   await client.items.destroy('1234');
+
+  // client.createUploadPath
+  const path = await client.createUploadPath(
+    // file can be
+    // - a File (browser)
+    // - a relative path (Node.js)
+    // - a remote url (Node.js)
+    './file.jpg',
+    { // options
+      filename: 'custom-filename.jpg',
+      onProgress: ({ type, payload }) => {
+        switch (type) {
+          // fired before starting upload
+          case 'uploadRequestComplete':
+            console.log(payload.id, payload.url)
+            break;
+          // fired during upload
+          case 'upload':
+          // fired during download of a remote file
+          case 'download':
+            console.log(payload.percent);
+            break;
+          default:
+            break;
+        }
+      }
+    },
+  )
+
+  // client.createUploadPath is cancellable
+  const promise = client.createUploadPath('./file.jpg')
+  promise.catch(() => { console.log("aborted") })
+  promise.cancel()
+  // > "aborted"
+
+  // client.uploads.create
+  const upload = await client.uploads.create({
+    ...uploadAttributes,
+    path
+  });
+
+  // client.uploadFile and client.uploadImage
+  // Like createUploadPath these can be cancelled
+  const uploadFieldAttributes = await client.uploadFile(
+    './file.jpg'
+    // The following arguments are all optional
+    { /* uploadAttributes */ },
+    { /* fieldAttributes */ },
+    { // options
+      filename: 'custom-filename.jpg',
+      onProgress: ({ type, payload }) => {
+        switch (type) {
+          // fired before starting upload
+          case 'uploadRequestComplete':
+            console.log(payload.id, payload.url)
+            break;
+          // fired during upload
+          case 'upload':
+          // fired during download of a remote file
+          case 'download':
+            console.log(payload.percent);
+            break;
+          default:
+            break;
+        }
+      }
+    },
+  );
 })();
 ```
 
