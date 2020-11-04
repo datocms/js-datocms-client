@@ -1,4 +1,4 @@
-function uploadToS3(id, url, file, { onProgress }) {
+function uploadToS3(file, url, { onProgress }) {
   const xhr = new XMLHttpRequest();
 
   const promise = new Promise((resolve, reject) => {
@@ -8,7 +8,7 @@ function uploadToS3(id, url, file, { onProgress }) {
           const done = typeof e.loaded !== 'undefined' ? e.loaded : e.position;
           const total = typeof e.total !== 'undefined' ? e.total : e.totalSize;
           const percent = parseInt((done / total) * 100, 10);
-          onProgress({ type: 'uploadProgress', payload: { percent } });
+          onProgress({ type: 'upload', payload: { percent } });
         }
       };
     }
@@ -16,9 +16,9 @@ function uploadToS3(id, url, file, { onProgress }) {
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
-          resolve(id);
+          resolve();
         } else {
-          reject();
+          reject(new Error(xhr.status));
         }
       }
     };
@@ -28,13 +28,7 @@ function uploadToS3(id, url, file, { onProgress }) {
       reject(new Error('upload aborted'));
     };
     xhr.open('PUT', url, true);
-    if (file instanceof File) {
-      const formData = new FormData();
-      formData.append('file', file);
-      xhr.send(formData);
-    } else {
-      xhr.send(file);
-    }
+    xhr.send(file);
   });
 
   const cancel = () => {
@@ -50,6 +44,7 @@ export default function browser(client, file, { onProgress }) {
   let cancel = () => {
     isCancelled = true;
   };
+
   const promise = client.uploadRequest
     .create({ filename: file.name })
     .then(({ id, url }) => {
@@ -66,9 +61,8 @@ export default function browser(client, file, { onProgress }) {
         });
       }
       const { promise: uploadPromise, cancel: cancelUpload } = uploadToS3(
-        id,
-        url,
         file,
+        url,
         {
           onProgress,
         },
@@ -76,5 +70,11 @@ export default function browser(client, file, { onProgress }) {
       cancel = cancelUpload;
       return uploadPromise.then(() => id);
     });
-  return { promise, cancel };
+
+  return {
+    promise,
+    cancel: () => {
+      cancel();
+    },
+  };
 }
