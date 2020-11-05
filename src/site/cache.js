@@ -96,6 +96,9 @@ module.exports = {
     batchUnpublish: true,
     publish: true,
     unpublish: true,
+    bulkPublish: true,
+    bulkUnpublish: true,
+    bulkDestroy: true,
   },
   itemVersions: {
     restore: true,
@@ -106,10 +109,12 @@ module.exports = {
     all: true,
     find: true,
     destroy: true,
-    batchDestroy: true,
     update: true,
     batchAddTags: true,
+    batchDestroy: true,
     references: true,
+    bulkTag: true,
+    bulkDestroy: true,
   },
   uploadRequest: {
     create: true,
