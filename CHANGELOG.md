@@ -123,10 +123,10 @@ import { SiteClient } from 'datocms-client';
 const client = new SiteClient('YOUR-API-KEY');
 
 // `deserializeResponse` is true by default:
-const accessToken = client.accessTokens.create(
-  (name: 'New token'),
-  (role: '34'),
-);
+const accessToken = client.accessTokens.create({
+  name: 'New token',
+  role: '34',
+});
 
 // {
 //   id: "312",
