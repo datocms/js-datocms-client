@@ -233,8 +233,10 @@ describe('Site API', () => {
       vcr(async () => {
         const path = await client.createUploadPath(
           'test/fixtures/newTextFileHttps.txt',
+          { filename: 'whoa.txt' },
         );
         const upload = await client.uploads.create({ path });
+        expect(upload.path.endsWith('whoa.txt')).to.be.true();
         const updatedUpload = await client.uploads.update(upload.id, {
           author: 'Mark Smith',
         });
