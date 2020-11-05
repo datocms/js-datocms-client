@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>browser test</title>
+    <script src="http://localhost:3003/client.js"></script>
+
+    <script>
+      async function run() {
+        window.assert = (condition, message) => {
+          if (!condition) {
+            alert(message)
+            throw new Error(message)
+          }
+        }
+        const SITE_RW_API_TOKEN = '';
+        assert(SITE_RW_API_TOKEN, 'Configure SITE_RW_API_TOKEN in browser.html - you can find your Full-access API token in your DatoCMS dashboard at /admin/access_tokens')
+        window.datoClient = new Dato.SiteClient(SITE_RW_API_TOKEN);
+      }
+      run();
+    </script>
+  </head>
+  <body>
+    <input type="file" />
+    <script>
+      const picker = document.querySelector('input');
+      picker.addEventListener('change', async event => {
+        const files = event.target.files;
+        document.body.style.opacity = '0.4'
+        for (let file of files) {
+          const testCancelUpload = datoClient.uploadFile(
+            file,
+            {},
+            {},
+            {
+              onProgress: ({ type, payload }) => {
+                if (type === 'upload') {
+                  if (payload.percent > 5) {
+                    return testCancelUpload.cancel();
+                  }
+                  noUpload = payload.percent <= 5;
+                }
+              },
+            },
+          );
+
+          try {
+            const { uploadId } = await testCancelUpload;
+            assert(false, 'should not resolve');
+          } catch (error) {}
+
+          const testRenamingFilename = datoClient.uploadFile(
+            file,
+            {},
+            {},
+            {
+              filename: 'test.jpeg', // renaming
+            },
+          );
+
+          const { uploadId } = await testRenamingFilename;
+          const upload = await datoClient.uploads.find(uploadId);
+          assert(
+            upload.basename === 'test',
+            'upload.basename should be `test`',
+          );
+          assert(
+            upload.filename === 'test.jpeg',
+            'upload.filename should be `test.jpeg`',
+          );
+          assert(
+            /-test.jpeg$/.test(upload.url),
+            'upload.url should end with `-test.jpeg`',
+          );
+        }
+        document.body.style.opacity = null
+        alert('🎉 All tests passed!');
+      });
+    </script>
+  </body>
+</html>

@@ -6,21 +6,71 @@ import url from 'url';
 import decode from '../../utils/decode';
 import local from './nodeLocal';
 
-export default function nodeUrl(client, fileUrl) {
-  return new Promise((resolve, reject) => {
-    tmp.dir((err, dir, cleanupCallback) => {
+export default function nodeUrl(client, fileUrl, options) {
+  let isCancelled = false;
+  let cancel = () => {
+    isCancelled = true;
+  };
+  const promise = new Promise((resolve, reject) => {
+    if (isCancelled) {
+      return reject(new Error('upload aborted'));
+    }
+    return tmp.dir((err, dir, cleanupCallback) => {
       if (err) {
         reject(err);
       }
 
       const encodedFileUrl = decode(fileUrl);
 
+      const cancelTokenSource = axios.CancelToken.source();
+      cancel = () => {
+        isCancelled = true;
+        cancelTokenSource.cancel();
+        cleanupCallback();
+        reject(new Error('upload aborted'));
+      };
+
+      if (isCancelled) {
+        return cancel();
+      }
+
       return axios({
         url: encodedFileUrl,
         maxRedirects: 10,
-        responseType: 'arraybuffer',
+        responseType: options.onProgress ? 'stream' : 'arraybuffer',
+        cancelToken: cancelTokenSource.token,
       })
-        .then(response => {
+        .then(async response => {
+          let data;
+          // Axios' onDownloadProgress works only in the browser
+          // so in Node.js we need to implement it ourselves with streams.
+          if (options.onProgress) {
+            let onStreamEnd;
+            const streamPromise = new Promise(_resolve => {
+              onStreamEnd = _resolve;
+            });
+            const totalLength = response.headers['content-length'];
+            const body = [];
+            let progressLength = 0;
+            response.data.on('data', chunk => {
+              body.push(chunk);
+              progressLength += chunk.length;
+              options.onProgress({
+                type: 'download',
+                payload: {
+                  percent: Math.round((progressLength * 100) / totalLength),
+                },
+              });
+            });
+            response.data.on('end', () => {
+              onStreamEnd(Buffer.concat(body));
+            });
+            response.data.on('error', reject);
+            data = await streamPromise;
+          } else {
+            data = Buffer.from(response.data);
+          }
+
           /* eslint-disable no-underscore-dangle */
           const redirectedUrl =
             response.request._redirectable &&
@@ -31,13 +81,28 @@ export default function nodeUrl(client, fileUrl) {
 
           const { pathname } = url.parse(decode(redirectedUrl));
           const filePath = path.join(dir, path.basename(pathname));
-          fs.writeFileSync(filePath, Buffer.from(response.data));
+          fs.writeFileSync(filePath, data);
 
-          return local(client, filePath).then(result => {
-            fs.unlinkSync(filePath);
-            cleanupCallback();
-            resolve(result);
-          });
+          const { promise: uploadPromise, cancel: cancelUpload } = local(
+            client,
+            filePath,
+            options,
+          );
+          cancel = () => {
+            cancelUpload();
+          };
+          return uploadPromise.then(
+            result => {
+              fs.unlinkSync(filePath);
+              cleanupCallback();
+              resolve(result);
+            },
+            error => {
+              fs.unlinkSync(filePath);
+              cleanupCallback();
+              throw error;
+            },
+          );
         })
         .catch(error => {
           if (error.response) {
@@ -52,4 +117,10 @@ export default function nodeUrl(client, fileUrl) {
         });
     });
   });
+  return {
+    promise,
+    cancel: () => {
+      cancel();
+    },
+  };
 }

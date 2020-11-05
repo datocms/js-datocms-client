@@ -5,8 +5,10 @@ export default function uploadFile(
   source,
   uploadAttributes = {},
   fieldAttributes = {},
+  options = {},
 ) {
-  return createUploadPath(client, source)
+  const uploadPathPromise = createUploadPath(client, source, options);
+  const promise = uploadPathPromise
     .then(path => {
       return client.uploads.create({
         ...uploadAttributes,
@@ -22,4 +24,6 @@ export default function uploadFile(
         uploadId: upload.id,
       });
     });
+  promise.cancel = uploadPathPromise.cancel;
+  return promise;
 }

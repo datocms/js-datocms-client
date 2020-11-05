@@ -16,15 +16,13 @@ Add the following library to your page:
 
 ```html
 <script>
-var client = new Dato.SiteClient('YOUR_SITE_API_READONLY_TOKEN')
+  var client = new Dato.SiteClient('YOUR_SITE_API_READONLY_TOKEN');
 
-client.items.all({ 'filter[type]': 'article' })
-  .then(function(articles) {
+  client.items.all({ 'filter[type]': 'article' }).then(function(articles) {
     console.log(articles);
   });
 
-client.items.find('123')
-  .then(function(article) {
+  client.items.find('123').then(function(article) {
     console.log(article);
   });
 </script>

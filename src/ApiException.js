@@ -18,7 +18,19 @@ export default function ApiException(
   }
 
   this.body = body;
-  this.headers = response.headers ? response.headers.raw() : {};
+  this.headers = {};
+  if (response.headers) {
+    this.headers = response.headers.raw
+      ? response.headers.raw()
+      : Array.from(response.headers.entries()).reduce(
+          (headers, [key, value]) => {
+            // eslint-disable-next-line no-param-reassign
+            headers[key] = value;
+            return headers;
+          },
+          {},
+        );
+  }
   this.statusCode = response.status;
   this.statusText = response.statusText;
   this.requestUrl = url;
