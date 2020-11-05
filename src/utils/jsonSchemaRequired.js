@@ -1,4 +1,4 @@
-import findInfoForProperty from './findInfoForProperty';
+import findInfoForProperty, { findEntityInData } from './findInfoForProperty';
 
 const toArray = obj => (Array.isArray(obj) ? obj : [obj]);
 
@@ -25,4 +25,9 @@ export function jsonSchemaValueRequired(propertyName, schema) {
     }
     return !toArray(propertySchema.type).includes('null');
   });
+}
+
+export function jsonSchemaGroupPropertyRequired(schema) {
+  const entity = findEntityInData(schema);
+  return (entity && entity.required) || [];
 }

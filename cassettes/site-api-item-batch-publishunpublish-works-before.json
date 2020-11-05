@@ -285,6 +285,22 @@
                           },
                           "password": {
                             "$ref": "#/definitions/account/definitions/attributes/properties/password"
+                          },
+                          "acquisition_method": {
+                            "type": "object",
+                            "required": ["medium", "source"],
+                            "additionalProperties": false,
+                            "properties": {
+                              "source": {
+                                "type": "string"
+                              },
+                              "medium": {
+                                "type": "string"
+                              },
+                              "campaign": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3452,7 +3468,8 @@
                 "defaulting",
                 "credits",
                 "cf_cod_fiscale",
-                "unbilled_charges"
+                "unbilled_charges",
+                "discount_percentage"
               ],
               "properties": {
                 "first_name": {
@@ -3530,6 +3547,10 @@
                 "unbilled_charges": {
                   "type": "integer",
                   "example": 2700
+                },
+                "discount_percentage": {
+                  "type": "number",
+                  "example": 0.5
                 }
               }
             }
@@ -4143,6 +4164,10 @@
                             "type": ["string"],
                             "format": "date-time",
                             "example": "2016-09-20T18:50:24.914Z"
+                          },
+                          "discount_percentage": {
+                            "type": "number",
+                            "example": 0.1
                           },
                           "tax_label": {
                             "type": ["null", "string"]
@@ -4865,15 +4890,15 @@
       "Server",
       "Cowboy",
       "Date",
-      "Tue, 29 Sep 2020 12:30:48 GMT",
+      "Thu, 05 Nov 2020 08:50:42 GMT",
       "Connection",
       "close",
       "Last-Modified",
-      "Tue, 29 Sep 2020 12:26:50 GMT",
+      "Mon, 02 Nov 2020 17:26:52 GMT",
       "Content-Type",
       "application/json",
       "X-Queue-Time",
-      "4ms",
+      "2ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -4887,7 +4912,7 @@
       "Access-Control-Allow-Origin",
       "*",
       "Content-Length",
-      "177139",
+      "178147",
       "Via",
       "1.1 vegur"
     ],
@@ -4901,7 +4926,7 @@
       "data": {
         "type": "account",
         "attributes": {
-          "email": "u4wkyn@delete-this-at-midnight-utc.tk",
+          "email": "tneeq@delete-this-at-midnight-utc.tk",
           "company": "DatoCMS",
           "password": "STRONG_pass123!"
         }
@@ -4909,15 +4934,15 @@
     },
     "status": 201,
     "response": [
-      "1f8b0800f928735f0003",
-      "8c51db6e9b4010fd171efae44b420b912d452df125011b1c191cc9ae2ab45ed661f0b26076d60447fef72e512b2b4d55755f763473e6cc9939af46429018c35703126368b0c64bb7f71416e0b9ab937b1d8037e8e9a4e966c5cb7ce495fa6f82686f05610d9bc6b5ddccadfdcc417fbc473fe32b3f726dffe4d8c178af16e3753d3b39f522736a575cf57253ced793077eb8b7f230ba9a4df3a763dc94e1b2100753a917b2b4e8e3661a1eecbdd131b029995624999450089da81827a8439942295bc584d242096cc3774b98d660605d187ec3cefa750c1094ab8469dcf77fc33b0641ac60ab90bd4d633901aeebea4bbd6fc4b7847186ac8b29c82ec16e0e8980e714bb0a690f5bfd3ba824c682e49a5428ce3b06277f2468919744349a744cb018f9a16e2babe208edc6209e6373476255810614581285e9b0df471df67fe187ff25e6ab64b462783b5a4437d1dd7cb5f41e1c3fb80b27f39bc9cc8b364febe9e7a933b23f81948a55b7173120df24108a70d4aa77844b76feab132d20966a2b6905655bfbe0cab53d303f5cf97d4bebcf16386f57d777d80167179af664dac11fe79f000000ffff",
-      "0300cef07564b3020000"
+      "1f8b0800e4bca35f0003",
+      "8c51db6e9b4010fd977de8936fc114b796a2161bb78204ecf8d2385495b52c8b19670d849d0d81c8ffde256a65a5a9aaeecb8e66ce9c3933e799c41429193f1388c998f0da4ba3af0ce6e0b99bc6bd08c0fbd8d349c33de44fd753afd07f1d34acf2a182b0762df7e056fec1467f3d43dff9b6f19dbd15ac6d2b706e94dfdc0fae1abb9a1feccacd063d9a8ed6acb9780a4df383bc1eb0b09a19b3ba5a4485bb91eba523122f341a5585db0de910ac0bae15492e25e4994e945c50d4a14ca190ad62ca58ae326cc3574b18a3d1c03833fc869df4eb10c8985031d7b8efff867708452c2152c85fa6f12305a1eb9871fef039e68223ef620ab24bb17b8438837d8a5d85ac87f7ba398152e22ea347cd9929213a44d03f122c3f1634ab35a743319ffa2bdd5694f923b40b43b6df1909dda9123420c7822a4cc7fd3eeab0ff0b3ffe1f2d9f246725c7cb1b6b15b8d3c9fb8515dece27778bc5ca346fb7cbabe5ec6ef2c5de0edf81948a9797672d205f145086f0a8452754487efaab0f2d602755245909455b7be3c9d01c5a6f6efcbaa575270221dacdf5191210fc4cd35e4cfbf7e3f4130000ffff",
+      "03004533e5c4b1020000"
     ],
     "rawHeaders": [
       "Server",
       "Cowboy",
       "Date",
-      "Tue, 29 Sep 2020 12:30:49 GMT",
+      "Thu, 05 Nov 2020 08:50:43 GMT",
       "Connection",
       "close",
       "Content-Type",
@@ -4931,15 +4956,15 @@
       "X-Ratelimit-Remaining",
       "59",
       "Etag",
-      "W/\"66fb76dda725c875abd0009e495b98cb\"",
+      "W/\"178c65f9aa4d2410d8cecc512e3c3028\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "21db209a-c7b7-4d91-89ad-25e2a0647b12",
+      "c9e5234a-280e-4a35-8704-b6ec09dd9b33",
       "X-Runtime",
-      "0.356406",
+      "0.339649",
       "X-Queue-Time",
-      "11ms",
+      "0ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -5245,6 +5270,22 @@
                           },
                           "password": {
                             "$ref": "#/definitions/account/definitions/attributes/properties/password"
+                          },
+                          "acquisition_method": {
+                            "type": "object",
+                            "required": ["medium", "source"],
+                            "additionalProperties": false,
+                            "properties": {
+                              "source": {
+                                "type": "string"
+                              },
+                              "medium": {
+                                "type": "string"
+                              },
+                              "campaign": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -8412,7 +8453,8 @@
                 "defaulting",
                 "credits",
                 "cf_cod_fiscale",
-                "unbilled_charges"
+                "unbilled_charges",
+                "discount_percentage"
               ],
               "properties": {
                 "first_name": {
@@ -8490,6 +8532,10 @@
                 "unbilled_charges": {
                   "type": "integer",
                   "example": 2700
+                },
+                "discount_percentage": {
+                  "type": "number",
+                  "example": 0.5
                 }
               }
             }
@@ -9103,6 +9149,10 @@
                             "type": ["string"],
                             "format": "date-time",
                             "example": "2016-09-20T18:50:24.914Z"
+                          },
+                          "discount_percentage": {
+                            "type": "number",
+                            "example": 0.1
                           },
                           "tax_label": {
                             "type": ["null", "string"]
@@ -9825,15 +9875,15 @@
       "Server",
       "Cowboy",
       "Date",
-      "Tue, 29 Sep 2020 12:30:49 GMT",
+      "Thu, 05 Nov 2020 08:50:44 GMT",
       "Connection",
       "close",
       "Last-Modified",
-      "Tue, 29 Sep 2020 12:26:50 GMT",
+      "Mon, 02 Nov 2020 17:26:52 GMT",
       "Content-Type",
       "application/json",
       "X-Queue-Time",
-      "-7ms",
+      "4ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",
@@ -9847,7 +9897,7 @@
       "Access-Control-Allow-Origin",
       "*",
       "Content-Length",
-      "177139",
+      "178147",
       "Via",
       "1.1 vegur"
     ],
@@ -9867,15 +9917,15 @@
     },
     "status": 201,
     "response": [
-      "1f8b0800fb28735f0003",
-      "7c925f8fa23014c5bf4b9f850002233eadb3bbd9e0f8675d35717c21a5bd23c55a1c7a59c489df7d5bc799ddc4647921bde79ce672f8bd114e9192e11b119c0c493ff2e398f408764730472d10cc8922d6226f10b4352a7ab0daa3ac7646e3d5810a4586aa91b2478442a81595996ef20f85e4c6e9f84912197bd52aa833308a344a13b6fb4e7de12001c1c1426887a273105c895d814e83ccc5bd4949aa31b38b66aca06a071945930ebcc073bcc40992951f0cfbde30f2dc244ab67663c640eb0cab3dd80da01b17f90f26e6629caecfa93f13e3c435c3202dabd3e4ebf86cdee7d9ea7b3013ada0cb349e96eb68be5aeb542d6ca848cd7cdba5715aa6edb41ce1f4db1ea7a55c4f57c67b1ec526db4ccb45f0741eb5f372d4a6ca73db531a64e1d3eb169e4f291f1f97e122c9979b49bd99b49be57139913a7a7e9d3cfefab926ff34775f9b4bf94128d77c7fc50eda65d5c1f8590d1481ffaf89d036616cbcadcd7ffc2c83c71e00e391cfc238eee76c900cb89ff85e4419e4fd5ba452b2fb4cb03c60ec81c7217883074e0308799ef4f980057d96585c385086e2b75d880c5fa8d4d0231a29360698eb751db9d87b254551295d88e395a46b082c2b9ad5e268353b7e27d20275e97d788e92de6b5853a55fa0be13ae94fd9ddee00ea277066f701b46aa4621b9d8e70f000000ffff",
-      "03004dccce9a08030000"
+      "1f8b0800e5bca35f0003",
+      "7c925f6f9b3014c5bf8b9f03326020e469e9c82ab242d436c9435e90314e700a26c3973152e5bbd7cefa6752a4f162f99e73ecebcbef159514289abd2251a219f24287f86882603c71bd5502b8de51804e143d70658c923646bbabdb83d6cab6a142a299eceb7a828404de495ae7aa2f3e145468a7e54f23ed6e07c9bb9c6ba1d60248ce7f7d2b79cd815b50096551b01a514a71a8c0ea81d9f0a2433555909b3673565179e039051d76b18b2dc7b1b0bfc6d3998f67c4b71deced4cbf8c71a572685fb8b99f8fcbaab867622596c9e69c38995846b62ebac9b1fdf3f07d79d6eb393b2f70f63c08fa9c04e99179699ca8443e9a50958841ecc624488ec9901ee790ae1790c6db4d1a1f826c3d0fb278d367f19cfc3ccf87d5713e2412dbd33bb15ab0dd62fb146ec351ec421edf3bd8eabcae10f0f4103e66a1b3f397c58ff111fd33b79ba1d9b46c84b4f5f35bd6289bb58db6b38e53e0e5ff0681cd20b4ad1c3afd133f67e1f0bdef3a9cb8cc2781c75849dc8816c4755c8231798fb4b21e3f1311a1911b1541e8b861e895c19e91d2c59414210bbdd010c02903f1db3484667b5a2b3e410a28f49a96eb7123ba98736b0aa295aa12a72b46d71037a028d68993d14cf92f8e86a6cbe4c373aae9ad061d956acfbb1be1cad857f59d6cdd3c76bfc8d688b4bd047431df1b000000ffff",
+      "0300ae03eec205030000"
     ],
     "rawHeaders": [
       "Server",
       "Cowboy",
       "Date",
-      "Tue, 29 Sep 2020 12:30:50 GMT",
+      "Thu, 05 Nov 2020 08:50:45 GMT",
       "Connection",
       "close",
       "Content-Type",
@@ -9889,15 +9939,15 @@
       "X-Ratelimit-Remaining",
       "59",
       "Etag",
-      "W/\"15354ea33ddd83d0041b83eb63e2b41c\"",
+      "W/\"be3371ff7d00bd708a09eb19190b5fb4\"",
       "Cache-Control",
       "max-age=0, private, must-revalidate",
       "X-Request-Id",
-      "d3e9e8fb-10b0-4483-9122-88e90106f698",
+      "ca4089f0-4544-433d-b3b1-91c06985fcfd",
       "X-Runtime",
-      "0.490859",
+      "0.336089",
       "X-Queue-Time",
-      "0ms",
+      "7ms",
       "Access-Control-Allow-Credentials",
       "true",
       "Access-Control-Allow-Headers",

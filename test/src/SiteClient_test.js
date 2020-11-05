@@ -227,6 +227,22 @@ describe('Site API', () => {
     );
   });
 
+  describe('upload', () => {
+    it(
+      'update',
+      vcr(async () => {
+        const path = await client.createUploadPath(
+          'test/fixtures/newTextFileHttps.txt',
+        );
+        const upload = await client.uploads.create({ path });
+        const updatedUpload = await client.uploads.update(upload.id, {
+          author: 'Mark Smith',
+        });
+        expect(updatedUpload.author).to.equal('Mark Smith');
+      }),
+    );
+  });
+
   describe('item', () => {
     it(
       'batchDestroy works',

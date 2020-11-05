@@ -5,6 +5,7 @@ import findInfoForProperty from './findInfoForProperty';
 import jsonSchemaRelationships from './jsonSchemaRelationships';
 import jsonSchemaType from './jsonSchemaType';
 import {
+  jsonSchemaGroupPropertyRequired,
   jsonSchemaPropertyRequired,
   jsonSchemaValueRequired,
 } from './jsonSchemaRequired';
@@ -54,72 +55,40 @@ const hasKey = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
 function serializedRelationships(type, unserializedBody, schema) {
   const relationships = jsonSchemaRelationships(schema);
 
-  if (relationships.length === 0) {
-    return null;
-  }
+  return relationships.reduce((acc, { relationship, collection, types }) => {
+    const camelizedRelationship = camelize(relationship);
 
-  return jsonSchemaRelationships(schema).reduce(
-    (acc, { relationship, collection, types }) => {
-      const camelizedRelationship = camelize(relationship);
+    if (
+      relationship !== camelizedRelationship &&
+      hasKey(unserializedBody, relationship) &&
+      hasKey(unserializedBody, camelizedRelationship)
+    ) {
+      throw new Error(
+        `Attribute ${camelizedRelationship} is expressed both in camel-case and snake-case`,
+      );
+    }
 
-      if (
-        relationship !== camelizedRelationship &&
-        hasKey(unserializedBody, relationship) &&
-        hasKey(unserializedBody, camelizedRelationship)
-      ) {
-        throw new Error(
-          `Attribute ${camelizedRelationship} is expressed both in camel-case and snake-case`,
-        );
-      }
+    if (
+      hasKey(unserializedBody, camelizedRelationship) ||
+      hasKey(unserializedBody, relationship)
+    ) {
+      const value =
+        unserializedBody[camelizedRelationship] ||
+        unserializedBody[relationship];
 
-      if (
-        hasKey(unserializedBody, camelizedRelationship) ||
-        hasKey(unserializedBody, relationship)
-      ) {
-        const value =
-          unserializedBody[camelizedRelationship] ||
-          unserializedBody[relationship];
+      let data;
 
-        let data;
-
-        if (value) {
-          if (types.length > 1) {
-            data = value;
-          } else if (collection) {
-            data = value.map(id => ({ type: types[0], id }));
-          } else {
-            data = { type: types[0], id: value };
-          }
+      if (value) {
+        if (types.length > 1) {
+          data = value;
+        } else if (collection) {
+          data = value.map(id => ({ type: types[0], id }));
         } else {
-          if (
-            jsonSchemaValueRequired('relationships', schema).includes(
-              relationship,
-            )
-          ) {
-            throw new Error(`Required relationship: ${camelizedRelationship}`);
-          }
-
-          data = null;
+          data = { type: types[0], id: value };
         }
-
+      } else {
         if (
-          relationship !== camelizedRelationship &&
-          hasKey(unserializedBody, relationship)
-        ) {
-          console.warn(
-            `Warning: Attribute ${relationship} should be expressed in camel-case syntax (${camelizedRelationship})`,
-          );
-        }
-
-        return Object.assign(acc, { [relationship]: { data } });
-      }
-
-      if (
-        jsonSchemaPropertyRequired('relationships', schema).includes(
-          relationship,
-        )
-      ) {
-        if (
+          jsonSchemaGroupPropertyRequired(schema).includes('relationships') &&
           jsonSchemaValueRequired('relationships', schema).includes(
             relationship,
           )
@@ -127,13 +96,36 @@ function serializedRelationships(type, unserializedBody, schema) {
           throw new Error(`Required relationship: ${camelizedRelationship}`);
         }
 
-        return Object.assign(acc, { [relationship]: { data: null } });
+        data = null;
       }
 
-      return acc;
-    },
-    {},
-  );
+      if (
+        relationship !== camelizedRelationship &&
+        hasKey(unserializedBody, relationship)
+      ) {
+        console.warn(
+          `Warning: Attribute ${relationship} should be expressed in camel-case syntax (${camelizedRelationship})`,
+        );
+      }
+
+      return Object.assign(acc, { [relationship]: { data } });
+    }
+
+    if (
+      jsonSchemaGroupPropertyRequired(schema).includes('relationships') &&
+      jsonSchemaPropertyRequired('relationships', schema).includes(relationship)
+    ) {
+      if (
+        jsonSchemaValueRequired('relationships', schema).includes(relationship)
+      ) {
+        throw new Error(`Required relationship: ${camelizedRelationship}`);
+      }
+
+      return Object.assign(acc, { [relationship]: { data: null } });
+    }
+
+    return acc;
+  }, {});
 }
 
 export function serializedAttributes(type, unserializedBody = {}, schema) {
@@ -147,10 +139,6 @@ export function serializedAttributes(type, unserializedBody = {}, schema) {
           'creator',
         ])
       : findAttributes(schema);
-
-  if (attrs.length === 0) {
-    return null;
-  }
 
   return attrs.reduce((acc, attr) => {
     const camelizedAttr = camelize(attr);
@@ -269,11 +257,17 @@ export default function serializeJsonApi(unserializedBody, link, itemId) {
   const meta =
     unserializedBody.meta && serializedMeta(unserializedBody.meta, link.schema);
 
-  if (attributes) {
+  if (
+    jsonSchemaGroupPropertyRequired(link.schema).includes('attributes') ||
+    Object.keys(attributes).length > 0
+  ) {
     data.attributes = attributes;
   }
 
-  if (relationships) {
+  if (
+    jsonSchemaGroupPropertyRequired(link.schema).includes('relationships') ||
+    Object.keys(relationships).length > 0
+  ) {
     data.relationships = relationships;
   }
 
