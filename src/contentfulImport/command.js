@@ -15,6 +15,7 @@ import publishRecords from './publishRecords';
 export default async ({
   contentfulToken,
   contentfulSpaceId,
+  contentfulEnvironment,
   datoCmsToken,
   datoCmsEnvironment,
   datoCmsCmaBaseUrl,
@@ -33,6 +34,7 @@ export default async ({
     client: client.contentful,
     skipContent,
     contentType,
+    contentfulEnvironment
   });
 
   await removeAllValidators({ datoClient, contentfulData });

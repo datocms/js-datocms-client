@@ -24,7 +24,7 @@ Usage:
   dato environment destroy <environmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato maintenance (on|off) [--force] [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato wp-import --token=<datoApiToken> [--environment=<datoEnvironment>] --wpUrl=<url> --wpUser=<user> --wpPassword=<password> [--datoCmaBaseUrl=<url>]
-  dato contentful-import --datoCmsToken=<apiToken> --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--datoCmsEnvironment=<datoEnvironment>] [--skipContent] [--datoCmaBaseUrl=<url>] [(--includeOnly <contentType>...)]
+  dato contentful-import --datoCmsToken=<apiToken> --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--contentfulEnvironment=<contentfulEnvironment>] [--datoCmsEnvironment=<datoEnvironment>] [--skipContent] [--datoCmaBaseUrl=<url>] [(--includeOnly <contentType>...)]
   dato check
   dato -h | --help
   dato --version
@@ -134,6 +134,7 @@ module.exports = argv => {
     const {
       '--contentfulToken': contentfulToken,
       '--contentfulSpaceId': contentfulSpaceId,
+      '--contentfulEnvironment': contentfulEnvironment,
       '--datoCmsToken': datoCmsToken,
       '--datoCmsEnvironment': datoCmsEnvironment,
       '--skipContent': skipContent,
@@ -145,6 +146,7 @@ module.exports = argv => {
     return contentfulImport({
       contentfulToken,
       contentfulSpaceId,
+      contentfulEnvironment,
       datoCmsCmaBaseUrl,
       datoCmsToken,
       datoCmsEnvironment,
