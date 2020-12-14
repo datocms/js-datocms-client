@@ -125,6 +125,12 @@ describe('dump', () => {
       });
 
       await client.fields.create(itemType.id, {
+        apiKey: 'title2',
+        fieldType: 'string',
+        label: 'Title 2',
+      });
+
+      await client.fields.create(itemType.id, {
         apiKey: 'slug',
         fieldType: 'slug',
         label: 'Slug',
@@ -212,6 +218,7 @@ describe('dump', () => {
           en: 'First post',
           it: 'Primo post',
         },
+        title2: 'This is second title',
         slug: 'first-post',
         image,
         video,
@@ -250,6 +257,7 @@ describe('dump', () => {
       expect(articleFile.data.updatedAt).to.not.be.null();
       expect(articleFile.data.createdAt).to.not.be.null();
       expect(articleFile.data.title).to.eq('First post');
+      expect(articleFile.data.title2).to.eq('This is second title');
       expect(articleFile.data.slug).to.eq('first-post');
       expect(articleFile.data.image.alt).to.eq('My post image alt');
       expect(articleFile.data.image.title).to.eq('Default title');
