@@ -123,6 +123,10 @@ module.exports = {
     create: true,
     destroy: true,
   },
+  scheduledUnpublishing: {
+    create: true,
+    destroy: true,
+  },
   searchResults: {
     all: true,
   },
@@ -155,6 +159,7 @@ module.exports = {
     create: true,
     update: true,
     trigger: true,
+    reindex: true,
     destroy: true,
   },
   itemTypeFilters: {

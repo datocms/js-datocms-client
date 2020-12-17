@@ -23,10 +23,17 @@ async function allPages(apiCall) {
   return items;
 }
 
-export default async ({ client, skipContent, contentType, contentfulEnvironment }) => {
+export default async ({
+  client,
+  skipContent,
+  contentType,
+  contentfulEnvironment,
+}) => {
   const spinner = ora('Downloading Contentful data structure').start();
   const environments = await client.getEnvironments();
-  const environment = environments.items.find(e => e.name === (contentfulEnvironment || 'master'));
+  const environment = environments.items.find(
+    e => e.name === (contentfulEnvironment || 'master'),
+  );
   const rawLocales = await environment.getLocales();
   const defaultLocale = rawLocales.items.find(locale => locale.default).code;
   const locales = rawLocales.items.map(locale => locale.code);
