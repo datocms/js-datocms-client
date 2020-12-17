@@ -25,6 +25,10 @@ export function decamelize(str) {
   return humpsDecamelize(str);
 }
 
+export function decamelizeLegacyApiKeysWithUnderscoreAndThenNumber(str) {
+  return humpsDecamelize(str).replace(/([0-9]+)/g, '_$1');
+}
+
 export function camelizeKeys(payload) {
   return humpsCamelizeKeys(payload, (key, convert, options) => {
     if (/-/.test(key)) {

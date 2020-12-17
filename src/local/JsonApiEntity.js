@@ -1,5 +1,9 @@
 /* eslint-disable no-underscore-dangle */
-import { decamelize, camelizeKeys } from '../utils/keyFormatter';
+import {
+  decamelize,
+  decamelizeLegacyApiKeysWithUnderscoreAndThenNumber,
+  camelizeKeys,
+} from '../utils/keyFormatter';
 
 export default class JsonApiEntity {
   constructor(payload, repo) {
@@ -39,35 +43,38 @@ export default class JsonApiEntity {
             return cachedCamelizedMeta;
           }
 
-          const decamelizedProp = decamelize(prop);
+          for (const decamelizedProp of [
+            decamelize(prop),
+            decamelizeLegacyApiKeysWithUnderscoreAndThenNumber(prop),
+          ]) {
+            if (payload.attributes && decamelizedProp in payload.attributes) {
+              if (cachedCamelizedAttributes[prop]) {
+                return cachedCamelizedAttributes[prop];
+              }
 
-          if (payload.attributes && decamelizedProp in payload.attributes) {
-            if (cachedCamelizedAttributes[prop]) {
+              cachedCamelizedAttributes[prop] = camelizeKeys(
+                payload.attributes[decamelizedProp],
+              );
+
               return cachedCamelizedAttributes[prop];
             }
 
-            cachedCamelizedAttributes[prop] = camelizeKeys(
-              payload.attributes[decamelizedProp],
-            );
+            if (
+              payload.relationships &&
+              decamelizedProp in payload.relationships
+            ) {
+              const linkage = payload.relationships[decamelizedProp].data;
 
-            return cachedCamelizedAttributes[prop];
-          }
+              if (Array.isArray(linkage)) {
+                return linkage.map(item => repo.findEntity(item.type, item.id));
+              }
 
-          if (
-            payload.relationships &&
-            decamelizedProp in payload.relationships
-          ) {
-            const linkage = payload.relationships[decamelizedProp].data;
+              if (linkage) {
+                return repo.findEntity(linkage.type, linkage.id);
+              }
 
-            if (Array.isArray(linkage)) {
-              return linkage.map(item => repo.findEntity(item.type, item.id));
+              return null;
             }
-
-            if (linkage) {
-              return repo.findEntity(linkage.type, linkage.id);
-            }
-
-            return null;
           }
 
           return Reflect.get(target, prop, receiver);
