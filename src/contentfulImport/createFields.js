@@ -1,7 +1,42 @@
 /* eslint-disable no-constant-condition */
 import ora from 'ora';
+import humps from 'humps';
 import Progress from './progress';
-import { toFieldApiKey } from './toApiKey';
+import datoFieldTypeFor from './datoFieldTypeFor';
+
+const reservedKeys = [
+  'position',
+  'is_valid',
+  'id',
+  'type',
+  'updated_at',
+  'created_at',
+  'attributes',
+  'fields',
+  'item_type',
+  'is_singleton',
+  'seo_meta_tags',
+  'parent_id',
+  'parent',
+  'children',
+  'status',
+  'meta',
+  'eq',
+  'neq',
+  'all_in',
+  'any_in',
+  'exists',
+];
+
+const toFieldApiKey = value => {
+  const apiKey = humps.decamelize(value);
+
+  if (reservedKeys.includes(apiKey)) {
+    return `${apiKey}_field`;
+  }
+
+  return apiKey;
+};
 
 const findItemTypeId = ({ contentfulField, itemTypeMapping }) => {
   const linkValidation = contentfulField.validations.find(
@@ -9,12 +44,12 @@ const findItemTypeId = ({ contentfulField, itemTypeMapping }) => {
   );
 
   if (linkValidation) {
-    return linkValidation.linkContentType.map(contentType =>
-      itemTypeMapping[contentType.sys.id].map(iT => iT.id),
+    return linkValidation.linkContentType.map(
+      contentTypeId => itemTypeMapping[contentTypeId].id,
     );
   }
 
-  return itemTypeMapping.map(pair => Object.values(pair)).flat();
+  return Object.values(itemTypeMapping).map(iT => iT.id);
 };
 
 export default async ({ itemTypeMapping, datoClient, contentfulData }) => {
@@ -33,12 +68,15 @@ export default async ({ itemTypeMapping, datoClient, contentfulData }) => {
     const fieldsMapping = {};
 
     for (const contentType of contentTypes) {
-      fieldsMapping[contentType.sys.id] = [];
+      const contentTypeId = contentType.sys.id;
 
-      const itemType = itemTypeMapping[contentType.sys.id];
+      fieldsMapping[contentTypeId] = [];
+
+      const itemType = itemTypeMapping[contentTypeId];
 
       for (const contentfulField of contentType.fields) {
         const position = contentType.fields.indexOf(contentfulField);
+        let validators = {};
 
         if (
           contentfulField.type === 'Link' &&
@@ -87,8 +125,12 @@ export default async ({ itemTypeMapping, datoClient, contentfulData }) => {
           itemType.id,
           fieldAttributes,
         );
+
         spinner.text = progress.tick();
-        fieldsMapping[contentType.sys.id].push(datoField);
+        fieldsMapping[contentTypeId].push({
+          datoField,
+          contentfulFieldId: contentfulField.id,
+        });
       }
     }
 

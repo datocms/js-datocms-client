@@ -2,7 +2,7 @@
 
 import ora from 'ora';
 import Progress from './progress';
-import datoFieldValidatorsFor from './datoFieldValidatorsFor';
+import datoValidatorsFor from './datoValidatorsFor';
 
 export default async ({ fieldsMapping, datoClient, contentfulData }) => {
   const spinner = ora('').start();
@@ -17,17 +17,25 @@ export default async ({ fieldsMapping, datoClient, contentfulData }) => {
     spinner.text = progress.tick();
 
     for (const contentType of contentTypes) {
-      const itemTypeFields = fieldsMapping[contentType.sys.id];
+      const datoFields = fieldsMapping[contentType.sys.id];
 
-      for (const field of contentType.fields) {
-        const datoField = itemTypeFields.find(f => f.apiKey === field.id);
+      for (const contentfulField of contentType.fields) {
+        const { datoField } = datoFields.find(
+          f => f.contentfulFieldId === contentfulField.id,
+        );
+
         if (!datoField) {
-          break;
+          console.log('Dato field not found');
+          // eslint-disable-next-line no-continue
+          continue;
         }
 
-        const validators = await datoFieldValidatorsFor({ field });
+        const validators = datoValidatorsFor(contentfulField);
 
-        await datoClient.fields.update(datoField.id, { validators });
+        await datoClient.fields.update(datoField.id, {
+          validators: { ...datoField.validators, ...validators },
+        });
+
         spinner.text = progress.tick();
       }
     }
