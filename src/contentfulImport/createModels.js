@@ -17,7 +17,7 @@ export default async ({ datoClient, contentfulData }) => {
       const contKey = contentType.sys.id;
       let itemTypeApiKey = singularize(humps.decamelize(contKey));
 
-      const itemAttributes = {
+      const itemTypeAttributes = {
         apiKey: itemTypeApiKey,
         name: contentType.name,
         modularBlock: false,
@@ -30,7 +30,7 @@ export default async ({ datoClient, contentfulData }) => {
       };
 
       const itemType = await datoClient.itemTypes
-        .create(itemAttributes)
+        .create(itemTypeAttributes)
         .catch(e => {
           if (
             e.body &&
@@ -44,7 +44,7 @@ export default async ({ datoClient, contentfulData }) => {
             itemTypeApiKey = `${contKey}_block`;
 
             const newAttr = {
-              ...itemAttributes,
+              ...itemTypeAttributes,
               apiKey: itemTypeApiKey,
             };
 
@@ -55,10 +55,9 @@ export default async ({ datoClient, contentfulData }) => {
             e.body.data &&
             e.body.data[0].attributes.details.code === 'VALIDATION_UNIQUENESS'
           ) {
-            console.error(`Error: This model already exists`);
-          } else {
-            throw e;
+            return datoClient.itemTypes.find(itemTypeApiKey);
           }
+          throw e;
         });
 
       spinner.text = progress.tick();

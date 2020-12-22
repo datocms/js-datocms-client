@@ -1,9 +1,38 @@
 import ora from 'ora';
 import promiseLimit from 'promise-limit';
 import Progress from './progress';
-import { toFieldApiKey } from './toApiKey';
 
 const { camelize } = require('humps');
+
+const datoValueForFieldType = (value, field) => {
+  // Fills link and media fields temporarly. They will be valorized once we create all items and files
+  if (['links', 'gallery'].includes(field.fieldType)) {
+    return [];
+  }
+
+  if (['link', 'file'].includes(field.fieldType)) {
+    return null;
+  }
+
+  if (field.fieldType === 'lat_lon') {
+    return (
+      value && {
+        latitude: value.lat,
+        longitude: value.lon,
+      }
+    );
+  }
+
+  if (field.fieldType === 'string' && Array.isArray(value)) {
+    return value && value.join(', ');
+  }
+
+  if (field.fieldType === 'json') {
+    return value && JSON.stringify(value, null, 2);
+  }
+
+  return value;
+};
 
 export default async ({
   itemTypeMapping,
@@ -27,120 +56,66 @@ export default async ({
 
     for (const entry of entries) {
       const { contentType } = entry.sys;
-
       const itemType = itemTypeMapping[contentType.sys.id];
-      const itemTypeFields = fieldsMapping[contentType.sys.id];
 
-      if (itemType) {
-        const emptyFieldValues = itemTypeFields.reduce((accFields, field) => {
-          if (field.localized) {
-            const value = contentfulData.locales
-              .map(locale => locale)
-              .reduce(
-                (accLocales, locale) =>
-                  Object.assign(accLocales, { [locale]: null }),
-                {},
-              );
-            return Object.assign(accFields, {
-              [camelize(field.apiKey)]: value,
-            });
-          }
-          return Object.assign(accFields, { [camelize(field.apiKey)]: null });
-        }, {});
-
-        const recordAttributes = Object.entries(entry.fields).reduce(
-          (acc, [option, value]) => {
-            const apiKey = toFieldApiKey(option);
-            const field = itemTypeFields.find(f => f.apiKey === apiKey);
-            switch (field.fieldType) {
-              case 'link':
-              case 'links':
-              case 'file':
-              case 'gallery':
-                return acc;
-              default:
-                break;
-            }
-
-            if (field.localized) {
-              const localizedValue = Object.keys(value).reduce(
-                (innerAcc, locale) => {
-                  let innerValue = value[locale];
-
-                  if (field.fieldType === 'lat_lon') {
-                    innerValue = {
-                      latitude: innerValue.lat,
-                      longitude: innerValue.lon,
-                    };
-                  }
-
-                  if (
-                    field.fieldType === 'string' &&
-                    Array.isArray(innerValue)
-                  ) {
-                    innerValue = innerValue.join(', ');
-                  }
-
-                  if (field.fieldType === 'json') {
-                    innerValue = JSON.stringify(innerValue, null, 2);
-                  }
-                  return Object.assign(innerAcc, {
-                    [locale]: innerValue,
-                  });
-                },
-                {},
-              );
-
-              const fallbackValues = contentfulData.locales.reduce(
-                (accLocales, locale) => {
-                  return Object.assign(accLocales, {
-                    [locale]: localizedValue[contentfulData.defaultLocale],
-                  });
-                },
-                {},
-              );
-
-              return Object.assign(acc, {
-                [camelize(apiKey)]: { ...fallbackValues, ...localizedValue },
-              });
-            }
-            let innerValue = value[contentfulData.defaultLocale];
-
-            if (field.fieldType === 'lat_lon') {
-              innerValue = {
-                latitude: innerValue.lat,
-                longitude: innerValue.lon,
-              };
-            }
-
-            if (field.fieldType === 'string' && Array.isArray(innerValue)) {
-              innerValue = innerValue.join(', ');
-            }
-
-            if (field.fieldType === 'json') {
-              innerValue = JSON.stringify(innerValue, null, 2);
-            }
-            return Object.assign(acc, { [camelize(apiKey)]: innerValue });
-          },
-          emptyFieldValues,
-        );
-
-        jobs.push(
-          limit(async () => {
-            const record = await datoClient.items.create({
-              ...recordAttributes,
-              itemType: itemType.id.toString(),
-            });
-
-            if (entry.sys.publishedVersion) {
-              recordsToPublish.push(record.id);
-            }
-
-            spinner.text = progress.tick();
-            contentfulRecordMap[entry.sys.id] = record.id;
-          }),
-        );
+      if (!itemType) {
+        // eslint-disable-next-line no-continue
+        continue;
       }
+
+      const datoFields = fieldsMapping[contentType.sys.id];
+
+      // Contentful returns only valorized fields while Dato requires all the fields to be passed
+      const allFieldApiKeys = [
+        ...new Set([
+          ...Object.keys(entry.fields),
+          ...datoFields.map(f => f.contentfulFieldId),
+        ]),
+      ];
+
+      const recordAttributes = allFieldApiKeys.reduce((acc, apiKey) => {
+        const contentfulItem = entry.fields[apiKey];
+        const { datoField } = datoFields.find(
+          f => f.contentfulFieldId === apiKey,
+        );
+
+        let datoValue;
+
+        if (datoField.localized) {
+          datoValue = contentfulData.locales.reduce((innerAcc, locale) => {
+            return {
+              ...innerAcc,
+              [locale]: datoValueForFieldType(
+                contentfulItem && contentfulItem[locale],
+                datoField,
+              ),
+            };
+          }, {});
+        } else {
+          datoValue = datoValueForFieldType(
+            contentfulItem && contentfulItem[contentfulData.defaultLocale],
+            datoField,
+          );
+        }
+
+        return { ...acc, [camelize(datoField.apiKey)]: datoValue };
+      }, {});
+
+      jobs.push(
+        limit(async () => {
+          const record = await datoClient.items.create({
+            ...recordAttributes,
+            itemType: itemType.id.toString(),
+          });
+
+          if (entry.sys.publishedVersion) {
+            recordsToPublish.push(record.id);
+          }
+
+          spinner.text = progress.tick();
+          contentfulRecordMap[entry.sys.id] = record.id;
+        }),
+      );
     }
 
     await Promise.all(jobs);
