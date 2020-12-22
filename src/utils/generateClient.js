@@ -1,5 +1,5 @@
 import jsonref from 'json-schema-ref-parser';
-import pluralize from 'pluralize';
+import { singularize } from 'inflection';
 import { decamelize, camelize } from 'humps';
 import fetch from './fetch';
 import deserializeJsonApi from './deserializeJsonApi';
@@ -24,7 +24,7 @@ const toMap = keys =>
   keys.reduce((acc, prop) => Object.assign(acc, { [prop]: true }), {});
 
 const findLinkFor = (schema, namespace, apiCall) => {
-  const singularized = decamelize(pluralize.singular(namespace));
+  const singularized = decamelize(singularize(namespace));
   const sub = schema.properties[singularized];
 
   if (!sub) {
@@ -105,7 +105,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
               }
 
               return schemaPromise.then(async schema => {
-                const singularized = decamelize(pluralize.singular(namespace));
+                const singularized = decamelize(singularize(namespace));
                 const link = findLinkFor(schema, singularized, apiCall);
 
                 let lastUrlId;

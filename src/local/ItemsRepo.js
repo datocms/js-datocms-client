@@ -1,4 +1,4 @@
-import pluralize from 'pluralize';
+import { pluralize } from 'inflection';
 import { camelize } from 'humps';
 import Item from './Item';
 import Site from './Site';

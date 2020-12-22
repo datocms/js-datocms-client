@@ -1,17 +1,17 @@
 import ora from 'ora';
+import { singularize } from 'inflection';
 import Progress from './progress';
-import { toItemApiKey } from './toApiKey';
 
 export default async ({ datoClient, contentfulData }) => {
   let spinner = ora('Fetching existing models').start();
+
   try {
     const itemTypes = await datoClient.itemTypes.all();
-
-    const importedItemTypes = itemTypes.filter(itemType => {
-      return contentfulData.contentTypes.some(contentType => {
-        return itemType.apiKey === toItemApiKey(contentType.sys.id);
-      });
-    });
+    const importedItemTypes = itemTypes.filter(iT =>
+      contentfulData.contentTypes
+        .map(c => singularize(c.sys.id))
+        .includes(iT.apiKey),
+    );
 
     spinner.succeed();
 

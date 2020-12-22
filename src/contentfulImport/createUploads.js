@@ -1,6 +1,6 @@
 import ora from 'ora';
 import Progress from './progress';
-import { toItemApiKey, toFieldApiKey } from './toApiKey';
+import { toFieldApiKey } from './toApiKey';
 
 const { camelize } = require('humps');
 
@@ -78,12 +78,7 @@ export default async ({
       for (const key of Object.keys(entry.fields)) {
         const entryFieldValue = entry.fields[key];
 
-        const contentTypeApiKey = toItemApiKey(entry.sys.contentType.sys.id);
-        const apiKey = toFieldApiKey(key);
-
-        const field = fieldsMapping[contentTypeApiKey].find(
-          f => f.apiKey === apiKey,
-        );
+        const field = fieldsMapping[key].find(f => f.apiKey === apiKey);
 
         let fileFieldAttributes = null;
 

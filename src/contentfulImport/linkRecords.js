@@ -1,6 +1,6 @@
 import ora from 'ora';
 import Progress from './progress';
-import { toItemApiKey, toFieldApiKey } from './toApiKey';
+import { toFieldApiKey } from './toApiKey';
 
 const { camelize } = require('humps');
 
@@ -21,11 +21,9 @@ export default async ({
 
     for (const entry of entries) {
       const { contentType } = entry.sys;
-      const contentTypeApiKey = toItemApiKey(contentType.sys.id);
 
       const datoItemId = contentfulRecordMap[entry.sys.id];
-
-      const itemTypeFields = fieldsMapping[contentTypeApiKey];
+      const itemTypeFields = fieldsMapping[contentType.sys.id];
 
       const recordAttributes = Object.entries(entry.fields).reduce(
         (outerAcc, [option, value]) => {
