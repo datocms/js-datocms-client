@@ -1,12 +1,12 @@
 import ora from 'ora';
 import promiseLimit from 'promise-limit';
 import Progress from './progress';
-import { toItemApiKey, toFieldApiKey } from './toApiKey';
+import { toFieldApiKey } from './toApiKey';
 
 const { camelize } = require('humps');
 
 export default async ({
-  itemTypes,
+  itemTypeMapping,
   fieldsMapping,
   datoClient,
   contentfulData,
@@ -27,13 +27,9 @@ export default async ({
 
     for (const entry of entries) {
       const { contentType } = entry.sys;
-      const contentTypeApiKey = toItemApiKey(contentType.sys.id);
 
-      const itemType = itemTypes.find(iT => {
-        return iT.apiKey === contentTypeApiKey;
-      });
-
-      const itemTypeFields = fieldsMapping[contentTypeApiKey];
+      const itemType = itemTypeMapping[contentType.sys.id];
+      const itemTypeFields = fieldsMapping[contentType.sys.id];
 
       if (itemType) {
         const emptyFieldValues = itemTypeFields.reduce((accFields, field) => {

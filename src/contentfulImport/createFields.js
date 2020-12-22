@@ -1,34 +1,44 @@
 /* eslint-disable no-constant-condition */
 import ora from 'ora';
 import Progress from './progress';
-import { toItemApiKey, toFieldApiKey } from './toApiKey';
-import datoFieldTypeFor from './datoFieldTypeFor';
-import datoLinkItemTypeFor from './datoLinkItemTypeFor';
+import { toFieldApiKey } from './toApiKey';
 
-export default async ({ itemTypes, datoClient, contentfulData }) => {
+const findItemTypeId = ({ contentfulField, itemTypeMapping }) => {
+  const linkValidation = contentfulField.validations.find(
+    val => val.linkContentType,
+  );
+
+  if (linkValidation) {
+    return linkValidation.linkContentType.map(contentType =>
+      itemTypeMapping[contentType.sys.id].map(iT => iT.id),
+    );
+  }
+
+  return itemTypeMapping.map(pair => Object.values(pair)).flat();
+};
+
+export default async ({ itemTypeMapping, datoClient, contentfulData }) => {
   const spinner = ora('').start();
 
   try {
     const { contentTypes } = contentfulData;
+
     const fieldSize = contentTypes
       .map(contentType => contentType.fields.length)
       .reduce((acc, length) => acc + length, 0);
 
     const progress = new Progress(fieldSize, 'Creating fields');
     spinner.text = progress.tick();
+
     const fieldsMapping = {};
 
     for (const contentType of contentTypes) {
-      const contentTypeApiKey = toItemApiKey(contentType.sys.id);
-      fieldsMapping[contentTypeApiKey] = [];
+      fieldsMapping[contentType.sys.id] = [];
 
-      const itemType = itemTypes.find(iT => {
-        return iT.apiKey === contentTypeApiKey;
-      });
+      const itemType = itemTypeMapping[contentType.sys.id];
 
       for (const contentfulField of contentType.fields) {
         const position = contentType.fields.indexOf(contentfulField);
-        let validators = {};
 
         if (
           contentfulField.type === 'Link' &&
@@ -36,10 +46,7 @@ export default async ({ itemTypes, datoClient, contentfulData }) => {
         ) {
           validators = {
             itemItemType: {
-              itemTypes: datoLinkItemTypeFor({
-                itemTypes,
-                field: contentfulField,
-              }),
+              itemTypes: findItemTypeId({ itemTypeMapping, contentfulField }),
             },
           };
         }
@@ -51,10 +58,7 @@ export default async ({ itemTypes, datoClient, contentfulData }) => {
         ) {
           validators = {
             itemsItemType: {
-              itemTypes: datoLinkItemTypeFor({
-                itemTypes,
-                field: contentfulField.items,
-              }),
+              itemTypes: findItemTypeId({ itemTypeMapping, contentfulField }),
             },
           };
         }
@@ -84,7 +88,7 @@ export default async ({ itemTypes, datoClient, contentfulData }) => {
           fieldAttributes,
         );
         spinner.text = progress.tick();
-        fieldsMapping[contentTypeApiKey].push(datoField);
+        fieldsMapping[contentType.sys.id].push(datoField);
       }
     }
 

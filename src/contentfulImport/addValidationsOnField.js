@@ -2,15 +2,9 @@
 
 import ora from 'ora';
 import Progress from './progress';
-import { toItemApiKey, toFieldApiKey } from './toApiKey';
 import datoFieldValidatorsFor from './datoFieldValidatorsFor';
 
-export default async ({
-  itemTypes,
-  fieldsMapping,
-  datoClient,
-  contentfulData,
-}) => {
+export default async ({ fieldsMapping, datoClient, contentfulData }) => {
   const spinner = ora('').start();
 
   try {
@@ -23,18 +17,16 @@ export default async ({
     spinner.text = progress.tick();
 
     for (const contentType of contentTypes) {
-      const contentTypeApiKey = toItemApiKey(contentType.sys.id);
-
-      const itemTypeFields = fieldsMapping[contentTypeApiKey];
+      const itemTypeFields = fieldsMapping[contentType.sys.id];
 
       for (const field of contentType.fields) {
-        const fieldApiKey = toFieldApiKey(field.id);
-        const datoField = itemTypeFields.find(f => f.apiKey === fieldApiKey);
+        const datoField = itemTypeFields.find(f => f.apiKey === field.id);
         if (!datoField) {
           break;
         }
 
-        const validators = await datoFieldValidatorsFor({ field, itemTypes });
+        const validators = await datoFieldValidatorsFor({ field });
+
         await datoClient.fields.update(datoField.id, { validators });
         spinner.text = progress.tick();
       }

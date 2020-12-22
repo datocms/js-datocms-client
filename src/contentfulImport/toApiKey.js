@@ -1,9 +1,4 @@
 import humps from 'humps';
-import pluralize from 'pluralize';
-
-export const toItemApiKey = value => {
-  return pluralize.singular(humps.decamelize(value));
-};
 
 export const toFieldApiKey = value => {
   const reservedKeys = [

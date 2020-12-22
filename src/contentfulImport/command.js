@@ -45,17 +45,17 @@ export default async ({
 
   await setLocales({ datoClient, contentfulData });
 
-  const itemTypes = await createModels({ datoClient, contentfulData });
+  const itemTypeMapping = await createModels({ datoClient, contentfulData });
 
   const fieldsMapping = await createFields({
-    itemTypes,
+    itemTypeMapping,
     datoClient,
     contentfulData,
   });
 
   if (!skipContent) {
     const { contentfulRecordMap, recordsToPublish } = await createRecords({
-      itemTypes,
+      itemTypeMapping,
       fieldsMapping,
       datoClient,
       contentfulData,
@@ -63,7 +63,6 @@ export default async ({
 
     await createUploads({
       fieldsMapping,
-      itemTypes,
       datoClient,
       contentfulData,
       contentfulRecordMap,
@@ -93,7 +92,6 @@ export default async ({
   }
 
   await addValidationsOnField({
-    itemTypes,
     fieldsMapping,
     datoClient,
     contentfulData,
