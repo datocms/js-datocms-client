@@ -1,10 +1,13 @@
 import ora from 'ora';
-import humps from 'humps';
-import { singularize } from 'inflection';
 import Progress from './progress';
 
 export default async ({ datoClient, contentfulData }) => {
   const spinner = ora().start();
+
+  const toItemTypeApiKey = value => {
+    return `${value.toLowerCase().replace(/\d+/, '')}_model`;
+  };
+
   try {
     const { contentTypes } = contentfulData;
 
@@ -15,7 +18,7 @@ export default async ({ datoClient, contentfulData }) => {
 
     for (const contentType of contentTypes) {
       const contKey = contentType.sys.id;
-      let itemTypeApiKey = singularize(humps.decamelize(contKey));
+      const itemTypeApiKey = toItemTypeApiKey(contKey);
 
       const itemTypeAttributes = {
         apiKey: itemTypeApiKey,
@@ -29,36 +32,7 @@ export default async ({ datoClient, contentfulData }) => {
         draftModeActive: true,
       };
 
-      const itemType = await datoClient.itemTypes
-        .create(itemTypeAttributes)
-        .catch(e => {
-          if (
-            e.body &&
-            e.body.data &&
-            e.body.data[0].attributes.details.code === 'VALIDATION_PLURAL'
-          ) {
-            console.error(
-              `Error: ${contKey} is not a valid DatoCMS model name. A ${contKey}_page will be created instead`,
-            );
-
-            itemTypeApiKey = `${contKey}_block`;
-
-            const newAttr = {
-              ...itemTypeAttributes,
-              apiKey: itemTypeApiKey,
-            };
-
-            return datoClient.itemTypes.create(newAttr);
-          }
-          if (
-            e.body &&
-            e.body.data &&
-            e.body.data[0].attributes.details.code === 'VALIDATION_UNIQUENESS'
-          ) {
-            return datoClient.itemTypes.find(itemTypeApiKey);
-          }
-          throw e;
-        });
+      const itemType = await datoClient.itemTypes.create(itemTypeAttributes);
 
       spinner.text = progress.tick();
 
