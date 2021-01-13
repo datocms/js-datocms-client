@@ -1,5 +1,6 @@
 import File from './File';
 import Seo from './Seo';
+import StructuredText from './StructuredText';
 import Links from './Links';
 import DateTime from './DateTime';
 import DateOnly from './DateOnly';
@@ -62,6 +63,12 @@ const fieldTypeParser = {
       return value;
     }
     return JSON.parse(value);
+  },
+  structured_text(value, { itemsRepo }) {
+    if (!value) {
+      return value;
+    }
+    return new StructuredText(value, { itemsRepo });
   },
 };
 

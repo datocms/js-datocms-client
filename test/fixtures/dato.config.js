@@ -1,4 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-param-reassign */
+const { render } = require('datocms-structured-text-to-html-string');
 
 module.exports = (dato, root, i18n) => {
   root.addToDataFile('site.yml', 'yaml', dato.site.toMap());
@@ -13,6 +15,44 @@ module.exports = (dato, root, i18n) => {
             frontmatter: {
               ...article.toMap(),
               croppedUrl: article.image.url({ fit: 'crop', w: 40, h: 40 }),
+              structuredText: {
+                ...article.content.toMap(),
+                excerpt: render({
+                  structuredText: article.content,
+                  renderInlineRecord: ({ adapter, record }) => {
+                    switch (record.itemType.apiKey) {
+                      case 'author':
+                        return adapter.renderNode(
+                          'a',
+                          { href: `/authors/${record.name.toLowerCase()}` },
+                          record.name,
+                        );
+                      default:
+                        return null;
+                    }
+                  },
+                  renderLinkToRecord: ({ record, children, adapter }) => {
+                    switch (record.itemType.apiKey) {
+                      case 'author':
+                        return adapter.renderNode(
+                          'a',
+                          { href: `/authors/${record.name.toLowerCase()}` },
+                          children,
+                        );
+                      default:
+                        return null;
+                    }
+                  },
+                  renderBlock: ({ record, adapter }) => {
+                    switch (record.itemType.apiKey) {
+                      case 'block':
+                        return adapter.renderNode('figure', null, record.text);
+                      default:
+                        return null;
+                    }
+                  },
+                }),
+              },
             },
             content: article.title,
           });
