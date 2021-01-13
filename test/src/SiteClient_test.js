@@ -2,6 +2,7 @@ import { expect } from 'chai';
 /* global generateNewAccountClient:true */
 
 import u from 'updeep';
+import b from 'unist-builder';
 import { SiteClient, buildModularBlock, ApiException } from '../../src/index';
 
 describe('Site API', () => {
@@ -529,6 +530,61 @@ describe('Site API', () => {
       }),
     );
   });
+
+  it(
+    'structured text',
+    vcr(async () => {
+      const articleItemType = await client.itemTypes.create({
+        name: 'Article',
+        apiKey: 'article',
+      });
+
+      const contentItemType = await client.itemTypes.create({
+        name: 'Block',
+        apiKey: 'block',
+        modularBlock: true,
+      });
+
+      await client.fields.create(contentItemType.id, {
+        label: 'Text',
+        fieldType: 'text',
+        apiKey: 'text',
+      });
+
+      await client.fields.create(articleItemType.id, {
+        label: 'Content',
+        fieldType: 'structured_text',
+        apiKey: 'content',
+        validators: {
+          structuredTextBlocks: { itemTypes: [contentItemType.id] },
+          structuredTextLinks: { itemTypes: [] },
+        },
+      });
+
+      const item = await client.items.create({
+        itemType: articleItemType.id,
+        content: {
+          schema: 'dast',
+          document: b('root', [
+            b('heading', { level: 1 }, [b('span', 'This is the title!')]),
+            b('paragraph', [
+              b('span', 'And '),
+              b('span', { marks: ['strong'] }, 'this'),
+              b('span', ' is a paragraph!'),
+            ]),
+            b('block', {
+              item: buildModularBlock({
+                itemType: contentItemType.id,
+                text: 'Foo',
+              }),
+            }),
+          ]),
+        },
+      });
+
+      expect(item.content.document.children.length).to.equal(3);
+    }),
+  );
 
   describe('plugins', () => {
     it(
