@@ -64,7 +64,7 @@ function serializedRelationships(type, unserializedBody, schema) {
       hasKey(unserializedBody, camelizedRelationship)
     ) {
       throw new Error(
-        `Attribute ${camelizedRelationship} is expressed both in camel-case and snake-case`,
+        `Attribute ${camelizedRelationship} is expressed both in camelCase and snake_case`,
       );
     }
 
@@ -104,7 +104,7 @@ function serializedRelationships(type, unserializedBody, schema) {
         hasKey(unserializedBody, relationship)
       ) {
         console.warn(
-          `Warning: Attribute ${relationship} should be expressed in camel-case syntax (${camelizedRelationship})`,
+          `Warning: Attribute ${relationship} should be expressed in camelCase syntax (${camelizedRelationship})`,
         );
       }
 
@@ -156,13 +156,13 @@ export function serializedAttributes(type, unserializedBody = {}, schema) {
       hasKey(unserializedBody, camelizedAttr)
     ) {
       throw new Error(
-        `Attribute ${camelizedAttr} is expressed both in camel-case and snake-case`,
+        `Attribute ${camelizedAttr} is expressed both in camelCase and snake_case`,
       );
     }
 
     if (attr !== camelizedAttr && hasKey(unserializedBody, attr)) {
       console.warn(
-        `Warning: Attribute ${attr} should be expressed in camel-case syntax (${camelizedAttr})`,
+        `Warning: Attribute ${attr} should be expressed in camelCase syntax (${camelizedAttr})`,
       );
       return Object.assign(acc, {
         [attr]: decamelizeKeysIfRequired(unserializedBody[attr]),
@@ -206,13 +206,13 @@ export function serializedMeta(unserializedMeta = {}, schema) {
       hasKey(unserializedMeta, camelizedAttr)
     ) {
       throw new Error(
-        `Meta ${camelizedAttr} is expressed both in camel-case and snake-case`,
+        `Meta ${camelizedAttr} is expressed both in camelCase and snake_case`,
       );
     }
 
     if (attr !== camelizedAttr && hasKey(unserializedMeta, attr)) {
       console.warn(
-        `Warning: Meta ${attr} should be expressed in camel-case syntax (${camelizedAttr})`,
+        `Warning: Meta ${attr} should be expressed in camelCase syntax (${camelizedAttr})`,
       );
       return Object.assign(acc, {
         [attr]: decamelizeKeysIfRequired(unserializedMeta[attr]),
