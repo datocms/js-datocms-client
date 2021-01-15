@@ -94,7 +94,7 @@ const datoValidatorsForAsset = ({ field }) => {
         validators.file_size = {
           ...validators.file_size,
           min_value: validation.assetFileSize.min,
-          min_unit: 'B',
+          min_unit: validation.assetFileSize.min ? 'B' : null,
         };
       }
       if (
@@ -103,7 +103,7 @@ const datoValidatorsForAsset = ({ field }) => {
         validators.file_size = {
           ...validators.file_size,
           max_value: validation.assetFileSize.max,
-          max_unit: 'B',
+          max_unit: validation.assetFileSize.max ? 'B' : null,
         };
       }
     }
@@ -151,7 +151,16 @@ export default function createFields(field) {
           return {};
       }
     case 'Array':
-      return datoValidatorsForArray({ field });
+      switch (field.items.linkType) {
+        case 'Asset':
+          return datoValidatorsForArray({ field, itemTypes });
+        case 'Entry':
+          return datoValidatorsForArray({ field, itemTypes });
+        case 'Symbol':
+          return datoValidatorsForString({ field });
+        default:
+          return datoValidatorsForString({ field });
+      }
     case 'Boolean':
     default:
       return {};

@@ -12,7 +12,11 @@ export default async ({ recordIds, datoClient }) => {
       await datoClient.items.publish(recordId);
       spinner.text = progress.tick();
     } catch (e) {
-      console.error(`Could not publish Record #${recordId}`);
+      console.log(
+        `Cannot publish record: ${recordId}.`,
+        `Contentful allows for published records with draft links, DatoCMS don't.`,
+        `Error: ${e}`,
+      );
     }
   }
 

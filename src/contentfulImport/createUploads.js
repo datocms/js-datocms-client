@@ -25,7 +25,9 @@ export default async ({ datoClient, contentfulData }) => {
             return Object.assign(acc, {
               [locale]: {
                 title: asset.fields.title[locale],
-                alt: asset.fields.description[locale],
+                alt: asset.fields.description
+                  ? asset.fields.description[locale]
+                  : asset.fields.title[locale],
                 customData: {},
               },
             });
