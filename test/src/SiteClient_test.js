@@ -3,6 +3,8 @@ import { expect } from 'chai';
 
 import u from 'updeep';
 import b from 'unist-builder';
+import unistMap from 'unist-util-map';
+import { isBlock } from 'datocms-structured-text-utils';
 import { SiteClient, buildModularBlock, ApiException } from '../../src/index';
 
 describe('Site API', () => {
@@ -527,11 +529,36 @@ describe('Site API', () => {
         });
 
         expect(item.content.length).to.equal(2);
+
+        const itemWithNestedBlocks = await client.items.find(item.id, {
+          nested: true,
+        });
+
+        await client.items.update(item.id, {
+          content: itemWithNestedBlocks.content.map(block => ({
+            ...block,
+            attributes: {
+              ...block.attributes,
+              text: `Updated ${block.attributes.text}`,
+            },
+          })),
+        });
+
+        const updatedItemWithNestedBlocks = await client.items.find(item.id, {
+          nested: true,
+        });
+
+        expect(updatedItemWithNestedBlocks.content[0].attributes.text).to.equal(
+          'Updated Foo',
+        );
+        expect(updatedItemWithNestedBlocks.content[1].attributes.text).to.equal(
+          'Updated Bar',
+        );
       }),
     );
   });
 
-  it(
+  it.only(
     'structured text',
     vcr(async () => {
       const articleItemType = await client.itemTypes.create({
@@ -583,6 +610,39 @@ describe('Site API', () => {
       });
 
       expect(item.content.document.children.length).to.equal(3);
+
+      const itemWithNestedBlocks = await client.items.find(item.id, {
+        nested: true,
+      });
+
+      await client.items.update(item.id, {
+        content: {
+          ...itemWithNestedBlocks.content,
+          document: unistMap(itemWithNestedBlocks.content.document, node => {
+            return isBlock(node)
+              ? {
+                  ...node,
+                  item: {
+                    ...node.item,
+                    attributes: {
+                      ...node.item.attributes,
+                      text: `Updated ${node.item.attributes.text}`,
+                    },
+                  },
+                }
+              : node;
+          }),
+        },
+      });
+
+      const updatedItemWithNestedBlocks = await client.items.find(item.id, {
+        nested: true,
+      });
+
+      expect(
+        updatedItemWithNestedBlocks.content.document.children[2].item.attributes
+          .text,
+      ).to.equal('Updated Foo');
     }),
   );
 
