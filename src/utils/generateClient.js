@@ -262,7 +262,13 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   : false;
 
                 if (allPages) {
-                  const request = fetchAllPages(rawClient, url, queryString);
+                  const perPage = allPages === true ? undefined : allPages;
+                  const request = fetchAllPages(
+                    rawClient,
+                    url,
+                    queryString,
+                    perPage,
+                  );
                   return request.then(response => deserialize(null, response));
                 }
 
