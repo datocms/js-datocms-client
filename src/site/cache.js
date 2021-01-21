@@ -40,6 +40,7 @@ module.exports = {
     all: true,
     find: true,
     destroy: true,
+    duplicate: true,
   },
   fieldsets: {
     create: true,
