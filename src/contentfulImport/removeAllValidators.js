@@ -1,7 +1,7 @@
 /* eslint-disable no-constant-condition */
 
 import ora from 'ora';
-import { singularize } from 'inflection';
+import { singular } from 'pluralize';
 import Progress from './progress';
 
 export default async ({ datoClient, contentfulData }) => {
@@ -11,7 +11,7 @@ export default async ({ datoClient, contentfulData }) => {
     const itemTypes = await datoClient.itemTypes.all();
     const importedItemTypes = itemTypes.filter(iT =>
       contentfulData.contentTypes
-        .map(c => singularize(c.sys.id))
+        .map(c => singular(c.sys.id))
         .includes(iT.apiKey),
     );
 

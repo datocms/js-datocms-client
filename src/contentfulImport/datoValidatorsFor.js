@@ -153,9 +153,8 @@ export default function createFields(field) {
     case 'Array':
       switch (field.items.linkType) {
         case 'Asset':
-          return datoValidatorsForArray({ field, itemTypes });
         case 'Entry':
-          return datoValidatorsForArray({ field, itemTypes });
+          return datoValidatorsForArray({ field });
         case 'Symbol':
           return datoValidatorsForString({ field });
         default:

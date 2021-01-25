@@ -1,5 +1,5 @@
 import ora from 'ora';
-import { singularize } from 'inflection';
+import { singular } from 'pluralize';
 import { camelize } from 'humps';
 import Progress from './progress';
 
@@ -8,7 +8,7 @@ export default async ({ datoClient, contentfulData: { contentTypes } }) => {
 
   try {
     const itemTypes = await datoClient.itemTypes.all();
-    const contKeys = contentTypes.map(c => singularize(c.sys.id));
+    const contKeys = contentTypes.map(c => singular(c.sys.id));
 
     const imported = itemTypes.filter(iT =>
       contKeys.includes(camelize(iT.apiKey)),
