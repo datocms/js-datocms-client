@@ -1,12 +1,9 @@
 import ora from 'ora';
 import Progress from './progress';
+import toItemTypeApiKey from './toItemTypeApiKey';
 
 export default async ({ datoClient, contentfulData }) => {
   const spinner = ora().start();
-
-  const toItemTypeApiKey = value => {
-    return `${value.toLowerCase().replace(/\d+/, '')}_model`;
-  };
 
   try {
     const { contentTypes } = contentfulData;
