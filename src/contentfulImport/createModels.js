@@ -1,12 +1,13 @@
 import ora from 'ora';
+import { decamelize } from 'humps';
 import Progress from './progress';
+
+export const toItemTypeApiKey = value => {
+  return `${decamelize(value).replace(/\d+/, '')}_model`;
+};
 
 export default async ({ datoClient, contentfulData }) => {
   const spinner = ora().start();
-
-  const toItemTypeApiKey = value => {
-    return `${value.toLowerCase().replace(/\d+/, '')}_model`;
-  };
 
   try {
     const { contentTypes } = contentfulData;

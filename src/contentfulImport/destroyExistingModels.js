@@ -1,18 +1,14 @@
 import ora from 'ora';
-import { singular } from 'pluralize';
-import { camelize } from 'humps';
 import Progress from './progress';
+import { toItemTypeApiKey } from './createModels';
 
 export default async ({ datoClient, contentfulData: { contentTypes } }) => {
   let spinner = ora('Fetching existing models').start();
 
   try {
     const itemTypes = await datoClient.itemTypes.all();
-    const contKeys = contentTypes.map(c => singular(c.sys.id));
-
-    const imported = itemTypes.filter(iT =>
-      contKeys.includes(camelize(iT.apiKey)),
-    );
+    const contKeys = contentTypes.map(c => toItemTypeApiKey(c.sys.id));
+    const imported = itemTypes.filter(iT => contKeys.includes(iT.apiKey));
 
     spinner.succeed();
 
