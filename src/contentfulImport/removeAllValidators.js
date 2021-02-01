@@ -1,7 +1,7 @@
 /* eslint-disable no-constant-condition */
 
 import ora from 'ora';
-import { toItemApiKey } from './toApiKey';
+import { singular } from 'pluralize';
 import Progress from './progress';
 
 export default async ({ datoClient, contentfulData }) => {
@@ -9,11 +9,11 @@ export default async ({ datoClient, contentfulData }) => {
 
   try {
     const itemTypes = await datoClient.itemTypes.all();
-    const importedItemTypes = itemTypes.filter(itemType => {
-      return contentfulData.contentTypes.some(contentType => {
-        return itemType.apiKey === toItemApiKey(contentType.sys.id);
-      });
-    });
+    const importedItemTypes = itemTypes.filter(iT =>
+      contentfulData.contentTypes
+        .map(c => singular(c.sys.id))
+        .includes(iT.apiKey),
+    );
 
     const importedFieldIds = importedItemTypes
       .map(itemType => itemType.fields)

@@ -1,5 +1,3 @@
-import datoLinkItemTypeFor from './datoLinkItemTypeFor';
-
 const datoValidatorsForString = ({ field }) => {
   const validators = {};
 
@@ -81,38 +79,6 @@ const datoValidatorsForDate = ({ field }) => {
   return validators;
 };
 
-const datoValidatorsForLocation = ({ field }) => {
-  const validators = {};
-
-  if (field.required) {
-    validators.required = {};
-  }
-  return validators;
-};
-
-const datoValidatorsForObject = ({ field }) => {
-  const validators = {};
-
-  if (field.required) {
-    validators.required = {};
-  }
-  return validators;
-};
-
-const datoValidatorsForLink = async ({ field, itemTypes }) => {
-  const validators = {
-    itemItemType: {
-      itemTypes: datoLinkItemTypeFor({ field, itemTypes }),
-    },
-  };
-
-  if (field.required) {
-    validators.required = {};
-  }
-
-  return validators;
-};
-
 const datoValidatorsForAsset = ({ field }) => {
   const validators = {};
 
@@ -128,7 +94,7 @@ const datoValidatorsForAsset = ({ field }) => {
         validators.file_size = {
           ...validators.file_size,
           min_value: validation.assetFileSize.min,
-          min_unit: 'B',
+          min_unit: validation.assetFileSize.min ? 'B' : null,
         };
       }
       if (
@@ -137,7 +103,7 @@ const datoValidatorsForAsset = ({ field }) => {
         validators.file_size = {
           ...validators.file_size,
           max_value: validation.assetFileSize.max,
-          max_unit: 'B',
+          max_unit: validation.assetFileSize.max ? 'B' : null,
         };
       }
     }
@@ -145,15 +111,8 @@ const datoValidatorsForAsset = ({ field }) => {
   return validators;
 };
 
-const datoValidatorsForArray = async ({ field, itemTypes }) => {
-  let validators = {};
-  if (field.items.type === 'Link' && field.items.linkType === 'Entry') {
-    validators = {
-      itemsItemType: {
-        itemTypes: datoLinkItemTypeFor({ field: field.items, itemTypes }),
-      },
-    };
-  }
+const datoValidatorsForArray = ({ field }) => {
+  const validators = {};
 
   for (const validation of field.validations) {
     if (Object.prototype.hasOwnProperty.call(validation, 'size')) {
@@ -170,36 +129,39 @@ const datoValidatorsForArray = async ({ field, itemTypes }) => {
       }
     }
   }
+
   return validators;
 };
 
-export default async ({ field, itemTypes }) => {
+export default function createFields(field) {
   switch (field.type) {
     case 'Symbol':
     case 'Text':
       return datoValidatorsForString({ field });
+    case 'Date':
+      return datoValidatorsForDate({ field });
     case 'Integer':
     case 'Number':
       return datoValidatorsForInteger({ field });
-    case 'Date':
-      return datoValidatorsForDate({ field });
-    case 'Location':
-      return datoValidatorsForLocation({ field });
-    case 'Object':
-      return datoValidatorsForObject({ field });
     case 'Link':
       switch (field.linkType) {
-        case 'Entry':
-          return datoValidatorsForLink({ field, itemTypes });
         case 'Asset':
           return datoValidatorsForAsset({ field });
         default:
           return {};
       }
     case 'Array':
-      return datoValidatorsForArray({ field, itemTypes });
+      switch (field.items.linkType) {
+        case 'Asset':
+        case 'Entry':
+          return datoValidatorsForArray({ field });
+        case 'Symbol':
+          return datoValidatorsForString({ field });
+        default:
+          return datoValidatorsForString({ field });
+      }
     case 'Boolean':
     default:
       return {};
   }
-};
+}
