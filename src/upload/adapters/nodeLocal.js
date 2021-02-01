@@ -14,28 +14,27 @@ function uploadToS3(url, filePath, { onProgress }) {
       'Content-Type': mime.lookup(filePath),
       'Content-Length': totalLength,
     },
-    data: onProgress
-      ? fs.createReadStream(filePath)
-      : fs.readFileSync(filePath),
-    transformRequest: onProgress
-      ? [
-          data => {
-            let progressLength = 0;
-            const listener = chunk => {
-              progressLength += chunk.length;
-              onProgress({
-                type: 'upload',
-                payload: {
-                  percent: Math.round((progressLength * 100) / totalLength),
-                },
-              });
-            };
-            data.on('data', listener);
-            return data;
-          },
-        ]
-      : undefined,
+    data: fs.createReadStream(filePath),
+    transformRequest: [
+      data => {
+        let progressLength = 0;
+        const listener = chunk => {
+          progressLength += chunk.length;
+          if (onProgress) {
+            onProgress({
+              type: 'upload',
+              payload: {
+                percent: Math.round((progressLength * 100) / totalLength),
+              },
+            });
+          }
+        };
+        data.on('data', listener);
+        return data;
+      },
+    ],
     maxContentLength: 1000000000,
+    maxBodyLength: 1000000000,
     cancelToken: cancelTokenSource.token,
   });
   return {

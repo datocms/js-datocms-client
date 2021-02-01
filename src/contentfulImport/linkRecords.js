@@ -21,7 +21,7 @@ export default async ({
   fieldsMapping,
   contentfulData,
   contentfulRecordMap,
-  contentfulAssetsMap,
+  uploadsMapping,
 }) => {
   const spinner = ora('').start();
   const { entries } = contentfulData;
@@ -32,7 +32,7 @@ export default async ({
 
     const datoValueForFieldType = (value, field) => {
       if (['file'].includes(field.fieldType)) {
-        return uploadData(contentfulAssetsMap[value.sys.id]);
+        return uploadData(uploadsMapping[value.sys.id]);
       }
 
       if (['link'].includes(field.fieldType)) {
@@ -47,7 +47,7 @@ export default async ({
 
       if (['gallery'].includes(field.fieldType)) {
         return value
-          .map(link => uploadData(contentfulAssetsMap[link.sys.id]))
+          .map(link => uploadData(uploadsMapping[link.sys.id]))
           .filter(v => !!v);
       }
 

@@ -37,39 +37,39 @@ export default function nodeUrl(client, fileUrl, options) {
       return axios({
         url: encodedFileUrl,
         maxRedirects: 10,
-        responseType: options.onProgress ? 'stream' : 'arraybuffer',
+        responseType: 'stream',
         cancelToken: cancelTokenSource.token,
+        maxContentLength: 1000000000,
+        maxBodyLength: 1000000000,
       })
         .then(async response => {
           let data;
           // Axios' onDownloadProgress works only in the browser
           // so in Node.js we need to implement it ourselves with streams.
-          if (options.onProgress) {
-            let onStreamEnd;
-            const streamPromise = new Promise(_resolve => {
-              onStreamEnd = _resolve;
-            });
-            const totalLength = response.headers['content-length'];
-            const body = [];
-            let progressLength = 0;
-            response.data.on('data', chunk => {
-              body.push(chunk);
-              progressLength += chunk.length;
+          let onStreamEnd;
+          const streamPromise = new Promise(_resolve => {
+            onStreamEnd = _resolve;
+          });
+          const totalLength = response.headers['content-length'];
+          const body = [];
+          let progressLength = 0;
+          response.data.on('data', chunk => {
+            body.push(chunk);
+            progressLength += chunk.length;
+            if (options.onProgress) {
               options.onProgress({
                 type: 'download',
                 payload: {
                   percent: Math.round((progressLength * 100) / totalLength),
                 },
               });
-            });
-            response.data.on('end', () => {
-              onStreamEnd(Buffer.concat(body));
-            });
-            response.data.on('error', reject);
-            data = await streamPromise;
-          } else {
-            data = Buffer.from(response.data);
-          }
+            }
+          });
+          response.data.on('end', () => {
+            onStreamEnd(Buffer.concat(body));
+          });
+          response.data.on('error', reject);
+          data = await streamPromise;
 
           /* eslint-disable no-underscore-dangle */
           const redirectedUrl =

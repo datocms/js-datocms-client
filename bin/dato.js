@@ -41,6 +41,5 @@ runCli().catch(e => {
 
   process.stderr.write(colors.underline.gray(`\n\nException details:\n\n`));
   process.stderr.write(new PrettyError().render(e));
-
   process.exit(1);
 });

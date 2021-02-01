@@ -1,8 +1,7 @@
 import ora from 'ora';
 import promiseLimit from 'promise-limit';
+import { camelize } from 'humps';
 import Progress from './progress';
-
-const { camelize } = require('humps');
 
 const datoValueForFieldType = (value, field) => {
   // Fills link and media fields temporarly. They will be valorized once we create all items and files
