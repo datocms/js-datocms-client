@@ -89,50 +89,63 @@ export default class Client {
   }
 
   request(fetchRequest, preCallStack = new Error().stack, retryCount = 1) {
-    return fetch(fetchRequest.url, fetchRequest.options).then(res => {
-      if (res.status === 429) {
-        const waitTime = parseInt(
-          res.headers.get('X-RateLimit-Reset') || '10',
-          10,
-        );
-        console.log(
-          `Rate limit exceeded, waiting ${waitTime * retryCount} seconds...`,
-        );
-        return wait(waitTime * retryCount * 1000).then(() => {
-          return this.request(fetchRequest, preCallStack, retryCount + 1);
-        });
-      }
-
-      return (res.status !== 204 ? res.json() : Promise.resolve(null))
-        .then(body => {
-          if (res.status >= 200 && res.status < 300) {
-            return Promise.resolve(body);
-          }
-          return Promise.reject(
-            new ApiException(res, body, {
-              ...fetchRequest,
-              preCallStack,
-            }),
+    return fetch(fetchRequest.url, fetchRequest.options)
+      .then(res => {
+        if (res.status === 429) {
+          const waitTime = parseInt(
+            res.headers.get('X-RateLimit-Reset') || '10',
+            10,
           );
-        })
-        .catch(error => {
-          if (
-            error &&
-            error.body &&
-            error.body.data &&
-            error.body.data.some(
-              e => e.attributes.code === 'BATCH_DATA_VALIDATION_IN_PROGRESS',
-            )
-          ) {
-            console.log(
-              `Data validation in progress, waiting ${retryCount} seconds...`,
+          console.log(
+            `Rate limit exceeded, waiting ${waitTime * retryCount} seconds...`,
+          );
+          return wait(waitTime * retryCount * 1000).then(() => {
+            return this.request(fetchRequest, preCallStack, retryCount + 1);
+          });
+        }
+
+        return (res.status !== 204 ? res.json() : Promise.resolve(null))
+          .then(body => {
+            if (res.status >= 200 && res.status < 300) {
+              return Promise.resolve(body);
+            }
+            return Promise.reject(
+              new ApiException(res, body, {
+                ...fetchRequest,
+                preCallStack,
+              }),
             );
-            return wait(retryCount * 1000).then(() => {
-              return this.request(fetchRequest, preCallStack, retryCount + 1);
-            });
-          }
-          throw error;
-        });
-    });
+          })
+          .catch(error => {
+            if (
+              error &&
+              error.body &&
+              error.body.data &&
+              error.body.data.some(
+                e => e.attributes.code === 'BATCH_DATA_VALIDATION_IN_PROGRESS',
+              )
+            ) {
+              console.log(
+                `Data validation in progress, waiting ${retryCount} seconds...`,
+              );
+              return wait(retryCount * 1000).then(() => {
+                return this.request(fetchRequest, preCallStack, retryCount + 1);
+              });
+            }
+            throw error;
+          });
+      })
+      .catch(error => {
+        if (error.code && error.code.includes('ETIMEDOUT')) {
+          console.log(
+            `Error "${error.code}", waiting ${retryCount} seconds to retry...`,
+          );
+          return wait(retryCount * 1000).then(() => {
+            return this.request(fetchRequest, preCallStack, retryCount + 1);
+          });
+        }
+
+        throw error;
+      });
   }
 }
