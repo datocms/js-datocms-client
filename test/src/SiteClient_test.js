@@ -558,7 +558,7 @@ describe('Site API', () => {
     );
   });
 
-  it.only(
+  it(
     'structured text',
     vcr(async () => {
       const articleItemType = await client.itemTypes.create({

@@ -17,8 +17,7 @@ module.exports = (dato, root, i18n) => {
               croppedUrl: article.image.url({ fit: 'crop', w: 40, h: 40 }),
               structuredText: {
                 ...article.content.toMap(),
-                excerpt: render({
-                  structuredText: article.content,
+                excerpt: render(article.content, {
                   renderInlineRecord: ({ adapter, record }) => {
                     switch (record.itemType.apiKey) {
                       case 'author':
