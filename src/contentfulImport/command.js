@@ -12,6 +12,7 @@ import addValidationsOnField from './addValidationsOnField';
 import linkRecords from './linkRecords';
 import createUploads from './createUploads';
 import publishRecords from './publishRecords';
+import { initializeCache, writeToFile, cached, destroyTempFile } from './cache';
 
 export default async ({
   contentfulToken,
@@ -24,6 +25,8 @@ export default async ({
   contentType,
 }) => {
   try {
+    await initializeCache();
+
     const client = await appClient(
       contentfulToken,
       contentfulSpaceId,
@@ -39,42 +42,58 @@ export default async ({
       contentfulEnvironment,
     });
 
-    await removeAllValidators({ datoClient, contentfulData });
+    !cached('fieldsMapping') &&
+      (await removeAllValidators({ datoClient, contentfulData }));
 
-    await destroyExistingModels({ datoClient, contentfulData });
+    !cached('itemTypeMapping') &&
+      (await destroyExistingModels({ datoClient, contentfulData }));
 
-    await destroyExistingAssets({ datoClient });
+    !cached('uploadsMapping') && (await destroyExistingAssets({ datoClient }));
 
     await setLocales({ datoClient, contentfulData });
 
     // itemTypeMapping = { <contentTypeId>: <ItemType> }
-    const itemTypeMapping = await createModels({ datoClient, contentfulData });
+    const itemTypeMapping = cached('itemTypeMapping')
+      ? cached('itemTypeMapping')
+      : await createModels({ datoClient, contentfulData });
+
+    writeToFile({ itemTypeMapping });
 
     // fieldsMapping = { <contentTypeId>: Array<{ datoField: Field, contentfulFieldId: string}> }
-    const fieldsMapping = await createFields({
-      datoClient,
-      itemTypeMapping,
-      contentfulData,
-    });
+    const fieldsMapping = cached('fieldsMapping')
+      ? cached('fieldsMapping')
+      : await createFields({
+          datoClient,
+          itemTypeMapping,
+          contentfulData,
+        });
+
+    writeToFile({ fieldsMapping });
 
     if (!skipContent) {
       // contentfulRecordMap = { <entryId>: <ItemId> }
       // recordsToPublish = Array<ItemId>
-      const { contentfulRecordMap, recordsToPublish } = await createRecords({
-        itemTypeMapping,
-        fieldsMapping,
+      const recordsMapping = cached('recordsMapping')
+        ? cached('recordsMapping')
+        : await createRecords({
+            itemTypeMapping,
+            fieldsMapping,
+            datoClient,
+            contentfulData,
+          });
+
+      writeToFile({ recordsMapping });
+
+      const uploadsMapping = await createUploads({
         datoClient,
         contentfulData,
       });
 
-      const contentfulAssetsMap = await createUploads({
-        datoClient,
-        contentfulData,
-      });
+      // writeToFile({ uploadsMapping });
 
       // publish all records that should be published...
       await publishRecords({
-        recordIds: recordsToPublish,
+        recordIds: recordsMapping.recordsToPublish,
         datoClient,
       });
 
@@ -84,8 +103,8 @@ export default async ({
         datoClient,
         fieldsMapping,
         contentfulData,
-        contentfulRecordMap,
-        contentfulAssetsMap,
+        contentfulRecordMap: recordsMapping.contentfulRecordMap,
+        uploadsMapping,
       });
 
       // ...but then we need to re-publish the records that
@@ -103,9 +122,13 @@ export default async ({
     });
 
     const spinner = ora('Import completed! 🎉🎉🎉');
+
+    destroyTempFile();
+
     spinner.succeed();
   } catch (e) {
-    console.error('Importer error:', e);
+    console.error('Importer error:', e.message);
+
     throw e;
   }
 };
