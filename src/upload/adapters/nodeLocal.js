@@ -1,45 +1,50 @@
-import axios from 'axios';
+import got from 'got';
 import path from 'path';
 import fs from 'fs';
+import stream from 'stream';
+import { promisify } from 'util';
 import mime from 'mime-types';
+
+const pipeline = promisify(stream.pipeline);
 
 function uploadToS3(url, filePath, { onProgress }) {
   const totalLength = fs.statSync(filePath).size;
-  const cancelTokenSource = axios.CancelToken.source();
-
-  const promise = axios({
-    url,
-    method: 'put',
+  let aborted = false;
+  const uploadStream = got.stream.put(url, {
     headers: {
       'Content-Type': mime.lookup(filePath),
       'Content-Length': totalLength,
     },
-    data: fs.createReadStream(filePath),
-    transformRequest: [
-      data => {
-        let progressLength = 0;
-        const listener = chunk => {
-          progressLength += chunk.length;
-          if (onProgress) {
-            onProgress({
-              type: 'upload',
-              payload: {
-                percent: Math.round((progressLength * 100) / totalLength),
-              },
-            });
-          }
-        };
-        data.on('data', listener);
-        return data;
-      },
-    ],
-    maxContentLength: 1000000000,
-    maxBodyLength: 1000000000,
-    cancelToken: cancelTokenSource.token,
+    responseType: 'json',
   });
+
+  if (typeof onProgress === 'function') {
+    uploadStream.on('uploadProgress', ({ percent }) => {
+      if (!aborted) {
+        onProgress({
+          type: 'upload',
+          payload: { percent: Math.round(percent * 100) },
+        });
+      }
+    });
+  }
+
+  const promise = pipeline(fs.createReadStream(filePath), uploadStream).catch(
+    error => {
+      if (aborted) {
+        throw new Error('aborted');
+      } else {
+        throw error;
+      }
+    },
+  );
+
   return {
     promise,
-    cancel: () => cancelTokenSource.cancel('aborted'),
+    cancel: () => {
+      aborted = true;
+      uploadStream.destroy();
+    },
   };
 }
 

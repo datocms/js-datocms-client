@@ -43,7 +43,6 @@ export default function nodeUrl(client, fileUrl, options) {
         maxBodyLength: 1000000000,
       })
         .then(async response => {
-          let data;
           // Axios' onDownloadProgress works only in the browser
           // so in Node.js we need to implement it ourselves with streams.
           let onStreamEnd;
@@ -69,7 +68,7 @@ export default function nodeUrl(client, fileUrl, options) {
             onStreamEnd(Buffer.concat(body));
           });
           response.data.on('error', reject);
-          data = await streamPromise;
+          const data = await streamPromise;
 
           /* eslint-disable no-underscore-dangle */
           const redirectedUrl =
