@@ -9,7 +9,7 @@ const pipeline = promisify(stream.pipeline);
 
 function uploadToS3(url, filePath, { onProgress }) {
   const totalLength = fs.statSync(filePath).size;
-  let aborted = false;
+  let isCancelled = false;
   const uploadStream = got.stream.put(url, {
     headers: {
       'Content-Type': mime.lookup(filePath),
@@ -20,7 +20,7 @@ function uploadToS3(url, filePath, { onProgress }) {
 
   if (typeof onProgress === 'function') {
     uploadStream.on('uploadProgress', ({ percent }) => {
-      if (!aborted) {
+      if (!isCancelled) {
         onProgress({
           type: 'upload',
           payload: { percent: Math.round(percent * 100) },
@@ -31,7 +31,7 @@ function uploadToS3(url, filePath, { onProgress }) {
 
   const promise = pipeline(fs.createReadStream(filePath), uploadStream).catch(
     error => {
-      if (aborted) {
+      if (isCancelled) {
         throw new Error('aborted');
       } else {
         throw error;
@@ -42,7 +42,7 @@ function uploadToS3(url, filePath, { onProgress }) {
   return {
     promise,
     cancel: () => {
-      aborted = true;
+      isCancelled = true;
       uploadStream.destroy();
     },
   };
@@ -53,6 +53,7 @@ export default function nodeLocal(client, filePath, options) {
   let cancel = () => {
     isCancelled = true;
   };
+
   const promise = client.uploadRequest
     .create({ filename: options.filename || path.basename(filePath) })
     .then(({ id, url }) => {
