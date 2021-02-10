@@ -21,6 +21,13 @@ export const promptForAction = (message, rightAnswer, action) =>
     }),
   );
 
+export const destroyTempFile = () =>
+  fs.unlink(path, err => {
+    if (err) {
+      console.log(`failed to delete temp file: ${err}`);
+    }
+  });
+
 export const initializeCache = async () => {
   let spinner;
 
@@ -33,7 +40,7 @@ export const initializeCache = async () => {
   }
 
   if (!fs.existsSync(path)) {
-    fs.appendFile(path, JSON.stringify({}), function(err) {
+    fs.appendFile(path, JSON.stringify({}), function onFileAppened(err) {
       if (err) throw err;
     });
 
@@ -55,13 +62,6 @@ export const writeToFile = json => {
     if (err) throw err;
   });
 };
-
-export const destroyTempFile = () =>
-  fs.unlink(path, err => {
-    if (err) {
-      console.log(`failed to delete temp file: ${err}`);
-    }
-  });
 
 export const cached = key => {
   return readFile()[key];

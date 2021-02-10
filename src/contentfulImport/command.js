@@ -42,14 +42,15 @@ export default async ({
       contentfulEnvironment,
     });
 
-    !cached('fieldsMapping') &&
-      (await removeAllValidators({ datoClient, contentfulData }));
-
-    !cached('itemTypeMapping') &&
-      (await destroyExistingModels({ datoClient, contentfulData }));
-
-    !cached('uploadsMapping') && (await destroyExistingAssets({ datoClient }));
-
+    if (!cached('fieldsMapping')) {
+      await removeAllValidators({ datoClient, contentfulData });
+    }
+    if (!cached('itemTypeMapping')) {
+      await destroyExistingModels({ datoClient, contentfulData });
+    }
+    if (!cached('uploadsMapping')) {
+      await destroyExistingAssets({ datoClient });
+    }
     await setLocales({ datoClient, contentfulData });
 
     // itemTypeMapping = { <contentTypeId>: <ItemType> }
