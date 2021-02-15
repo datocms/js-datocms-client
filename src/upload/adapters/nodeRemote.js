@@ -1,5 +1,5 @@
 import tmp from 'tmp';
-import axios from 'axios';
+import got from 'got';
 import fs from 'fs';
 import path from 'path';
 import url from 'url';
@@ -17,71 +17,45 @@ export default function nodeUrl(client, fileUrl, options) {
     }
     return tmp.dir((err, dir, cleanupCallback) => {
       if (err) {
+        cleanupCallback();
         reject(err);
+        return;
+      }
+
+      if (isCancelled) {
+        cleanupCallback();
+        reject(new Error('upload aborted'));
+        return;
       }
 
       const encodedFileUrl = decode(fileUrl);
+      const request = got(encodedFileUrl, {
+        responseType: 'buffer',
+        maxRedirects: 10,
+      });
 
-      const cancelTokenSource = axios.CancelToken.source();
-      cancel = () => {
-        isCancelled = true;
-        cancelTokenSource.cancel();
-        cleanupCallback();
-        reject(new Error('upload aborted'));
-      };
-
-      if (isCancelled) {
-        return cancel();
+      if (typeof options.onProgress === 'function') {
+        request.on('downloadProgress', ({ percent }) => {
+          if (!isCancelled) {
+            options.onProgress({
+              type: 'download',
+              payload: { percent: Math.round(percent * 100) },
+            });
+          }
+        });
       }
 
-      return axios({
-        url: encodedFileUrl,
-        maxRedirects: 10,
-        responseType: 'stream',
-        cancelToken: cancelTokenSource.token,
-        maxContentLength: 1000000000,
-        maxBodyLength: 1000000000,
-      })
-        .then(async response => {
-          let data;
-          // Axios' onDownloadProgress works only in the browser
-          // so in Node.js we need to implement it ourselves with streams.
-          let onStreamEnd;
-          const streamPromise = new Promise(_resolve => {
-            onStreamEnd = _resolve;
-          });
-          const totalLength = response.headers['content-length'];
-          const body = [];
-          let progressLength = 0;
-          response.data.on('data', chunk => {
-            body.push(chunk);
-            progressLength += chunk.length;
-            if (options.onProgress) {
-              options.onProgress({
-                type: 'download',
-                payload: {
-                  percent: Math.round((progressLength * 100) / totalLength),
-                },
-              });
-            }
-          });
-          response.data.on('end', () => {
-            onStreamEnd(Buffer.concat(body));
-          });
-          response.data.on('error', reject);
-          data = await streamPromise;
+      cancel = () => {
+        isCancelled = true;
+        request.cancel();
+        cleanupCallback();
+      };
 
-          /* eslint-disable no-underscore-dangle */
-          const redirectedUrl =
-            response.request._redirectable &&
-            response.request._redirectable._redirectCount > 0
-              ? response.request._redirectable._currentUrl
-              : response.config.url;
-          /* eslint-enable no-underscore-dangle */
-
-          const { pathname } = url.parse(decode(redirectedUrl));
+      request
+        .then(response => {
+          const { pathname } = url.parse(decode(response.url));
           const filePath = path.join(dir, path.basename(pathname));
-          fs.writeFileSync(filePath, data);
+          fs.writeFileSync(filePath, response.body);
 
           const { promise: uploadPromise, cancel: cancelUpload } = local(
             client,
@@ -105,10 +79,12 @@ export default function nodeUrl(client, fileUrl, options) {
           );
         })
         .catch(error => {
-          if (error.response) {
+          if (error instanceof got.CancelError) {
+            reject(new Error('upload aborted'));
+          } else if (error.response) {
             reject(
               new Error(
-                `Invalid status code for ${encodedFileUrl}: ${error.response.status}`,
+                `Invalid status code for ${encodedFileUrl}: ${error.response.statusCode}`,
               ),
             );
           } else {

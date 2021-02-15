@@ -39,6 +39,29 @@ describe('Upload file from', async () => {
         expect(upload).to.have.deep.property('tags');
       }),
     );
+
+    it(
+      'communicates progress',
+      vcr(async () => {
+        const startTime = Date.now();
+        let lastProgressTimestamp = startTime;
+        await uploadFile(
+          client,
+          'https://d2pn8kiwq2w21t.cloudfront.net/original_images/jpegPIA17005.jpg',
+          {},
+          {},
+          {
+            onProgress: ({ type }) => {
+              if (type === 'upload') {
+                lastProgressTimestamp = Date.now();
+              }
+            },
+          },
+        );
+
+        expect(lastProgressTimestamp - startTime).to.be.above(0);
+      }),
+    );
   });
 
   context('url that responds 404', () => {
@@ -67,21 +90,15 @@ describe('Upload file from', async () => {
     );
   });
 
-  // https://httpbin.org/redirect-to has stopped working.
-  // To test redirection use another service.
-  //
-  // context('url that redirects to image', () => {
-  //   it(
-  //     'follows redirect and uploads file',
-  //     vcr(async () => {
-  //       const uploadData = await uploadFile(
-  //         client,
-  //         'https://httpbin.org/redirect-to?url=https%3A%2F%2Fwww.datocms-assets.com%2F13095%2F1561736871-11-rockingwithlights.png',
-  //       );
-  //       expect(uploadData).to.not.be.null();
-  //     }),
-  //   );
-  // });
+  context('url that redirects to image', () => {
+    it(
+      'follows redirect and uploads file',
+      vcr(async () => {
+        const uploadData = await uploadFile(client, 'https://bit.ly/2ZeLedM');
+        expect(uploadData).to.not.be.null();
+      }),
+    );
+  });
 
   context('url that contains unescaped characters', () => {
     it(
@@ -154,16 +171,15 @@ describe('Upload file from', async () => {
           {},
           {},
           {
-            /* eslint-disable consistent-return */
             onProgress: ({ type, payload }) => {
               if (type === 'upload') {
                 if (payload.percent > 5) {
-                  return cancel();
+                  cancel();
+                } else {
+                  noUpload = payload.percent <= 5;
                 }
-                noUpload = payload.percent <= 5;
               }
             },
-            /* eslint-enable consistent-return */
           },
         );
         cancel = promise.cancel;

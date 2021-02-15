@@ -1,45 +1,45 @@
-import axios from 'axios';
+import got from 'got';
 import path from 'path';
 import fs from 'fs';
 import mime from 'mime-types';
 
 function uploadToS3(url, filePath, { onProgress }) {
   const totalLength = fs.statSync(filePath).size;
-  const cancelTokenSource = axios.CancelToken.source();
-
-  const promise = axios({
-    url,
-    method: 'put',
+  let isCancelled = false;
+  const promise = got.put(url, {
     headers: {
       'Content-Type': mime.lookup(filePath),
       'Content-Length': totalLength,
     },
-    data: fs.createReadStream(filePath),
-    transformRequest: [
-      data => {
-        let progressLength = 0;
-        const listener = chunk => {
-          progressLength += chunk.length;
-          if (onProgress) {
-            onProgress({
-              type: 'upload',
-              payload: {
-                percent: Math.round((progressLength * 100) / totalLength),
-              },
-            });
-          }
-        };
-        data.on('data', listener);
-        return data;
-      },
-    ],
-    maxContentLength: 1000000000,
-    maxBodyLength: 1000000000,
-    cancelToken: cancelTokenSource.token,
+    responseType: 'json',
+    body: fs.createReadStream(filePath),
   });
+  if (typeof onProgress === 'function') {
+    promise.on('uploadProgress', ({ percent }) => {
+      if (!isCancelled) {
+        onProgress({
+          type: 'upload',
+          payload: { percent: Math.round(percent * 100) },
+        });
+      }
+    });
+  }
+
+  // const cancel = promise.cancel.bind(promise);
+
   return {
-    promise,
-    cancel: () => cancelTokenSource.cancel('aborted'),
+    promise: promise.catch(error => {
+      if (error instanceof got.CancelError) {
+        // eslint-disable-next-line no-param-reassign
+        // error.message = 'upload aborted';
+        throw new Error('upload aborted');
+      }
+      throw error;
+    }),
+    cancel: () => {
+      isCancelled = true;
+      promise.cancel();
+    },
   };
 }
 
