@@ -53,7 +53,6 @@ export default function nodeLocal(client, filePath, options) {
   let cancel = () => {
     isCancelled = true;
   };
-
   const promise = client.uploadRequest
     .create({ filename: options.filename || path.basename(filePath) })
     .then(({ id, url }) => {

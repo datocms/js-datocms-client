@@ -32,25 +32,12 @@ export default function nodeUrl(client, fileUrl, options) {
       const request = got(encodedFileUrl, {
         responseType: 'buffer',
         maxRedirects: 10,
-      }).catch(error => {
-        if (isCancelled) {
-          throw new Error('upload aborted');
-        } else {
-          throw error;
-        }
       });
 
-      cancel = () => {
-        isCancelled = true;
-        request.cancel();
-        cleanupCallback();
-        return;
-      };
-
-      if (typeof onProgress === 'function') {
+      if (typeof options.onProgress === 'function') {
         request.on('downloadProgress', ({ percent }) => {
           if (!isCancelled) {
-            onProgress({
+            options.onProgress({
               type: 'download',
               payload: { percent: Math.round(percent * 100) },
             });
@@ -58,16 +45,14 @@ export default function nodeUrl(client, fileUrl, options) {
         });
       }
 
-      return request
-        .then(async response => {
-          /* eslint-disable no-underscore-dangle */
-          const redirectedUrl =
-            response.request._redirectable &&
-            response.request._redirectable._redirectCount > 0
-              ? response.request._redirectable._currentUrl
-              : response.url;
-          /* eslint-enable no-underscore-dangle */
+      cancel = () => {
+        isCancelled = true;
+        request.cancel();
+        cleanupCallback();
+      };
 
+      request
+        .then(response => {
           const { pathname } = url.parse(decode(response.url));
           const filePath = path.join(dir, path.basename(pathname));
           fs.writeFileSync(filePath, response.body);
@@ -94,7 +79,9 @@ export default function nodeUrl(client, fileUrl, options) {
           );
         })
         .catch(error => {
-          if (error.response) {
+          if (error instanceof got.CancelError) {
+            reject(new Error('upload aborted'));
+          } else if (error.response) {
             reject(
               new Error(
                 `Invalid status code for ${encodedFileUrl}: ${error.response.statusCode}`,
