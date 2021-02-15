@@ -25,13 +25,9 @@ function uploadToS3(url, filePath, { onProgress }) {
     });
   }
 
-  // const cancel = promise.cancel.bind(promise);
-
   return {
     promise: promise.catch(error => {
       if (error instanceof got.CancelError) {
-        // eslint-disable-next-line no-param-reassign
-        // error.message = 'upload aborted';
         throw new Error('upload aborted');
       }
       throw error;
