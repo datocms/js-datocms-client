@@ -1,25 +1,21 @@
 import got from 'got';
 import path from 'path';
 import fs from 'fs';
-import stream from 'stream';
-import { promisify } from 'util';
 import mime from 'mime-types';
-
-const pipeline = promisify(stream.pipeline);
 
 function uploadToS3(url, filePath, { onProgress }) {
   const totalLength = fs.statSync(filePath).size;
   let isCancelled = false;
-  const uploadStream = got.stream.put(url, {
+  const promise = got.put(url, {
     headers: {
       'Content-Type': mime.lookup(filePath),
       'Content-Length': totalLength,
     },
     responseType: 'json',
+    body: fs.createReadStream(filePath),
   });
-
   if (typeof onProgress === 'function') {
-    uploadStream.on('uploadProgress', ({ percent }) => {
+    promise.on('uploadProgress', ({ percent }) => {
       if (!isCancelled) {
         onProgress({
           type: 'upload',
@@ -29,21 +25,20 @@ function uploadToS3(url, filePath, { onProgress }) {
     });
   }
 
-  const promise = pipeline(fs.createReadStream(filePath), uploadStream).catch(
-    error => {
-      if (isCancelled) {
-        throw new Error('aborted');
-      } else {
-        throw error;
-      }
-    },
-  );
+  // const cancel = promise.cancel.bind(promise);
 
   return {
-    promise,
+    promise: promise.catch(error => {
+      if (error instanceof got.CancelError) {
+        // eslint-disable-next-line no-param-reassign
+        // error.message = 'upload aborted';
+        throw new Error('upload aborted');
+      }
+      throw error;
+    }),
     cancel: () => {
       isCancelled = true;
-      uploadStream.destroy();
+      promise.cancel();
     },
   };
 }
