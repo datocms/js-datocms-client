@@ -358,10 +358,12 @@ describe('Site API', () => {
           fieldType: 'file',
           localized: false,
           apiKey: 'attachment',
-          validators: {
-            required: {},
-          },
+          validators: { required: {} },
         });
+
+        const createdAt = new Date(2018, 11, 24, 10);
+        const firstPublishedAt = new Date(2018, 11, 24, 10);
+        const updatedAt = new Date(2018, 11, 24, 10);
 
         const item = await client.items.create({
           title: 'My first blog post',
@@ -369,9 +371,27 @@ describe('Site API', () => {
           attachment: await client.uploadFile(
             'test/fixtures/newTextFileHttps.txt',
           ),
+          meta: {
+            createdAt,
+            firstPublishedAt,
+            updatedAt,
+          },
         });
+
         expect(item.title).to.equal('My first blog post');
         expect(item.itemType).to.not.be.undefined();
+        expect(new Date(item.meta.createdAt).getTime()).to.equal(
+          createdAt.getTime(),
+        );
+        expect(new Date(item.meta.firstPublishedAt).getTime()).to.equal(
+          firstPublishedAt.getTime(),
+        );
+        expect(new Date(item.meta.updatedAt).getTime()).not.to.equal(
+          updatedAt.getTime(),
+        );
+        expect(new Date(item.meta.publishedAt).getTime()).not.to.equal(
+          firstPublishedAt.getTime(),
+        );
 
         const foundItem = await client.items.find(item.id);
         expect(foundItem.id).to.equal(item.id);
