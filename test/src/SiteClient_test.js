@@ -328,7 +328,7 @@ describe('Site API', () => {
       }),
     );
 
-    it(
+    it.only(
       'create, find, all, update, destroy',
       vcr(async () => {
         const itemType = await client.itemTypes.create({
@@ -361,9 +361,7 @@ describe('Site API', () => {
           validators: { required: {} },
         });
 
-        const createdAt = new Date(2018, 11, 24, 10);
-        const firstPublishedAt = new Date(2018, 11, 24, 10);
-        const updatedAt = new Date(2018, 11, 24, 10);
+        const date = '2018-11-24T10:00';
 
         const item = await client.items.create({
           title: 'My first blog post',
@@ -372,25 +370,27 @@ describe('Site API', () => {
             'test/fixtures/newTextFileHttps.txt',
           ),
           meta: {
-            createdAt,
-            firstPublishedAt,
-            updatedAt,
+            createdAt: date,
+            firstPublishedAt: date,
+            // updatedAt and publishedAt cannot be edited
+            updatedAt: date,
+            publishedAt: date,
           },
         });
 
+        console.log(item);
+
         expect(item.title).to.equal('My first blog post');
         expect(item.itemType).to.not.be.undefined();
-        expect(new Date(item.meta.createdAt).getTime()).to.equal(
-          createdAt.getTime(),
+        expect(item.meta.createdAt).to.equal('2018-11-24T10:00:00.000+00:00');
+        expect(item.meta.firstPublishedAt).to.equal(
+          '2018-11-24T10:00:00.000+00:00',
         );
-        expect(new Date(item.meta.firstPublishedAt).getTime()).to.equal(
-          firstPublishedAt.getTime(),
+        expect(item.meta.updatedAt).not.to.equal(
+          '2018-11-24T10:00:00.000+00:00',
         );
-        expect(new Date(item.meta.updatedAt).getTime()).not.to.equal(
-          updatedAt.getTime(),
-        );
-        expect(new Date(item.meta.publishedAt).getTime()).not.to.equal(
-          firstPublishedAt.getTime(),
+        expect(item.meta.publishedAt).not.to.equal(
+          '2018-11-24T10:00:00.000+00:00',
         );
 
         const foundItem = await client.items.find(item.id);

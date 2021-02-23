@@ -38,6 +38,10 @@ export default async function articles(
         categories: newCategories,
         tags: newTags,
         featuredMedia: null,
+        meta: {
+          firstPublishedAt: new Date(article.date),
+          createdAt: new Date(article.date),
+        },
       };
 
       if (media.ids[article.featured_media]) {

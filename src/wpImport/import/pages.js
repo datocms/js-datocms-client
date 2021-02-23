@@ -25,6 +25,10 @@ export default async function pages(dato, wp, schema, media, authors) {
         date: page.date,
         author: authors[page.author],
         featuredMedia: null,
+        meta: {
+          firstPublishedAt: new Date(page.date),
+          createdAt: new Date(page.date),
+        },
       };
 
       if (media.ids[page.featured_media]) {
