@@ -378,8 +378,6 @@ describe('Site API', () => {
           },
         });
 
-        console.log(item);
-
         expect(item.title).to.equal('My first blog post');
         expect(item.itemType).to.not.be.undefined();
         expect(item.meta.createdAt).to.equal('2018-11-24T10:00:00.000+00:00');
