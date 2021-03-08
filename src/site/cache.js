@@ -38,6 +38,8 @@ module.exports = {
     create: true,
     update: true,
     all: true,
+    referencing: true,
+    related: true,
     find: true,
     destroy: true,
     duplicate: true,
