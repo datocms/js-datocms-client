@@ -45,12 +45,15 @@ export default async ({
     if (!cached('fieldsMapping')) {
       await removeAllValidators({ datoClient, contentfulData });
     }
+
     if (!cached('itemTypeMapping')) {
       await destroyExistingModels({ datoClient, contentfulData });
     }
+
     if (!cached('uploadsMapping')) {
       await destroyExistingAssets({ datoClient });
     }
+
     await setLocales({ datoClient, contentfulData });
 
     // itemTypeMapping = { <contentTypeId>: <ItemType> }

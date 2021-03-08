@@ -6,7 +6,7 @@ export default async ({ datoClient }) => {
 
   try {
     const uploads = await datoClient.uploads.all(
-      { 'filter[type]': 'not_used' },
+      { 'filter[fields][in_use][eq]': 'not_used' },
       { allPages: true },
     );
 
