@@ -44,9 +44,13 @@ const findItemTypeId = ({ contentfulField, itemTypeMapping }) => {
   );
 
   if (linkValidation) {
-    return linkValidation.linkContentType.map(
-      contentTypeId => itemTypeMapping[contentTypeId].id,
-    );
+    return linkValidation.linkContentType
+      .map(contentTypeId =>
+        itemTypeMapping[contentTypeId]
+          ? itemTypeMapping[contentTypeId].id
+          : null,
+      )
+      .filter(Boolean);
   }
 
   return Object.values(itemTypeMapping).map(iT => iT.id);
