@@ -328,7 +328,7 @@ describe('Site API', () => {
       }),
     );
 
-    it.only(
+    it(
       'create, find, all, update, destroy',
       vcr(async () => {
         const itemType = await client.itemTypes.create({
