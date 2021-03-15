@@ -61,6 +61,10 @@ export default async ({
       const datoFields = fieldsMapping[entry.sys.contentType.sys.id];
       let datoNewValue;
 
+      if (!datoFields) {
+        continue;
+      }
+
       for (const [id, contentfulItem] of Object.entries(entry.fields)) {
         const { datoField } = datoFields.find(f => f.contentfulFieldId === id);
 
