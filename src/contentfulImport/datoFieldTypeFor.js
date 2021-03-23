@@ -16,7 +16,7 @@ export default field => {
       return 'boolean';
     case 'Object':
     case 'RichText':
-      return 'json';
+      return 'structured_text';
     case 'Link':
       switch (field.linkType) {
         case 'Entry':

@@ -63,6 +63,15 @@ export const writeToFile = json => {
   });
 };
 
+export const removeFromFile = key => {
+  const data = readFile();
+  delete data[key];
+
+  fs.writeFileSync(path, JSON.stringify(data), err => {
+    if (err) throw err;
+  });
+};
+
 export const cached = key => {
   return readFile()[key];
 };

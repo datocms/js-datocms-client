@@ -105,6 +105,17 @@ export default async ({ itemTypeMapping, datoClient, contentfulData }) => {
           };
         }
 
+        if (contentfulField.type === 'RichText') {
+          validators = {
+            structuredTextBlocks: {
+              itemTypes: [],
+            },
+            structuredTextLinks: {
+              itemTypes: findItemTypeId({ itemTypeMapping, contentfulField }),
+            },
+          };
+        }
+
         const fieldAttributes = {
           label: contentfulField.name,
           fieldType: datoFieldTypeFor(contentfulField),
@@ -142,6 +153,7 @@ export default async ({ itemTypeMapping, datoClient, contentfulData }) => {
     return fieldsMapping;
   } catch (e) {
     spinner.fail();
+    removeFromFile('fieldsMapping');
     throw e;
   }
 };
