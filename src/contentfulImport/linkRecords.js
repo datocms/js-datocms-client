@@ -32,22 +32,30 @@ export default async ({
 
     const datoValueForFieldType = (value, field) => {
       if (['file'].includes(field.fieldType)) {
-        return uploadData(uploadsMapping[value.sys.id]);
+        return value && value.sys
+          ? uploadData(uploadsMapping[value.sys.id])
+          : null;
       }
 
       if (['link'].includes(field.fieldType)) {
-        return contentfulRecordMap[value.sys.id];
+        return value && value.sys ? contentfulRecordMap[value.sys.id] : null;
       }
 
       if (['links'].includes(field.fieldType)) {
         return value
-          .map(link => contentfulRecordMap[link.sys.id])
+          .map(link => {
+            return link && link.sys ? contentfulRecordMap[link.sys.id] : null;
+          })
           .filter(v => !!v);
       }
 
       if (['gallery'].includes(field.fieldType)) {
         return value
-          .map(link => uploadData(uploadsMapping[link.sys.id]))
+          .map(link => {
+            return link && link.sys
+              ? uploadData(uploadsMapping[link.sys.id])
+              : null;
+          })
           .filter(v => !!v);
       }
 
@@ -78,10 +86,13 @@ export default async ({
         if (datoField.localized) {
           datoNewValue = Object.entries(contentfulItem).reduce(
             (innerAcc, [locale, innerValue]) => {
-              return {
-                ...innerAcc,
-                [locale]: datoValueForFieldType(innerValue, datoField),
-              };
+              const value = datoValueForFieldType(innerValue, datoField);
+              return value
+                ? {
+                    ...innerAcc,
+                    [locale]: value,
+                  }
+                : { ...innerAcc };
             },
             {},
           );
