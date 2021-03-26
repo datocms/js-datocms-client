@@ -31,9 +31,8 @@ describe('Site API', () => {
         const fetchedSite = await client.site.find();
         expect(fetchedSite.name).to.equal('Blog');
 
-        const updatedSite = await client.site.update(
-          u({ name: 'New blog' }, site),
-        );
+        const updatedSite = await client.site.update({ name: 'New blog' });
+
         expect(updatedSite.name).to.equal('New blog');
       }),
     );
