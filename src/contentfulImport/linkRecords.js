@@ -70,6 +70,7 @@ export default async ({
       let datoNewValue;
 
       if (!datoFields) {
+        // eslint-disable-next-line no-continue
         continue;
       }
 
