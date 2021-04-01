@@ -35,12 +35,16 @@ export default async ({
       datoCmsCmaBaseUrl,
     );
     const datoClient = client.dato;
-    const contentfulData = await getContentfulData({
-      client: client.contentful,
-      skipContent,
-      contentType,
-      contentfulEnvironment,
-    });
+    const contentfulData = cached('contentfulData')
+      ? cached('contentfulData')
+      : await getContentfulData({
+          client: client.contentful,
+          skipContent,
+          contentType,
+          contentfulEnvironment,
+        });
+
+    writeToFile({ contentfulData });
 
     if (!cached('fieldsMapping')) {
       await removeAllValidators({ datoClient, contentfulData });
@@ -88,12 +92,14 @@ export default async ({
 
       writeToFile({ recordsMapping });
 
-      const uploadsMapping = await createUploads({
-        datoClient,
-        contentfulData,
-      });
+      const uploadsMapping = cached('uploadsMapping')
+        ? cached('uploadsMapping')
+        : await createUploads({
+            datoClient,
+            contentfulData,
+          });
 
-      // writeToFile({ uploadsMapping });
+      writeToFile({ uploadsMapping });
 
       // publish all records that should be published...
       await publishRecords({
