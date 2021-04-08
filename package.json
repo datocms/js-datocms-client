@@ -11,10 +11,10 @@
   "scripts": {
     "prettier": "prettier --write \"{src/**/*.js,**/*.md}\"",
     "test": "eslint ./ && npm run mocha",
-    "mocha": "ACCOUNT_API_BASE_URL='https://account-api.datocms.com' SITE_API_BASE_URL='https://site-api.datocms.com' npm run inner:mocha",
+    "mocha": "cross-env ACCOUNT_API_BASE_URL='https://account-api.datocms.com' SITE_API_BASE_URL='https://site-api.datocms.com' npm run inner:mocha",
     "inner:mocha": "mocha ./test/**/*_test.js --require \"@babel/register\" --require \"./test/support/common\" --exit --timeout 50000 $([ -n \"$GREP_TEST\" ] && echo \"-f $GREP_TEST\")",
     "dev:test": "eslint ./ && npm run dev:mocha",
-    "dev:mocha": "ACCOUNT_API_BASE_URL='http://account-api.lvh.me:3001' SITE_API_BASE_URL='http://site-api.lvh.me:3001' npm run inner:mocha",
+    "dev:mocha": "cross-env ACCOUNT_API_BASE_URL='http://account-api.lvh.me:3001' SITE_API_BASE_URL='http://site-api.lvh.me:3001' npm run inner:mocha",
     "prepublish": "rimraf lib dist && mkdir lib dist && node build/buildApiMethods.js && node build/transformPackageJson.js && npm run lib && npm run dist",
     "dist": "cross-env NODE_ENV=production webpack --progress --mode production && npm run prettier",
     "dev": "cross-env NODE_ENV=production webpack --progress --watch --mode development",
