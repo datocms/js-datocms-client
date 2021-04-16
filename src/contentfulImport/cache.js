@@ -4,13 +4,13 @@ import ora from 'ora';
 
 const path = './contentfulImport.json';
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
 export const promptForAction = (message, rightAnswer, action) =>
-  new Promise(resolve =>
+  new Promise(resolve => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
     rl.question(message, answer => {
       if (answer === rightAnswer) {
         action();
@@ -18,8 +18,8 @@ export const promptForAction = (message, rightAnswer, action) =>
 
       rl.close();
       resolve(answer);
-    }),
-  );
+    });
+  });
 
 export const destroyTempFile = () =>
   fs.unlink(path, err => {
