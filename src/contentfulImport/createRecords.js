@@ -36,9 +36,8 @@ const datoValueForFieldType = async (
   }
 
   if (field.fieldType === 'structured_text') {
-    const structured = await richTextToStructuredText(value);
-
-    return structured;
+    // skip for now
+    return null;
   }
 
   return value;
@@ -107,14 +106,12 @@ export default async ({
             datoFieldValue[locale] = await datoValueForFieldType(
               contentfulItem[locale],
               datoField,
-              richTextToStructuredText,
             );
           }
         } else {
           datoFieldValue = await datoValueForFieldType(
             contentfulItem[contentfulData.defaultLocale],
             datoField,
-            richTextToStructuredText,
           );
         }
 
