@@ -27,7 +27,7 @@ export default async ({
   const spinner = ora('').start();
   const { entries } = contentfulData;
   const progress = new Progress(entries.length, 'Create links');
-  const richTextToStructuredText = richTextConverter(
+  const richTextToStructuredText = await richTextConverter(
     datoClient,
     contentfulRecordMap,
     uploadsMapping,

@@ -4,7 +4,7 @@ import {
 } from 'datocms-contentful-to-structured-text';
 import { allowedChildren } from 'datocms-structured-text-utils';
 
-const createItemLinkFunction = async (createNode, node, context) => {
+const createItemLinkHandler = async (createNode, node, context) => {
   const isAllowedChild = allowedChildren[context.parentNodeType].includes(
     'inlineNodes',
   );
@@ -20,7 +20,7 @@ const createItemLinkFunction = async (createNode, node, context) => {
       : children;
 };
 
-const inlineItemFunction = async (createNode, node, context) => {
+const createInlineItemHandler = async (createNode, node, context) => {
   const isAllowedChild = allowedChildren[context.parentNodeType].includes(
     'inlineNodes',
   );
@@ -33,32 +33,65 @@ const inlineItemFunction = async (createNode, node, context) => {
         });
 };
 
-export default function(datoClient, contentfulRecordMap, uploadsMapping) {
+const createModularBlockHandler = async (createNode, node, context) => {
+  const isAllowedChild = allowedChildren[context.parentNodeType].includes(
+    'block',
+  );
+
+  return modularBlockId => {
+    return isAllowedChild && modularBlockId
+      ? createNode('block', { item: modularBlockId })
+      : createNode('span', {
+          value: `Asset #${node.data.target.sys.id}`,
+        });
+  };
+};
+
+export default async function(datoClient, contentfulRecordMap, uploadsMapping) {
   // if link it should create a placeholder and then substitute it on the link phase
   // if modular block it should create a new block
   // if asset it should create a new image modular block
+  console.log('ooooooo', datoClient);
+
+  let contentfulAssetModularBlock = await datoClient.itemTypes.find(
+    'contentful_asset',
+  );
+
+  if (!contentfulAssetModularBlock) {
+    contentfulAssetModularBlock = await datoClient.itemTypes.create({
+      name: 'Contentful asset',
+      apiKey: 'contentful_asset',
+      modularBlock: true,
+    });
+
+    await datoClient.fields.create(contentfulAssetModularBlock.id, {
+      label: 'File',
+      apiKey: 'file',
+      fieldType: 'file',
+    });
+  }
 
   const handlers = {
     'embedded-entry-inline': async (createNode, node, context) => {
-      const createDatoInlineItem = await inlineItemFunction(
+      const inlineItemHandler = await createInlineItemHandler(
         createNode,
         node,
         context,
       );
 
-      return createDatoInlineItem(contentfulRecordMap[node.data.target.sys.id]);
+      return inlineItemHandler(contentfulRecordMap[node.data.target.sys.id]);
     },
     'embedded-entry-block': async (createNode, node, context) => {
-      const createDatoInlineItem = await inlineItemFunction(
+      const inlineItemHandler = await createInlineItemHandler(
         createNode,
         node,
         context,
       );
 
-      return createDatoInlineItem(contentfulRecordMap[node.data.target.sys.id]);
+      return inlineItemHandler(contentfulRecordMap[node.data.target.sys.id]);
     },
     'entry-hyperlink': async (createNode, node, context) => {
-      const createItemLink = await createItemLinkFunction(
+      const createItemLink = await createItemLinkHandler(
         createNode,
         node,
         context,
@@ -66,16 +99,34 @@ export default function(datoClient, contentfulRecordMap, uploadsMapping) {
 
       return createItemLink(contentfulRecordMap[node.data.target.sys.id]);
     },
-    'asset-hyperlink': (createNode, node, context) => {
+    'asset-hyperlink': async (createNode, node, context) => {
       // create modular block if not exists and create image
-      return createNode('span', {
-        value: `asset-hyperlink ${node.data.target.sys.id}`,
+      const modularBlockHandler = await createModularBlockHandler(
+        createNode,
+        node,
+        context,
+      );
+
+      const modularBlock = await datoClient.items.create({
+        itemType: contentfulAssetModularBlock.id,
+        file: uploadsMapping[node.data.target.sys.id],
       });
+
+      return modularBlockHandler(modularBlock.id);
     },
-    'embedded-asset-block': (createNode, node, context) => {
-      return createNode('span', {
-        value: `embedded-asset-block ${node.data.target.sys.id}`,
+    'embedded-asset-block': async (createNode, node, context) => {
+      const modularBlockHandler = await createModularBlockHandler(
+        createNode,
+        node,
+        context,
+      );
+
+      const modularBlock = await datoClient.items.create({
+        itemType: contentfulAssetModularBlock.id,
+        file: uploadsMapping[node.data.target.sys.id],
       });
+
+      return modularBlockHandler(modularBlock.id);
     },
   };
 

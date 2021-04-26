@@ -1,20 +1,20 @@
 import ora from 'ora';
 import promiseLimit from 'promise-limit';
 import { camelize } from 'humps';
-import richTextConverter from './richTextToStructuredText';
 import Progress from './progress';
 
-const datoValueForFieldType = async (
-  value,
-  field,
-  richTextToStructuredText,
-) => {
+const datoValueForFieldType = async (value, field) => {
   // Fills link and media fields temporarly. They will be valorized once we create all items and files
   if (['links', 'gallery'].includes(field.fieldType)) {
     return [];
   }
 
   if (['link', 'file'].includes(field.fieldType)) {
+    return null;
+  }
+
+  if (field.fieldType === 'structured_text') {
+    // skip for now
     return null;
   }
 
@@ -35,11 +35,6 @@ const datoValueForFieldType = async (
     return value && JSON.stringify(value, null, 2);
   }
 
-  if (field.fieldType === 'structured_text') {
-    // skip for now
-    return null;
-  }
-
   return value;
 };
 
@@ -54,11 +49,6 @@ export default async ({
   try {
     const { entries } = contentfulData;
     const progress = new Progress(entries.length, 'Creating records');
-    const richTextToStructuredText = richTextConverter(
-      itemTypeMapping,
-      datoClient,
-    );
-
     const contentfulRecordMap = {};
     const recordsToPublish = [];
 
