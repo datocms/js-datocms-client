@@ -80,7 +80,7 @@ const createAssetLinkHandler = async (createNode, node, context) => {
       : children;
 };
 
-export const createAssetModularBlock = async datoClient => {
+export const createContentfulAssetBlock = async datoClient => {
   // DatoCMS does not handle assets in Structured Text like Contentful does, so
   // we need to create a modular block with a file field to allow assets in Structured
 

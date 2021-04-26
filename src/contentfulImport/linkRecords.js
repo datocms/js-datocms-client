@@ -1,6 +1,6 @@
 import ora from 'ora';
 import Progress from './progress';
-import richTextConverter from './richTextToStructuredText';
+import generateRichToStructured from './richTextToStructuredText';
 
 const { camelize } = require('humps');
 
@@ -27,7 +27,7 @@ export default async ({
   const spinner = ora('').start();
   const { entries } = contentfulData;
   const progress = new Progress(entries.length, 'Create links');
-  const richTextToStructuredText = await richTextConverter(
+  const richTextToStructuredText = await generateRichToStructured(
     datoClient,
     contentfulRecordMap,
     uploadsMapping,
@@ -37,17 +37,17 @@ export default async ({
     spinner.text = progress.tick();
 
     const datoValueForFieldType = async (value, field) => {
-      if (['file'].includes(field.fieldType)) {
+      if (field.fieldType === 'file') {
         return value && value.sys
           ? uploadData(uploadsMapping[value.sys.id])
           : null;
       }
 
-      if (['link'].includes(field.fieldType)) {
+      if (field.fieldType === 'link') {
         return value && value.sys ? contentfulRecordMap[value.sys.id] : null;
       }
 
-      if (['links'].includes(field.fieldType)) {
+      if (field.fieldType === 'links') {
         return value
           .map(link => {
             return link && link.sys ? contentfulRecordMap[link.sys.id] : null;
@@ -55,7 +55,7 @@ export default async ({
           .filter(v => !!v);
       }
 
-      if (['gallery'].includes(field.fieldType)) {
+      if (field.fieldType === 'gallery') {
         return value
           .map(link => {
             return link && link.sys
