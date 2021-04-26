@@ -66,9 +66,7 @@ export default async ({
       }
 
       if (field.fieldType === 'structured_text') {
-        const structured = await richTextToStructuredText(value);
-
-        return structured;
+        return await richTextToStructuredText(value);
       }
 
       return value;
