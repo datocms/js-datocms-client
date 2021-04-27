@@ -44,7 +44,7 @@ const createBlockHandler = async (createNode, node, context, assetBlockId) => {
     const payload = {
       type: 'item',
       attributes: {
-        file: { uploadId },
+        file: uploadId ? { uploadId } : null,
       },
       relationships: {
         item_type: {
@@ -56,10 +56,10 @@ const createBlockHandler = async (createNode, node, context, assetBlockId) => {
       },
     };
 
-    return isAllowedChild && uploadId
+    return isAllowedChild
       ? createNode('block', { item: payload })
       : createNode('span', {
-          value: `Missing asset #${node.data.target.sys.id}`,
+          value: `** Contentful asset inaccessible: #${node.data.target.sys.id} **`,
         });
   };
 };
@@ -80,7 +80,7 @@ const createAssetLinkHandler = async (createNode, node, context) => {
       : children;
 };
 
-export const createContentfulAssetBlock = async datoClient => {
+export const createStructuredTextAssetBlock = async datoClient => {
   // DatoCMS does not handle assets in Structured Text like Contentful does, so
   // we need to create a modular block with a file field to allow assets in Structured
 
@@ -109,6 +109,75 @@ export const createContentfulAssetBlock = async datoClient => {
   }
 
   return contentfulAssetModularBlock.id;
+};
+
+const liftAssets = richText => {
+  const visit = (node, cb, index = 0, parents = []) => {
+    if (node.content && node.content.length > 0) {
+      node.content.forEach((child, index) => {
+        visit(child, cb, index, [...parents, node]);
+      });
+    }
+
+    cb(node, index, parents);
+  };
+
+  const liftedImages = new WeakSet();
+
+  visit(richText, (node, index, parents) => {
+    if (
+      !node ||
+      node.nodeType !== 'embedded-asset-block' ||
+      liftedImages.has(node) ||
+      parents.length === 1 // is a top level asset
+    ) {
+      return;
+    }
+
+    const imgParent = parents[parents.length - 1];
+
+    imgParent.content.splice(index, 1);
+
+    let i = parents.length;
+    let splitChildrenIndex = index;
+    let contentAfterSplitPoint = [];
+
+    while (--i > 0) {
+      const parent = parents[i];
+      const parentsParent = parents[i - 1];
+
+      contentAfterSplitPoint = parent.content.splice(splitChildrenIndex);
+
+      splitChildrenIndex = parentsParent.content.indexOf(parent);
+
+      let nodeInserted = false;
+
+      if (i === 1) {
+        splitChildrenIndex += 1;
+        parentsParent.content.splice(splitChildrenIndex, 0, node);
+        liftedImages.add(node);
+
+        nodeInserted = true;
+      }
+
+      splitChildrenIndex += 1;
+
+      if (contentAfterSplitPoint.length > 0) {
+        parentsParent.content.splice(splitChildrenIndex, 0, {
+          ...parent,
+          content: contentAfterSplitPoint,
+        });
+      }
+      // Remove the parent if empty
+      if (parent.content.length === 0) {
+        splitChildrenIndex -= 1;
+        parentsParent.content.splice(
+          nodeInserted ? splitChildrenIndex - 1 : splitChildrenIndex,
+          1,
+        );
+      }
+    }
+  });
 };
 
 export default async function(datoClient, contentfulRecordMap, uploadsMapping) {
@@ -149,6 +218,10 @@ export default async function(datoClient, contentfulRecordMap, uploadsMapping) {
         context,
       );
 
+      if (!uploadsMapping[node.data.target.sys.id]) {
+        return;
+      }
+
       const upload = await datoClient.uploads.find(
         uploadsMapping[node.data.target.sys.id],
       );
@@ -167,5 +240,10 @@ export default async function(datoClient, contentfulRecordMap, uploadsMapping) {
     },
   };
 
-  return async value => richTextToStructuredText(value, { handlers });
+  return async value => {
+    // Extrapolate assets from lists without losing content
+    liftAssets(value);
+
+    return richTextToStructuredText(value, { handlers });
+  };
 }

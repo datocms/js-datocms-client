@@ -3,7 +3,7 @@ import ora from 'ora';
 import humps from 'humps';
 import Progress from './progress';
 import datoFieldTypeFor from './datoFieldTypeFor';
-import { createContentfulAssetBlock } from './richTextToStructuredText';
+import { createStructuredTextAssetBlock } from './richTextToStructuredText';
 
 const reservedKeys = [
   'position',
@@ -107,7 +107,7 @@ export default async ({ itemTypeMapping, datoClient, contentfulData }) => {
         }
 
         if (contentfulField.type === 'RichText') {
-          const assetBlockId = await createContentfulAssetBlock(datoClient);
+          const assetBlockId = await createStructuredTextAssetBlock(datoClient);
 
           validators = {
             structuredTextBlocks: {

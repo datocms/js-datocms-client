@@ -80,6 +80,10 @@ export default async ({ datoClient, contentfulData }) => {
         uploadsMapping[asset.sys.id.toString()] = upload.id;
         writeToFile({ uploadsMapping });
       } catch (error) {
+        console.error(
+          `Could not upload Contentful asset with ID ${asset.sys.id}`,
+        );
+
         uploadsMapping[asset.sys.id.toString()] = null;
       }
     }
