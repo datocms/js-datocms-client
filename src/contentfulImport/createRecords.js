@@ -3,13 +3,18 @@ import promiseLimit from 'promise-limit';
 import { camelize } from 'humps';
 import Progress from './progress';
 
-const datoValueForFieldType = (value, field) => {
+const datoValueForFieldType = async (value, field) => {
   // Fills link and media fields temporarly. They will be valorized once we create all items and files
   if (['links', 'gallery'].includes(field.fieldType)) {
     return [];
   }
 
   if (['link', 'file'].includes(field.fieldType)) {
+    return null;
+  }
+
+  if (field.fieldType === 'structured_text') {
+    // skip for now
     return null;
   }
 
@@ -44,7 +49,6 @@ export default async ({
   try {
     const { entries } = contentfulData;
     const progress = new Progress(entries.length, 'Creating records');
-
     const contentfulRecordMap = {};
     const recordsToPublish = [];
 
@@ -72,33 +76,37 @@ export default async ({
         ]),
       ];
 
-      const recordAttributes = allFieldApiKeys.reduce((acc, apiKey) => {
+      const recordAttributes = {};
+
+      for (const apiKey of allFieldApiKeys) {
         const contentfulItem = entry.fields[apiKey];
+
+        if (!contentfulItem) {
+          return null;
+        }
+
         const { datoField } = datoFields.find(
           f => f.contentfulFieldId === apiKey,
         );
 
-        let datoValue;
+        let datoFieldValue = {};
 
         if (datoField.localized) {
-          datoValue = contentfulData.locales.reduce((innerAcc, locale) => {
-            return {
-              ...innerAcc,
-              [locale]: datoValueForFieldType(
-                contentfulItem && contentfulItem[locale],
-                datoField,
-              ),
-            };
-          }, {});
+          for (const locale of contentfulData.locales) {
+            datoFieldValue[locale] = await datoValueForFieldType(
+              contentfulItem[locale],
+              datoField,
+            );
+          }
         } else {
-          datoValue = datoValueForFieldType(
-            contentfulItem && contentfulItem[contentfulData.defaultLocale],
+          datoFieldValue = await datoValueForFieldType(
+            contentfulItem[contentfulData.defaultLocale],
             datoField,
           );
         }
 
-        return { ...acc, [camelize(datoField.apiKey)]: datoValue };
-      }, {});
+        recordAttributes[camelize(datoField.apiKey)] = datoFieldValue;
+      }
 
       jobs.push(
         limit(async () => {

@@ -137,7 +137,7 @@ export default async ({
 
     spinner.succeed();
   } catch (e) {
-    console.error('Importer error:', e.message);
+    console.error('Importer error:', JSON.stringify(e, null, 2));
 
     throw e;
   }
