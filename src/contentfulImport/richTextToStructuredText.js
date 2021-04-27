@@ -114,8 +114,8 @@ export const createStructuredTextAssetBlock = async datoClient => {
 const liftAssets = richText => {
   const visit = (node, cb, index = 0, parents = []) => {
     if (node.content && node.content.length > 0) {
-      node.content.forEach((child, index) => {
-        visit(child, cb, index, [...parents, node]);
+      node.content.forEach((child, i) => {
+        visit(child, cb, i, [...parents, node]);
       });
     }
 
@@ -142,6 +142,7 @@ const liftAssets = richText => {
     let splitChildrenIndex = index;
     let contentAfterSplitPoint = [];
 
+    /* eslint-disable no-plusplus */
     while (--i > 0) {
       const parent = parents[i];
       const parentsParent = parents[i - 1];
@@ -219,7 +220,7 @@ export default async function(datoClient, contentfulRecordMap, uploadsMapping) {
       );
 
       if (!uploadsMapping[node.data.target.sys.id]) {
-        return;
+        return null;
       }
 
       const upload = await datoClient.uploads.find(
