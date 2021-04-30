@@ -11,10 +11,10 @@ const datoValidatorsForString = ({ field }) => {
       if (validation.size.min && validation.size.min === validation.size.max) {
         validators.length.eq = validation.size.min.toString();
       } else {
-        if (validation.size.min) {
+        if (![null, undefined].includes(validation.size.min)) {
           validators.length.min = validation.size.min.toString();
         }
-        if (validation.size.max) {
+        if (![null, undefined].includes(validation.size.max)) {
           validators.length.max = validation.size.max.toString();
         }
       }
@@ -49,10 +49,10 @@ const datoValidatorsForInteger = ({ field }) => {
   for (const validation of field.validations) {
     if (Object.prototype.hasOwnProperty.call(validation, 'range')) {
       validators.numberRange = {};
-      if (validation.range.min) {
+      if (![null, undefined].includes(validation.range.min)) {
         validators.numberRange.min = validation.range.min.toString();
       }
-      if (validation.range.max) {
+      if (![null, undefined].includes(validation.range.max)) {
         validators.numberRange.max = validation.range.max.toString();
       }
     }
@@ -120,10 +120,10 @@ const datoValidatorsForArray = ({ field }) => {
       if (validation.size.min && validation.size.min === validation.size.max) {
         validators.size.eq = validation.size.min.toString();
       } else {
-        if (validation.size.min) {
+        if (![null, undefined].includes(validation.size.min)) {
           validators.size.min = validation.size.min.toString();
         }
-        if (validation.size.max) {
+        if (![null, undefined].includes(validation.size.max)) {
           validators.size.max = validation.size.max.toString();
         }
       }

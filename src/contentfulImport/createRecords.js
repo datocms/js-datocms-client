@@ -59,6 +59,7 @@ export default async ({
 
     for (const entry of entries) {
       const { contentType } = entry.sys;
+
       const itemType = itemTypeMapping[contentType.sys.id];
 
       if (!itemType) {
@@ -79,11 +80,7 @@ export default async ({
       const recordAttributes = {};
 
       for (const apiKey of allFieldApiKeys) {
-        const contentfulItem = entry.fields[apiKey];
-
-        if (!contentfulItem) {
-          return null;
-        }
+        const contentfulContent = entry.fields[apiKey];
 
         const { datoField } = datoFields.find(
           f => f.contentfulFieldId === apiKey,
@@ -94,13 +91,14 @@ export default async ({
         if (datoField.localized) {
           for (const locale of contentfulData.locales) {
             datoFieldValue[locale] = await datoValueForFieldType(
-              contentfulItem[locale],
+              contentfulContent && contentfulContent[locale],
               datoField,
             );
           }
         } else {
           datoFieldValue = await datoValueForFieldType(
-            contentfulItem[contentfulData.defaultLocale],
+            contentfulContent &&
+              contentfulContent[contentfulData.defaultLocale],
             datoField,
           );
         }

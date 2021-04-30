@@ -88,7 +88,7 @@ export const createStructuredTextAssetBlock = async datoClient => {
 
   try {
     contentfulAssetModularBlock = await datoClient.itemTypes.find(
-      'contentful_asset',
+      'structured_text_asset',
     );
   } catch {
     // do nothing
@@ -96,8 +96,8 @@ export const createStructuredTextAssetBlock = async datoClient => {
 
   if (!contentfulAssetModularBlock) {
     contentfulAssetModularBlock = await datoClient.itemTypes.create({
-      name: 'Contentful asset',
-      apiKey: 'contentful_asset',
+      name: 'Structured Text asset',
+      apiKey: 'structured_text_asset',
       modularBlock: true,
     });
 
@@ -182,7 +182,7 @@ const liftAssets = richText => {
 };
 
 export default async function(datoClient, contentfulRecordMap, uploadsMapping) {
-  const assetBlock = await datoClient.itemTypes.find('contentful_asset');
+  const assetBlock = await datoClient.itemTypes.find('structured_text_asset');
 
   const handlers = {
     'embedded-entry-inline': async (createNode, node, context) => {
