@@ -24,8 +24,7 @@ const toMap = keys =>
   keys.reduce((acc, prop) => Object.assign(acc, { [prop]: true }), {});
 
 const findLinkFor = (schema, namespace, apiCall) => {
-  const singularized = decamelize(singular(namespace));
-  const sub = schema.properties[singularized];
+  const sub = schema.properties[namespace];
 
   if (!sub) {
     throw new TypeError(`${namespace} is not a valid namespace`);
@@ -105,8 +104,9 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
               }
 
               return schemaPromise.then(async schema => {
-                const singularized = decamelize(singular(namespace));
-                const link = findLinkFor(schema, singularized, apiCall);
+                const resourceName = decamelize(singular(namespace));
+
+                const link = findLinkFor(schema, resourceName, apiCall);
 
                 let lastUrlId;
 
@@ -179,7 +179,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
 
                     return deserializeResponse
                       ? deserializeJsonApi(
-                          singularized,
+                          resourceName,
                           link.jobSchema,
                           jobResult.attributes.payload,
                         )
@@ -188,7 +188,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
 
                   return deserializeResponse
                     ? deserializeJsonApi(
-                        singularized,
+                        resourceName,
                         link.targetSchema,
                         response,
                       )
