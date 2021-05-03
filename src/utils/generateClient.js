@@ -104,8 +104,10 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
               }
 
               return schemaPromise.then(async schema => {
-                const resourceName = decamelize(singular(namespace));
+                const singularized =
+                  namespace === 'ssoSettings' ? namespace : singular(namespace);
 
+                const resourceName = decamelize(singularized);
                 const link = findLinkFor(schema, resourceName, apiCall);
 
                 let lastUrlId;
