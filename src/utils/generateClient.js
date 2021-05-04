@@ -11,6 +11,7 @@ import InvalidApiRequestException from '../InvalidApiRequestException';
 import wait from './wait';
 
 const identityRegexp = /\{\(.*?definitions%2F(.*?)%2Fdefinitions%2Fidentity\)}/g;
+const pluralResources = ['ssoSettings', 'whiteLabelSettings'];
 
 const getProps = obj =>
   Object.getOwnPropertyNames(obj)
@@ -104,8 +105,9 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
               }
 
               return schemaPromise.then(async schema => {
-                const singularized =
-                  namespace === 'ssoSettings' ? namespace : singular(namespace);
+                const singularized = pluralResources.includes(namespace)
+                  ? namespace
+                  : singular(namespace);
 
                 const resourceName = decamelize(singularized);
                 const link = findLinkFor(schema, resourceName, apiCall);
