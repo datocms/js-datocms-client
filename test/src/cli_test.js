@@ -15,7 +15,7 @@ describe('CLI tool', () => {
     let tempDirName;
 
     before(() => {
-      tempDir = tmp.dirSync();
+      tempDir = tmp.dirSync({ unsafeCleanup: true });
       tempDirName = tempDir.name;
     });
     before(() => {
