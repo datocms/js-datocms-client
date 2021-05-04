@@ -5,7 +5,7 @@ import { SiteClient } from '../../src/index';
 
 const shouldRunTest = () => {
   // This test is only available in developmentMode
-  // To make it pass change the CHARGEBEE_BASE_PLAN_ID to 100 in the API .env
+  // To make it pass change the CHARGEBEE_BASE_PLAN_ID to 210 in the API .env
 
   if (
     process.env.ACCOUNT_API_BASE_URL !== 'http://account-api.lvh.me:3001' ||
@@ -58,6 +58,29 @@ const shouldRunTest = () => {
 
         expect(updatedSsoSettings.idpSamlMetadataUrl).to.equal(
           'https://my-org.oktapreview.com/app/XXXX/sso/saml/metadata',
+        );
+      }),
+    );
+  });
+
+  describe('white label settings', () => {
+    it.only(
+      'find, update',
+      vcr(async () => {
+        const whiteLabelSettings = await client.whiteLabelSettings.update({
+          customI18nMessagesTemplateUrl:
+            'https://my-app-messages.netlify.app/:locale/message.json',
+        });
+
+        expect(whiteLabelSettings.customI18nMessagesTemplateUrl).to.equal(
+          'https://my-app-messages.netlify.app/:locale/message.json',
+        );
+
+        const whiteLabel = await client.whiteLabelSettings.find();
+
+        expect(whiteLabel).not.to.equal(null);
+        expect(whiteLabel.customI18nMessagesTemplateUrl).to.equal(
+          'https://my-app-messages.netlify.app/:locale/message.json',
         );
       }),
     );
