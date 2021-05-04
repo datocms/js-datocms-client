@@ -64,7 +64,7 @@ const shouldRunTest = () => {
   });
 
   describe('white label settings', () => {
-    it.only(
+    it(
       'find, update',
       vcr(async () => {
         const whiteLabelSettings = await client.whiteLabelSettings.update({
