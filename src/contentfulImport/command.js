@@ -92,12 +92,16 @@ export default async ({
 
       writeToFile({ recordsMapping });
 
-      const uploadsMapping = cached('uploadsMapping')
-        ? cached('uploadsMapping')
-        : await createUploads({
-            datoClient,
-            contentfulData,
-          });
+      const cachedUploads = cached('uploadsMapping');
+
+      const uploadsMapping =
+        cachedUploads &&
+        Object.keys(cachedUploads).length === contentfulData.assets.length
+          ? cachedUploads
+          : await createUploads({
+              datoClient,
+              contentfulData,
+            });
 
       writeToFile({ uploadsMapping });
 
