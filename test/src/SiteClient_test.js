@@ -328,6 +328,53 @@ describe('Site API', () => {
     );
 
     it(
+      'bulk publish/unpublish/destroy works',
+      vcr(async () => {
+        const itemType = await client.itemTypes.create({
+          name: 'Article',
+          apiKey: 'article',
+          singleton: true,
+          modularBlock: false,
+          sortable: false,
+          tree: false,
+          draftModeActive: true,
+          orderingDirection: null,
+          orderingField: null,
+          allLocalesRequired: true,
+          titleField: null,
+        });
+
+        await client.fields.create(itemType.id, {
+          label: 'Title',
+          fieldType: 'string',
+          localized: false,
+          apiKey: 'title',
+          validators: {},
+        });
+
+        const item = await client.items.create({
+          title: 'My first blog post',
+          itemType: itemType.id,
+        });
+
+        await client.items.bulkPublish({ items: [item.id] });
+
+        const item1 = await client.items.find(item.id);
+        expect(item1.meta.status).to.equal('published');
+
+        await client.items.bulkUnpublish({ items: [item.id] });
+
+        const item2 = await client.items.find(item.id);
+        expect(item2.meta.status).to.equal('draft');
+
+        await client.items.bulkDestroy({ items: [item.id] });
+
+        const allItems = await client.items.all();
+        expect(allItems).to.have.length(0);
+      }),
+    );
+
+    it(
       'create, find, all, update, destroy',
       vcr(async () => {
         const itemType = await client.itemTypes.create({
