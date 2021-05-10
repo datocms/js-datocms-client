@@ -55,7 +55,7 @@ const builders = {
         rel: 'icon',
         sizes: `${size}x${size}`,
         href: url(site.favicon, entitiesRepo, { w: size, h: size }),
-        type: `image/${upload.format}`,
+        type: `image/${upload.format === 'jpg' ? 'jpeg' : upload.format}`,
       }),
     );
   },
