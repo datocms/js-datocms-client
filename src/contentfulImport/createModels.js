@@ -3,7 +3,9 @@ import { decamelize } from 'humps';
 import Progress from './progress';
 
 export const toItemTypeApiKey = value => {
-  return `${decamelize(value).replace(/\d+/, '')}_model`;
+  return `${decamelize(value)
+    .replace(/\d+/g, '')
+    .replace(/-/g, '_')}_model`;
 };
 
 export default async ({ datoClient, contentfulData }) => {
