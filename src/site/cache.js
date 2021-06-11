@@ -102,6 +102,7 @@ module.exports = {
     bulkPublish: true,
     bulkUnpublish: true,
     bulkDestroy: true,
+    bulkMoveToStage: true,
   },
   itemVersions: {
     restore: true,
@@ -225,5 +226,12 @@ module.exports = {
   site: {
     find: true,
     update: true,
+  },
+  workflows: {
+    create: true,
+    update: true,
+    all: true,
+    find: true,
+    destroy: true,
   },
 };
