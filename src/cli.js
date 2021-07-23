@@ -8,6 +8,7 @@ import contentfulImport from './contentfulImport/command';
 import toggleMaintenanceMode from './toggleMaintenanceMode/command';
 import createMigrationScript from './createMigrationScript/command';
 import runPendingMigrations from './runPendingMigrations/command';
+import forkEnvironment from './forkEnvironment/command';
 import getPrimaryEnvironment from './environment/getPrimary/command';
 import promoteEnvironment from './environment/promote/command';
 import destroyEnvironment from './environment/destroy/command';
@@ -19,6 +20,7 @@ Usage:
   dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--environment=<environment>] [--config=<file>] [--cmaBaseUrl=<url>]
   dato new migration <name> [--migrationsDir=<directory>] [--migrationTemplate=<migrationTemplateFile>]
   dato migrate [--source=<environment>] [--destination=<environment>] [--inPlace] [--migrationModel=<apiKey>] [--migrationsDir=<directory>] [--token=<apiToken>] [--cmaBaseUrl=<url>]
+  dato environment fork <sourceEnvironmentId> <destinationEnvironmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment get-primary [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment promote <environmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment destroy <environmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
@@ -96,6 +98,21 @@ module.exports = argv => {
     if (options['get-primary']) {
       const { '--token': token, '--cmaBaseUrl': cmaBaseUrl } = options;
       return getPrimaryEnvironment({ token, cmaBaseUrl });
+    }
+
+    if (options.fork) {
+      const {
+        '<sourceEnvironmentId>': sourceEnvId,
+        '<destinationEnvironmentId>': destinationEnvId,
+        '--token': token,
+        '--cmaBaseUrl': cmaBaseUrl,
+      } = options;
+      return forkEnvironment({
+        sourceEnvId,
+        destinationEnvId,
+        token,
+        cmaBaseUrl,
+      });
     }
 
     if (options.promote) {

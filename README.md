@@ -4,13 +4,11 @@
 
 API client and CLI tool for [DatoCMS](https://www.datocms.com). Take a look at the full [API documentation](https://www.datocms.com/docs/content-management-api) for examples.
 
-
 <br /><br />
 <a href="https://www.datocms.com/">
-  <img src="https://www.datocms.com/images/full_logo.svg" height="60">
+<img src="https://www.datocms.com/images/full_logo.svg" height="60">
 </a>
 <br /><br />
-
 
 ## Development
 

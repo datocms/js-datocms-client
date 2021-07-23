@@ -19,6 +19,9 @@ module.exports = {
     copyUsers: true,
     destroy: true,
   },
+  auditLogEvent: {
+    query: true,
+  },
   menuItems: {
     create: true,
     update: true,
