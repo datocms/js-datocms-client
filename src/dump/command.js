@@ -17,6 +17,9 @@ export default async function(options) {
   const quiet = options['--quiet'];
   const previewMode = options['--preview'];
   const cmaBaseUrl = options['--cmaBaseUrl'];
+  const pageSize = options['--pageSize']
+    ? parseInt(options['--pageSize'], 10)
+    : undefined;
 
   const token = tokenOption || (await requireToken());
 
@@ -37,7 +40,7 @@ export default async function(options) {
 
   const client = new SiteClient(token, headers, cmaBaseUrl);
 
-  const loader = new Loader(client, previewMode, environment);
+  const loader = new Loader(client, previewMode, environment, { pageSize });
 
   process.stdout.write('Fetching content from DatoCMS');
   await loader.load();

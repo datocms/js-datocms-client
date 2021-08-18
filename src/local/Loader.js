@@ -1,11 +1,17 @@
 import EntitiesRepo from './EntitiesRepo';
 
 export default class Loader {
-  constructor(client, previewMode = false, environment = undefined) {
+  constructor(
+    client,
+    previewMode = false,
+    environment = undefined,
+    { pageSize } = {},
+  ) {
     this.client = client;
     this.environment = environment;
     this.previewMode = previewMode;
     this.entitiesRepo = new EntitiesRepo();
+    this.pageSize = pageSize || true;
   }
 
   loadSchema() {
@@ -32,11 +38,11 @@ export default class Loader {
       this.client.get('/site', { include: 'item_types,item_types.fields' }),
       this.client.items.all(
         { version: this.previewMode ? 'latest' : 'published' },
-        { deserializeResponse: false, allPages: true },
+        { deserializeResponse: false, allPages: this.pageSize },
       ),
       this.client.uploads.all(
         {},
-        { deserializeResponse: false, allPages: true },
+        { deserializeResponse: false, allPages: this.pageSize },
       ),
     ]).then(([site, items, uploads]) => {
       this.siteId = site.data.id;
@@ -70,11 +76,11 @@ export default class Loader {
         this.client.get('/site', { include: 'item_types,item_types.fields' }),
         this.client.items.all(
           { version: itemVersion },
-          { deserializeResponse: false, allPages: true },
+          { deserializeResponse: false, allPages: this.pageSize },
         ),
         this.client.uploads.all(
           {},
-          { deserializeResponse: false, allPages: true },
+          { deserializeResponse: false, allPages: this.pageSize },
         ),
       ]);
 
@@ -88,7 +94,7 @@ export default class Loader {
           'filter[ids]': ids.join(','),
           version: itemVersion,
         },
-        { deserializeResponse: false, allPages: true },
+        { deserializeResponse: false, allPages: this.pageSize },
       );
 
       this.entitiesRepo.upsertEntities(payload);
@@ -101,7 +107,7 @@ export default class Loader {
     addEventListener('upload:upsert', async ({ ids }) => {
       const payload = await this.client.uploads.all(
         { 'filter[ids]': ids.join(',') },
-        { deserializeResponse: false, allPages: true },
+        { deserializeResponse: false, allPages: this.pageSize },
       );
 
       this.entitiesRepo.upsertEntities(payload);
@@ -117,7 +123,7 @@ export default class Loader {
           this.client.itemTypes.find(id, {}, { deserializeResponse: false }),
           this.client.items.all(
             { 'filter[type]': id, version: itemVersion },
-            { deserializeResponse: false, allPages: true },
+            { deserializeResponse: false, allPages: this.pageSize },
           ),
         ]);
 

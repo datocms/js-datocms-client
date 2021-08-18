@@ -17,7 +17,7 @@ const doc = `
 DatoCMS CLI tool
 
 Usage:
-  dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--environment=<environment>] [--config=<file>] [--cmaBaseUrl=<url>]
+  dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--environment=<environment>] [--config=<file>] [--cmaBaseUrl=<url>] [--pageSize=<pageSize>]
   dato new migration <name> [--migrationsDir=<directory>] [--migrationTemplate=<migrationTemplateFile>]
   dato migrate [--source=<environment>] [--destination=<environment>] [--inPlace] [--migrationModel=<apiKey>] [--migrationsDir=<directory>] [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment fork <sourceEnvironmentId> <destinationEnvironmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
