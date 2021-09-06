@@ -76,14 +76,14 @@ export default async ({
     const recordsToPublish = [];
 
     for (const entry of entries) {
-      const datoItemId = contentfulRecordMap[entry.sys.id];
       const datoFields = fieldsMapping[entry.sys.contentType.sys.id];
-      let datoNewValue = {};
 
       if (!datoFields) {
         // eslint-disable-next-line no-continue
         continue;
       }
+
+      const datoNewValue = {};
 
       for (const [id, contentfulItem] of Object.entries(entry.fields)) {
         const { datoField } = datoFields.find(f => f.contentfulFieldId === id);
@@ -97,25 +97,34 @@ export default async ({
           continue;
         }
 
+        const fieldKey = camelize(datoField.apiKey);
+        datoNewValue[fieldKey] = {};
+
         if (datoField.localized) {
           for (const [locale, val] of Object.entries(contentfulItem)) {
-            datoNewValue[locale] = await datoValueForFieldType(val, datoField);
+            datoNewValue[fieldKey][locale] = await datoValueForFieldType(
+              val,
+              datoField,
+            );
           }
         } else {
-          datoNewValue = await datoValueForFieldType(
+          datoNewValue[fieldKey] = await datoValueForFieldType(
             contentfulItem[contentfulData.defaultLocale],
             datoField,
           );
         }
-
-        const recordAttributes = { [camelize(datoField.apiKey)]: datoNewValue };
-
-        await datoClient.items.update(datoItemId, recordAttributes);
-
-        if (entry.sys.publishedVersion) {
-          recordsToPublish.push(datoItemId);
-        }
       }
+
+      const datoItemId = contentfulRecordMap[entry.sys.id];
+
+      if (entry.sys.publishedVersion) {
+        recordsToPublish.push(datoItemId);
+      }
+
+      if (Object.keys(datoNewValue).length > 0) {
+        await datoClient.items.update(datoItemId, datoNewValue);
+      }
+
       spinner.text = progress.tick();
     }
 
