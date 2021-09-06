@@ -9,7 +9,7 @@ const MIGRATION_FILE_REGEXP = /^[0-9]+.*\.js$/;
 
 export default async function runPendingMigrations({
   sourceEnvId,
-  destinationEnvId,
+  destinationEnvId: rawDestinationEnvId,
   migrationModelApiKey,
   relativeMigrationsDir,
   inPlace,
@@ -38,38 +38,46 @@ export default async function runPendingMigrations({
     ? await globalClient.environments.find(sourceEnvId)
     : primaryEnv;
 
-  const environmentId = inPlace
+  if (!sourceEnv) {
+    throw new Error(
+      `You have no permissions to access the ${
+        sourceEnvId ? `"${sourceEnvId}"` : 'primary'
+      } environment!`,
+    );
+  }
+
+  const destinationEnvId = inPlace
     ? sourceEnv.id
-    : destinationEnvId || `${sourceEnv.id}-post-migrations`;
+    : rawDestinationEnvId || `${sourceEnv.id}-post-migrations`;
 
   if (inPlace) {
-    if (primaryEnv.id === environmentId) {
+    if (primaryEnv && primaryEnv.id === destinationEnvId) {
       throw new Error(
         'Running migrations on primary environment is not allowed!',
       );
     }
 
     process.stdout.write(
-      `Migrations will be run in sandbox env \`${environmentId}\`\n`,
+      `Migrations will be run in sandbox env \`${destinationEnvId}\`\n`,
     );
   } else {
     const forkSpinner = ora(
-      `Creating a fork of \`${sourceEnv.id}\` called \`${environmentId}\`...`,
+      `Creating a fork of \`${sourceEnv.id}\` called \`${destinationEnvId}\`...`,
     ).start();
 
     const existingEnvironment = allEnvironments.find(
-      env => env.id === environmentId,
+      env => env.id === destinationEnvId,
     );
 
     if (existingEnvironment) {
       forkSpinner.fail();
       throw new Error(
-        `Environment ${environmentId} already exists! If you want to run the migrations inside this existing environment you can add the --inPlace flag.`,
+        `Environment ${destinationEnvId} already exists! If you want to run the migrations inside this existing environment you can add the --inPlace flag.`,
       );
     }
 
     await globalClient.environments.fork(sourceEnv.id, {
-      id: environmentId,
+      id: destinationEnvId,
     });
 
     forkSpinner.succeed();
@@ -77,7 +85,7 @@ export default async function runPendingMigrations({
 
   const client = new SiteClient(
     token,
-    { environment: environmentId },
+    { environment: destinationEnvId },
     cmaBaseUrl,
   );
 
