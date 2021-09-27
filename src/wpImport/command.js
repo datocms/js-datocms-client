@@ -19,11 +19,25 @@ export default async function command(
   wpUser,
   wpPassword,
   cmaBaseUrl,
+  wpApiEndpointUrl,
 ) {
   const dato = new SiteClient(token, { environment }, cmaBaseUrl);
 
-  const wp = await WPAPI.discover(wpUrl);
-  await wp.auth({ username: wpUser, password: wpPassword });
+  let wp;
+
+  console.log(wpApiEndpointUrl);
+
+  if (wpApiEndpointUrl) {
+    wp = new WPAPI({
+      endpoint: wpApiEndpointUrl,
+      username: wpUser,
+      password: wpPassword,
+      auth: true,
+    });
+  } else {
+    wp = await WPAPI.discover(wpUrl);
+    await wp.auth({ username: wpUser, password: wpPassword });
+  }
 
   await destroyExistingData(dato, wp);
 

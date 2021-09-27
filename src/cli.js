@@ -25,7 +25,7 @@ Usage:
   dato environment promote <environmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment destroy <environmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato maintenance (on|off) [--force] [--token=<apiToken>] [--cmaBaseUrl=<url>]
-  dato wp-import --token=<datoApiToken> [--environment=<datoEnvironment>] --wpUrl=<url> --wpUser=<user> --wpPassword=<password> [--datoCmaBaseUrl=<url>]
+  dato wp-import --token=<datoApiToken> [--environment=<datoEnvironment>] --wpUrl=<url> --wpUser=<user> --wpPassword=<password> [--datoCmaBaseUrl=<url>] [--wpApiEndpointUrl=<url>]
   dato contentful-import --datoCmsToken=<apiToken> --contentfulToken=<apiToken> --contentfulSpaceId=<spaceId> [--contentfulEnvironment=<contentfulEnvironment>] [--datoCmsEnvironment=<datoEnvironment>] [--skipContent] [--datoCmaBaseUrl=<url>] [(--includeOnly <contentType>...)]
   dato check
   dato -h | --help
@@ -142,9 +142,18 @@ module.exports = argv => {
       '--wpUser': wpUser,
       '--wpPassword': wpPassword,
       '--datoCmaBaseUrl': cmaBaseUrl,
+      '--wpApiEndpointUrl': wpApiEndpointUrl,
     } = options;
 
-    return wpImport(token, environment, wpUrl, wpUser, wpPassword, cmaBaseUrl);
+    return wpImport(
+      token,
+      environment,
+      wpUrl,
+      wpUser,
+      wpPassword,
+      cmaBaseUrl,
+      wpApiEndpointUrl,
+    );
   }
 
   if (options['contentful-import']) {
