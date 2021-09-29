@@ -5,7 +5,7 @@ import path from 'path';
 import url from 'url';
 import decode from './decode';
 
-export default function downloadLocally(fileUrl, options) {
+export default function downloadLocally(fileUrl, options = {}) {
   let isCancelled = false;
   let request = null;
 
