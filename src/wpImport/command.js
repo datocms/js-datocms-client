@@ -25,8 +25,6 @@ export default async function command(
 
   let wp;
 
-  console.log(wpApiEndpointUrl);
-
   if (wpApiEndpointUrl) {
     wp = new WPAPI({
       endpoint: wpApiEndpointUrl,
