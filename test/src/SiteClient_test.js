@@ -245,6 +245,50 @@ describe('Site API', () => {
         expect(updatedUpload.author).to.equal('Mark Smith');
       }),
     );
+
+    it(
+      'references',
+      vcr(async () => {
+        const itemType = await client.itemTypes.create({
+          name: 'Article',
+          apiKey: 'article',
+          singleton: true,
+          modularBlock: false,
+          sortable: false,
+          tree: false,
+          draftModeActive: true,
+          orderingDirection: null,
+          orderingField: null,
+          allLocalesRequired: true,
+          titleField: null,
+        });
+
+        await client.fields.create(itemType.id, {
+          label: 'Image',
+          fieldType: 'file',
+          localized: false,
+          apiKey: 'image',
+          validators: { required: {} },
+        });
+
+        const path = await client.createUploadPath(
+          'https://www.w3.org/People/mimasa/test/imgformat/img/w3c_home.jpg',
+        );
+
+        const upload = await client.uploads.create({
+          path,
+        });
+
+        await client.items.create({
+          image: { uploadId: upload.id },
+          itemType: itemType.id,
+        });
+
+        const items = await client.uploads.references(upload.id);
+
+        expect(items[0].image.uploadId).to.equal(upload.id);
+      }),
+    );
   });
 
   describe('item', () => {
