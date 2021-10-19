@@ -183,7 +183,6 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
 
                     return deserializeResponse
                       ? deserializeJsonApi(
-                          resourceName,
                           link.jobSchema,
                           jobResult.attributes.payload,
                         )
@@ -191,11 +190,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   }
 
                   return deserializeResponse
-                    ? deserializeJsonApi(
-                        resourceName,
-                        link.targetSchema,
-                        response,
-                      )
+                    ? deserializeJsonApi(link.targetSchema, response)
                     : response;
                 };
 

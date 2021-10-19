@@ -8,10 +8,16 @@ const findKey = (jsonApiKey, schema) => {
   const info = findInfoForProperty(jsonApiKey, schema);
 
   if (info && info.properties) {
+    // jsonApiKey: meta, attributes
     return Object.entries(info.properties).map(([key, details]) => ({
       key,
       details,
     }));
+  }
+
+  if (info && info.pattern) {
+    // jsonApiKey: type
+    return info.pattern.replace(/\^|\$/g, '');
   }
 
   return [];
@@ -19,9 +25,9 @@ const findKey = (jsonApiKey, schema) => {
 
 const findAttributes = findKey.bind(null, 'attributes');
 const findMeta = findKey.bind(null, 'meta');
+const findType = findKey.bind(null, 'type');
 
 function deserialize(
-  type,
   relationshipsMeta,
   schema,
   { id, attributes, meta, relationships },
@@ -29,7 +35,7 @@ function deserialize(
   const result = { id };
 
   const attrs =
-    type === 'item' && attributes
+    findType(schema) === 'item' && attributes
       ? Object.keys(attributes).map(key => ({ key, details: null }))
       : findAttributes(schema);
 
@@ -79,7 +85,7 @@ function deserialize(
   return result;
 }
 
-export default function deserializeJsonApi(type, targetSchema, json) {
+export default function deserializeJsonApi(targetSchema, json) {
   if (!json) {
     return json;
   }
@@ -88,10 +94,8 @@ export default function deserializeJsonApi(type, targetSchema, json) {
   const { data } = json;
 
   if (Array.isArray(data)) {
-    return data.map(item =>
-      deserialize(type, relationshipsMeta, targetSchema, item),
-    );
+    return data.map(item => deserialize(relationshipsMeta, targetSchema, item));
   }
 
-  return deserialize(type, relationshipsMeta, targetSchema, data);
+  return deserialize(relationshipsMeta, targetSchema, data);
 }
