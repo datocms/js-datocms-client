@@ -245,7 +245,8 @@ describe('Site API', () => {
         expect(updatedUpload.author).to.equal('Mark Smith');
       }),
     );
-    it.only(
+
+    it(
       'references',
       vcr(async () => {
         const itemType = await client.itemTypes.create({
