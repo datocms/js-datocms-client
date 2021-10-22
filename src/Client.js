@@ -89,6 +89,23 @@ export default class Client {
   }
 
   request(fetchRequest, preCallStack = new Error().stack, retryCount = 1) {
+    if (fetchRequest.options.logApiCalls) {
+      console.log('>>>>>>>>>>>>');
+      console.log(`${fetchRequest.options.method} ${fetchRequest.url}`);
+      if (fetchRequest.options.logApiCalls >= 2) {
+        for (const [key, value] of Object.entries(
+          fetchRequest.options.headers || {},
+        )) {
+          console.log(`${key}: ${value}`);
+        }
+      }
+      if (fetchRequest.options.logApiCalls >= 3 && fetchRequest.options.body) {
+        console.log();
+        console.log(fetchRequest.options.body);
+      }
+      console.log('>>>>>>>>>>>>');
+    }
+
     return fetch(fetchRequest.url, fetchRequest.options)
       .then(res => {
         if (res.status === 429) {
@@ -104,8 +121,35 @@ export default class Client {
           });
         }
 
+        if (fetchRequest.options.logApiCalls) {
+          console.log('<<<<<<<<<<<<');
+          console.log(`Status: ${res.status}`);
+          if (fetchRequest.options.logApiCalls >= 2) {
+            [
+              'content-type',
+              'x-api-version',
+              'x-environment',
+              'x-queue-time',
+              'x-ratelimit-remaining',
+            ].forEach(key => {
+              const value = res.headers.get(key);
+              if (value) {
+                console.log(`${key}: ${value}`);
+              }
+            });
+          }
+        }
+
         return (res.status !== 204 ? res.json() : Promise.resolve(null))
           .then(body => {
+            if (fetchRequest.options.logApiCalls >= 3 && body) {
+              console.log();
+              console.log(JSON.stringify(body));
+            }
+            if (fetchRequest.options.logApiCalls) {
+              console.log('<<<<<<<<<<<<');
+              console.log();
+            }
             if (res.status >= 200 && res.status < 300) {
               return Promise.resolve(body);
             }

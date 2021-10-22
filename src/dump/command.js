@@ -34,11 +34,11 @@ export default async function(options) {
     'X-SSG': detectSsg(process.cwd()),
   };
 
-  if (environment) {
-    headers['X-Environment'] = environment;
-  }
-
-  const client = new SiteClient(token, headers, cmaBaseUrl);
+  const client = new SiteClient(token, {
+    environment,
+    headers,
+    baseUrl: cmaBaseUrl,
+  });
 
   const loader = new Loader(client, previewMode, environment, { pageSize });
 

@@ -61,11 +61,9 @@ describe('dump', () => {
         name: 'Integration new test site',
       });
 
-      const client = new SiteClient(
-        site.readwriteToken,
-        {},
-        process.env.SITE_API_BASE_URL,
-      );
+      const client = new SiteClient(site.readwriteToken, {
+        baseUrl: process.env.SITE_API_BASE_URL,
+      });
 
       const newSite = await client.site.find();
       const faviconFilePath = path.resolve('test/fixtures/favicon.ico');

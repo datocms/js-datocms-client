@@ -21,7 +21,7 @@ export default async function command(
   cmaBaseUrl,
   wpApiEndpointUrl,
 ) {
-  const dato = new SiteClient(token, { environment }, cmaBaseUrl);
+  const dato = new SiteClient(token, { environment, baseUrl: cmaBaseUrl });
 
   let wp;
 

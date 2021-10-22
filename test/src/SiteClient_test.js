@@ -16,11 +16,9 @@ describe('Site API', () => {
       const accountClient = await generateNewAccountClient();
       site = await accountClient.sites.create({ name: 'Blog' });
 
-      client = new SiteClient(
-        site.readwriteToken,
-        null,
-        process.env.SITE_API_BASE_URL,
-      );
+      client = new SiteClient(site.readwriteToken, {
+        baseUrl: process.env.SITE_API_BASE_URL,
+      });
     }),
   );
 

@@ -89,13 +89,10 @@ describe('CLI tool', () => {
           `migrate --destination=foobar --token=${site.readwriteToken} --cmaBaseUrl=${process.env.SITE_API_BASE_URL}`,
         );
 
-        const client = new SiteClient(
-          site.readwriteToken,
-          {
-            environment: 'foobar',
-          },
-          process.env.SITE_API_BASE_URL,
-        );
+        const client = new SiteClient(site.readwriteToken, {
+          environment: 'foobar',
+          baseUrl: process.env.SITE_API_BASE_URL,
+        });
 
         const model = await client.itemTypes.find('article');
         expect(model.apiKey).to.eq('article');
@@ -118,11 +115,9 @@ describe('CLI tool', () => {
             `maintenance on --token=${site.readwriteToken} --cmaBaseUrl=${process.env.SITE_API_BASE_URL}`,
           );
 
-          const client = new SiteClient(
-            site.readwriteToken,
-            {},
-            process.env.SITE_API_BASE_URL,
-          );
+          const client = new SiteClient(site.readwriteToken, {
+            baseUrl: process.env.SITE_API_BASE_URL,
+          });
 
           const { active } = await client.maintenanceMode.find();
           expect(active).to.eq(true);
@@ -149,11 +144,9 @@ describe('CLI tool', () => {
             name: 'Integration new test site',
           });
 
-          const client = new SiteClient(
-            site.readwriteToken,
-            {},
-            process.env.SITE_API_BASE_URL,
-          );
+          const client = new SiteClient(site.readwriteToken, {
+            baseUrl: process.env.SITE_API_BASE_URL,
+          });
 
           await client.environments.fork('main', {
             id: 'my-sandbox-env',
@@ -184,11 +177,9 @@ describe('CLI tool', () => {
             name: 'Integration new test site',
           });
 
-          const client = new SiteClient(
-            site.readwriteToken,
-            {},
-            process.env.SITE_API_BASE_URL,
-          );
+          const client = new SiteClient(site.readwriteToken, {
+            baseUrl: process.env.SITE_API_BASE_URL,
+          });
 
           const newSandboxName = 'my-sandbox-env';
 

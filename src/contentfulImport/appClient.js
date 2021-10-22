@@ -14,11 +14,10 @@ export default async (
   try {
     const contentfulClient = createClient({ accessToken: contentfulToken });
 
-    const dato = new SiteClient(
-      datoCmsToken,
-      { environment: datoCmsEnvironment },
-      datoCmsCmaBaseUrl,
-    );
+    const dato = new SiteClient(datoCmsToken, {
+      environment: datoCmsEnvironment,
+      baseUrl: datoCmsCmaBaseUrl,
+    });
 
     const contentful = await contentfulClient.getSpace(contentfulSpaceId);
     spinner.succeed();

@@ -11,7 +11,7 @@ export default async function command({
   ).start();
 
   const token = tokenByArg || process.env.DATO_MANAGEMENT_API_TOKEN;
-  const client = new SiteClient(token, {}, cmaBaseUrl);
+  const client = new SiteClient(token, { baseUrl: cmaBaseUrl });
 
   try {
     await client.environments.promote(environmentId);

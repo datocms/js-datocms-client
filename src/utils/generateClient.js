@@ -1,6 +1,7 @@
 import jsonref from 'json-schema-ref-parser';
 import { singular } from 'pluralize';
 import { decamelize, camelize } from 'humps';
+import omit from 'object.omit';
 import fetch from './fetch';
 import deserializeJsonApi from './deserializeJsonApi';
 import serializeJsonApi from './serializeJsonApi';
@@ -47,21 +48,34 @@ const findLinkFor = (schema, namespace, apiCall) => {
 };
 
 export default function generateClient(subdomain, cache, extraMethods = {}) {
-  return function Client(token, extraHeaders = {}, baseUrl) {
+  return function Client(
+    token,
+    rawLegacyHeadersArgOrOptions,
+    legacyBaseUrlArg,
+  ) {
     let schemaPromise;
 
-    const headers = { ...extraHeaders };
+    const legacyHeadersArgOrOptions = rawLegacyHeadersArgOrOptions || {};
 
-    if (extraHeaders && extraHeaders.environment) {
-      headers['X-Environment'] = extraHeaders.environment;
-      delete headers.environment;
+    const validOptions = ['environment', 'baseUrl', 'headers', 'logApiCalls'];
+
+    const headers = {
+      ...omit(legacyHeadersArgOrOptions, validOptions),
+      ...(legacyHeadersArgOrOptions.headers || {}),
+    };
+
+    if (legacyHeadersArgOrOptions.environment) {
+      headers['x-environment'] = legacyHeadersArgOrOptions.environment;
     }
 
-    const rawClient = new RawClient(
-      token,
-      headers,
-      baseUrl || `https://${subdomain}.datocms.com`,
-    );
+    const globalOptions = legacyHeadersArgOrOptions;
+
+    const baseUrl =
+      legacyBaseUrlArg ||
+      legacyHeadersArgOrOptions.baseUrl ||
+      `https://${subdomain}.datocms.com`;
+
+    const rawClient = new RawClient(token, headers, baseUrl);
 
     const extraProps = getProps(extraMethods);
     const rawClientProps = getProps(rawClient);
@@ -129,7 +143,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                 }
 
                 const queryString = args.shift() || {};
-                const options = args.shift() || {};
+                const options = { ...globalOptions, ...(args.shift() || {}) };
 
                 const deserializeResponse = Object.prototype.hasOwnProperty.call(
                   options,
@@ -225,6 +239,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                     url,
                     body,
                     queryString,
+                    options,
                   );
 
                   return rawClient
@@ -236,6 +251,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                     url,
                     body,
                     queryString,
+                    options,
                   );
 
                   return rawClient
@@ -246,6 +262,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   const fetchRequest = rawClient.buildDeleteRequest(
                     url,
                     queryString,
+                    options,
                   );
 
                   return rawClient
@@ -274,6 +291,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                 const fetchRequest = rawClient.buildGetRequest(
                   url,
                   queryString,
+                  options,
                 );
 
                 return rawClient
