@@ -8,15 +8,20 @@ export default async function fetchAllPages(
   endpoint,
   params,
   perPage = ITEMS_PER_PAGE,
+  options,
 ) {
   const limiter = new Bottleneck({
     maxConcurrent: MAX_CONCURRENT,
   });
 
-  const baseResponse = await client.get(endpoint, {
-    ...params,
-    'page[limit]': perPage,
-  });
+  const baseResponse = await client.get(
+    endpoint,
+    {
+      ...params,
+      'page[limit]': perPage,
+    },
+    options,
+  );
 
   const totalCount = baseResponse.meta.total_count;
 
@@ -25,11 +30,15 @@ export default async function fetchAllPages(
   for (let index = perPage; index < totalCount; index += perPage) {
     promises.push(
       limiter.schedule(async () => {
-        const response = await client.get(endpoint, {
-          ...params,
-          'page[offset]': index,
-          'page[limit]': perPage,
-        });
+        const response = await client.get(
+          endpoint,
+          {
+            ...params,
+            'page[offset]': index,
+            'page[limit]': perPage,
+          },
+          options,
+        );
         return response;
       }),
     );

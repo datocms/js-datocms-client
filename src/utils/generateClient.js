@@ -284,6 +284,7 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                     url,
                     queryString,
                     perPage,
+                    options,
                   );
                   return request.then(response => deserialize(null, response));
                 }
