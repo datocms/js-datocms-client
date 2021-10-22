@@ -10,6 +10,7 @@ function queryString(query) {
   return qs.stringify(query, { arrayFormat: 'brackets' });
 }
 
+let requestCount = 1;
 export default class Client {
   constructor(token, extraHeaders, baseUrl) {
     this.baseUrl = baseUrl.replace(/\/$/, '');
@@ -89,21 +90,26 @@ export default class Client {
   }
 
   request(fetchRequest, preCallStack = new Error().stack, retryCount = 1) {
+    const requestId = requestCount;
+    requestCount += 1;
+
     if (fetchRequest.options.logApiCalls) {
-      console.log('>>>>>>>>>>>>');
-      console.log(`${fetchRequest.options.method} ${fetchRequest.url}`);
+      console.log(`[${requestId}] >>>>>>>>>>>>`);
+      console.log(
+        `[${requestId}] ${fetchRequest.options.method} ${fetchRequest.url}`,
+      );
       if (fetchRequest.options.logApiCalls >= 2) {
         for (const [key, value] of Object.entries(
           fetchRequest.options.headers || {},
         )) {
-          console.log(`${key}: ${value}`);
+          console.log(`[${requestId}] ${key}: ${value}`);
         }
       }
       if (fetchRequest.options.logApiCalls >= 3 && fetchRequest.options.body) {
         console.log();
-        console.log(fetchRequest.options.body);
+        console.log(`[${requestId}] ${fetchRequest.options.body}`);
       }
-      console.log('>>>>>>>>>>>>');
+      console.log(`[${requestId}] >>>>>>>>>>>>`);
     }
 
     return fetch(fetchRequest.url, fetchRequest.options)
@@ -122,8 +128,8 @@ export default class Client {
         }
 
         if (fetchRequest.options.logApiCalls) {
-          console.log('<<<<<<<<<<<<');
-          console.log(`Status: ${res.status}`);
+          console.log(`[${requestId}] <<<<<<<<<<<<`);
+          console.log(`[${requestId}] Status: ${res.status}`);
           if (fetchRequest.options.logApiCalls >= 2) {
             [
               'content-type',
@@ -134,7 +140,7 @@ export default class Client {
             ].forEach(key => {
               const value = res.headers.get(key);
               if (value) {
-                console.log(`${key}: ${value}`);
+                console.log(`[${requestId}] ${key}: ${value}`);
               }
             });
           }
@@ -144,11 +150,10 @@ export default class Client {
           .then(body => {
             if (fetchRequest.options.logApiCalls >= 3 && body) {
               console.log();
-              console.log(JSON.stringify(body));
+              console.log(`[${requestId}] ${JSON.stringify(body)}`);
             }
             if (fetchRequest.options.logApiCalls) {
-              console.log('<<<<<<<<<<<<');
-              console.log();
+              console.log(`[${requestId}] <<<<<<<<<<<<`);
             }
             if (res.status >= 200 && res.status < 300) {
               return Promise.resolve(body);
