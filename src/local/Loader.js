@@ -32,18 +32,18 @@ export default class Loader {
   }
 
   saveStateToCache(cache) {
-    cache.set(this.cacheKey(), this.entitiesRepo.entities);
+    return cache.set(this.cacheKey(), this.entitiesRepo.entities);
   }
 
   loadStateFromCache(cache) {
-    const entities = cache.get(this.cacheKey());
+    return cache.get(this.cacheKey()).then(entities => {
+      if (!entities) {
+        return false;
+      }
 
-    if (!entities) {
-      return false;
-    }
-
-    this.entitiesRepo.entities = entities;
-    return true;
+      this.entitiesRepo.entities = entities;
+      return true;
+    });
   }
 
   loadSchema() {
