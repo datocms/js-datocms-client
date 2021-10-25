@@ -483,7 +483,20 @@ describe('Site API', () => {
         expect(foundItem.id).to.equal(item.id);
         expect(foundItem.itemType).to.not.be.undefined();
 
-        const allItems = await client.items.all();
+        const allItems = await client.items.all({
+          filter: {
+            type: itemType.id,
+          },
+          page: {
+            offset: 0,
+            limit: 10,
+          },
+          orderBy: 'title_ASC',
+          version: 'current',
+          locale: 'en',
+          nested: true,
+        });
+
         expect(allItems).to.have.length(1);
         expect(allItems[0].itemType).to.not.be.undefined();
 
