@@ -18,6 +18,26 @@ import Loader from '../../src/local/Loader';
 import ItemsRepo from '../../src/local/ItemsRepo';
 import uploadImage from '../../src/upload/uploadImage';
 
+class DummyCache {
+  constructor() {
+    this.cache = {};
+  }
+
+  async get(key) {
+    const val = this.cache[key];
+
+    if (!val) {
+      return null;
+    }
+
+    return JSON.parse(val);
+  }
+
+  async set(key, value) {
+    this.cache[key] = JSON.stringify(value);
+  }
+}
+
 describe('dump', () => {
   it(
     'dump with toml',
@@ -40,6 +60,7 @@ describe('dump', () => {
       const configFile = path.resolve('test/fixtures/toml.config.js');
       const loader = new Loader(client, false);
       await loader.load();
+
       await dump(configFile, new ItemsRepo(loader.entitiesRepo), true, dirName);
 
       const tomlFile = TOML.parse(
@@ -293,7 +314,19 @@ describe('dump', () => {
       const configFile = path.resolve('test/fixtures/dato.config.js');
       const loader = new Loader(client, false);
       await loader.load();
-      await dump(configFile, new ItemsRepo(loader.entitiesRepo), true, dirName);
+
+      const cache = new DummyCache();
+      await loader.saveStateToCache(cache);
+
+      const loader2 = new Loader(client, false);
+      await loader2.loadStateFromCache(cache);
+
+      await dump(
+        configFile,
+        new ItemsRepo(loader2.entitiesRepo),
+        true,
+        dirName,
+      );
 
       const yamlFile = yaml.safeLoad(
         fs.readFileSync(path.join(dirName, 'site.yml'), 'utf8'),

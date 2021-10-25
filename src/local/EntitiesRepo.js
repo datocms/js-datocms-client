@@ -35,7 +35,7 @@ export default class EntitiesRepo {
             ...acc2,
             [id]: entity.payload,
           };
-        }),
+        }, {}),
       };
     }, {});
   }
@@ -45,12 +45,12 @@ export default class EntitiesRepo {
       (acc, [type, entitiesById]) => {
         return {
           ...acc,
-          [type]: Object.entries(entitiesById).reduce((acc2, [id, entity]) => {
+          [type]: Object.entries(entitiesById).reduce((acc2, [id, payload]) => {
             return {
               ...acc2,
-              [id]: new JsonApiEntity(entity.payload, this),
+              [id]: new JsonApiEntity(payload, this),
             };
-          }),
+          }, {}),
         };
       },
       {},
