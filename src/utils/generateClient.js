@@ -146,7 +146,16 @@ export default function generateClient(subdomain, cache, extraMethods = {}) {
                   body = args.shift() || {};
                 }
 
-                const queryString = args.shift() || {};
+                let queryString = args.shift() || {};
+
+                queryString = Object.entries(queryString).reduce(
+                  (acc, [key, value]) => {
+                    acc[decamelize(key)] = value;
+                    return acc;
+                  },
+                  {},
+                );
+
                 const options = { ...globalOptions, ...(args.shift() || {}) };
 
                 const deserializeResponse = Object.prototype.hasOwnProperty.call(
