@@ -47,6 +47,10 @@ const findLinkFor = (schema, namespace, apiCall) => {
   return link;
 };
 
+export const isClient = object => {
+  return object && object.rawClient && object.rawClient.token;
+};
+
 export default function generateClient(subdomain, cache, extraMethods = {}) {
   return function Client(
     token,

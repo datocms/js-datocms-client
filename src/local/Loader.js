@@ -1,30 +1,52 @@
 import EntitiesRepo from './EntitiesRepo';
+import { isClient } from '../utils/generateClient';
+import SiteClient from '../site/SiteClient';
 
 export default class Loader {
   constructor(
-    client,
+    clientOrClientArgs,
     previewMode = false,
     environment = undefined,
     { pageSize } = {},
   ) {
-    this.client = client;
+    if (isClient(clientOrClientArgs)) {
+      this.client = clientOrClientArgs;
+    } else {
+      this.client = new SiteClient(...clientOrClientArgs);
+      this.clientArgs = clientOrClientArgs;
+    }
     this.environment = environment;
     this.previewMode = previewMode;
     this.entitiesRepo = new EntitiesRepo();
     this.pageSize = pageSize || true;
   }
 
-  loadSchema() {
-    return this.client
-      .get('/site', { include: 'item_types,item_types.fields' })
-      .then(site => {
-        this.entitiesRepo.destroyAllEntities();
-        this.siteId = site.data.id;
-        this.entitiesRepo.upsertEntities(site);
-      });
+  cacheKey() {
+    return `datocms-loader-data-${JSON.stringify({
+      clientArgs: this.clientArgs,
+      environment: this.environment,
+      previewMode: this.previewMode,
+      entitiesRepo: this.entitiesRepo,
+      pageSize: this.pageSize,
+    })}`;
   }
 
-  loadSchemaWithinEnvironment() {
+  saveStateToCache(cache) {
+    cache.set(this.cacheKey(), this.entitiesRepo.entities);
+  }
+
+  loadStateFromCache(cache) {
+    const entities = cache.get(this.cacheKey());
+
+    if (!entities) {
+      return false;
+    }
+
+    this.entitiesRepo.entities = entities;
+    return true;
+  }
+
+  loadSchema() {
     return this.client
       .get('/site', { include: 'item_types,item_types.fields' })
       .then(site => {
