@@ -26,7 +26,6 @@ export default class Loader {
       clientArgs: this.clientArgs,
       environment: this.environment,
       previewMode: this.previewMode,
-      entitiesRepo: this.entitiesRepo,
       pageSize: this.pageSize,
     })}`;
   }
