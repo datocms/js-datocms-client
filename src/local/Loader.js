@@ -31,16 +31,16 @@ export default class Loader {
   }
 
   saveStateToCache(cache) {
-    return cache.set(this.cacheKey(), this.entitiesRepo.entities);
+    return cache.set(this.cacheKey(), this.entitiesRepo.serializeState());
   }
 
   loadStateFromCache(cache) {
-    return cache.get(this.cacheKey()).then(entities => {
-      if (!entities) {
+    return cache.get(this.cacheKey()).then(serializedState => {
+      if (!serializedState) {
         return false;
       }
 
-      this.entitiesRepo.entities = entities;
+      this.entitiesRepo.loadState(serializedState);
       return true;
     });
   }

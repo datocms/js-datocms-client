@@ -26,6 +26,37 @@ export default class EntitiesRepo {
     this.upsertEntities(...payloads);
   }
 
+  serializeState() {
+    return Object.entries(this.entities).reduce((acc, [type, entitiesById]) => {
+      return {
+        ...acc,
+        [type]: Object.entries(entitiesById).reduce((acc2, [id, entity]) => {
+          return {
+            ...acc2,
+            [id]: entity.payload,
+          };
+        }),
+      };
+    }, {});
+  }
+
+  loadState(serializedState) {
+    this.entities = Object.entries(serializedState).reduce(
+      (acc, [type, entitiesById]) => {
+        return {
+          ...acc,
+          [type]: Object.entries(entitiesById).reduce((acc2, [id, entity]) => {
+            return {
+              ...acc2,
+              [id]: new JsonApiEntity(entity.payload, this),
+            };
+          }),
+        };
+      },
+      {},
+    );
+  }
+
   addDestroyListener(cb) {
     this.destroyListeners.push(cb);
     return () => {
