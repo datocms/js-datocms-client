@@ -110,6 +110,7 @@ module.exports = {
   itemVersions: {
     restore: true,
     all: true,
+    find: true,
   },
   uploads: {
     create: true,
