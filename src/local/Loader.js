@@ -54,6 +54,11 @@ export default class Loader {
       });
   }
 
+  // deprecated
+  loadSchemaWithinEnvironment() {
+    return this.loadSchema();
+  }
+
   load() {
     return Promise.all([
       this.client.get('/site', { include: 'item_types,item_types.fields' }),
