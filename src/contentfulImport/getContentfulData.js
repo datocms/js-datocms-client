@@ -58,9 +58,10 @@ export default async ({
     assets = rawAssets;
   }
 
- spinner.succeed(
-    skipContent ? `Found ${contentTypes.length} content types, skipping content import` :
-    `Found ${entries.length} entries and ${assets.length} assets in Contentful project`,
+  spinner.succeed(
+    skipContent
+      ? `Found ${contentTypes.length} content types, skipping content import`
+      : `Found ${entries.length} entries and ${assets.length} assets in Contentful project`,
   );
 
   return {
