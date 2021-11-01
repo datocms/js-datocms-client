@@ -6,7 +6,10 @@ export default function localizedRead(entity, key, localized, i18n) {
     const localeWithValue = locales.find(locale => {
       const localeValue = hash[locale];
       return (
-        localeValue !== null && localeValue !== undefined && localeValue !== ''
+        localeValue !== null &&
+        localeValue !== undefined &&
+        localeValue !== '' &&
+        localeValue.length !== 0
       );
     });
     return localeWithValue ? hash[localeWithValue] : null;
