@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-fetch';
+import fetch from 'cross-fetch';
 
 export default function fetchWithProxy(url, options) {
   const instanceOptions = { ...options };
