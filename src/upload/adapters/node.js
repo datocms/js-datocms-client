@@ -1,7 +1,9 @@
 import url from 'url';
 import fs from 'fs';
 import remote from './nodeRemote';
-import local from './nodeLocal';
+import local, { uploadToS3 } from './nodeLocal';
+
+export { uploadToS3 };
 
 export default function node(client, source, options = {}) {
   const { host } = url.parse(source);

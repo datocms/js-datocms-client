@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import mime from 'mime-types';
 
-function uploadToS3(url, filePath, { onProgress }) {
+export function uploadToS3(filePath, url, { onProgress }) {
   const totalLength = fs.statSync(filePath).size;
   let isCancelled = false;
   const promise = got.put(url, {
@@ -60,8 +60,8 @@ export default function nodeLocal(client, filePath, options) {
         });
       }
       const { promise: uploadPromise, cancel: cancelUpload } = uploadToS3(
-        url,
         filePath,
+        url,
         {
           onProgress: options.onProgress,
         },

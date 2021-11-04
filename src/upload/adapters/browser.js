@@ -1,4 +1,4 @@
-function uploadToS3(file, url, { onProgress }) {
+export function uploadToS3(file, url, { onProgress }) {
   const xhr = new XMLHttpRequest();
 
   const promise = new Promise((resolve, reject) => {
