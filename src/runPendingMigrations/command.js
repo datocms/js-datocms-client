@@ -1,11 +1,28 @@
 import path from 'path';
 import fs from 'fs';
 import ora from 'ora';
+import ApiException from '../ApiException';
 
 import SiteClient from '../site/SiteClient';
 import upsertMigrationModel from './upsertMigrationModel';
 
 const MIGRATION_FILE_REGEXP = /^[0-9]+.*\.js$/;
+
+async function catchPermissionErrors(operation, promise) {
+  try {
+    const result = await promise;
+    return result;
+  } catch (e) {
+    if (e instanceof ApiException && e.statusCode === 401) {
+      process.stderr.write(
+        `\n\nFail: the API token has not enough permissions to perform the following operation: ${operation}. Please use another API token, or edit the permissions for the current one.\n`,
+      );
+      process.exit(1);
+    }
+
+    throw e;
+  }
+}
 
 export default async function runPendingMigrations({
   sourceEnvId,
@@ -30,12 +47,18 @@ export default async function runPendingMigrations({
 
   const globalClient = new SiteClient(token, { baseUrl: cmaBaseUrl });
 
-  const allEnvironments = await globalClient.environments.all();
+  const allEnvironments = await catchPermissionErrors(
+    'fetch the existing environments',
+    globalClient.environments.all(),
+  );
 
   const primaryEnv = allEnvironments.find(env => env.meta.primary);
 
   const sourceEnv = sourceEnvId
-    ? await globalClient.environments.find(sourceEnvId)
+    ? await catchPermissionErrors(
+        `fetch environment ${sourceEnvId}`,
+        globalClient.environments.find(sourceEnvId),
+      )
     : primaryEnv;
 
   if (!sourceEnv) {
@@ -76,9 +99,12 @@ export default async function runPendingMigrations({
       );
     }
 
-    await globalClient.environments.fork(sourceEnv.id, {
-      id: destinationEnvId,
-    });
+    await catchPermissionErrors(
+      `fork environment ${sourceEnv.id} into ${destinationEnvId}`,
+      globalClient.environments.fork(sourceEnv.id, {
+        id: destinationEnvId,
+      }),
+    );
 
     forkSpinner.succeed();
   }
@@ -91,6 +117,7 @@ export default async function runPendingMigrations({
   const migrationModel = await upsertMigrationModel(
     client,
     migrationModelApiKey,
+    catchPermissionErrors,
   );
 
   const alreadyRunMigrations = (

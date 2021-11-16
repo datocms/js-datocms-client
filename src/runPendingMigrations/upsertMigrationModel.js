@@ -1,20 +1,30 @@
 import ora from 'ora';
 import ApiException from '../ApiException';
 
-async function createMigrationModel(client, migrationModelApiKey) {
-  const model = await client.itemTypes.create({
-    name: 'Schema migration',
-    apiKey: migrationModelApiKey,
-  });
+async function createMigrationModel(
+  client,
+  migrationModelApiKey,
+  catchPermissionErrors,
+) {
+  const model = await catchPermissionErrors(
+    `create model ${migrationModelApiKey}`,
+    client.itemTypes.create({
+      name: 'Schema migration',
+      apiKey: migrationModelApiKey,
+    }),
+  );
 
-  await client.fields.create(model.id, {
-    label: 'Migration file name',
-    apiKey: 'name',
-    fieldType: 'string',
-    validators: {
-      required: {},
-    },
-  });
+  await catchPermissionErrors(
+    `create field for model ${migrationModelApiKey}`,
+    client.fields.create(model.id, {
+      label: 'Migration file name',
+      apiKey: 'name',
+      fieldType: 'string',
+      validators: {
+        required: {},
+      },
+    }),
+  );
 
   return model;
 }
@@ -22,9 +32,13 @@ async function createMigrationModel(client, migrationModelApiKey) {
 export default async function upsertMigrationModel(
   client,
   migrationModelApiKey,
+  catchPermissionErrors,
 ) {
   try {
-    return await client.itemTypes.find(migrationModelApiKey);
+    return await catchPermissionErrors(
+      `fetch model ${migrationModelApiKey}`,
+      client.itemTypes.find(migrationModelApiKey),
+    );
   } catch (e) {
     if (e instanceof ApiException && e.statusCode === 404) {
       const creationSpinner = ora(
@@ -34,6 +48,7 @@ export default async function upsertMigrationModel(
       const migrationItemType = await createMigrationModel(
         client,
         migrationModelApiKey,
+        catchPermissionErrors,
       );
 
       creationSpinner.succeed();
