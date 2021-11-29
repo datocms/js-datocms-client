@@ -1,7 +1,7 @@
 import SiteClient from '../../site/SiteClient';
 
 export default async function command({ token: tokenByArg, cmaBaseUrl }) {
-  const token = tokenByArg || process.env.DATO_MANAGEMENT_API_TOKEN;
+  const token = tokenByArg || process.env.DATO_API_TOKEN;
   const client = new SiteClient(token, { baseUrl: cmaBaseUrl });
 
   const allEnvs = await client.environments.all();

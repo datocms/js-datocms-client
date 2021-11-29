@@ -10,7 +10,7 @@ export default async function command({
     `Promoting environment \`${environmentId}\` to primary environment\n`,
   ).start();
 
-  const token = tokenByArg || process.env.DATO_MANAGEMENT_API_TOKEN;
+  const token = tokenByArg || process.env.DATO_API_TOKEN;
   const client = new SiteClient(token, { baseUrl: cmaBaseUrl });
 
   try {

@@ -43,7 +43,7 @@ export default async function runPendingMigrations({
     .readdirSync(migrationsDir)
     .filter(file => file.match(MIGRATION_FILE_REGEXP));
 
-  const token = tokenByArg || process.env.DATO_MANAGEMENT_API_TOKEN;
+  const token = tokenByArg || process.env.DATO_API_TOKEN;
 
   const globalClient = new SiteClient(token, { baseUrl: cmaBaseUrl });
 

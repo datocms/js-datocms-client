@@ -7,7 +7,7 @@ export default async function runPendingMigrations({
   cmaBaseUrl,
   token: tokenByArg,
 }) {
-  const token = tokenByArg || process.env.DATO_MANAGEMENT_API_TOKEN;
+  const token = tokenByArg || process.env.DATO_API_TOKEN;
 
   const client = new SiteClient(token, { baseUrl: cmaBaseUrl });
   const allEnvironments = await client.environments.all();

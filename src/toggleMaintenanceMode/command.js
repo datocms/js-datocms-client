@@ -7,7 +7,7 @@ export default async function toggleMaintenanceMode({
   force,
   cmaBaseUrl,
 }) {
-  const token = tokenByArg || process.env.DATO_MANAGEMENT_API_TOKEN;
+  const token = tokenByArg || process.env.DATO_API_TOKEN;
   const client = new SiteClient(token, { baseUrl: cmaBaseUrl });
 
   const { active } = await client.maintenanceMode.find();
