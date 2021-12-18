@@ -5,7 +5,7 @@ import path from 'path';
 import glob from 'glob';
 import fs from 'fs';
 import runCli from '../../src/cli';
-import { SiteClient } from '../../src/index';
+import { SiteClient, ApiException } from '../../src/index';
 import captureStream from '../support/captureStream';
 
 describe('CLI tool', () => {
@@ -96,6 +96,34 @@ describe('CLI tool', () => {
 
         const model = await client.itemTypes.find('article');
         expect(model.apiKey).to.eq('article');
+      }),
+    );
+
+    it(
+      '--dryRun',
+      vcr(async () => {
+        process.chdir(path.resolve('test/fixtures/cli/scenario1'));
+
+        const accountClient = await generateNewAccountClient();
+
+        const site = await accountClient.sites.create({
+          name: 'Integration new test site',
+        });
+
+        await runCli(
+          `migrate --destination=foobar --token=${site.readwriteToken} --cmaBaseUrl=${process.env.SITE_API_BASE_URL} --dryRun`,
+        );
+
+        const client = new SiteClient(site.readwriteToken, {
+          baseUrl: process.env.SITE_API_BASE_URL,
+        });
+
+        const envs = await client.environments.all();
+        expect(envs.length).to.eq(1);
+
+        await expect(
+          client.itemTypes.find('schema_migration'),
+        ).to.be.rejectedWith(ApiException, /NOT_FOUND/);
       }),
     );
   });

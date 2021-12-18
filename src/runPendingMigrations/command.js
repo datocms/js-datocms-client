@@ -30,6 +30,7 @@ export default async function runPendingMigrations({
   migrationModelApiKey,
   relativeMigrationsDir,
   inPlace,
+  dryRun,
   cmaBaseUrl,
   token: tokenByArg,
 }) {
@@ -69,7 +70,7 @@ export default async function runPendingMigrations({
     );
   }
 
-  const destinationEnvId = inPlace
+  let destinationEnvId = inPlace
     ? sourceEnv.id
     : rawDestinationEnvId || `${sourceEnv.id}-post-migrations`;
 
@@ -99,12 +100,16 @@ export default async function runPendingMigrations({
       );
     }
 
-    await catchPermissionErrors(
-      `fork environment ${sourceEnv.id} into ${destinationEnvId}`,
-      globalClient.environments.fork(sourceEnv.id, {
-        id: destinationEnvId,
-      }),
-    );
+    if (dryRun) {
+      destinationEnvId = sourceEnv.id;
+    } else {
+      await catchPermissionErrors(
+        `fork environment ${sourceEnv.id} into ${destinationEnvId}`,
+        globalClient.environments.fork(sourceEnv.id, {
+          id: destinationEnvId,
+        }),
+      );
+    }
 
     forkSpinner.succeed();
   }
@@ -118,14 +123,17 @@ export default async function runPendingMigrations({
     client,
     migrationModelApiKey,
     catchPermissionErrors,
+    dryRun,
   );
 
-  const alreadyRunMigrations = (
-    await client.items.all(
-      { filter: { type: migrationModel.id } },
-      { allPages: true },
-    )
-  ).map(m => m.name);
+  const alreadyRunMigrations = migrationModel
+    ? (
+        await client.items.all(
+          { filter: { type: migrationModel.id } },
+          { allPages: true },
+        )
+      ).map(m => m.name)
+    : [];
 
   const migrationsToRun = allMigrations
     .filter(file => !alreadyRunMigrations.includes(file))
@@ -138,15 +146,21 @@ export default async function runPendingMigrations({
 
     const migrationSpinner = ora(`Running ${migrationFile}...`).start();
 
-    await migration(client);
+    if (!dryRun) {
+      await migration(client);
+    }
 
     migrationSpinner.succeed();
 
-    await client.items.create({
-      itemType: migrationModel.id,
-      name: migrationFile,
-    });
+    if (!dryRun) {
+      await client.items.create({
+        itemType: migrationModel.id,
+        name: migrationFile,
+      });
+    }
   }
 
-  process.stdout.write('Done!\n');
+  process.stdout.write(
+    `Done! Successfully run ${migrationsToRun.length} migration files.\n`,
+  );
 }

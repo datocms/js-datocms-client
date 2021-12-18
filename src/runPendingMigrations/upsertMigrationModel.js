@@ -33,6 +33,7 @@ export default async function upsertMigrationModel(
   client,
   migrationModelApiKey,
   catchPermissionErrors,
+  dryRun,
 ) {
   try {
     return await catchPermissionErrors(
@@ -45,11 +46,15 @@ export default async function upsertMigrationModel(
         `Creating \`${migrationModelApiKey}\` model...\n`,
       ).start();
 
-      const migrationItemType = await createMigrationModel(
-        client,
-        migrationModelApiKey,
-        catchPermissionErrors,
-      );
+      let migrationItemType = null;
+
+      if (!dryRun) {
+        migrationItemType = await createMigrationModel(
+          client,
+          migrationModelApiKey,
+          catchPermissionErrors,
+        );
+      }
 
       creationSpinner.succeed();
 
