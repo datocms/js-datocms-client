@@ -43,7 +43,7 @@ export default async function upsertMigrationModel(
   } catch (e) {
     if (e instanceof ApiException && e.statusCode === 404) {
       const creationSpinner = ora(
-        `Creating \`${migrationModelApiKey}\` model...\n`,
+        `Creating \`${migrationModelApiKey}\` model...`,
       ).start();
 
       let migrationItemType = null;

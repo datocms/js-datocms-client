@@ -31,9 +31,12 @@ export default async function runPendingMigrations({
   relativeMigrationsDir,
   inPlace,
   dryRun,
+  jsonOutput,
   cmaBaseUrl,
   token: tokenByArg,
 }) {
+  const jsonResult = {};
+
   const migrationsDir = path.resolve(relativeMigrationsDir);
 
   if (!fs.existsSync(migrationsDir)) {
@@ -80,10 +83,6 @@ export default async function runPendingMigrations({
         'Running migrations on primary environment is not allowed!',
       );
     }
-
-    process.stdout.write(
-      `Migrations will be run in sandbox env \`${destinationEnvId}\`\n`,
-    );
   } else {
     const forkSpinner = ora(
       `Creating a fork of \`${sourceEnv.id}\` called \`${destinationEnvId}\`...`,
@@ -114,6 +113,14 @@ export default async function runPendingMigrations({
     forkSpinner.succeed();
   }
 
+  jsonResult.destinationEnvId = destinationEnvId;
+
+  if (!jsonOutput) {
+    process.stdout.write(
+      `Migrations will be run in sandbox env \`${destinationEnvId}\`\n`,
+    );
+  }
+
   const client = new SiteClient(token, {
     environment: destinationEnvId,
     baseUrl: cmaBaseUrl,
@@ -140,13 +147,12 @@ export default async function runPendingMigrations({
     .sort();
 
   for (const migrationFile of migrationsToRun) {
-    const migrationAbsolutePath = path.join(migrationsDir, migrationFile);
-    // eslint-disable-next-line global-require, import/no-dynamic-require
-    const migration = require(migrationAbsolutePath);
-
     const migrationSpinner = ora(`Running ${migrationFile}...`).start();
 
     if (!dryRun) {
+      const migrationAbsolutePath = path.join(migrationsDir, migrationFile);
+      // eslint-disable-next-line global-require, import/no-dynamic-require
+      const migration = require(migrationAbsolutePath);
       await migration(client);
     }
 
@@ -160,7 +166,16 @@ export default async function runPendingMigrations({
     }
   }
 
-  process.stdout.write(
-    `Done! Successfully run ${migrationsToRun.length} migration files.\n`,
-  );
+  jsonResult.runMigrations = migrationsToRun;
+  jsonResult.runMigrationsCount = migrationsToRun.length;
+
+  if (!jsonOutput) {
+    process.stdout.write(
+      `Done! Successfully run ${migrationsToRun.length} migration files.\n`,
+    );
+  }
+
+  if (jsonOutput) {
+    process.stdout.write(JSON.stringify(jsonResult, null, 2));
+  }
 }

@@ -19,7 +19,7 @@ DatoCMS CLI tool
 Usage:
   dato dump [--watch] [--verbose] [--preview] [--token=<apiToken>] [--environment=<environment>] [--config=<file>] [--cmaBaseUrl=<url>] [--pageSize=<pageSize>]
   dato new migration <name> [--migrationsDir=<directory>] [--migrationTemplate=<migrationTemplateFile>]
-  dato migrate [--source=<environment>] [--destination=<environment>] [--inPlace] [--dryRun] [--migrationModel=<apiKey>] [--migrationsDir=<directory>] [--token=<apiToken>] [--cmaBaseUrl=<url>]
+  dato migrate [--source=<environment>] [--destination=<environment>] [--inPlace] [--dryRun] [--migrationModel=<apiKey>] [--migrationsDir=<directory>] [--jsonOutput] [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment fork <sourceEnvironmentId> <destinationEnvironmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment get-primary [--token=<apiToken>] [--cmaBaseUrl=<url>]
   dato environment promote <environmentId> [--token=<apiToken>] [--cmaBaseUrl=<url>]
@@ -80,6 +80,7 @@ module.exports = argv => {
       '--migrationsDir': relativeMigrationsDir,
       '--inPlace': inPlace,
       '--dryRun': dryRun,
+      '--jsonOutput': jsonOutput,
       '--token': token,
       '--cmaBaseUrl': cmaBaseUrl,
     } = options;
@@ -89,6 +90,7 @@ module.exports = argv => {
       destinationEnvId,
       inPlace,
       dryRun,
+      jsonOutput,
       migrationModelApiKey,
       relativeMigrationsDir,
       token,
