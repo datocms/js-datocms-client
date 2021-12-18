@@ -67,10 +67,10 @@ describe('CLI tool', () => {
   describe('dato migrate', () => {
     let oldCwd;
 
-    before(() => {
+    beforeEach(() => {
       oldCwd = process.cwd();
     });
-    after(() => {
+    afterEach(() => {
       process.chdir(oldCwd);
     });
 
