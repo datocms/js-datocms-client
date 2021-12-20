@@ -160,6 +160,6 @@ Do you wish to continue? [Y/n]: `;
 
     spinner.succeed();
   } catch (e) {
-    throw new Error('Importer error: ' + JSON.stringify(e, null, 2));
+    throw new Error(`Importer error:  ${JSON.stringify(e, null, 2)}`);
   }
 };
