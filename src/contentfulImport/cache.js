@@ -4,7 +4,7 @@ import ora from 'ora';
 
 const path = './contentfulImport.json';
 
-export const promptForAction = (message, rightAnswer, action) =>
+export const promptForAction = (message, answerToTriggerAction, action) =>
   new Promise(resolve => {
     const rl = readline.createInterface({
       input: process.stdin,
@@ -12,7 +12,7 @@ export const promptForAction = (message, rightAnswer, action) =>
     });
 
     rl.question(message, answer => {
-      if (answer === rightAnswer) {
+      if (answer === answerToTriggerAction) {
         action();
       }
 
@@ -32,8 +32,13 @@ export const initializeCache = async () => {
   let spinner;
 
   if (fs.existsSync(path)) {
-    const message =
-      'We found a recovery file from your previous import attempt, you can use this file to continue importing from where you left. If you made any changes to your Contentful project we suggest to select no and start from scratch. Do you wish to use this file? [Y/n]';
+    const message = `
+*****Recovery file*****
+
+We found a recovery file from your last import attempt, you can use this file to continue importing from where you left off. 
+If you made any changes to your Contentful project we suggest to select "n" and start importing from scratch. 
+
+Do you wish to start from where you left off? [Y/n]: `;
 
     spinner = ora(`Using recovery file in ${path}`);
     await promptForAction(message, 'n', destroyTempFile);

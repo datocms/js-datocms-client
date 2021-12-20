@@ -12,7 +12,13 @@ import addValidationsOnField from './addValidationsOnField';
 import linkRecords from './linkRecords';
 import createUploads from './createUploads';
 import publishRecords from './publishRecords';
-import { initializeCache, writeToFile, cached, destroyTempFile } from './cache';
+import {
+  initializeCache,
+  writeToFile,
+  cached,
+  destroyTempFile,
+  promptForAction,
+} from './cache';
 
 export default async ({
   contentfulToken,
@@ -26,6 +32,19 @@ export default async ({
 }) => {
   try {
     await initializeCache();
+
+    const message = `
+*****Important Notice*****
+
+Importing from Contentful is a potentially destructive operation. 
+It will remove all your unused media assets, unused locales, and all models with the same name as Contentful's content types.
+We strongly recommend to proceed using a clean environment.
+
+Do you wish to continue? [Y/n]: `;
+
+    await promptForAction(message, 'n', () => {
+      throw new Error(`Import aborted`);
+    });
 
     const client = await appClient(
       contentfulToken,
@@ -141,8 +160,6 @@ export default async ({
 
     spinner.succeed();
   } catch (e) {
-    console.error('Importer error:', JSON.stringify(e, null, 2));
-
-    throw e;
+    throw new Error('Importer error: ' + JSON.stringify(e, null, 2));
   }
 };
