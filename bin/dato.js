@@ -8,7 +8,7 @@ const runCli = require('../lib/cli');
 const ApiException = require('../lib/ApiException').default;
 
 runCli().catch(e => {
-  process.stderr.write(chalk.brightRed(`\nCommand failed!\n`));
+  process.stderr.write(chalk.redBright(`\nCommand failed!\n`));
 
   if (e instanceof ApiException) {
     const humanMessage = e.humanMessageForFailedResponse();
