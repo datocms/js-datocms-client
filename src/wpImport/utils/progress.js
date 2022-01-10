@@ -1,7 +1,7 @@
 import { Progress } from 'clui';
 import ora from 'ora';
 import truncate from 'truncate';
-import colors from 'colors/safe';
+import chalk from 'chalk';
 
 export async function spin(label, promise) {
   const spinner = ora(label).start();
@@ -21,7 +21,7 @@ export function progress(label, max) {
 
   const tick = async (info, promise) => {
     const newInfo =
-      info.length > 0 ? colors.grey(` — ${truncate(info, 25)}`) : info;
+      info.length > 0 ? chalk.grey(` — ${truncate(info, 25)}`) : info;
 
     spinner.text = `${label} (${i}/${max}) ${prog.update(i, max)} ${newInfo}`;
 
