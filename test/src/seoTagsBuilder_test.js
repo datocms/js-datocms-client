@@ -3,7 +3,7 @@
 import EntitiesRepo from '../../src/local/EntitiesRepo';
 import { builders } from '../../src/utils/seoTagsBuilder';
 
-describe('seoTagsBuilder', () => {
+describe.only('seoTagsBuilder', () => {
   let itemTitle;
   let seo;
   let globalSeo;
@@ -12,14 +12,18 @@ describe('seoTagsBuilder', () => {
   let entitiesRepo;
   let itemImage;
   let locales;
+  let heading;
+  let titleField;
 
   beforeEach(() => {
-    itemTitle = memo(() => null);
+    itemTitle = memo(() => 'My title');
     globalSeo = memo(() => null);
     seo = memo(() => null);
     noIndex = memo(() => null);
     itemImage = memo(() => null);
     locales = memo(() => ['en']);
+    heading = memo(() => false);
+    titleField = memo(() => ({}));
 
     entitiesRepo = memo(() => {
       const payload = {
@@ -112,12 +116,7 @@ describe('seoTagsBuilder', () => {
               singleton_item: {
                 data: null,
               },
-              title_field: {
-                data: {
-                  type: 'field',
-                  id: '15085',
-                },
-              },
+              title_field: titleField(),
             },
           },
           {
@@ -184,7 +183,7 @@ describe('seoTagsBuilder', () => {
               position: 3,
               appearance: {
                 editor: 'single_line',
-                parameters: { heading: false },
+                parameters: { heading: heading() },
               },
             },
             relationships: {
@@ -291,8 +290,35 @@ describe('seoTagsBuilder', () => {
         });
 
         context('no SEO', () => {
-          it('returns no tags', () => {
-            expect(result()).to.be.undefined();
+          context('with title field', () => {
+            beforeEach(() => {
+              titleField = memo(() => ({
+                data: {
+                  type: 'field',
+                  id: '15085',
+                },
+              }));
+            });
+
+            it('returns title field as title', () => {
+              expect(titleValue()).to.eq('My title');
+            });
+          });
+
+          context('with heading appearance', () => {
+            beforeEach(() => {
+              heading = memo(() => true);
+            });
+
+            it('returns heading as title', () => {
+              expect(titleValue()).to.eq('Foo bar');
+            });
+          });
+
+          context('with no heading and no title', () => {
+            it('returns the first string field alphabetically', () => {
+              expect(titleValue()).to.eq('Foo bar');
+            });
           });
         });
 
@@ -320,18 +346,19 @@ describe('seoTagsBuilder', () => {
       });
 
       context('with no item', () => {
-        it('returns fallback description', () => {
+        it('returns fallback title', () => {
           expect(titleValue()).to.eq('Default title');
         });
       });
 
-      context('with item', () => {
+      context('with item but no title field', () => {
         beforeEach(() => {
+          itemTitle = memo(() => null);
           item = memo(() => entitiesRepo().findEntity('item', '24038'));
         });
 
         context('no SEO', () => {
-          it('returns fallback description', () => {
+          it('returns fallback title', () => {
             expect(titleValue()).to.eq('Default title');
           });
         });
