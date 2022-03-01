@@ -353,13 +353,13 @@ describe.only('seoTagsBuilder', () => {
 
       context('with item but no title field', () => {
         beforeEach(() => {
-          itemTitle = memo(() => null);
           item = memo(() => entitiesRepo().findEntity('item', '24038'));
+          itemTitle = memo(() => null);
         });
 
         context('no SEO', () => {
           it('returns fallback title', () => {
-            expect(titleValue()).to.eq('Default title');
+            expect(titleValue()).to.eq('Foo bar');
           });
         });
 
