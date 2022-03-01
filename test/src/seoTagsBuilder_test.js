@@ -14,6 +14,7 @@ describe.only('seoTagsBuilder', () => {
   let locales;
   let heading;
   let titleField;
+  let imagePreviewField;
 
   beforeEach(() => {
     itemTitle = memo(() => 'My title');
@@ -24,6 +25,7 @@ describe.only('seoTagsBuilder', () => {
     locales = memo(() => ['en']);
     heading = memo(() => false);
     titleField = memo(() => ({}));
+    imagePreviewField = memo(() => ({}));
 
     entitiesRepo = memo(() => {
       const payload = {
@@ -37,6 +39,7 @@ describe.only('seoTagsBuilder', () => {
               another_string: 'Foo bar',
               seo_settings: seo(),
               image: itemImage(),
+              another_gallery: [{ uploadId: '100001' }],
             },
             meta: {
               updated_at: '2016-12-07T09:14:22Z',
@@ -117,6 +120,7 @@ describe.only('seoTagsBuilder', () => {
                 data: null,
               },
               title_field: titleField(),
+              image_preview_field: imagePreviewField(),
             },
           },
           {
@@ -132,6 +136,31 @@ describe.only('seoTagsBuilder', () => {
               position: 1,
               appearance: {
                 editor: 'file',
+                parameters: {},
+              },
+            },
+            relationships: {
+              item_type: {
+                data: {
+                  id: '3781',
+                  type: 'item_type',
+                },
+              },
+            },
+          },
+          {
+            id: '2088',
+            type: 'field',
+            attributes: {
+              label: 'Another gallery',
+              field_type: 'gallery',
+              api_key: 'another_gallery',
+              hint: null,
+              localized: false,
+              validators: {},
+              position: 1,
+              appearance: {
+                editor: 'gallery',
                 parameters: {},
               },
             },
@@ -741,7 +770,7 @@ describe.only('seoTagsBuilder', () => {
       result = memo(() => builders.image(item(), entitiesRepo()));
     });
 
-    context('with no fallback seo', () => {
+    context('with no global fallback seo', () => {
       context('with no item', () => {
         it('returns no tags', () => {
           expect(result()).to.be.undefined();
@@ -781,10 +810,28 @@ describe.only('seoTagsBuilder', () => {
             });
           });
 
-          context('no SEO', () => {
-            it('returns item image', () => {
-              expect(ogValue()).to.include('image.png');
-              expect(cardValue()).to.include('image.png');
+          context('no SEO field', () => {
+            context('with no image_preview_field', () => {
+              it('returns item image', () => {
+                expect(ogValue()).to.include('image.png');
+                expect(cardValue()).to.include('image.png');
+              });
+            });
+
+            context('with image_preview_field', () => {
+              beforeEach(() => {
+                imagePreviewField = memo(() => ({
+                  data: {
+                    type: 'file',
+                    id: '100000',
+                  },
+                }));
+              });
+
+              it('returns item image', () => {
+                expect(ogValue()).to.include('seo.png');
+                expect(cardValue()).to.include('seo.png');
+              });
             });
           });
 
