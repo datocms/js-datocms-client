@@ -49,8 +49,34 @@ function seoAttributeWithFallback(
 export const builders = {
   title(itemEntity, entitiesRepo, i18n) {
     const { site } = entitiesRepo;
+    const itemType = itemEntity && itemEntity.itemType;
 
-    const titleField = itemEntity && itemEntity.itemType.titleField;
+    let titleField;
+
+    if (!itemType) {
+      titleField = undefined;
+    } else if (
+      itemType.titleField &&
+      itemType.titleField.fieldType !== 'link'
+    ) {
+      titleField = itemType.titleField;
+    } else {
+      const fields = itemType.fields.sort((a, b) =>
+        a.apiKey.localeCompare(b.apiKey),
+      );
+      const headingField = fields.find(
+        field =>
+          field.fieldType === 'string' &&
+          field.appearance.editor === 'single_line' &&
+          field.appearance.parameters.heading,
+      );
+
+      if (headingField) {
+        titleField = headingField;
+      } else {
+        titleField = fields.find(field => field.fieldType === 'string');
+      }
+    }
 
     const title = seoAttributeWithFallback(
       'title',
