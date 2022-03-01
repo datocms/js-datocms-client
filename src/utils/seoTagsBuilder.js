@@ -16,32 +16,33 @@ function seoAttributeWithFallback(
   i18n,
 ) {
   const { site } = entitiesRepo;
+  let itemSeoValue;
 
   const seoField =
     itemEntity && itemEntity.itemType.fields.find(f => f.fieldType === 'seo');
 
-  const itemSeoValue =
-    seoField &&
-    localizedRead(
+  if (seoField) {
+    const itemSeoFieldValue = localizedRead(
       itemEntity,
       camelize(seoField.apiKey),
       seoField.localized,
       i18n,
-    ) &&
-    localizedRead(
-      itemEntity,
-      camelize(seoField.apiKey),
-      seoField.localized,
-      i18n,
-    )[attribute];
+    );
 
-  const multiLocaleSite = site.locales.length > 1;
+    itemSeoValue = itemSeoFieldValue && itemSeoFieldValue[attribute];
+  }
 
-  const fallbackSeo =
-    localizedRead(site, 'globalSeo', multiLocaleSite, i18n) &&
-    localizedRead(site, 'globalSeo', multiLocaleSite, i18n).fallbackSeo;
+  const globalSeoValue = localizedRead(
+    site,
+    'globalSeo',
+    site.locales.length > 1,
+    i18n,
+  );
 
-  const fallbackSeoValue = fallbackSeo && fallbackSeo[attribute];
+  const fallbackSeoValue =
+    globalSeoValue &&
+    globalSeoValue.fallbackSeo &&
+    globalSeoValue.fallbackSeo[attribute];
 
   return itemSeoValue || alternative || fallbackSeoValue;
 }
