@@ -115,9 +115,55 @@ export const builders = {
   },
 
   description(itemEntity, entitiesRepo, i18n) {
+    // def excerpt_value
+    //   return nil if item_type.excerpt_field.nil?
+
+    //   value = item_field_value(item_type.excerpt_field)
+
+    //   return nil if value.nil?
+
+    //   post_transformation_value =
+    //     case item_type.excerpt_field.field_type
+    //     when Dato::FieldType::String.code
+    //       value
+    //     when Dato::FieldType::Text.code
+    //       case item_type.excerpt_field.appearance["editor"]
+    //       when "wysiwyg"
+    //         Sanitize.clean(value)
+    //       when "markdown"
+    //         Sanitize.clean(Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(value))
+    //       else
+    //         value
+    //       end
+    //     when Dato::FieldType::StructuredText.code
+    //       Dato::FieldType::StructuredText.tsv_text(value)
+    //     end
+
+    //   stripped_post_transformation_value = post_transformation_value.strip.presence
+
+    //   return nil if stripped_post_transformation_value.nil?
+
+    //   stripped_post_transformation_value.length > 200 ? "#{stripped_post_transformation_value[0...200].strip}..." : stripped_post_transformation_value
+    // end
+    let excerptField;
+    const itemType = itemEntity && itemEntity.itemType;
+
+    if (itemType && itemType.excerptField) {
+      excerptField = itemType.excerptField;
+    }
+
+    const excerptValue =
+      excerptField &&
+      localizedRead(
+        itemEntity,
+        camelize(excerptField.apiKey),
+        excerptField.localized,
+        i18n,
+      );
+
     const description = seoAttributeWithFallback(
       'description',
-      null,
+      excerptValue,
       itemEntity,
       entitiesRepo,
       i18n,

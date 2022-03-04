@@ -17,6 +17,7 @@ describe.only('seoTagsBuilder', () => {
   let heading;
   let titleField;
   let imagePreviewField;
+  let excerptField;
 
   beforeEach(() => {
     itemTitle = memo(() => 'My title');
@@ -30,6 +31,7 @@ describe.only('seoTagsBuilder', () => {
     heading = memo(() => false);
     titleField = memo(() => ({}));
     imagePreviewField = memo(() => ({}));
+    excerptField = memo(() => ({}));
 
     entitiesRepo = memo(() => {
       const payload = {
@@ -129,6 +131,7 @@ describe.only('seoTagsBuilder', () => {
               },
               title_field: titleField(),
               image_preview_field: imagePreviewField(),
+              excerpt_field: excerptField(),
             },
           },
           {
@@ -466,8 +469,27 @@ describe.only('seoTagsBuilder', () => {
         });
 
         context('no SEO', () => {
-          it('returns no tags', () => {
-            expect(result()).to.be.undefined();
+          context('with excerptValue', () => {
+            beforeEach(() => {
+              excerptField = memo(() => ({
+                data: {
+                  type: 'field',
+                  id: '15086',
+                },
+              }));
+            });
+
+            it('returns excerpt field', () => {
+              expect(descriptionValue()).to.eq('Foo bar');
+              expect(ogValue()).to.eq('Foo bar');
+              expect(cardValue()).to.eq('Foo bar');
+            });
+          });
+
+          context('with no excerptValue', () => {
+            it('returns no tags', () => {
+              expect(result()).to.be.undefined();
+            });
           });
         });
 
