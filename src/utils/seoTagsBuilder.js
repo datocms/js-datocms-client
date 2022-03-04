@@ -234,9 +234,21 @@ export const builders = {
     ) {
       itemImageField = itemType.imagePreviewField;
     } else {
-      itemImageField = itemType.fields
-        .sort((a, b) => a.apiKey.localeCompare(b.apiKey))
-        .find(field => ['file', 'gallery'].includes(field.fieldType));
+      const fields = itemType.fields.sort((a, b) =>
+        a.apiKey.localeCompare(b.apiKey),
+      );
+
+      const fileFieldWithImageValidations = fields.find(
+        field =>
+          ['file', 'gallery'].includes(field.fieldType) &&
+          field.validators &&
+          field.validators.extension &&
+          field.validators.extension.predefinedList === 'image',
+      );
+
+      itemImageField =
+        fileFieldWithImageValidations ||
+        fields.find(field => ['file', 'gallery'].includes(field.fieldType));
     }
 
     const itemImage =

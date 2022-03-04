@@ -11,6 +11,7 @@ describe.only('seoTagsBuilder', () => {
   let noIndex;
   let entitiesRepo;
   let itemImage;
+  let itemImageValidators;
   let itemGallery;
   let locales;
   let heading;
@@ -23,6 +24,7 @@ describe.only('seoTagsBuilder', () => {
     seo = memo(() => null);
     noIndex = memo(() => null);
     itemImage = memo(() => null);
+    itemImageValidators = memo(() => ({}));
     itemGallery = memo(() => null);
     locales = memo(() => ['en']);
     heading = memo(() => false);
@@ -138,7 +140,7 @@ describe.only('seoTagsBuilder', () => {
               api_key: 'image',
               hint: null,
               localized: false,
-              validators: {},
+              validators: itemImageValidators(),
               position: 1,
               appearance: {
                 editor: 'file',
@@ -846,10 +848,34 @@ describe.only('seoTagsBuilder', () => {
 
           context('no SEO field', () => {
             context('with no image_preview_field', () => {
-              it('returns the first item image or gallery in alphabetical order', () => {
-                expect(ogValue()).to.include('gallery.png');
-                expect(cardValue()).to.include('gallery.png');
-              });
+              context(
+                'with no imagish fields with "image" extension validator',
+                () => {
+                  it('returns the first item image or gallery in alphabetical order', () => {
+                    expect(ogValue()).to.include('gallery.png');
+                    expect(cardValue()).to.include('gallery.png');
+                  });
+                },
+              );
+              context(
+                'with imagish fields with "image" extension validator',
+                () => {
+                  beforeEach(() => {
+                    itemImageValidators = memo(() => {
+                      return {
+                        extension: {
+                          predefinedList: 'image',
+                        },
+                      };
+                    });
+                  });
+
+                  it('returns the file or gallery field that will most likely contain an image', () => {
+                    expect(ogValue()).to.include('image.png');
+                    expect(cardValue()).to.include('image.png');
+                  });
+                },
+              );
             });
 
             context('with image_preview_field', () => {
