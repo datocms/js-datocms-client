@@ -222,64 +222,60 @@ export const builders = {
   },
 
   image(itemEntity, entitiesRepo, i18n) {
-    let itemImageField;
-
     const itemType = itemEntity && itemEntity.itemType;
 
+    let itemImageField;
+
     if (!itemType) {
-      itemImageField = [];
+      itemImageField = undefined;
     } else if (
       itemType.imagePreviewField &&
       itemType.imagePreviewField.fieldType !== 'link'
     ) {
-      itemImageField = [itemType.imagePreviewField];
+      itemImageField = itemType.imagePreviewField;
     } else {
-      itemImageField = itemType.fields.filter(f => f.fieldType === 'file');
+      itemImageField = itemType.fields.find(f => f.fieldType === 'file');
     }
 
-    const itemImage = itemImageField
-      .map(field =>
-        localizedRead(
-          itemEntity,
-          camelize(field.apiKey),
-          field.localized,
-          i18n,
-        ),
-      )
-      .map(image => (image ? image.uploadId : null))
-      .filter(id => !!id)
-      .map(id => entitiesRepo.findEntity('upload', id))
-      .find(
-        image =>
-          image &&
-          image.width &&
-          image.height &&
-          image.width >= 200 &&
-          image.height >= 200,
+    const itemImage =
+      itemImageField &&
+      localizedRead(
+        itemEntity,
+        camelize(itemImageField.apiKey),
+        itemImageField.localized,
+        i18n,
       );
 
-    const itemImageId = itemImage && itemImage.id;
+    const fallbackImage =
+      itemImage && Array.isArray(itemImage) ? itemImage[0] : itemImage;
 
-    const imageId = seoAttributeWithFallback(
+    const fallbackImageId = fallbackImage && fallbackImage.uploadId;
+
+    const finalUploadId = seoAttributeWithFallback(
       'image',
-      itemImageId,
+      fallbackImageId,
       itemEntity,
       entitiesRepo,
       i18n,
     );
 
-    if (imageId) {
-      const upload = entitiesRepo.findEntity('upload', imageId);
-      const url = buildFileUrl(upload, entitiesRepo, {
-        w: '1000',
-        fit: 'max',
-        fm: 'jpg',
-      });
-
-      return [ogTag('og:image', url), cardTag('twitter:image', url)];
+    if (!finalUploadId) {
+      return [];
     }
 
-    return undefined;
+    const upload = entitiesRepo.findEntity('upload', finalUploadId);
+
+    if (!upload.width) {
+      return [];
+    }
+
+    const url = buildFileUrl(upload, entitiesRepo, {
+      w: '1000',
+      fit: 'max',
+      fm: 'jpg',
+    });
+
+    return [ogTag('og:image', url), cardTag('twitter:image', url)];
   },
 };
 

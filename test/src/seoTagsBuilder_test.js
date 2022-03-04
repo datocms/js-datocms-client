@@ -39,7 +39,7 @@ describe.only('seoTagsBuilder', () => {
               another_string: 'Foo bar',
               seo_settings: seo(),
               image: itemImage(),
-              another_gallery: [{ uploadId: '100001' }],
+              another_gallery: [{ uploadId: '100003' }],
             },
             meta: {
               updated_at: '2016-12-07T09:14:22Z',
@@ -286,6 +286,19 @@ describe.only('seoTagsBuilder', () => {
               title: '',
               alt: '',
               path: '/image.png',
+            },
+          },
+          {
+            id: '100003',
+            type: 'upload',
+            attributes: {
+              format: 'png',
+              size: '1000',
+              width: '200',
+              height: '200',
+              title: '',
+              alt: '',
+              path: '/gallery.png',
             },
           },
         ],
@@ -773,7 +786,7 @@ describe.only('seoTagsBuilder', () => {
     context('with no global fallback seo', () => {
       context('with no item', () => {
         it('returns no tags', () => {
-          expect(result()).to.be.undefined();
+          expect(result()).to.be.empty();
         });
       });
 
@@ -785,7 +798,7 @@ describe.only('seoTagsBuilder', () => {
         context('with no image', () => {
           context('no SEO', () => {
             it('returns no tags', () => {
-              expect(result()).to.be.undefined();
+              expect(result()).to.be.empty();
             });
           });
 
@@ -822,15 +835,15 @@ describe.only('seoTagsBuilder', () => {
               beforeEach(() => {
                 imagePreviewField = memo(() => ({
                   data: {
-                    type: 'file',
-                    id: '100000',
+                    type: 'field',
+                    id: '2088',
                   },
                 }));
               });
 
-              it('returns item image', () => {
-                expect(ogValue()).to.include('seo.png');
-                expect(cardValue()).to.include('seo.png');
+              it('returns image_preview_field image', () => {
+                expect(ogValue()).to.include('gallery.png');
+                expect(cardValue()).to.include('gallery.png');
               });
             });
           });
