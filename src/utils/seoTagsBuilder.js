@@ -1,4 +1,5 @@
 import { camelize } from 'humps';
+import striptags from 'striptags';
 import localizedRead from './localizedRead';
 import buildFileUrl from './buildFileUrl';
 
@@ -152,7 +153,7 @@ export const builders = {
       excerptField = itemType.excerptField;
     }
 
-    const excerptValue =
+    let excerptValue =
       excerptField &&
       localizedRead(
         itemEntity,
@@ -160,6 +161,20 @@ export const builders = {
         excerptField.localized,
         i18n,
       );
+
+    if (excerptValue) {
+      switch (excerptField.fieldType) {
+        case 'text':
+          excerptValue = striptags(excerptValue);
+          break;
+        case 'structured_text':
+          excerptValue = 'foo';
+          break;
+
+        default:
+          break;
+      }
+    }
 
     const description = seoAttributeWithFallback(
       'description',

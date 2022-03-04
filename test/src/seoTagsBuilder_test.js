@@ -18,6 +18,7 @@ describe.only('seoTagsBuilder', () => {
   let titleField;
   let imagePreviewField;
   let excerptField;
+  let excerptFieldType;
 
   beforeEach(() => {
     itemTitle = memo(() => 'My title');
@@ -32,6 +33,11 @@ describe.only('seoTagsBuilder', () => {
     titleField = memo(() => ({}));
     imagePreviewField = memo(() => ({}));
     excerptField = memo(() => ({}));
+    excerptFieldType = memo(() => ({
+      type: 'string',
+      editor: 'single_line',
+      itemContent: 'This is an excerpt',
+    }));
 
     entitiesRepo = memo(() => {
       const payload = {
@@ -46,6 +52,7 @@ describe.only('seoTagsBuilder', () => {
               seo_settings: seo(),
               image: itemImage(),
               gallery: itemGallery(),
+              excerpt: excerptFieldType().itemContent,
             },
             meta: {
               updated_at: '2016-12-07T09:14:22Z',
@@ -198,6 +205,33 @@ describe.only('seoTagsBuilder', () => {
               },
               position: 2,
               appearance: {
+                parameters: { heading: false },
+              },
+            },
+            relationships: {
+              item_type: {
+                data: {
+                  id: '3781',
+                  type: 'item_type',
+                },
+              },
+            },
+          },
+          {
+            id: '15090',
+            type: 'field',
+            attributes: {
+              label: 'Excerpt',
+              field_type: excerptFieldType().type,
+              api_key: 'excerpt',
+              hint: null,
+              localized: false,
+              validators: {
+                required: {},
+              },
+              position: 6,
+              appearance: {
+                editor: excerptFieldType().editor,
                 parameters: { heading: false },
               },
             },
@@ -474,15 +508,33 @@ describe.only('seoTagsBuilder', () => {
               excerptField = memo(() => ({
                 data: {
                   type: 'field',
-                  id: '15086',
+                  id: '15090',
                 },
               }));
             });
 
-            it('returns excerpt field', () => {
-              expect(descriptionValue()).to.eq('Foo bar');
-              expect(ogValue()).to.eq('Foo bar');
-              expect(cardValue()).to.eq('Foo bar');
+            context('of string type', () => {
+              it('returns excerpt field', () => {
+                expect(descriptionValue()).to.eq('This is an excerpt');
+                expect(ogValue()).to.eq('This is an excerpt');
+                expect(cardValue()).to.eq('This is an excerpt');
+              });
+            });
+
+            context('of wysiwyg type', () => {
+              beforeEach(() => {
+                excerptFieldType = memo(() => ({
+                  type: 'text',
+                  editor: 'wysiwyg',
+                  itemContent: '<p>This is <a href="#">an excerpt</a></p>',
+                }));
+              });
+
+              it('returns sanitized field', () => {
+                expect(descriptionValue()).to.eq('This is an excerpt');
+                expect(ogValue()).to.eq('This is an excerpt');
+                expect(cardValue()).to.eq('This is an excerpt');
+              });
             });
           });
 
