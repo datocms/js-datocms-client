@@ -234,7 +234,9 @@ export const builders = {
     ) {
       itemImageField = itemType.imagePreviewField;
     } else {
-      itemImageField = itemType.fields.find(f => f.fieldType === 'file');
+      itemImageField = itemType.fields
+        .sort((a, b) => a.apiKey.localeCompare(b.apiKey))
+        .find(field => ['file', 'gallery'].includes(field.fieldType));
     }
 
     const itemImage =

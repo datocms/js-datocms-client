@@ -11,6 +11,7 @@ describe.only('seoTagsBuilder', () => {
   let noIndex;
   let entitiesRepo;
   let itemImage;
+  let itemGallery;
   let locales;
   let heading;
   let titleField;
@@ -22,6 +23,7 @@ describe.only('seoTagsBuilder', () => {
     seo = memo(() => null);
     noIndex = memo(() => null);
     itemImage = memo(() => null);
+    itemGallery = memo(() => null);
     locales = memo(() => ['en']);
     heading = memo(() => false);
     titleField = memo(() => ({}));
@@ -39,7 +41,7 @@ describe.only('seoTagsBuilder', () => {
               another_string: 'Foo bar',
               seo_settings: seo(),
               image: itemImage(),
-              another_gallery: [{ uploadId: '100003' }],
+              gallery: itemGallery(),
             },
             meta: {
               updated_at: '2016-12-07T09:14:22Z',
@@ -114,6 +116,10 @@ describe.only('seoTagsBuilder', () => {
                     id: '15087',
                     type: 'field',
                   },
+                  {
+                    id: '2088',
+                    type: 'field',
+                  },
                 ],
               },
               singleton_item: {
@@ -152,9 +158,9 @@ describe.only('seoTagsBuilder', () => {
             id: '2088',
             type: 'field',
             attributes: {
-              label: 'Another gallery',
+              label: 'Gallery',
               field_type: 'gallery',
-              api_key: 'another_gallery',
+              api_key: 'gallery',
               hint: null,
               localized: false,
               validators: {},
@@ -816,18 +822,33 @@ describe.only('seoTagsBuilder', () => {
           });
         });
 
-        context('with image', () => {
+        context('when first field in alphabetical order is empty', () => {
           beforeEach(() => {
             itemImage = memo(() => {
               return { uploadId: '100002' };
             });
           });
 
+          it('returns no tags', () => {
+            expect(result()).to.be.empty();
+          });
+        });
+
+        context('with image & gallery', () => {
+          beforeEach(() => {
+            itemImage = memo(() => {
+              return { uploadId: '100002' };
+            });
+            itemGallery = memo(() => {
+              return [{ uploadId: '100003' }];
+            });
+          });
+
           context('no SEO field', () => {
             context('with no image_preview_field', () => {
-              it('returns item image', () => {
-                expect(ogValue()).to.include('image.png');
-                expect(cardValue()).to.include('image.png');
+              it('returns the first item image or gallery in alphabetical order', () => {
+                expect(ogValue()).to.include('gallery.png');
+                expect(cardValue()).to.include('gallery.png');
               });
             });
 
@@ -907,17 +928,20 @@ describe.only('seoTagsBuilder', () => {
           });
         });
 
-        context('with image', () => {
+        context('with image & no gallery', () => {
           beforeEach(() => {
             itemImage = memo(() => {
               return { uploadId: '100002' };
             });
+            itemGallery = memo(() => {
+              return [{ uploadId: '100003' }];
+            });
           });
 
           context('no SEO', () => {
-            it('returns item image', () => {
-              expect(ogValue()).to.include('image.png');
-              expect(cardValue()).to.include('image.png');
+            it('returns first image or gallery field in alphabetical order', () => {
+              expect(ogValue()).to.include('gallery.png');
+              expect(cardValue()).to.include('gallery.png');
             });
           });
 
@@ -986,17 +1010,20 @@ describe.only('seoTagsBuilder', () => {
           });
         });
 
-        context('with image', () => {
+        context('with multiple imagish fields', () => {
           beforeEach(() => {
             itemImage = memo(() => {
               return { uploadId: '100002' };
             });
+            itemGallery = memo(() => {
+              return [{ uploadId: '100003' }];
+            });
           });
 
           context('no SEO', () => {
-            it('returns item image', () => {
-              expect(ogValue()).to.include('image.png');
-              expect(cardValue()).to.include('image.png');
+            it('returns first imagish field in alphabetical order', () => {
+              expect(ogValue()).to.include('gallery.png');
+              expect(cardValue()).to.include('gallery.png');
             });
           });
 
