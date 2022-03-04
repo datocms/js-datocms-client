@@ -222,29 +222,41 @@ export const builders = {
   },
 
   image(itemEntity, entitiesRepo, i18n) {
-    const itemImage =
-      itemEntity &&
-      itemEntity.itemType.fields
-        .filter(f => f.fieldType === 'file')
-        .map(field =>
-          localizedRead(
-            itemEntity,
-            camelize(field.apiKey),
-            field.localized,
-            i18n,
-          ),
-        )
-        .map(image => (image ? image.uploadId : null))
-        .filter(id => !!id)
-        .map(id => entitiesRepo.findEntity('upload', id))
-        .find(
-          image =>
-            image &&
-            image.width &&
-            image.height &&
-            image.width >= 200 &&
-            image.height >= 200,
-        );
+    let itemImageField;
+
+    const itemType = itemEntity && itemEntity.itemType;
+
+    if (!itemType) {
+      itemImageField = [];
+    } else if (
+      itemType.imagePreviewField &&
+      itemType.imagePreviewField.fieldType !== 'link'
+    ) {
+      itemImageField = [itemType.imagePreviewField];
+    } else {
+      itemImageField = itemType.fields.filter(f => f.fieldType === 'file');
+    }
+
+    const itemImage = itemImageField
+      .map(field =>
+        localizedRead(
+          itemEntity,
+          camelize(field.apiKey),
+          field.localized,
+          i18n,
+        ),
+      )
+      .map(image => (image ? image.uploadId : null))
+      .filter(id => !!id)
+      .map(id => entitiesRepo.findEntity('upload', id))
+      .find(
+        image =>
+          image &&
+          image.width &&
+          image.height &&
+          image.width >= 200 &&
+          image.height >= 200,
+      );
 
     const itemImageId = itemImage && itemImage.id;
 

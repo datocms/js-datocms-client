@@ -3,7 +3,7 @@
 import EntitiesRepo from '../../src/local/EntitiesRepo';
 import { builders } from '../../src/utils/seoTagsBuilder';
 
-describe('seoTagsBuilder', () => {
+describe.only('seoTagsBuilder', () => {
   let itemTitle;
   let seo;
   let globalSeo;
