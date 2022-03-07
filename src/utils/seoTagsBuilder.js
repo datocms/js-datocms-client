@@ -118,71 +118,46 @@ export const builders = {
   },
 
   description(itemEntity, entitiesRepo, i18n) {
-    // def excerpt_value
-    //   return nil if item_type.excerpt_field.nil?
-
-    //   value = item_field_value(item_type.excerpt_field)
-
-    //   return nil if value.nil?
-
-    //   post_transformation_value =
-    //     case item_type.excerpt_field.field_type
-    //     when Dato::FieldType::String.code
-    //       value
-    //     when Dato::FieldType::Text.code
-    //       case item_type.excerpt_field.appearance["editor"]
-    //       when "wysiwyg"
-    //         Sanitize.clean(value)
-    //       when "markdown"
-    //         Sanitize.clean(Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(value))
-    //       else
-    //         value
-    //       end
-    //     when Dato::FieldType::StructuredText.code
-    //       Dato::FieldType::StructuredText.tsv_text(value)
-    //     end
-
-    //   stripped_post_transformation_value = post_transformation_value.strip.presence
-
-    //   return nil if stripped_post_transformation_value.nil?
-
-    //   stripped_post_transformation_value.length > 200 ? "#{stripped_post_transformation_value[0...200].strip}..." : stripped_post_transformation_value
-    // end
-    let excerptField;
     const itemType = itemEntity && itemEntity.itemType;
+    const excerptField = itemType && itemType.excerptField;
 
-    if (itemType && itemType.excerptField) {
-      excerptField = itemType.excerptField;
-    }
-
-    let excerptValue =
-      excerptField &&
-      localizedRead(
+    const findExcerptValue = () => {
+      const value = localizedRead(
         itemEntity,
         camelize(excerptField.apiKey),
         excerptField.localized,
         i18n,
       );
 
-    if (excerptValue) {
-      switch (excerptField.fieldType) {
-        case 'text':
-          if (excerptField.appearance.editor === 'wysiwyg') {
-            excerptValue = striptags(excerptValue);
-          } else if (excerptField.appearance.editor === 'markdown') {
-            excerptValue = striptags(
-              marked.parse(excerptValue).replace('\n', ''),
-            );
-          }
-          break;
-        case 'structured_text':
-          excerptValue = render(excerptValue);
-          break;
+      const transformExcerptValue = () => {
+        switch (excerptField.fieldType) {
+          case 'text':
+            if (excerptField.appearance.editor === 'wysiwyg') {
+              return striptags(value);
+            }
+            if (excerptField.appearance.editor === 'markdown') {
+              return striptags(marked.parse(value).replace('\n', ''));
+            }
+            return value;
+          case 'structured_text':
+            return render(value);
+          case 'string':
+            return value;
+          default:
+            return undefined;
+        }
+      };
 
-        default:
-          break;
-      }
-    }
+      const postTransformationValue = value && transformExcerptValue();
+
+      console.log(postTransformationValue);
+
+      return postTransformationValue && postTransformationValue.length > 200
+        ? `${postTransformationValue.slice(0, 200)}...`
+        : postTransformationValue;
+    };
+
+    const excerptValue = excerptField && findExcerptValue();
 
     const description = seoAttributeWithFallback(
       'description',
@@ -195,15 +170,11 @@ export const builders = {
     if (!description) {
       return undefined;
     }
-    const strippedDescription =
-      description.length > 200
-        ? `${description.slice(0, 200)}...`
-        : description;
 
     return [
-      metaTag('description', strippedDescription),
-      ogTag('og:description', strippedDescription),
-      cardTag('twitter:description', strippedDescription),
+      metaTag('description', description),
+      ogTag('og:description', description),
+      cardTag('twitter:description', description),
     ];
   },
 
