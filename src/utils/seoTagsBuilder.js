@@ -53,21 +53,22 @@ function seoAttributeWithFallback(
 export const builders = {
   title(itemEntity, entitiesRepo, i18n) {
     const { site } = entitiesRepo;
-    const itemType = itemEntity && itemEntity.itemType;
 
-    let titleField;
+    const findTitleField = () => {
+      const itemType = itemEntity && itemEntity.itemType;
 
-    if (!itemType) {
-      titleField = undefined;
-    } else if (
-      itemType.titleField &&
-      itemType.titleField.fieldType !== 'link'
-    ) {
-      titleField = itemType.titleField;
-    } else {
+      if (!itemType) {
+        return undefined;
+      }
+
+      if (itemType.titleField && itemType.titleField.fieldType !== 'link') {
+        return itemType.titleField;
+      }
+
       const fields = itemType.fields.sort((a, b) =>
         a.apiKey.localeCompare(b.apiKey),
       );
+
       const headingField = fields.find(
         field =>
           field.fieldType === 'string' &&
@@ -76,13 +77,14 @@ export const builders = {
       );
 
       if (headingField) {
-        titleField = headingField;
-      } else {
-        titleField = fields.find(field => field.fieldType === 'string');
+        return headingField;
       }
-    }
+      return fields.find(field => field.fieldType === 'string');
+    };
 
-    const title = seoAttributeWithFallback(
+    const titleField = findTitleField();
+
+    const itemTitle = seoAttributeWithFallback(
       'title',
       titleField &&
         localizedRead(
@@ -96,25 +98,25 @@ export const builders = {
       i18n,
     );
 
-    if (title) {
-      const multiLocaleSite = site.locales.length > 1;
-      const suffix =
-        (localizedRead(site, 'globalSeo', multiLocaleSite, i18n) &&
-          localizedRead(site, 'globalSeo', multiLocaleSite, i18n)
-            .titleSuffix) ||
-        '';
-
-      const titleWithSuffix =
-        (title + suffix).length <= 60 ? title + suffix : title;
-
-      return [
-        contentTag('title', titleWithSuffix),
-        ogTag('og:title', title),
-        cardTag('twitter:title', title),
-      ];
+    if (!itemTitle) {
+      return undefined;
     }
 
-    return undefined;
+    const globalSeoValue = localizedRead(
+      site,
+      'globalSeo',
+      site.locales.length > 1,
+      i18n,
+    );
+    const suffix = (globalSeoValue && globalSeoValue.titleSuffix) || '';
+    const titleWithSuffix =
+      (itemTitle + suffix).length <= 60 ? itemTitle + suffix : itemTitle;
+
+    return [
+      contentTag('title', titleWithSuffix),
+      ogTag('og:title', itemTitle),
+      cardTag('twitter:title', itemTitle),
+    ];
   },
 
   description(itemEntity, entitiesRepo, i18n) {
@@ -149,8 +151,6 @@ export const builders = {
       };
 
       const postTransformationValue = value && transformExcerptValue();
-
-      console.log(postTransformationValue);
 
       return postTransformationValue && postTransformationValue.length > 200
         ? `${postTransformationValue.slice(0, 200)}...`
