@@ -1,5 +1,6 @@
 import { camelize } from 'humps';
 import striptags from 'striptags';
+import { render } from 'datocms-structured-text-to-plain-text';
 import { marked } from 'marked';
 import localizedRead from './localizedRead';
 import buildFileUrl from './buildFileUrl';
@@ -175,8 +176,7 @@ export const builders = {
           }
           break;
         case 'structured_text':
-          console.log(excerptValue);
-          excerptValue = 'foo';
+          excerptValue = render(excerptValue);
           break;
 
         default:

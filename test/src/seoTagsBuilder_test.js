@@ -547,10 +547,48 @@ describe.only('seoTagsBuilder', () => {
               });
 
               it('returns sanitized field', () => {
-                console.log(JSON.stringify(descriptionValue()));
                 expect(descriptionValue()).to.eq('This is an excerpt');
                 expect(ogValue()).to.eq('This is an excerpt');
                 expect(cardValue()).to.eq('This is an excerpt');
+              });
+            });
+
+            context.only('of structured_text type', () => {
+              beforeEach(() => {
+                excerptFieldType = memo(() => ({
+                  type: 'structured_text',
+                  editor: 'structured_text',
+                  itemContent: {
+                    schema: 'dast',
+                    document: {
+                      type: 'root',
+                      children: [
+                        {
+                          type: 'heading',
+                          level: 3,
+                          children: [
+                            { type: 'span', value: 'This is an ' },
+                            {
+                              type: 'span',
+                              value: 'excerpt',
+                              marks: ['strong'],
+                            },
+                          ],
+                        },
+                        {
+                          type: 'paragraph',
+                          children: [{ type: 'span', value: '!' }],
+                        },
+                      ],
+                    },
+                  },
+                }));
+              });
+
+              it('returns sanitized field', () => {
+                expect(descriptionValue()).to.eq('This is an excerpt !');
+                expect(ogValue()).to.eq('This is an excerpt !');
+                expect(cardValue()).to.eq('This is an excerpt !');
               });
             });
           });
