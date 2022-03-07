@@ -192,15 +192,19 @@ export const builders = {
       i18n,
     );
 
-    if (description) {
-      return [
-        metaTag('description', description),
-        ogTag('og:description', description),
-        cardTag('twitter:description', description),
-      ];
+    if (!description) {
+      return undefined;
     }
+    const strippedDescription =
+      description.length > 200
+        ? `${description.slice(0, 200)}...`
+        : description;
 
-    return undefined;
+    return [
+      metaTag('description', strippedDescription),
+      ogTag('og:description', strippedDescription),
+      cardTag('twitter:description', strippedDescription),
+    ];
   },
 
   robots(itemEntity, entitiesRepo) {

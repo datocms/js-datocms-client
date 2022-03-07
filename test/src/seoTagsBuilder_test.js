@@ -521,6 +521,25 @@ describe.only('seoTagsBuilder', () => {
               });
             });
 
+            context('of textarea type', () => {
+              beforeEach(() => {
+                excerptFieldType = memo(() => ({
+                  type: 'text',
+                  editor: 'textarea',
+                  itemContent:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                }));
+              });
+
+              it('returns excerpt field - max 200 chars', () => {
+                const excerptValue =
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut a...';
+                expect(descriptionValue()).to.eq(excerptValue);
+                expect(ogValue()).to.eq(excerptValue);
+                expect(cardValue()).to.eq(excerptValue);
+              });
+            });
+
             context('of wysiwyg type', () => {
               beforeEach(() => {
                 excerptFieldType = memo(() => ({
@@ -553,7 +572,7 @@ describe.only('seoTagsBuilder', () => {
               });
             });
 
-            context.only('of structured_text type', () => {
+            context('of structured_text type', () => {
               beforeEach(() => {
                 excerptFieldType = memo(() => ({
                   type: 'structured_text',
