@@ -266,18 +266,20 @@ export const builders = {
   },
 
   image(itemEntity, entitiesRepo, i18n) {
-    const itemType = itemEntity && itemEntity.itemType;
+    const findImagePreviewField = () => {
+      const itemType = itemEntity && itemEntity.itemType;
 
-    let itemImageField;
+      if (!itemType) {
+        return undefined;
+      }
 
-    if (!itemType) {
-      itemImageField = undefined;
-    } else if (
-      itemType.imagePreviewField &&
-      itemType.imagePreviewField.fieldType !== 'link'
-    ) {
-      itemImageField = itemType.imagePreviewField;
-    } else {
+      if (
+        itemType.imagePreviewField &&
+        itemType.imagePreviewField.fieldType !== 'link'
+      ) {
+        return itemType.imagePreviewField;
+      }
+
       const fields = itemType.fields.sort((a, b) =>
         a.apiKey.localeCompare(b.apiKey),
       );
@@ -290,12 +292,15 @@ export const builders = {
           field.validators.extension.predefinedList === 'image',
       );
 
-      itemImageField =
+      return (
         fileFieldWithImageValidations ||
-        fields.find(field => ['file', 'gallery'].includes(field.fieldType));
-    }
+        fields.find(field => ['file', 'gallery'].includes(field.fieldType))
+      );
+    };
 
-    const itemImage =
+    const itemImageField = findImagePreviewField();
+
+    const fallbackRawValue =
       itemImageField &&
       localizedRead(
         itemEntity,
@@ -305,7 +310,9 @@ export const builders = {
       );
 
     const fallbackImage =
-      itemImage && Array.isArray(itemImage) ? itemImage[0] : itemImage;
+      fallbackRawValue && Array.isArray(fallbackRawValue)
+        ? fallbackRawValue[0]
+        : fallbackRawValue;
 
     const fallbackImageId = fallbackImage && fallbackImage.uploadId;
 
@@ -318,16 +325,16 @@ export const builders = {
     );
 
     if (!finalUploadId) {
-      return [];
+      return undefined;
     }
 
-    const upload = entitiesRepo.findEntity('upload', finalUploadId);
+    const finalUpload = entitiesRepo.findEntity('upload', finalUploadId);
 
-    if (!upload.width) {
-      return [];
+    if (!finalUpload.width) {
+      return undefined;
     }
 
-    const url = buildFileUrl(upload, entitiesRepo, {
+    const url = buildFileUrl(finalUpload, entitiesRepo, {
       w: '1000',
       fit: 'max',
       fm: 'jpg',
