@@ -1,5 +1,6 @@
 import { camelize } from 'humps';
 import striptags from 'striptags';
+import { marked } from 'marked';
 import localizedRead from './localizedRead';
 import buildFileUrl from './buildFileUrl';
 
@@ -165,9 +166,16 @@ export const builders = {
     if (excerptValue) {
       switch (excerptField.fieldType) {
         case 'text':
-          excerptValue = striptags(excerptValue);
+          if (excerptField.appearance.editor === 'wysiwyg') {
+            excerptValue = striptags(excerptValue);
+          } else if (excerptField.appearance.editor === 'markdown') {
+            excerptValue = striptags(
+              marked.parse(excerptValue).replace('\n', ''),
+            );
+          }
           break;
         case 'structured_text':
+          console.log(excerptValue);
           excerptValue = 'foo';
           break;
 

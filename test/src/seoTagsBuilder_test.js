@@ -536,6 +536,23 @@ describe.only('seoTagsBuilder', () => {
                 expect(cardValue()).to.eq('This is an excerpt');
               });
             });
+
+            context('of markdown type', () => {
+              beforeEach(() => {
+                excerptFieldType = memo(() => ({
+                  type: 'text',
+                  editor: 'markdown',
+                  itemContent: '### This is **an excerpt**',
+                }));
+              });
+
+              it('returns sanitized field', () => {
+                console.log(JSON.stringify(descriptionValue()));
+                expect(descriptionValue()).to.eq('This is an excerpt');
+                expect(ogValue()).to.eq('This is an excerpt');
+                expect(cardValue()).to.eq('This is an excerpt');
+              });
+            });
           });
 
           context('with no excerptValue', () => {
