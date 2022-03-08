@@ -266,6 +266,8 @@ export const builders = {
   },
 
   image(itemEntity, entitiesRepo, i18n) {
+    const { site } = entitiesRepo;
+
     const findImagePreviewField = () => {
       const itemType = itemEntity && itemEntity.itemType;
 
@@ -340,7 +342,28 @@ export const builders = {
       fm: 'jpg',
     });
 
-    return [ogTag('og:image', url), cardTag('twitter:image', url)];
+    const { defaultFieldMetadata } = finalUpload;
+
+    const altLocale = defaultFieldMetadata
+      ? site.locales.find(
+          locale =>
+            defaultFieldMetadata[locale] && defaultFieldMetadata[locale].alt,
+        )
+      : site.locales[0];
+
+    const altValue =
+      defaultFieldMetadata &&
+      defaultFieldMetadata[altLocale] &&
+      defaultFieldMetadata[altLocale].alt;
+
+    return [
+      ogTag('og:image', url),
+      cardTag('twitter:image', url),
+      ogTag('og:image:width', finalUpload.width),
+      ogTag('og:image:height', finalUpload.height),
+      altValue && ogTag('og:image:alt', altValue),
+      altValue && ogTag('twitter:image:alt', altValue),
+    ];
   },
 };
 

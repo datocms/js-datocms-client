@@ -3,7 +3,7 @@
 import EntitiesRepo from '../../src/local/EntitiesRepo';
 import { builders } from '../../src/utils/seoTagsBuilder';
 
-describe.only('seoTagsBuilder', () => {
+describe('seoTagsBuilder', () => {
   let itemTitle;
   let seo;
   let globalSeo;
@@ -305,6 +305,20 @@ describe.only('seoTagsBuilder', () => {
               title: '',
               alt: '',
               path: '/seo.png',
+              default_field_metadata: {
+                en: {
+                  title: 'SEO default title',
+                  alt: 'SEO default alt',
+                  customData: {},
+                  focalPoint: { x: 0.1, y: 0.1 },
+                },
+                it: {
+                  title: null,
+                  alt: 'Alt default',
+                  customData: {},
+                  focalPoint: { x: 0.9, y: 0.9 },
+                },
+              },
             },
           },
           {
@@ -318,6 +332,16 @@ describe.only('seoTagsBuilder', () => {
               title: '',
               alt: '',
               path: '/fallback.png',
+              default_field_metadata: {
+                en: {
+                  title: 'Fallback title',
+                  alt: 'Fallback alt',
+                },
+                it: {
+                  title: null,
+                  alt: 'Fallback ITA alt',
+                },
+              },
             },
           },
           {
@@ -331,6 +355,20 @@ describe.only('seoTagsBuilder', () => {
               title: '',
               alt: '',
               path: '/image.png',
+              default_field_metadata: {
+                en: {
+                  title: 'Image title',
+                  alt: 'Image alt',
+                  customData: {},
+                  focalPoint: { x: 0.1, y: 0.1 },
+                },
+                it: {
+                  title: null,
+                  alt: 'Alt default',
+                  customData: {},
+                  focalPoint: { x: 0.9, y: 0.9 },
+                },
+              },
             },
           },
           {
@@ -344,6 +382,16 @@ describe.only('seoTagsBuilder', () => {
               title: '',
               alt: '',
               path: '/gallery.png',
+              default_field_metadata: {
+                en: {
+                  title: 'Gallery title',
+                  alt: 'Gallery alt',
+                },
+                it: {
+                  title: null,
+                  alt: 'Alt Gallery',
+                },
+              },
             },
           },
         ],
@@ -932,17 +980,21 @@ describe.only('seoTagsBuilder', () => {
     let result;
     let ogValue;
     let cardValue;
+    let ogWidth;
+    let ogAlt;
 
     beforeEach(() => {
       ogValue = memo(() => result()[0].attributes.content);
       cardValue = memo(() => result()[1].attributes.content);
+      ogWidth = memo(() => result()[2].attributes.content);
+      ogAlt = memo(() => result()[4] && result()[4].attributes.content);
       result = memo(() => builders.image(item(), entitiesRepo()));
     });
 
     context('with no global fallback seo', () => {
       context('with no item', () => {
         it('returns no tags', () => {
-          expect(result()).to.be.empty();
+          expect(result()).to.be.undefined();
         });
       });
 
@@ -954,7 +1006,7 @@ describe.only('seoTagsBuilder', () => {
         context('with no image', () => {
           context('no SEO', () => {
             it('returns no tags', () => {
-              expect(result()).to.be.empty();
+              expect(result()).to.be.undefined();
             });
           });
 
@@ -968,6 +1020,8 @@ describe.only('seoTagsBuilder', () => {
             it('returns seo image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
@@ -980,7 +1034,7 @@ describe.only('seoTagsBuilder', () => {
           });
 
           it('returns no tags', () => {
-            expect(result()).to.be.empty();
+            expect(result()).to.be.undefined();
           });
         });
 
@@ -1002,6 +1056,8 @@ describe.only('seoTagsBuilder', () => {
                   it('returns the first item image or gallery in alphabetical order', () => {
                     expect(ogValue()).to.include('gallery.png');
                     expect(cardValue()).to.include('gallery.png');
+                    expect(ogWidth()).to.eq('200');
+                    expect(ogAlt()).to.eq('Gallery alt');
                   });
                 },
               );
@@ -1021,6 +1077,8 @@ describe.only('seoTagsBuilder', () => {
                   it('returns the file or gallery field that will most likely contain an image', () => {
                     expect(ogValue()).to.include('image.png');
                     expect(cardValue()).to.include('image.png');
+                    expect(ogWidth()).to.eq('200');
+                    expect(ogAlt()).to.eq('Image alt');
                   });
                 },
               );
@@ -1039,6 +1097,8 @@ describe.only('seoTagsBuilder', () => {
               it('returns image_preview_field image', () => {
                 expect(ogValue()).to.include('gallery.png');
                 expect(cardValue()).to.include('gallery.png');
+                expect(ogWidth()).to.eq('200');
+                expect(ogAlt()).to.eq('Gallery alt');
               });
             });
           });
@@ -1053,6 +1113,8 @@ describe.only('seoTagsBuilder', () => {
             it('returns SEO image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
@@ -1085,6 +1147,8 @@ describe.only('seoTagsBuilder', () => {
             it('returns fallback image', () => {
               expect(ogValue()).to.include('fallback.png');
               expect(cardValue()).to.include('fallback.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('Fallback alt');
             });
           });
 
@@ -1098,6 +1162,8 @@ describe.only('seoTagsBuilder', () => {
             it('returns seo image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
@@ -1116,6 +1182,8 @@ describe.only('seoTagsBuilder', () => {
             it('returns first image or gallery field in alphabetical order', () => {
               expect(ogValue()).to.include('gallery.png');
               expect(cardValue()).to.include('gallery.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('Gallery alt');
             });
           });
 
@@ -1129,6 +1197,8 @@ describe.only('seoTagsBuilder', () => {
             it('returns SEO image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
@@ -1154,6 +1224,8 @@ describe.only('seoTagsBuilder', () => {
         it('returns fallback image', () => {
           expect(ogValue()).to.include('fallback.png');
           expect(cardValue()).to.include('fallback.png');
+          expect(ogWidth()).to.eq('200');
+          expect(ogAlt()).to.eq('Fallback alt');
         });
       });
 
@@ -1167,6 +1239,8 @@ describe.only('seoTagsBuilder', () => {
             it('returns fallback image', () => {
               expect(ogValue()).to.include('fallback.png');
               expect(cardValue()).to.include('fallback.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('Fallback alt');
             });
           });
 
@@ -1180,6 +1254,8 @@ describe.only('seoTagsBuilder', () => {
             it('returns seo image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
@@ -1198,6 +1274,8 @@ describe.only('seoTagsBuilder', () => {
             it('returns first imagish field in alphabetical order', () => {
               expect(ogValue()).to.include('gallery.png');
               expect(cardValue()).to.include('gallery.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('Gallery alt');
             });
           });
 
@@ -1211,6 +1289,8 @@ describe.only('seoTagsBuilder', () => {
             it('returns SEO image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
