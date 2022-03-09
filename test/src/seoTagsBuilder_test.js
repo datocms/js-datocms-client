@@ -621,41 +621,102 @@ describe('seoTagsBuilder', () => {
             });
 
             context('of structured_text type', () => {
-              beforeEach(() => {
-                excerptFieldType = memo(() => ({
-                  type: 'structured_text',
-                  editor: 'structured_text',
-                  itemContent: {
-                    schema: 'dast',
-                    document: {
-                      type: 'root',
-                      children: [
-                        {
-                          type: 'heading',
-                          level: 3,
-                          children: [
-                            { type: 'span', value: 'This is an ' },
-                            {
-                              type: 'span',
-                              value: 'excerpt',
-                              marks: ['strong'],
-                            },
-                          ],
-                        },
-                        {
-                          type: 'paragraph',
-                          children: [{ type: 'span', value: '!' }],
-                        },
-                      ],
+              context('without blocks', () => {
+                beforeEach(() => {
+                  excerptFieldType = memo(() => ({
+                    type: 'structured_text',
+                    editor: 'structured_text',
+                    itemContent: {
+                      schema: 'dast',
+                      document: {
+                        type: 'root',
+                        children: [
+                          {
+                            type: 'heading',
+                            level: 3,
+                            children: [
+                              { type: 'span', value: 'This is an ' },
+                              {
+                                type: 'span',
+                                value: 'excerpt',
+                                marks: ['strong'],
+                              },
+                            ],
+                          },
+                          {
+                            type: 'paragraph',
+                            children: [{ type: 'span', value: '!' }],
+                          },
+                        ],
+                      },
                     },
-                  },
-                }));
+                  }));
+                });
+
+                it('returns sanitized field', () => {
+                  expect(descriptionValue()).to.eq('This is an excerpt !');
+                  expect(ogValue()).to.eq('This is an excerpt !');
+                  expect(cardValue()).to.eq('This is an excerpt !');
+                });
               });
 
-              it('returns sanitized field', () => {
-                expect(descriptionValue()).to.eq('This is an excerpt !');
-                expect(ogValue()).to.eq('This is an excerpt !');
-                expect(cardValue()).to.eq('This is an excerpt !');
+              context('with blocks', () => {
+                beforeEach(() => {
+                  excerptFieldType = memo(() => ({
+                    type: 'structured_text',
+                    editor: 'structured_text',
+                    itemContent: {
+                      schema: 'dast',
+                      document: {
+                        type: 'root',
+                        children: [
+                          {
+                            type: 'heading',
+                            level: 3,
+                            children: [
+                              { type: 'span', value: 'This is an ' },
+                              {
+                                type: 'span',
+                                value: 'excerpt',
+                                marks: ['strong'],
+                              },
+                              {
+                                type: 'itemLink',
+                                item: '344312',
+                                children: [
+                                  {
+                                    type: 'span',
+                                    value: 'link text ',
+                                  },
+                                ],
+                              },
+                              {
+                                type: 'inlineItem',
+                                item: '344312',
+                              },
+                            ],
+                          },
+                          {
+                            type: 'paragraph',
+                            children: [{ type: 'span', value: '!' }],
+                          },
+                          {
+                            type: 'block',
+                            item: '812394',
+                          },
+                        ],
+                      },
+                    },
+                  }));
+                });
+
+                it('returns sanitized field', () => {
+                  expect(descriptionValue()).to.eq(
+                    'This is an excerpt link text !',
+                  );
+                  expect(ogValue()).to.eq('This is an excerpt link text !');
+                  expect(cardValue()).to.eq('This is an excerpt link text !');
+                });
               });
             });
           });
