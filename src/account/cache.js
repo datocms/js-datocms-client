@@ -10,7 +10,9 @@ module.exports = {
     find: true,
     resetPassword: true,
     activate2fa: true,
+    reset2fa: true,
     deactivate2fa: true,
+    validateResetPasswordToken: true,
   },
   sites: {
     find: true,
