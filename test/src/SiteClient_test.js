@@ -11,6 +11,44 @@ describe('Site API', () => {
   let site;
   let client;
 
+  describe('using readonlyToken', () => {
+    it.only(
+      'raises permission error when making "write" actions',
+      vcr(async () => {
+        const accountClient = await generateNewAccountClient();
+        site = await accountClient.sites.create({ name: 'Blog' });
+
+        client = new SiteClient(
+          site.readonlyToken,
+          null,
+          process.env.SITE_API_BASE_URL,
+        );
+
+        const fetchedSite = await client.site.find();
+        expect(fetchedSite.name).to.equal('Blog');
+
+        // write action that does not return job
+        await expect(
+          client.menuItems.create({
+            label: 'Browse Articles',
+            position: 1,
+          }),
+        ).to.be.rejectedWith(
+          ApiException,
+          '401 INSUFFICIENT_PERMISSIONS (details: {})',
+        );
+
+        // write action that returns job
+        await expect(
+          client.site.update({ name: 'New blog' }),
+        ).to.be.rejectedWith(
+          ApiException,
+          '401 INSUFFICIENT_PERMISSIONS (details: {})',
+        );
+      }),
+    );
+  });
+
   beforeEach(
     vcr('before', async () => {
       const accountClient = await generateNewAccountClient();
