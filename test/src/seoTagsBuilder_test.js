@@ -11,15 +11,33 @@ describe('seoTagsBuilder', () => {
   let noIndex;
   let entitiesRepo;
   let itemImage;
+  let itemImageValidators;
+  let itemGallery;
   let locales;
+  let heading;
+  let titleField;
+  let imagePreviewField;
+  let excerptField;
+  let excerptFieldType;
 
   beforeEach(() => {
-    itemTitle = memo(() => null);
+    itemTitle = memo(() => 'My title');
     globalSeo = memo(() => null);
     seo = memo(() => null);
     noIndex = memo(() => null);
     itemImage = memo(() => null);
+    itemImageValidators = memo(() => ({}));
+    itemGallery = memo(() => null);
     locales = memo(() => ['en']);
+    heading = memo(() => false);
+    titleField = memo(() => ({}));
+    imagePreviewField = memo(() => ({}));
+    excerptField = memo(() => ({}));
+    excerptFieldType = memo(() => ({
+      type: 'string',
+      editor: 'single_line',
+      itemContent: 'This is an excerpt',
+    }));
 
     entitiesRepo = memo(() => {
       const payload = {
@@ -33,6 +51,8 @@ describe('seoTagsBuilder', () => {
               another_string: 'Foo bar',
               seo_settings: seo(),
               image: itemImage(),
+              gallery: itemGallery(),
+              excerpt: excerptFieldType().itemContent,
             },
             meta: {
               updated_at: '2016-12-07T09:14:22Z',
@@ -107,17 +127,18 @@ describe('seoTagsBuilder', () => {
                     id: '15087',
                     type: 'field',
                   },
+                  {
+                    id: '2088',
+                    type: 'field',
+                  },
                 ],
               },
               singleton_item: {
                 data: null,
               },
-              title_field: {
-                data: {
-                  type: 'field',
-                  id: '15085',
-                },
-              },
+              title_field: titleField(),
+              image_preview_field: imagePreviewField(),
+              excerpt_field: excerptField(),
             },
           },
           {
@@ -129,10 +150,35 @@ describe('seoTagsBuilder', () => {
               api_key: 'image',
               hint: null,
               localized: false,
-              validators: {},
+              validators: itemImageValidators(),
               position: 1,
               appearance: {
                 editor: 'file',
+                parameters: {},
+              },
+            },
+            relationships: {
+              item_type: {
+                data: {
+                  id: '3781',
+                  type: 'item_type',
+                },
+              },
+            },
+          },
+          {
+            id: '2088',
+            type: 'field',
+            attributes: {
+              label: 'Gallery',
+              field_type: 'gallery',
+              api_key: 'gallery',
+              hint: null,
+              localized: false,
+              validators: {},
+              position: 1,
+              appearance: {
+                editor: 'gallery',
                 parameters: {},
               },
             },
@@ -172,6 +218,33 @@ describe('seoTagsBuilder', () => {
             },
           },
           {
+            id: '15090',
+            type: 'field',
+            attributes: {
+              label: 'Excerpt',
+              field_type: excerptFieldType().type,
+              api_key: 'excerpt',
+              hint: null,
+              localized: false,
+              validators: {
+                required: {},
+              },
+              position: 6,
+              appearance: {
+                editor: excerptFieldType().editor,
+                parameters: { heading: false },
+              },
+            },
+            relationships: {
+              item_type: {
+                data: {
+                  id: '3781',
+                  type: 'item_type',
+                },
+              },
+            },
+          },
+          {
             id: '15086',
             type: 'field',
             attributes: {
@@ -184,7 +257,7 @@ describe('seoTagsBuilder', () => {
               position: 3,
               appearance: {
                 editor: 'single_line',
-                parameters: { heading: false },
+                parameters: { heading: heading() },
               },
             },
             relationships: {
@@ -232,6 +305,20 @@ describe('seoTagsBuilder', () => {
               title: '',
               alt: '',
               path: '/seo.png',
+              default_field_metadata: {
+                en: {
+                  title: 'SEO default title',
+                  alt: 'SEO default alt',
+                  customData: {},
+                  focalPoint: { x: 0.1, y: 0.1 },
+                },
+                it: {
+                  title: null,
+                  alt: 'Alt default',
+                  customData: {},
+                  focalPoint: { x: 0.9, y: 0.9 },
+                },
+              },
             },
           },
           {
@@ -245,6 +332,16 @@ describe('seoTagsBuilder', () => {
               title: '',
               alt: '',
               path: '/fallback.png',
+              default_field_metadata: {
+                en: {
+                  title: 'Fallback title',
+                  alt: 'Fallback alt',
+                },
+                it: {
+                  title: null,
+                  alt: 'Fallback ITA alt',
+                },
+              },
             },
           },
           {
@@ -258,6 +355,43 @@ describe('seoTagsBuilder', () => {
               title: '',
               alt: '',
               path: '/image.png',
+              default_field_metadata: {
+                en: {
+                  title: 'Image title',
+                  alt: 'Image alt',
+                  customData: {},
+                  focalPoint: { x: 0.1, y: 0.1 },
+                },
+                it: {
+                  title: null,
+                  alt: 'Alt default',
+                  customData: {},
+                  focalPoint: { x: 0.9, y: 0.9 },
+                },
+              },
+            },
+          },
+          {
+            id: '100003',
+            type: 'upload',
+            attributes: {
+              format: 'png',
+              size: '1000',
+              width: '200',
+              height: '200',
+              title: '',
+              alt: '',
+              path: '/gallery.png',
+              default_field_metadata: {
+                en: {
+                  title: 'Gallery title',
+                  alt: 'Gallery alt',
+                },
+                it: {
+                  title: null,
+                  alt: 'Alt Gallery',
+                },
+              },
             },
           },
         ],
@@ -291,8 +425,35 @@ describe('seoTagsBuilder', () => {
         });
 
         context('no SEO', () => {
-          it('returns no tags', () => {
-            expect(result()).to.be.undefined();
+          context('with title field', () => {
+            beforeEach(() => {
+              titleField = memo(() => ({
+                data: {
+                  type: 'field',
+                  id: '15085',
+                },
+              }));
+            });
+
+            it('returns title field as title', () => {
+              expect(titleValue()).to.eq('My title');
+            });
+          });
+
+          context('with heading appearance', () => {
+            beforeEach(() => {
+              heading = memo(() => true);
+            });
+
+            it('returns heading as title', () => {
+              expect(titleValue()).to.eq('Foo bar');
+            });
+          });
+
+          context('with no heading and no title', () => {
+            it('returns the first string field alphabetically', () => {
+              expect(titleValue()).to.eq('Foo bar');
+            });
           });
         });
 
@@ -320,19 +481,20 @@ describe('seoTagsBuilder', () => {
       });
 
       context('with no item', () => {
-        it('returns fallback description', () => {
+        it('returns fallback title', () => {
           expect(titleValue()).to.eq('Default title');
         });
       });
 
-      context('with item', () => {
+      context('with item but no title field', () => {
         beforeEach(() => {
           item = memo(() => entitiesRepo().findEntity('item', '24038'));
+          itemTitle = memo(() => null);
         });
 
         context('no SEO', () => {
-          it('returns fallback description', () => {
-            expect(titleValue()).to.eq('Default title');
+          it('returns fallback title', () => {
+            expect(titleValue()).to.eq('Foo bar');
           });
         });
 
@@ -389,8 +551,180 @@ describe('seoTagsBuilder', () => {
         });
 
         context('no SEO', () => {
-          it('returns no tags', () => {
-            expect(result()).to.be.undefined();
+          context('with excerptValue', () => {
+            beforeEach(() => {
+              excerptField = memo(() => ({
+                data: {
+                  type: 'field',
+                  id: '15090',
+                },
+              }));
+            });
+
+            context('of string type', () => {
+              it('returns excerpt field', () => {
+                expect(descriptionValue()).to.eq('This is an excerpt');
+                expect(ogValue()).to.eq('This is an excerpt');
+                expect(cardValue()).to.eq('This is an excerpt');
+              });
+            });
+
+            context('of textarea type', () => {
+              beforeEach(() => {
+                excerptFieldType = memo(() => ({
+                  type: 'text',
+                  editor: 'textarea',
+                  itemContent:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                }));
+              });
+
+              it('returns excerpt field - max 200 chars', () => {
+                const excerptValue =
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut a...';
+                expect(descriptionValue()).to.eq(excerptValue);
+                expect(ogValue()).to.eq(excerptValue);
+                expect(cardValue()).to.eq(excerptValue);
+              });
+            });
+
+            context('of wysiwyg type', () => {
+              beforeEach(() => {
+                excerptFieldType = memo(() => ({
+                  type: 'text',
+                  editor: 'wysiwyg',
+                  itemContent: '<p>This is <a href="#">an excerpt</a></p>',
+                }));
+              });
+
+              it('returns sanitized field', () => {
+                expect(descriptionValue()).to.eq('This is an excerpt');
+                expect(ogValue()).to.eq('This is an excerpt');
+                expect(cardValue()).to.eq('This is an excerpt');
+              });
+            });
+
+            context('of markdown type', () => {
+              beforeEach(() => {
+                excerptFieldType = memo(() => ({
+                  type: 'text',
+                  editor: 'markdown',
+                  itemContent: '### This is **an excerpt**',
+                }));
+              });
+
+              it('returns sanitized field', () => {
+                expect(descriptionValue()).to.eq('This is an excerpt');
+                expect(ogValue()).to.eq('This is an excerpt');
+                expect(cardValue()).to.eq('This is an excerpt');
+              });
+            });
+
+            context('of structured_text type', () => {
+              context('without blocks', () => {
+                beforeEach(() => {
+                  excerptFieldType = memo(() => ({
+                    type: 'structured_text',
+                    editor: 'structured_text',
+                    itemContent: {
+                      schema: 'dast',
+                      document: {
+                        type: 'root',
+                        children: [
+                          {
+                            type: 'heading',
+                            level: 3,
+                            children: [
+                              { type: 'span', value: 'This is an ' },
+                              {
+                                type: 'span',
+                                value: 'excerpt',
+                                marks: ['strong'],
+                              },
+                            ],
+                          },
+                          {
+                            type: 'paragraph',
+                            children: [{ type: 'span', value: '!' }],
+                          },
+                        ],
+                      },
+                    },
+                  }));
+                });
+
+                it('returns sanitized field', () => {
+                  expect(descriptionValue()).to.eq('This is an excerpt !');
+                  expect(ogValue()).to.eq('This is an excerpt !');
+                  expect(cardValue()).to.eq('This is an excerpt !');
+                });
+              });
+
+              context('with blocks', () => {
+                beforeEach(() => {
+                  excerptFieldType = memo(() => ({
+                    type: 'structured_text',
+                    editor: 'structured_text',
+                    itemContent: {
+                      schema: 'dast',
+                      document: {
+                        type: 'root',
+                        children: [
+                          {
+                            type: 'heading',
+                            level: 3,
+                            children: [
+                              { type: 'span', value: 'This is an ' },
+                              {
+                                type: 'span',
+                                value: 'excerpt',
+                                marks: ['strong'],
+                              },
+                              {
+                                type: 'itemLink',
+                                item: '344312',
+                                children: [
+                                  {
+                                    type: 'span',
+                                    value: 'link text ',
+                                  },
+                                ],
+                              },
+                              {
+                                type: 'inlineItem',
+                                item: '344312',
+                              },
+                            ],
+                          },
+                          {
+                            type: 'paragraph',
+                            children: [{ type: 'span', value: '!' }],
+                          },
+                          {
+                            type: 'block',
+                            item: '812394',
+                          },
+                        ],
+                      },
+                    },
+                  }));
+                });
+
+                it('returns sanitized field', () => {
+                  expect(descriptionValue()).to.eq(
+                    'This is an excerpt link text !',
+                  );
+                  expect(ogValue()).to.eq('This is an excerpt link text !');
+                  expect(cardValue()).to.eq('This is an excerpt link text !');
+                });
+              });
+            });
+          });
+
+          context('with no excerptValue', () => {
+            it('returns no tags', () => {
+              expect(result()).to.be.undefined();
+            });
           });
         });
 
@@ -707,14 +1041,18 @@ describe('seoTagsBuilder', () => {
     let result;
     let ogValue;
     let cardValue;
+    let ogWidth;
+    let ogAlt;
 
     beforeEach(() => {
       ogValue = memo(() => result()[0].attributes.content);
       cardValue = memo(() => result()[1].attributes.content);
+      ogWidth = memo(() => result()[2].attributes.content);
+      ogAlt = memo(() => result()[4] && result()[4].attributes.content);
       result = memo(() => builders.image(item(), entitiesRepo()));
     });
 
-    context('with no fallback seo', () => {
+    context('with no global fallback seo', () => {
       context('with no item', () => {
         it('returns no tags', () => {
           expect(result()).to.be.undefined();
@@ -743,21 +1081,86 @@ describe('seoTagsBuilder', () => {
             it('returns seo image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
 
-        context('with image', () => {
+        context('when first field in alphabetical order is empty', () => {
           beforeEach(() => {
             itemImage = memo(() => {
               return { uploadId: '100002' };
             });
           });
 
-          context('no SEO', () => {
-            it('returns item image', () => {
-              expect(ogValue()).to.include('image.png');
-              expect(cardValue()).to.include('image.png');
+          it('returns no tags', () => {
+            expect(result()).to.be.undefined();
+          });
+        });
+
+        context('with image & gallery', () => {
+          beforeEach(() => {
+            itemImage = memo(() => {
+              return { uploadId: '100002' };
+            });
+            itemGallery = memo(() => {
+              return [{ uploadId: '100003' }];
+            });
+          });
+
+          context('no SEO field', () => {
+            context('with no image_preview_field', () => {
+              context(
+                'with no imagish fields with "image" extension validator',
+                () => {
+                  it('returns the first item image or gallery in alphabetical order', () => {
+                    expect(ogValue()).to.include('gallery.png');
+                    expect(cardValue()).to.include('gallery.png');
+                    expect(ogWidth()).to.eq('200');
+                    expect(ogAlt()).to.eq('Gallery alt');
+                  });
+                },
+              );
+              context(
+                'with imagish fields with "image" extension validator',
+                () => {
+                  beforeEach(() => {
+                    itemImageValidators = memo(() => {
+                      return {
+                        extension: {
+                          predefinedList: 'image',
+                        },
+                      };
+                    });
+                  });
+
+                  it('returns the file or gallery field that will most likely contain an image', () => {
+                    expect(ogValue()).to.include('image.png');
+                    expect(cardValue()).to.include('image.png');
+                    expect(ogWidth()).to.eq('200');
+                    expect(ogAlt()).to.eq('Image alt');
+                  });
+                },
+              );
+            });
+
+            context('with image_preview_field', () => {
+              beforeEach(() => {
+                imagePreviewField = memo(() => ({
+                  data: {
+                    type: 'field',
+                    id: '2088',
+                  },
+                }));
+              });
+
+              it('returns image_preview_field image', () => {
+                expect(ogValue()).to.include('gallery.png');
+                expect(cardValue()).to.include('gallery.png');
+                expect(ogWidth()).to.eq('200');
+                expect(ogAlt()).to.eq('Gallery alt');
+              });
             });
           });
 
@@ -771,6 +1174,8 @@ describe('seoTagsBuilder', () => {
             it('returns SEO image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
@@ -803,6 +1208,8 @@ describe('seoTagsBuilder', () => {
             it('returns fallback image', () => {
               expect(ogValue()).to.include('fallback.png');
               expect(cardValue()).to.include('fallback.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('Fallback alt');
             });
           });
 
@@ -816,21 +1223,28 @@ describe('seoTagsBuilder', () => {
             it('returns seo image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
 
-        context('with image', () => {
+        context('with image & no gallery', () => {
           beforeEach(() => {
             itemImage = memo(() => {
               return { uploadId: '100002' };
             });
+            itemGallery = memo(() => {
+              return [{ uploadId: '100003' }];
+            });
           });
 
           context('no SEO', () => {
-            it('returns item image', () => {
-              expect(ogValue()).to.include('image.png');
-              expect(cardValue()).to.include('image.png');
+            it('returns first image or gallery field in alphabetical order', () => {
+              expect(ogValue()).to.include('gallery.png');
+              expect(cardValue()).to.include('gallery.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('Gallery alt');
             });
           });
 
@@ -844,6 +1258,8 @@ describe('seoTagsBuilder', () => {
             it('returns SEO image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
@@ -869,6 +1285,8 @@ describe('seoTagsBuilder', () => {
         it('returns fallback image', () => {
           expect(ogValue()).to.include('fallback.png');
           expect(cardValue()).to.include('fallback.png');
+          expect(ogWidth()).to.eq('200');
+          expect(ogAlt()).to.eq('Fallback alt');
         });
       });
 
@@ -882,6 +1300,8 @@ describe('seoTagsBuilder', () => {
             it('returns fallback image', () => {
               expect(ogValue()).to.include('fallback.png');
               expect(cardValue()).to.include('fallback.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('Fallback alt');
             });
           });
 
@@ -895,21 +1315,28 @@ describe('seoTagsBuilder', () => {
             it('returns seo image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
 
-        context('with image', () => {
+        context('with multiple imagish fields', () => {
           beforeEach(() => {
             itemImage = memo(() => {
               return { uploadId: '100002' };
             });
+            itemGallery = memo(() => {
+              return [{ uploadId: '100003' }];
+            });
           });
 
           context('no SEO', () => {
-            it('returns item image', () => {
-              expect(ogValue()).to.include('image.png');
-              expect(cardValue()).to.include('image.png');
+            it('returns first imagish field in alphabetical order', () => {
+              expect(ogValue()).to.include('gallery.png');
+              expect(cardValue()).to.include('gallery.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('Gallery alt');
             });
           });
 
@@ -923,6 +1350,8 @@ describe('seoTagsBuilder', () => {
             it('returns SEO image', () => {
               expect(ogValue()).to.include('seo.png');
               expect(cardValue()).to.include('seo.png');
+              expect(ogWidth()).to.eq('200');
+              expect(ogAlt()).to.eq('SEO default alt');
             });
           });
         });
