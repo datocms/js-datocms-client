@@ -31,18 +31,11 @@ export default class Loader {
   }
 
   saveStateToCache(cache) {
-    return cache.set(this.cacheKey(), this.entitiesRepo.serializeState());
+    return this.entitiesRepo.saveStateToCache(cache, this.cacheKey());
   }
 
   loadStateFromCache(cache) {
-    return cache.get(this.cacheKey()).then(serializedState => {
-      if (!serializedState) {
-        return false;
-      }
-
-      this.entitiesRepo.loadState(serializedState);
-      return true;
-    });
+    return this.entitiesRepo.loadStateFromCache(cache, this.cacheKey());
   }
 
   loadSchema() {

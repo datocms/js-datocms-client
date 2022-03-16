@@ -1,5 +1,7 @@
 import JsonApiEntity from './JsonApiEntity';
 
+const entitiesToStorePerCacheKey = 5000;
+
 function payloadEntities(payload) {
   const accumulator = [];
 
@@ -24,6 +26,63 @@ export default class EntitiesRepo {
     this.destroyListeners = [];
     this.upsertListeners = [];
     this.upsertEntities(...payloads);
+  }
+
+  async saveStateToCache(cache, cachePrefixKey) {
+    const entityTypes = Object.keys(this.entities);
+
+    const manifest = { entityTypeChunkKeys: {} };
+
+    for (const entityType of entityTypes) {
+      const entities = Object.values(this.entities[entityType]);
+
+      for (
+        let i = 0, chunkIndex = 0;
+        i < entities.length;
+        i += entitiesToStorePerCacheKey, chunkIndex += 1
+      ) {
+        const chunkCacheKey = `${cachePrefixKey}--${entityType}-${chunkIndex}`;
+
+        manifest.entityTypeChunkKeys[entityType] =
+          manifest.entityTypeChunkKeys[entityType] || [];
+        manifest.entityTypeChunkKeys[entityType].push(chunkCacheKey);
+
+        await cache.set(
+          chunkCacheKey,
+          entities
+            .slice(i, i + entitiesToStorePerCacheKey)
+            .map(entity => entity.payload),
+        );
+      }
+    }
+
+    await cache.set(cachePrefixKey, manifest);
+  }
+
+  async loadStateFromCache(cache, cachePrefixKey) {
+    const manifest = await cache.get(cachePrefixKey);
+
+    if (!manifest) {
+      return;
+    }
+
+    this.entities = {};
+
+    for (const [entityType, entityTypeChunkKeys] of Object.entries(
+      manifest.entityTypeChunkKeys,
+    )) {
+      this.entities[entityType] = {};
+
+      for (const entityTypeChunkKey of entityTypeChunkKeys) {
+        const chunkEntities = await cache.get(entityTypeChunkKey);
+        chunkEntities.forEach(entityPayload => {
+          this.entities[entityType][entityPayload.id] = new JsonApiEntity(
+            entityPayload,
+            this,
+          );
+        });
+      }
+    }
   }
 
   serializeState() {
