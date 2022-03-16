@@ -363,7 +363,7 @@ export const builders = {
       ogTag('og:image:height', finalUpload.height),
       altValue && ogTag('og:image:alt', altValue),
       altValue && ogTag('twitter:image:alt', altValue),
-    ];
+    ].filter(x => !!x);
   },
 };
 
