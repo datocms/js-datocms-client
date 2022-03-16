@@ -4,8 +4,8 @@ import Progress from './progress';
 
 export const toItemTypeApiKey = value => {
   return `${decamelize(value)
-    .replace(/\d+/g, '')
-    .replace(/-/g, '_')}_model`;
+    .replace(/\W/g, '_')
+    .replace(/^_/g, '')}_model`.replace(/_{2,}/g, '_');
 };
 
 export default async ({ datoClient, contentfulData }) => {
