@@ -5,7 +5,7 @@ import Progress from './progress';
 export const toItemTypeApiKey = value => {
   return `${decamelize(value)
     .replace(/\W/g, '_')
-    .replace(/^\d/g, '')
+    .replace(/^\d+/g, '')
     .replace(/^_/g, '')}_model`.replace(/_{2,}/g, '_');
 };
 
