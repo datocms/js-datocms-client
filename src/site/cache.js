@@ -190,6 +190,7 @@ module.exports = {
     all: true,
     find: true,
     destroy: true,
+    resend: true,
   },
   editingSessions: {
     all: true,
