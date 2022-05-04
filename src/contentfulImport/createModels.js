@@ -3,10 +3,12 @@ import { decamelize } from 'humps';
 import Progress from './progress';
 
 export const toItemTypeApiKey = value => {
+  // Current acceptable values for item_types /[a-z](([a-z0-9]|_(?![_0-9]))*[a-z0-9])/
+
   return `${decamelize(value)
     .replace(/\W/g, '_')
-    .replace(/^\d+/g, '')
-    .replace(/^_/g, '')}_model`.replace(/_{2,}/g, '_');
+    .replace(/^\d+/gm, 'n')
+    .replace(/(^_+)|(_+)(\d+)|(_+)$/gm, '')}_model`.replace(/_{2,}/g, '_');
 };
 
 export default async ({ datoClient, contentfulData }) => {
