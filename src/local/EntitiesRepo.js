@@ -3,18 +3,18 @@ import JsonApiEntity from './JsonApiEntity';
 const entitiesToStorePerCacheKey = 5000;
 
 function payloadEntities(payload) {
-  const accumulator = [];
+  let accumulator = [];
 
   if (payload.data) {
     if (Array.isArray(payload.data)) {
-      accumulator.push(...payload.data);
+      accumulator = [...accumulator, ...payload.data];
     } else {
       accumulator.push(payload.data);
     }
   }
 
   if (payload.included) {
-    accumulator.push(...payload.included);
+    accumulator = [...accumulator, ...payload.included];
   }
 
   return accumulator;
