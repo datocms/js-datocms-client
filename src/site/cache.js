@@ -11,6 +11,7 @@ module.exports = {
     update: true,
     all: true,
     find: true,
+    me: true,
     destroy: true,
   },
   ssoUsers: {
@@ -167,6 +168,8 @@ module.exports = {
     create: true,
     update: true,
     trigger: true,
+    abort: true,
+    abortIndexing: true,
     reindex: true,
     destroy: true,
   },
@@ -231,6 +234,7 @@ module.exports = {
   site: {
     find: true,
     update: true,
+    activateImprovedTimezoneManagement: true,
   },
   workflows: {
     create: true,
