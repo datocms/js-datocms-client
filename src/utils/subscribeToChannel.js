@@ -24,6 +24,7 @@ export default function subscribeToChannel(client, siteId, environment) {
           headers: {
             Authorization: `Bearer ${client.rawClient.token}`,
             Accept: 'application/json',
+            'X-Api-Version': '3',
             'Content-Type': 'application/json',
           },
         },
