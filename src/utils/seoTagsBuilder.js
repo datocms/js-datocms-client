@@ -339,7 +339,7 @@ export const builders = {
     const url = buildFileUrl(finalUpload, entitiesRepo, {
       w: '1000',
       fit: 'max',
-      fm: 'jpg',
+      auto: 'format',
     });
 
     const { defaultFieldMetadata } = finalUpload;

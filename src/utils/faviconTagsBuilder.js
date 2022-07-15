@@ -5,7 +5,7 @@ const metaTag = (name, content) => tag('meta', { name, content });
 
 const url = (favicon, entitiesRepo, params) => {
   const upload = entitiesRepo.findEntity('upload', favicon);
-  return buildFileUrl(upload, entitiesRepo, params);
+  return buildFileUrl(upload, entitiesRepo, { ...params, auto: 'format' });
 };
 
 const builders = {
