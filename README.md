@@ -1,6 +1,7 @@
-# DatoCMS JS Client
-
+# DatoCMS JS Client ⛔️ DEPRECATED ⛔️
 [![Build Status](https://travis-ci.org/datocms/js-datocms-client.svg?branch=master)](https://travis-ci.org/datocms/js-datocms-client)
+
+We released a new [REST JS client](https://github.com/datocms/js-rest-api-clients). You can read the documentation, [here](https://www.datocms.com/docs/content-management-api/using-the-nodejs-clients).
 
 API client and CLI tool for [DatoCMS](https://www.datocms.com). Take a look at the full [API documentation](https://www.datocms.com/docs/content-management-api) for examples.
 
